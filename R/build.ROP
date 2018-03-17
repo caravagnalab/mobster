@@ -1,0 +1,8 @@
+package.name <- "dbpmm"
+package.dir <- paste("/Users/gcaravagna/Documents/GitHub/", package.name,sep="")
+setwd(package.dir)
+### --- Use Roxygenise to generate .RD files from my comments
+library(roxygen2)
+roxygenise(package.dir=package.dir)
+system(command=paste("R CMD INSTALL '",package.dir,"'",sep=""))
+library(dbpmm)
