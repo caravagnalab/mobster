@@ -218,3 +218,25 @@ plot.dbpmm = function(x, annotation = NULL, palette = 'Spectral', tail.color = c
     }
   }
 }
+
+.plot.fit.summary = function(x, alpha = .5) {
+
+  x = x[complete.cases(x), ]
+
+  x$tail[x$tail] = 'With Tail'
+  x$tail[x$tail == 'FALSE'] = 'Without Tail'
+
+  x$K = as.factor(x$K)
+  x$tail = as.factor(x$tail)
+
+
+  pa = ggplot(data = x, aes(x = K, y = ICL, fill = K)) +
+    geom_boxplot(alpha = alpha) +
+    scale_fill_brewer(palette = 'Set1') +
+    labs(title  = bquote(bold('ICL Score: ')~ .(nrow(x)) ~' runs')) +
+    xlab('K') + ylab(bquote(italic('ICL'))) +
+    theme_light() +
+    facet_wrap(~tail, nrow = 1)
+
+  print(pa)
+}

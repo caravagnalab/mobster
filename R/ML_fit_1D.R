@@ -42,7 +42,10 @@ dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'random', tail = TRUE, eps
   set.seed(seed)
 
   cat(bgYellow(black(" [ dbpmm ] ")),
-        yellow(' Finite Dirichelt Mixture Models with Beta and Pareto mixtures (univariate).\n'))
+        yellow(' Finite Dirichelt Mixture Models with Beta and Pareto mixtures (univariate)\n'))
+
+  cat(cyan('\n\tDump:'), blue(file.dump), cyan('\t Annotation:'), blue(annotation),'\n')
+
 
   TIME = as.POSIXct(Sys.time(), format = "%H:%M:%S")
 
@@ -54,7 +57,7 @@ dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'random', tail = TRUE, eps
   cat(cyan('\n\t- Fit   : '), yellow(fit.type), cyan('for'), maxIter, cyan('max. steps with'),
       ifelse(all(is.character(init)), init, 'custom'), cyan('initialization;'),  yellow('\u03B5 ='), epsilon)
   cat(cyan('\n\t- Runs  : '), samples, ' x ', length(K), ' x ', length(tail), '=', yellow(ntests), cyan(' with '),
-      ifelse(parallel, paste(green('PARALLEL'), '[', cores.ratio * 100, 'cores ]'), red('SERIAL')),
+      ifelse(parallel, paste(green('PARALLEL'), '[', cores.ratio * 100, '% of cores ]'), red('SERIAL')),
       cyan(' output is '),
       ifelse(is_verbose, green('VERBOSE'), red('SILENT')), '\n'
   )
@@ -114,7 +117,7 @@ dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'random', tail = TRUE, eps
   cat(bold("\n\nCOMPLETED."), blue(round(TIME, 2)), cyan('mins'), '\n')
 
   #### SUBSET TOP FITS
-  cat(bold("\nTOP-", top, " OF ALL FITS\n"))
+  cat(bold("\nTOP", top, "OF ALL FITS\n"))
 
   tests$ICL = Inf
 
@@ -122,6 +125,7 @@ dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'random', tail = TRUE, eps
   ranking = order(tests$ICL, decreasing = FALSE)
   tests = tests[ranking, ]
   runs = runs[ranking]
+  all.tests = tests
   tests = tests[1:top, ]
 
   rownames(tests) = NULL
@@ -140,19 +144,26 @@ dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'random', tail = TRUE, eps
   {
     res = list(tests = tests, runs = runs, best = best)
 
-    save(res, file = paste(file.dump, '-allRuns.RData', sep = ''))
-    cat(yellow('\nResults dumped to RData file'), paste(file.dump, '-allRuns.RData', sep = ''), '\n')
+    cat(bold("\n DUMP\n\n"))
 
-    pdf(paste(file.dump, '-allRuns.pdf', sep = ''), height = 8, width = 13)
+    save(res, file = paste(file.dump, '-allRuns.RData', sep = ''))
+    cat(yellow('\n-  Results : '), paste(file.dump, '-allRuns.RData', sep = ''))
+
+    pdf(paste(file.dump, '-topFits.pdf', sep = ''), height = 8, width = 13)
     lapply(runs, plot, annotation = annotation)
     dev.off()
-    cat(yellow('All fits plot to file'), paste(file.dump, '-allRuns.pdf', sep = ''), '\n')
-
+    cat(yellow('\n- Top fits : '), paste(file.dump, '-topFits.pdf', sep = ''))
 
     pdf(paste(file.dump, '-bestFit.pdf', sep = ''), height = 8, width = 13)
     plot(best, annotation = annotation)
     dev.off()
-    cat(yellow('Best fit plot to file'), paste(file.dump, '-bestFit.pdf', sep = ''), '\n')
+    cat(yellow('\n- Best fit : '), paste(file.dump, '-bestFit.pdf', sep = ''))
+
+    pdf(paste(file.dump, '-boxplotFitScores.pdf', sep = ''), height = 5, width = 8)
+    .plot.fit.summary(all.tests)
+    dev.off()
+    cat(yellow('\n-  Boxplot : '), paste(file.dump, '-boxplotFitScores.pdf', sep = ''))
+
   }
 
   return(runs)
