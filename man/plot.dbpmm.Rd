@@ -4,8 +4,8 @@
 \alias{plot.dbpmm}
 \title{Plot an object of class dbpmm. This is a set of multiple frames plot via ggplot2.}
 \usage{
-plot.dbpmm(x, palette = "Spectral", tail.color = c("gainsboro", "darkgray"),
-  alpha = 0.5, ...)
+plot.dbpmm(x, annotation = NULL, palette = "Spectral",
+  tail.color = c("gainsboro", "darkgray"), alpha = 0.5, ...)
 }
 \arguments{
 \item{x}{an object of class dbpmm}

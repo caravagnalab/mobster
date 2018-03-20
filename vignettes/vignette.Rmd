@@ -2,7 +2,10 @@
 title: "DBPMM -- A Mixed Finite-Mixture Models"
 author: "Giulio Caravagna <giulio.caravagna@icr.ac.uk>"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
 vignette: >
   %\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}
@@ -241,14 +244,14 @@ X = c(B1, B2, TAIL)
 hist(X, breaks = seq(0,1,0.01))
 ```
 
-We fit the model, as before but with larger $K$.
+We fit the model, as before but with larger $K$. We reduce the number of trials and epsilon to speed up things.
 
 ```{r}
 fit = dbpmm.fit(X, 
                 K = 1:3, 
-                samples = 10, 
+                samples = 3, 
                 tail = c(TRUE, FALSE), 
-                epsilon = 1e-10,
+                epsilon = 1e-6,
                 parallel = TRUE, # use parallel on my Macbook
                 maxIter = 2000, 
                 fit.type = 'MM')
@@ -284,9 +287,9 @@ hist(X, breaks = seq(0,1,0.01))
 ```{r}
 fit = dbpmm.fit(X, 
                 K = 1:4, 
-                samples = 10, 
+                samples = 3, 
                 tail = c(TRUE, FALSE), 
-                epsilon = 1e-10,
+                epsilon = 1e-6,
                 parallel = TRUE,
                 maxIter = 2000, 
                 fit.type = 'MM')

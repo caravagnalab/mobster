@@ -2,3 +2,4 @@
 *.pdf
 .Rproj.user
 inst/doc
+vignettes/.DS_Store

@@ -4,8 +4,8 @@ Title: Finite Dirichlet Mixture Models with Beta and Pareto components
 Version: 0.1.0
 Author: Giulio Caravagna
 Maintainer: Giulio Caravagna <gcaravagn@gmail.com>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Authors@R: person("Giulio", "Caravagna", role = c("aut", "cre"), email = "gcaravagn@gmail.com")
+Description: Finite Dirichlet Mixture Models with Beta and Pareto components. Will add some description later on..
 License: GPL
 Encoding: UTF-8
 LazyData: true

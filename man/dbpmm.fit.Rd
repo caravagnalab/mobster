@@ -7,7 +7,7 @@
 dbpmm.fit(X, K = 1:3, samples = 10, init = "random", tail = TRUE,
   epsilon = 1e-10, maxIter = 100, is_verbose = FALSE, fit.type = "MLE",
   parallel = FALSE, cores.ratio = 0.8, file.dump = NA, seed = 12345,
-  top = 10)
+  top = 10, annotation = NULL)
 }
 \arguments{
 \item{X}{Data, a vector of observations in (0,1).}
@@ -44,6 +44,8 @@ and will plot all the fits in a PDF file.}
 \item{seed}{Seed for the random numbers generator}
 
 \item{top}{Number of top fits to return, ranked by ICL.}
+
+\item{annotation}{Subtitle annotation, if plotting.}
 }
 \value{
 An object of class "dbpmm" which has methods for print and visualization.
