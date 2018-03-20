@@ -1,0 +1,300 @@
+---
+title: "DBPMM -- A Mixed Finite-Mixture Models"
+author: "Giulio Caravagna <giulio.caravagna@icr.ac.uk>"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+This is the preliminary definition of the **univariate DBPMM**, a model-based statistical tool to analyze clonal architectures in cancer. The "model" is derived by combining statistics with population genetics; DBPMM stands for *Dirichlet Beta-Pareto Finite-Mixture Models*. 
+
+>**Note:** The model is termed "mixed" because different types of random variables (Beta and Pareto) are combined to cluster the data, not because we use mixed-type distributions. 
+
+### The model: overview
+
+We briefly discuss its foundations. We first observe that the *frequency spectrum* $p$ of the observed SNVs is carachterized by a random variable that follows (assuming there exist $K$ detectable clones)
+\[
+{p} \sim Y + \sum_k^K B_k
+\]
+where:
+
+- $Y \propto x^{-\alpha}$ are power-law frequencies  that caractherize the SNVs in the progeny of each one of the $K$ clones, which by definition accumulate passenger mutations untill new selection events happen. 
+
+- $B_k \in [0,1]$ is a Beta-distributed random variable modeling the clone's main signal. In layman terms, that's where we expect the "bump" in the frequency distribution due to clone $k$.
+
+>**Remark:** the power-law part of the spectrum exists regardless one or more subclones are under selective pressures, or the overall tumour is neutral (which is the case with $K=1$). 
+
+Given ${p}$, the *observational model* for NGS (i.e., read counts), is a  *binomial process*
+\[
+n \mid p,m \sim Bin(n;m,p)
+\]
+where $m$ is the coverage, and $n$ are the reads harbouring SNV. Possibly, to account for some overdispersion, the Binomial could be replaced by a Beta-Binomial model. In general, we see that $p$ plays the role of the success probability for $m$ trials, as we expect.
+
+
+
+> **Relation to "other" models in the literature:** Models like the ones adopted in pyClone/ DPClust / etc. do not consider the spectrum,  and  model directly the observational process. Within this framework, they can be seen as assuming that $p$ can be approximated by a point-process (e.g. Dirac) centered at the Beta's means.  Their limitation is that, by neglecting the role of power-law frequencies, the number of clones might be overestimated.
+
+>**Remark:** For a while I tried (unsuccesfully) to model together the power-law spectrum with the observation models (i.e., a mixture of Pareto/ Binomial). Only recently it became clear to me that population genetic results hold only for the frequency spectrum, and not for read counts (i.e., it is the VAF that decays as a power-law, not the number of reads harbouring the variant allele). For this reason, we cannot model in one-step discrete power-laws with Binomial counts.
+
+**Technical note:** To be precise, the model that we present is already a simplification of the real spectrum.
+
+1. tail's frequencies are Landau, and become power-law only because of sequencing limitations.
+
+2. technically, each clone "emits" his own tail, which has lower frequency than its "bump". Thus, $p$ would be better written as a mixture of random variables $Z_k$ that harbour a joint signal for each bump and tail. A possible model would be a 2-components mixture $Z_k = [\pi_k T_k + (1-\pi_k)B_k]  l_k$ where $T_k$ is a power-law truncated at the peak of the clone ($\mathbb{E}[B_k]$, the expectation of the Beta), and $l_k < 1$ is a penalty term that tries to minimize the overlap between $T_k$ and $B_k$ (because the two spectra should not overlap much).
+
+3. Even if we make the simplifying assumption of  decoupling the signal from the tails and the bumps, the observed tail should be a convolution  of $K$ tails. 
+
+
+I attempted to improve the model accounting for these considerations, but  found the resulting formulation difficult. For instance, random variable $Z_k$ require numerical fitting, and Pareto convolution is  unknown in the general form, as far as I could understand. Thus, our single-tail modeling via $Y$ is a simplification to all these  observations, which however allows for a simple implementation and fit. Of course, I am happy to discuss all these issues offline, and make further attempts to improve the model later on.
+
+
+
+### Implementation
+
+DBPMM implements a statistical model that fits *N* mutations (eg SNVs) for which the frequency of the variant allele corrected for copy-number status and purity is available. 
+
+>**Note:** These frequencies are not CCF values, which require truncation above $1$. These are frequencies such that the clonal cluster hits at $\approx 0.5$, and  its outliers spread  around $0.5$ (but below $1$). If copy-number  values are unavailable, one should  use only diploid regions.
+
+Thus, our model works only with the frequency spectrum, i.e., upstream the observational  (Binomial) model, in a way that is complementary to other approaches. DBPMM allows to detect which SNVs are most likely due to $Y$, the tail, or $B_k$ (one of the possible clones). Once DBPMM has fit the data, one can remove the tail's SNVs, and use any other method to fit the observational process and determine the actual clones from read counts.
+
+The fit uses $K+1$ components:
+
+- 1 Pareto Type-I distribution to model a power-law tail;
+- $K$ (custom) Beta distribution to model clonal and subclonal clusters.
+
+
+
+The model likelihood for a dataset $X = \{x_i \mid i=1,\ldots,N\}$ where $0 < x_i <1$ is iid, is
+\[
+f(X \mid \boldsymbol{\theta}, \boldsymbol{\pi}) = 
+\prod_{i=1}^N 
+\left[ 
+\pi_1g(x_i\mid x_\ast, \alpha) + \sum_{k=1}^K \pi_k h(x_i\mid a_k, b_k)
+\right]
+\]
+where  $\boldsymbol{\theta}$ are all parameters and $\boldsymbol{\pi}$ is a standard Dirichlet variable on the $(K+1)$-dimensional probability simplex (*mixing proportions*). The involved densities are well-known.
+
+> **Pareto Type-I:** for a scale $x_\ast$ and shape $\alpha>0$ the density for $x\geq x_\ast$ is
+\[
+g(x\mid x_\ast, \alpha) =  \dfrac{\alpha x_\ast^\alpha}{x^{\alpha + 1}}\\
+\]
+Note that the support is $[0, +\infty)$. For $x>x_\ast$ it holds $g(x \mid x_\ast, \alpha) = 0$.
+
+>**Beta:** for shape $a_k>0$ and $b_k>0$ the density is 
+\[
+h(x\mid a_k, b_k) = \dfrac{x^{a-1}(1-x)^{b-1}}{Beta(a_k, b_k)}
+\]
+Note that the support is $[0, 1]$. $Beta$ is the beta-function.
+
+### Fitting
+
+I tried several ways to fit this model, and eventually resorted on the simplest possible: a Maximum Likelihood Estimation (MLE), through a standard EM-like procedure. The formulation uses *latent variables* and is rather standard, but there are some variations due to the following considerations.
+
+- posterior estimates of the latent variables is defined as usual
+\[
+z_{n,k} = 
+\dfrac{\pi_k w(x_n\mid \boldsymbol{\theta}_k)}{\sum_{y=1}^{K+1} 
+\pi_y w(x_y\mid \boldsymbol{\theta}_y)
+}
+\]
+where $w$ is actually $g$ (Pareto) for $k=1$ and $h$ (Beta) for $k>1$; $\boldsymbol{\theta}_y$ and $\boldsymbol{\theta}_k$ are the parameters of $g$ or $h$, accordingly.
+
+-  the scale $x_\ast$ is not an actual parameter. Its MLE estimator is known to be $x_\ast = \min X$, which can be set before running the fit.
+
+- the MLE estimator of a Pareto Type-I distribution, given $x_\ast$, is known, and analytical.   Swithing to the log-Likelihood and including latent variables this is ($n$ implicitely ranges over the data)
+\[
+\hat{\alpha} = - \dfrac{\sum_n z_{n,1}}
+{\sum_n z_{n,1} \log(x_\ast/x_n)}
+\]
+
+
+- Beta distributions have unknown closed form for their MLE estimator, which we have to approximate numerically, slowing down the fit. However, their Moment-Matching (MM) estimator is known, and is analytical. For mixtures of Beta distributions, this has been first derived in [Schröder and Rahmann Algorithms Mol Biol (2017) 12:21]. If we consider the mean $\mu_k$ and the variance $\sigma_k$ of a Beta distribution, and we include latent variables 
+\[
+\mu_k = \dfrac{\sum_{n} z_{n,k} x_n}
+{N \pi_k}
+\qquad
+\sigma_k = \dfrac{\sum_{n} z_{n,k} (x_n - \mu_k)^2}
+{N \pi_k}
+\]
+Given $\mu_k$ and  $\sigma_k$, we can re-parametrize the Beta with new values for $a_k$ and $b_k$
+\[
+a_k = \left(\dfrac{1-\mu_k}{\sigma_k} - \mu_k^{-1}\right)\mu_k^2
+\qquad b_k = \mu_k \left(\mu_k^{-1} - 1\right)
+\] 
+
+>**Moment-Matching vs MLE:** MM is the idea of matching $t$ *empirical moments* of the data $X$ (here $t=2$, so mean and variance), to the theoretical moments $\mu_k$ and  $\sigma_k$ of the distribution, and solving for them. This is not the same as computing the MLE, which computes the 0s of $\partial h/\partial\, \boldsymbol{\theta}$. Thus, the properties of EM do not hold when we compute updates via MM: *we cannot guarantee that the likelihood increases monotonically* (Jensen's inequality). For this reason,   we measure convergency of an EM-like MM through the variation in the estimates of $\boldsymbol{\pi}$, rather than the likelihood. This procedure can be called "iterative method of moments".
+
+>**Lemma 1 in [Algorithms Mol Biol (2017) 12:21]:** In each MM-step, before updating the component
+weights, the expectation of the estimated density equals the sample mean. In particular, this is true at a stationary point.
+
+
+I implemented this fitting algorihtm in a hidden function ```.dbpmm.EM```, which provides support for both MLE and MM computations. The function samples randomized initial conditions for the Beta distribution, and a random value for $\alpha$ in the interval $[0.01, 5]$. Because the algorithm is a local-search strategy, multiple initial conditions have to be tested. In the same implementation, we can fit a model with $K$ Betas where the Pareto tail is switched off.
+
+**Model Selection:**  Several scores are produced, but only one of them is used for model selection.
+
+- NLL: negative log-likelihood;
+- AIC/ BIC: standard information criteria, where $W$ are the model's parameters.  A model with $K$ Beta distributions has $$W=3K + 2$$ parameters that break down as: Dirichlet ($K+1$), Beta ($2K$) and Pareto ($1$). When the tail is switched off, $W=3K-1$.
+- Entropy: the entropy $H$ of the latent variables;
+- ICL: the Integrative Complete Likelihood, which combines all of the above as
+\[
+ICL = 2 * NLL +  W * \log(N) + H
+\]
+
+Because we are using NLL, we seek to **minimize** the ICL value.
+
+>**Variational fit:** I derived a variational method to fit this distribution, which however does not seem to work. It uses a  KL-optimization of the Pareto fit (as far as I understand, this is a new result), but falls apart  because Beta distributions do not have analytically tractable conjugate priors. Thus,  one has to approximate the prior and the posterior via  a product approximation of Gamma distributions; tthis strategy is also  used in SciClone, and is due to Ma and Leijon ["Bayesian Estimation of Beta Mixture Models with Variational Inference", IEEE]. The problem is that, in terms of density values, I find it incompatible (maybe for the scale of our values, I don't know) to combine  Gamma  the Pareto density functions, as all the probability mass for mixing proportions concentrate either on the tail, or on the $K$ components.  
+
+
+
+## The package
+
+It defines an S3 object for which the main function is ``dbpmm.fit``; this function computes the fit and returns the  top-$w$ results, where $w$ is a parameter.
+
+```{r}
+library(dbpmm)
+?dbpmm.fit # to read the manual use this
+```
+
+The function arguments are
+
+- ``X``. data (vector of values, without NAs).
+- ``K = 1:3``.  number of Beta components to test.  
+- ``samples = 10``. number of starts to test.
+- ``tail = TRUE``. whether or not a tail should be used. If this value is ``c(TRUE, FALSE)``, both a model with and without a tail are tested.
+- ``init = "random"``. initial condition; only "random" works.
+- ``epsilon = 1e-10``. convergency criterion, as explained above.
+- ``maxIter = 100``. maximum number of steps before forcing stop.
+- ``is_verbose = FALSE``. a bit more output to monitor progress.
+- ``fit.type = "MLE"``. type of fit, ``"MM"`` is for MM.
+- ``parallel = FALSE``. if ``TRUE`` uses ``parallel`` to performs the fits in parallel. The output of each thread is masked in this case (so ``is_verbose`` becomes useless).
+- ``cores.ratio = 0.8``. if ``parallel = TRUE`` it will use ``cores.ratio`` * 100 of the number of available cores, as they can be detected on the local machine. 
+- ``file.dump = NA``. if this is not ``NA``, an RData file is dumped with all results, and plots are generated for all and the best fit.
+- ``seed = 12345``. random number generator's seed.
+- ``top = 10``. number of top-results to return (ranked by ICL).
+
+A ``plot`` function is available for a ``dbpmm`` object. Plus, other functions are available to compute densities etc.
+
+
+### Example: neutral tumour
+
+We simulate the frequency spectrum with $N=500$ mutations coming from a neutral tumour with one clonal peak at $0.5$, a "gold standard" tail with $\alpha=2$. The detection limit for sequencing is set to $x_\ast=0.05$.
+```{r}
+library(sads)
+
+B1 = rbeta(100, 50, 50) # clonal cluster
+TAIL = sads::rpareto(400, shape = 2, scale = 0.05) # tail
+
+# outliers because the tail has support in [0, +inf], 
+# there should be few for the value of the parameters that we 
+# expect to observe, so our approximation is OK. We remove them.
+print(sum(as.integer(TAIL > 1)))
+TAIL = TAIL[TAIL < 1 ] 
+
+X = c(B1, TAIL)
+hist(X, breaks = seq(0,1,0.01))
+```
+
+We fit the model. We test only $K=1, 2$, we compare models with/ without a tail and we perform  $10$ starts for each configuration of parameters. In total, $10 \times 2 \times 2  = 40$ fits are carried out, and the one with lowest ICL is returned as best. Observe also the computational time, it should be less than 1 minute without the parallel engine.
+
+
+```{r}
+fit = dbpmm.fit(X, 
+                K = 1:2, 
+                samples = 10, 
+                tail = c(TRUE, FALSE), 
+                epsilon = 1e-10,
+                maxIter = 2000, 
+                fit.type = 'MM')
+```
+
+Show the results, which confirm that the best fit is achieved by including a tail in the data, as we might expect!
+```{r,  fig.height=5, fig.width = 7.5}
+plot(fit[[1]])
+```
+
+### Example: non-neutral tumour that we identify correctly
+
+We extend the previous scenario with 2 clones, and slighlty more mutations: $N=700$, but we add a subclone with a peak at $.35$ and a good number of mutations. Its signal is clear, and we hope that we can pick it up with DBPMM.
+```{r}
+library(sads)
+
+B1 = rbeta(100, 100, 100) # clonal cluster
+
+params = dbpmm:::.estBetaParams(mu = .35, var = 0.0005) # subclone
+B2 = rbeta(200, params$alpha, params$beta) 
+
+TAIL = sads::rpareto(300, shape = 2, scale = 0.05) # tail
+TAIL = TAIL[TAIL < 1 ] 
+
+X = c(B1, B2, TAIL)
+hist(X, breaks = seq(0,1,0.01))
+```
+
+We fit the model, as before but with larger $K$.
+
+```{r}
+fit = dbpmm.fit(X, 
+                K = 1:3, 
+                samples = 10, 
+                tail = c(TRUE, FALSE), 
+                epsilon = 1e-10,
+                parallel = TRUE, # use parallel on my Macbook
+                maxIter = 2000, 
+                fit.type = 'MM')
+```
+
+Show the results, are they good?
+```{r,  fig.height=5, fig.width = 7.5}
+plot(fit[[1]])
+```
+
+
+### Example: non-neutral tumour where we cannot detect the subclone
+
+All that glitters ain't gold! If the subclone has a poor signal, maybe because its frequency spectrum has a large variance, we might not detect it. In that case, it most likely gets assigned to the tail, and we would wrongly remove it from the downstream analysis.
+
+```{r}
+library(sads)
+
+B1 = rbeta(300, 50, 50) # clonal cluster
+
+# subclone -- larger variance than before, and as many mutations as the clonal
+# cluster, but spread over a wider range of value that mixes with the tail.
+params = dbpmm:::.estBetaParams(mu = .25, var = 0.01) 
+B2 = rbeta(300, params$alpha, params$beta) 
+
+TAIL = sads::rpareto(500, shape = 2, scale = 0.05) # tail
+TAIL = TAIL[TAIL < 1 ] 
+
+X = c(B1, B2, TAIL)
+hist(X, breaks = seq(0,1,0.01))
+```
+
+```{r}
+fit = dbpmm.fit(X, 
+                K = 1:4, 
+                samples = 10, 
+                tail = c(TRUE, FALSE), 
+                epsilon = 1e-10,
+                parallel = TRUE,
+                maxIter = 2000, 
+                fit.type = 'MM')
+```
+
+There you go.
+```{r,  fig.height=5, fig.width = 7.5}
+plot(fit[[1]])
+```
+
+
