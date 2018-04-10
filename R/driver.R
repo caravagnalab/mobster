@@ -70,7 +70,8 @@
       cnt = as.vector(clus$centers)
     }
     else{
-      clus = kmeans(x.peaks, lenght(x.peaks), nstart = 100)
+      # print(x.peaks)
+      clus = kmeans(x.peaks, length(x.peaks), nstart = 100)
       cnt = c(
         as.vector(clus$centers),
         runif(K - lenght(x.peaks))

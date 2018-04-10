@@ -11,9 +11,11 @@
 #' @import sads
 #' @import RColorBrewer
 #' @import ggplot2
+#' @import ggthemes
 #'
 #' @examples something..
-plot.dbpmm = function(x, annotation = NULL, palette = 'Spectral', tail.color = c('gainsboro', 'darkgray'), alpha = .5, ...)
+plot.dbpmm = function(x, annotation = NULL, palette = 'Spectral', tail.color = c('gainsboro', 'darkgray'), alpha = .5, max.height.hist = TRUE, cex = 1,
+                      plaw.ranges = c(0.1, 0.3), bg.color = 'ivory2', main = 'DBPMM fit', ...)
 {
   domain = seq(0, 1, 0.01)
   labels = names(x$pi)
@@ -33,6 +35,9 @@ plot.dbpmm = function(x, annotation = NULL, palette = 'Spectral', tail.color = c
 
   names(col.histogram) = names(col.lines) = labels
 
+
+
+
   # Plot 1 -- main histogram
   df = data.frame(X = x$X, Cluster = x$labels, Color = col[x$labels])
   vvv = lapply(1:x$K,
@@ -43,24 +48,40 @@ plot.dbpmm = function(x, annotation = NULL, palette = 'Spectral', tail.color = c
   names(vvv) = labels
 
   # Histogram coloured according to clustering assignments
-  tit = bquote(bold("Mixture Model Fit   :  ") ~ 'K =' ~ .(x$Kbeta) ~ 'Beta(s); Tail: OFF')
-  if(!all(is.na(x$tail)))
-    tit = bquote(bold("Mixture Model Fit   :  ") ~
-                        'K =' ~ .(x$Kbeta) ~ 'Beta(s);' ~
-                        'Tail:' ~ tau ~'='~.(x$shape) ~ gamma ~'='~.(x$scale))
+  # tit = bquote(bold(main) ~ K['Beta']~'=' ~ .(x$Kbeta) ~ '    Tail: OFF')
+  # if(!all(is.na(x$tail)))
+  #   tit = bquote(bold(main) ~
+  #                       K['Beta']~'=' ~ .(x$Kbeta)  ~ '   '~
+  #                       tau['tail'] ~'='~.(round(x$shape, 2)) ~ ' '~ gamma['tail'] ~'='~.(round(x$scale, 2)))
+  tit = bquote(bold(.(main)))
 
+  extented.labels = levels(df$Cluster)
+  if(!all(is.na(x$tail))) extented.labels['Tail'] = paste('Tail : ', round(x$shape, 2), '; x >', round(x$scale, 2), sep ='')
+  else extented.labels['Tail'] = bquote('Tail: OFF')
+
+  betavals = x$beta[c('mean', 'var'), , drop = FALSE]
+  betavals['mean', ] = round(betavals['mean', ], 3)
+  betavals['var', ]  = format(betavals['var', ] , scientific = T, digits = 3)
+
+  for(clus in paste('C', 1:x$Kbeta, sep = ''))
+    extented.labels[clus] = paste(clus, ' : ', betavals['mean', clus], ' (', betavals['var', clus], ')', sep = '')
 
 
   p = ggplot(df, aes(X, fill = Cluster, y = ..count../sum(..count..))) +
     geom_histogram(alpha = alpha, position = 'identity', binwidth = 0.01) +
-    scale_fill_manual(values = col.histogram) +
-    # scale_y_continuous(formatter = 'percent') +
+    scale_fill_manual(values = col.histogram, labels = extented.labels) +
     labs(
       title = tit,
       subtitle = annotation,
       x = "Observed Frequency", y = "") +
-    guides(fill = FALSE) +
-    theme_light()
+    theme_classic(base_size = 10 * cex)
+
+
+  if(max.height.hist) {
+    yMax = max(ggplot_build(p)$data[[1]]$y)
+    p = p + ylim(0, yMax)
+  }
+
 
   df.m = data.frame(variable = labels.betas, Mean = x$beta['mean', labels.betas])
   rownames(df.m) = df.m$variable
@@ -81,8 +102,15 @@ plot.dbpmm = function(x, annotation = NULL, palette = 'Spectral', tail.color = c
   for(i in labels.betas) p = p +  geom_vline(data = df.m[i ,], aes(xintercept = Mean), colour = col.lines[i], linetype = "longdash")
 
   # Annotate convergency value
-  if(x$status) p = p + annotate("text", x = .9, y = 0.01, label = 'CONVERGED', size = 3, colour = 'darkgreen')
-  else   p = p + annotate("text", x = .9, y = 0.01, label = 'NOT CONVERGED', size = 3, colour = 'red')
+  if(x$status) p = p + annotate("text", x = .9, y = yMax , label = paste(x$fit.type, ': CONVERGED'), size = 3, colour = 'darkgreen')
+  else   p = p + annotate("text", x = .9, y = yMax, label = paste(x$fit.type, ': NOT CONVERGED'), size = 3, colour = 'red')
+
+
+  tab.annotations = data.frame(round(x$beta[c('mean', 'var'), ], 2))
+  colnames(tab.annotations) = colnames(x$beta)
+
+  # p = p + annotation_custom(gridExtra::tableGrob(tab.annotations),  xmin = .9,  ymax= Inf)
+
 
   # Initial Condition -- density plot
   subdomain = domain[2:(length(domain) - 1)]
@@ -97,11 +125,17 @@ plot.dbpmm = function(x, annotation = NULL, palette = 'Spectral', tail.color = c
 
   pinit = ggplot() +
     labs(
-      title = bquote(bold("Init")),
+      title = bquote(italic("Initialization")),
       x = "", y = "") +
     guides(fill = FALSE) +
     ylim(0, maxBeta) +
-    theme_light()
+    theme(
+      panel.background = element_rect(fill = alpha(bg.color, 0.4), colour = "white", size = 0.5, linetype = "solid"),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank())
+
+    # theme_pander(base_size = 7 * cex)
+
 
   for(i in seq(labels)) pinit = pinit + geom_line(data = vvvi[[i]], aes(y = y, x = X), colour = col.lines[i])
 
@@ -115,15 +149,19 @@ plot.dbpmm = function(x, annotation = NULL, palette = 'Spectral', tail.color = c
   df.pi = data.frame(Cluster = names(pi), Proportions = pi)
 
   h = ggplot(data = df.pi, aes(x = Cluster, y = Proportions, fill = Cluster)) +
-    geom_bar(stat = "identity", alpha = alpha) +
+    geom_bar(stat = "identity", alpha = alpha, width = 0.3 * cex) +
     scale_fill_manual(values = col.histogram) +
     coord_flip() +
     geom_hline(aes(yintercept = 0.02), colour = 'red', linetype = "longdash") +
-    labs(title  = bquote('Proportions' ~ pi[i](x))) +
-    xlab("") +
+    labs(title  = bquote(italic('Proportions'))) +
+    xlab("") + ylab("") +
     guides(fill = FALSE) +
-    theme_light()
-
+    theme(
+      panel.background = element_rect(fill = alpha(bg.color, 0.4), colour = "white", size = 0.5, linetype = "solid"),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank())
+    #
+    # theme_pander(base_size = 7 * cex)
 
   ###### Mean parameter (Beta)
   df.pars = NULL
@@ -144,9 +182,15 @@ plot.dbpmm = function(x, annotation = NULL, palette = 'Spectral', tail.color = c
     geom_boxplot(alpha = alpha) +
     scale_fill_manual(values = col.histogram) +
     guides(fill=FALSE) +
-    labs(title  = bquote('Parameters: '~ mu[i] ~ '/' ~sigma[i])) +
-    xlab('') + ylab(bquote(italic('sampled'))) +
-    theme_light()
+    labs(title  = bquote(italic('Means'))) +
+    xlab('') + ylab("") +
+    theme(
+      panel.background = element_rect(fill = alpha(bg.color, 0.4), colour = "white", size = 0.5, linetype = "solid"),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank())
+
+  # +
+  #   theme_pander(base_size = 7 * cex)
 
 
   ###### Scores
@@ -155,18 +199,74 @@ plot.dbpmm = function(x, annotation = NULL, palette = 'Spectral', tail.color = c
 
   ps = ggplot(data = df.scores, aes(x = score, y = value)) +
     # geom_boxplot(alpha = alpha) +
-    geom_point(shape = 21, colour = "black", fill = "red", size = 2, stroke = 1) +
+    geom_point(shape = 21, colour = "black", fill = "red", size = 1 * cex, stroke = 1) +
     # scale_colour_gradient(low = "blue")+
-    guides(fill=FALSE) +
-    labs(title  = bquote('Model Selection')) +
+    guides(fill = FALSE) +
+    labs(title  = bquote(italic('Scores'))) +
     xlab('') + ylab('') +
-    theme_light()
+    theme(
+      panel.background = element_rect(fill = alpha(bg.color, 0.4), colour = "white", size = 0.5, linetype = "solid"),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank()) +
+    coord_flip()
+
+    # +
+    # theme_pander(base_size = 7 * cex)
 
 
-  top.layout = matrix(1, nrow = 2, ncol = 4)
-  bottom.layout = 2:5
 
-  .multiplot(p, pinit, pa, h, ps,
+  # GET EQUATION AND R-SQUARED AS STRING
+  # SOURCE: http://goo.gl/K4yh
+
+  lm_eqn <- function(df){
+    m <- lm(y ~ x, df);
+    eq <- substitute(italic(y) == a + b %.% italic(x)*","~~italic(r)^2~"="~r2,
+                     list(a = format(coef(m)[1], digits = 2),
+                          b = format(coef(m)[2], digits = 2),
+                          r2 = format(summary(m)$r.squared, digits = 3)))
+    as.character(as.expression(eq));
+    format(summary(m)$r.squared, digits = 2)
+  }
+
+  if(all(!is.na(x$shape)))
+  {
+    x.tail = seq(plaw.ranges[1], plaw.ranges[2], 0.01)
+
+    ## Cumdensity for the tail
+    tail.X = x$X[x$labels == 'Tail']
+    tail.X = tail.X[tail.X >= plaw.ranges[1] & tail.X <= plaw.ranges[2]]
+    ht = hist(tail.X, breaks = x.tail, plot = FALSE)
+    cms = cumsum(ht$counts)
+    # cms = cms[1:which.max(cms)]
+    # cms = cms[cms > 0]
+
+
+    # cumdf = sort(1/tail.X)
+    cumdf = data.frame(x = x.tail[1:length(cms)], y = cms)
+    rs = lm_eqn(cumdf)
+
+    r2 = ggplot(data = cumdf, aes(x = x, y = y)) +
+      geom_point(shape = 21, colour = "black", size = 1 * cex, stroke = 1) +
+      geom_smooth(method='lm', colour = "red") +
+      guides(fill=FALSE) +
+      labs(title  = bquote(italic('Power-law'))) +
+      xlab('f ~ VAF') + ylab('Cumulative M(f)') +
+      # scale_x_continuous(labels = NULL) +
+      theme(
+        panel.background = element_rect(fill = alpha(bg.color, 0.4), colour = "white", size = 0.5, linetype = "solid"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) +
+      annotate("text", x = Inf, y = min(cumdf$y) + 3, label = paste("R^2 == ", rs), hjust = 1, parse = T, size = 2 * cex)
+  }
+  else
+  {
+    r2 = ggplot(data.frame()) + geom_point() + xlim(0, 10) + ylim(0, 100)
+  }
+
+  top.layout = matrix(1, nrow = 2, ncol = 5)
+  bottom.layout = 2:6
+
+  .multiplot(p, pinit, pa, h, r2, ps,
             layout = rbind(top.layout, bottom.layout))
 
   invisible(list(p, pa, h))
@@ -229,14 +329,24 @@ plot.dbpmm = function(x, annotation = NULL, palette = 'Spectral', tail.color = c
   x$K = as.factor(x$K)
   x$tail = as.factor(x$tail)
 
+  outL = function(x) {
+    # compute lower and upper whiskers
+    boxplot.stats(x$ICL)$stats[5]
+  }
+
+  outliers = sapply(split(x, f = x$K), outL)
+  outliers = max(outliers)
+
+  range = c(min(x$ICL), outliers)
 
   pa = ggplot(data = x, aes(x = K, y = ICL, fill = K)) +
     geom_boxplot(alpha = alpha) +
     scale_fill_brewer(palette = 'Set1') +
-    labs(title  = bquote(bold('ICL Score: ')~ .(nrow(x)) ~' runs')) +
+    labs(title  = bquote(bold('ICL Score: ')~ .(nrow(x)) ~' runs' ~ '- no upper outliers')) +
     xlab('K') + ylab(bquote(italic('ICL'))) +
     theme_light() +
-    facet_wrap(~tail, nrow = 1)
+    facet_wrap(~tail, nrow = 1) +
+    coord_cartesian(ylim = range * 1.05)
 
-  print(pa)
+  pa
 }
