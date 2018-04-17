@@ -323,6 +323,8 @@ plot.dbpmm = function(x, annotation = NULL, palette = 'Spectral', tail.color = c
 
   x = x[complete.cases(x), ]
 
+  print(x)
+
   x$tail[x$tail] = 'With Tail'
   x$tail[x$tail == 'FALSE'] = 'Without Tail'
 

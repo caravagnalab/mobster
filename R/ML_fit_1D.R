@@ -163,7 +163,6 @@ dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'random', tail = TRUE, eps
     .plot.fit.summary(all.tests)
     dev.off()
     cat(yellow('\n-  Boxplot : '), paste(file.dump, '-boxplotFitScores.pdf', sep = ''))
-
   }
 
   return(runs)
