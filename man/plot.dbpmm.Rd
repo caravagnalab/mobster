@@ -6,7 +6,8 @@
 \usage{
 plot.dbpmm(x, annotation = NULL, palette = "Spectral",
   tail.color = c("gainsboro", "darkgray"), alpha = 0.5,
-  max.height.hist = TRUE, ...)
+  max.height.hist = TRUE, cex = 1, plaw.ranges = c(0.1, 0.3),
+  bg.color = "ivory2", main = "DBPMM fit", ...)
 }
 \arguments{
 \item{x}{an object of class dbpmm}

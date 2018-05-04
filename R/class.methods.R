@@ -50,8 +50,10 @@ print.dbpmm = function(x, ...)
   cat(crayon::yellow(greeks['pi'], '='), paste(pi, collapse = ', '), "\n")
 
   cat(crayon::cyan("Clusters dimension  -->  "))
+  clus.size = table(x$labels)
+  clus.size = clus.size[order(clus.size)]
   if(all(is.null(x$N.k))) cat(crayon::red('Unavaiable'), "\n")
-  else cat(paste(x$N.k, collapse = ', '), "\n")
+  else cat(paste(names(clus.size), clus.size, sep = ' = ', collapse = ', '), "\n")
 
   cat(crayon::cyan("               NLL  --> "), crayon::yellow('D | \U03B8', greeks['propto']),  round(x$NLL, 2), "\n")
 

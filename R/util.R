@@ -73,3 +73,57 @@
   pks
 }
 
+
+
+.extract.DP.fit = function(mfit, with.summary = FALSE)
+{
+  fit = NULL
+
+  # return the posterior density
+  # fit$densp.m = mfit$densp.m
+
+  # then the order statistics as well
+  rsave = mfit$save.state$randsave
+  maxK = max(apply(rsave, 1, function(x)length(unique(x))))
+  K_fit = round(mfit$coefficients['ncluster'])
+  alpha_fit = mfit$coefficients['alpha']
+
+  srsave = spropsave = matrix(NA, nrow(rsave), maxK)
+  for(i in 1:nrow(srsave))
+  {
+    v = sort(unique(rsave[i, ]), decreasing = T)
+    srsave[i, 1:length(v)] = v
+    spropsave[i, 1:length(v)] = (table(rsave[i, ])/ncol(rsave))[as.character(v)]
+  }
+
+  p = matrixStats::colMedians(srsave, na.rm = T)[1:K_fit]
+  pi = matrixStats::colMedians(spropsave, na.rm = T)[1:K_fit]
+
+  fit$theta_k = p
+  fit$pi_k = pi/sum(pi)
+  # fit$alpha = alpha_fit
+  # fit$prior = mfit$prior
+  fit$K_fit = K_fit
+
+  if(with.summary) fit$summary = summary(mfit)
+  data.frame(fit)
+}
+
+
+.extract.vbdbmm.fit = function(mfit, pi.cutoff = 0.01, with.summary = FALSE)
+{
+  fit = NULL
+
+  which.selection = mfit$pi_k > pi.cutoff
+  # which.selection = TRUE
+
+  fit$theta_k = mfit$theta_k[which.selection]
+  fit$pi_k = mfit$pi_k[which.selection]
+  fit$K_fit = length(fit$pi_k)
+
+  if(with.summary) fit$summary = summary(mfit)
+
+  cat('Extracted mixtures components with minimum pi', pi.cutoff, '\n')
+  data.frame(fit)
+}
+

@@ -134,3 +134,24 @@
 # # d = d[order(d, decreasing=TRUE)][1:5]
 # # abline(h = d, lty = 2, col = 'red')
 #
+
+# R.utils::sourceDirectory('.')
+#
+# load('../../test.dbpmm/Gundem/s.RData')
+# subsampled
+#
+# x = dbpmm::dbpmm.fit(
+#   X = subsampled,
+#   K = 1,
+#   init = 'peaks',
+#   tail = c(TRUE),
+#   is_verbose = T,
+#   fit.type = 'MM',
+#   maxIter = 600,
+#   epsilon = 1e-8,
+#   samples = 10,
+#   parallel = F,
+#   top = 100
+# )
+
+

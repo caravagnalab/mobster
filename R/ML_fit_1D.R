@@ -62,6 +62,18 @@ dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'random', tail = TRUE, eps
       ifelse(is_verbose, green('VERBOSE'), red('SILENT')), '\n'
   )
 
+  # Input Checks
+  if(any(X == 0)) {
+    cat(crayon::red('\n[VAFs = 0] setting them to 1e-9 to avoid numerical errors'))
+    X[X == 0] = 1e-9
+  }
+
+  if(any(X == 1)) {
+    cat(crayon::red('\n[VAFs = 1] setting them to 1-1e-9 to avoid numerical errors'))
+    X[X == 1] = 1-1e-9
+  }
+  # END: Input Checks
+
   if(!parallel)
   {
     for(r in 1:ntests)
@@ -169,8 +181,8 @@ dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'random', tail = TRUE, eps
 }
 
 
-.dbpmm.EM <- function(X, K = 3, init = 'random', tail = TRUE, epsilon = 1e-10,
-                      maxIter = 1000, is_verbose = FALSE, fit.type = 'MLE'){
+.dbpmm.EM <- function(X, K = 3, init = 'peaks', tail = TRUE, epsilon = 1e-10,
+                      maxIter = 1000, is_verbose = FALSE, fit.type = 'MM'){
 
   stopifnot(fit.type %in% c('MLE', 'MM'))
   stopifnot(tail | K > 0)
@@ -260,7 +272,8 @@ dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'random', tail = TRUE, eps
     fit$NLL    = -sum(Z)  # Evaluate the NLL
     fit$all.NLL   <- c(fit$all.NLL, fit$NLL)    # Keep all NLL in a vector
 
-    if(any(is.infinite(fit$z_nk))) stop('Error?')
+    if(any(is.infinite(fit$z_nk))) stop('Error? All latent variables (z_nk) are Infinite.')
+
 
     ##===================
     #       M-Step      #
@@ -289,7 +302,7 @@ dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'random', tail = TRUE, eps
         # Compute a functional of the negative logLik, which we minimize
         MLE.fit = stats4::mle(
           minuslogl = .NLLBetaMix(k, X, fit$z_nk, fit$pi),
-          fun,
+          # fun,
           start = list(a = fit$a[k-1], b = fit$b[k-1]))
 
         fit$a[k-1] = as.numeric(coef(MLE.fit)['a'])
@@ -434,3 +447,226 @@ dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'random', tail = TRUE, eps
 #   return(list(SCORES = SCORES, FIT = FIT))
 # }
 
+
+
+
+
+#' Title
+#'
+#' @param X
+#' @param output.folder
+#' @param fit.tail
+#' @param second.fit
+#' @param do.plots
+#' @param annotation
+#' @param dbpmm.fit.params
+#' @param DP.fit.params
+#' @param vbdbmm.fit.params
+#'
+#' @return
+#' @export
+#'
+#' @import crayon
+#' @import parallel
+#' @import doParallel
+#' @import ggplot2
+#' @import DPpackage
+#' @import vbdbmm
+#'
+#' @examples will make some
+dbpmm.2steps.fit = function(
+  X,
+  output.folder = '.',
+  fit.tail = TRUE,
+  second.fit = c('DP', 'vbdbmm'),
+  do.plots = TRUE,
+  annotation = 'dbpmm.tumour',
+  dbpmm.fit.params = list(
+    K = 1,
+    samples = 1,
+    init = 'peaks',
+    tail = TRUE,
+    epsilon = 1e-10,
+    maxIter = 6000,
+    is_verbose = FALSE,
+    fit.type = 'MM',
+    parallel = F,
+    cores.ratio = .8,
+    file.dump = NA,
+    seed = 12345,
+    top = 10,
+    annotation = NULL
+    ),
+  DP.fit.params = list(
+    alpha_0 = 1e-4,
+    a1 = 1,
+    b1 = 1,
+    ngrid = 100,
+    nburn = 5000,
+    nsave = 10000,
+    nskip = 3,
+    ndisplay = 100,
+    state = NULL,
+    status = TRUE
+    ),
+  vbdbmm.fit.params = list(
+    K = 5,
+    alpha_0 = 1e-8,
+    a_0 = 1,
+    b_0 = 1,
+    max_iter = NA,
+    epsilon_conv = 1e-10,
+    restarts = 10,
+    parallel = TRUE,
+    silent = TRUE
+    )
+  )
+{
+  if(output.folder != '.') {
+     current.dir = getwd()
+     dir.create(output.folder)
+     setwd(output.folder)
+  }
+
+  if(do.plots) pdf('plot.pdf')
+
+
+  stopifnot(ncol(X) >= 3)
+  stopifnot(is.data.frame(X))
+
+  # X$VAF = X[, 1]/X[, 2]
+
+  fits.table = NULL
+  fits.tail.table = NULL
+
+  # First, if required fit a tail. If you do, then remove tail mutations
+  if (fit.tail)
+  {
+    cat(bgBlue(white('\n\n ===== Tail-detection via Dirichlet Beta-Pareto Mixtures ===== \n\n')))
+
+    tail.fit = dbpmm.fit(
+      X = X$VAF,
+      K = dbpmm.fit.params$K,
+      samples = dbpmm.fit.params$samples,
+      init = dbpmm.fit.params$init,
+      tail = dbpmm.fit.params$tail,
+      epsilon = dbpmm.fit.params$epsilon,
+      maxIter = dbpmm.fit.params$maxIter,
+      is_verbose = dbpmm.fit.params$is_verbose,
+      fit.type = dbpmm.fit.params$fit.type,
+      parallel = dbpmm.fit.params$parallel,
+      cores.ratio = dbpmm.fit.params$cores.ratio,
+      file.dump = dbpmm.fit.params$file.dump,
+      seed = dbpmm.fit.params$seed,
+      top = dbpmm.fit.params$top,
+      annotation = NA
+    )
+
+    # Best fit
+    best.fit = tail.fit[[1]]
+
+    fits.tail.table = best.fit$beta[c('a', 'b', 'mean'), , drop = FALSE]
+
+    if(do.plots) plot(best.fit)
+
+    save(best.fit, file = 'dbpmm.fit.RData')
+
+    # remove tail mutations for the best fit, if the tail is used
+    if(all(is.na(best.fit$tail)))
+    {
+      cat(red('\n\n ===== Best dbpmm fit does not have a tail ===== \n\n'))
+    }
+    else
+    {
+      curX = nrow(X)
+
+      which.tail = which(best.fit$labels != 'Tail')
+
+      X = X[which.tail, ]
+      save(X, file = paste('Input-noTail.RData', sep = ''))
+
+      cat(green('\n\n ===== Best dbpmm fit with tail, removed',
+                (curX-nrow(X)),
+                'observations; reduction to',
+                round(nrow(X)/curX, 2) * 100,
+                '% ===== \n\n'))
+
+      stopifnot(ncol(X) > 0)
+    }
+  }
+
+  if('vbdbmm' %in% second.fit)
+  {
+    cat(bgBlue(white('\n\n ===== Clustering via Variational Bayes Binomial Mixtures ===== \n\n')))
+
+    fit.vbdbmm = vbdbmm::vb_bmm1D_fit(
+      X = X,
+      K = vbdbmm.fit.params$K,
+      alpha_0 = vbdbmm.fit.params$alpha_0,
+      a_0 = vbdbmm.fit.params$a_0,
+      b_0 = vbdbmm.fit.params$b_0,
+      max_iter = vbdbmm.fit.params$max_iter,
+      epsilon_conv = vbdbmm.fit.params$epsilon_conv,
+      restarts = vbdbmm.fit.params$restarts,
+      parallel = vbdbmm.fit.params$parallel,
+      silent = vbdbmm.fit.params$silent
+    )
+
+    fits.table = append(fits.table, list(.extract.vbdbmm.fit(fit.vbdbmm)))
+    names(fits.table)[length(fits.table)] = 'vbdbmm'
+
+    if(do.plots) vbdbmm::vb_bmm_summary(fit.vbdbmm)
+
+    save(fit.vbdbmm, file = paste('vbdbmm.fit.RData'))
+  }
+
+  #### DP package
+  if('DP' %in% second.fit)
+  {
+    cat(bgBlue(white('\n\n ===== Clustering via Dirichlet Process Binomial Mixtures ===== \n\n')))
+
+    # prior -- pointwise or Bayesian
+    prior = NULL
+    if(length(DP.fit.params$alpha_0) == 1) prior = list(alpha = DP.fit.params$alpha_0, a1 = DP.fit.params$a1, b1 = DP.fit.params$b1)
+    if(length(DP.fit.params$alpha_0) == 2) prior = list(a0 = DP.fit.params$alpha_0[1], b0 = DP.fit.params$alpha_0[2], a1 = DP.fit.params$a1, b1 = DP.fit.params$b1)
+
+    # fittin algorithm from DPpackage
+    fit.DP = DPpackage::DPbetabinom(
+      y = X,
+      ngrid = DP.fit.params$ngrid,
+      prior = prior,
+      mcmc = list(nburn = DP.fit.params$nburn,
+                  nsave = DP.fit.params$nsave,
+                  nskip = DP.fit.params$nskip,
+                  ndisplay = DP.fit.params$ndisplay),
+      state = DP.fit.params$state,
+      status = DP.fit.params$status
+      )
+
+    fits.table = append(fits.table, list(.extract.DP.fit(fit.DP)))
+    names(fits.table)[length(fits.table)] = 'DP'
+
+    save(fit.DP, file = paste('DP.fit.RData'))
+  }
+
+  cat(bgBlue(white('\n\n ===== MOBSTER ===== \n\n')))
+
+  cat(bgBlue(white('TAIL')), '\n')
+  if(!all(is.null(best.fit$tail))) print(data.frame(best.fit$tail, row.names = 'TAIL'))
+  else print("NONE")
+
+  cat(bgBlue(white('\nBeta components')), '\n')
+  print(fits.tail.table)
+
+  cat(bgBlue(white('\nCLONES')), '\n')
+  fits.table = Reduce(rbind, fits.table)
+  rownames(fits.table) = NULL
+  print(fits.table)
+
+  save(fits.table, file = 'fits.table.RData')
+
+  if(output.folder != '.') setwd(current.dir)
+  if(do.plots) dev.off()
+
+  fits.table
+}
