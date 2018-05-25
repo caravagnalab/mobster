@@ -33,8 +33,8 @@
 #' @import ggplot2
 #'
 #' @examples will make some
-dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'random', tail = TRUE, epsilon = 1e-10,
-                    maxIter = 100, is_verbose = FALSE, fit.type = 'MLE', parallel = FALSE,
+dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'peaks', tail = TRUE, epsilon = 1e-10,
+                    maxIter = 100, is_verbose = FALSE, fit.type = 'MM', parallel = FALSE,
                     cores.ratio = .8, file.dump = NA, seed = 12345, top = 10, annotation = NULL)
 {
   best = obj = runs = NULL
@@ -216,8 +216,8 @@ dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'random', tail = TRUE, eps
 
   fit$init      = .initializer(X, fit$Kbeta, init)
 
-  fit$a         = unlist(fit$init$beta['alpha', ])
-  fit$b         = unlist(fit$init$beta['beta', ])
+  fit$a         = unlist(fit$init$beta['a', ])
+  fit$b         = unlist(fit$init$beta['b', ])
   fit$shape     = fit$init$shape
   fit$scale     = fit$init$scale
 
@@ -302,11 +302,18 @@ dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'random', tail = TRUE, eps
         # Compute a functional of the negative logLik, which we minimize
         MLE.fit = stats4::mle(
           minuslogl = .NLLBetaMix(k, X, fit$z_nk, fit$pi),
-          # fun,
           start = list(a = fit$a[k-1], b = fit$b[k-1]))
 
-        fit$a[k-1] = as.numeric(coef(MLE.fit)['a'])
-        fit$b[k-1] = as.numeric(coef(MLE.fit)['b'])
+        # print(MLE.fit)
+        # print(as.numeric(MLE.fit['a']))
+        # print(coef(MLE.fit))
+        # print(coef(MLE.fit))
+        # print(fit)
+        # print(as.numeric(coef(MLE.fit)['a']))
+        # stop('xxxx')
+
+        fit$a[k-1] = as.numeric(stats4::coef(MLE.fit)['a'])
+        fit$b[k-1] = as.numeric(stats4::coef(MLE.fit)['b'])
       }
       else # Moments Matching
       {
@@ -318,8 +325,8 @@ dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'random', tail = TRUE, eps
         }
         else {
           par = .estBetaParams(mean, var)
-          fit$a[k-1] = par$alpha
-          fit$b[k-1] = par$beta
+          fit$a[k-1] = par$a
+          fit$b[k-1] = par$b
         }
       }
     }
@@ -375,7 +382,7 @@ dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'random', tail = TRUE, eps
   else
     numParams = (fit$K - 1) + 2 * fit$Kbeta         # Total number of parameters i.e. pi (Beta) + 2 * Kbeta (Beta)
 
-  BIC <- 2 * fit$NLL + numParams * log(fit$N) # BIC = -2*ln(L) + params*ln(N)
+  BIC <- 2 * fit$NLL + numParams * log(fit$N)     # BIC = -2*ln(L) + params*ln(N)
   AIC <- 2 * fit$NLL + 2 * numParams              # AIC = -2*ln(L) + 2*params
 
   entropy <- -sum(fit$z_nk * log(fit$z_nk), na.rm = TRUE)

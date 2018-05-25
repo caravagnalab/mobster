@@ -1,7 +1,10 @@
 .initializer = function(X, K, init, pareto.shape = list(min.val = 0.01, max.val = 5))
 {
   if(is.list(init)) {
-    stopifnot(c('a', 'b', 'shape', 'scale') %in% names(init))
+
+    stopifnot(c('beta', 'shape', 'scale') %in% names(init))
+    stopifnot(c('a', 'b') %in% rownames(init$beta))
+
     return(init)
   }
 

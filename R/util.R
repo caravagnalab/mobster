@@ -14,7 +14,7 @@
   if(var == 0) var = 1e-9
   alpha <- ((1 - mu) / var - 1 / mu) * mu ^ 2
   beta <- alpha * (1 / mu - 1)
-  return(params = list(alpha = alpha, beta = beta))
+  return(params = list(a = alpha, b = beta))
 }
 
 # Switch from a and b to mean/ var for Beta

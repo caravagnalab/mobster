@@ -4,8 +4,8 @@
 \alias{dbpmm.fit}
 \title{dbpmm.fit}
 \usage{
-dbpmm.fit(X, K = 1:3, samples = 10, init = "random", tail = TRUE,
-  epsilon = 1e-10, maxIter = 100, is_verbose = FALSE, fit.type = "MLE",
+dbpmm.fit(X, K = 1:3, samples = 10, init = "peaks", tail = TRUE,
+  epsilon = 1e-10, maxIter = 100, is_verbose = FALSE, fit.type = "MM",
   parallel = FALSE, cores.ratio = 0.8, file.dump = NA, seed = 12345,
   top = 10, annotation = NULL)
 }

@@ -37,7 +37,6 @@ plot.dbpmm = function(x, annotation = NULL, palette = 'Spectral', tail.color = c
 
 
 
-
   # Plot 1 -- main histogram
   df = data.frame(X = x$X, Cluster = x$labels, Color = col[x$labels])
   vvv = lapply(1:x$K,
