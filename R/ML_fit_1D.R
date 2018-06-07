@@ -41,7 +41,7 @@ dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'peaks', tail = TRUE, epsi
   stopifnot(is.numeric(samples))
   set.seed(seed)
 
-  cat(bgYellow(black(" [ dbpmm ] ")),
+  cat(bgYellow(black(" [ MOBSTER ] ")),
         yellow(' Finite Dirichelt Mixture Models with Beta and Pareto mixtures (univariate)\n'))
 
   cat(cyan('\n\tDump:'), blue(file.dump), cyan('\t Annotation:'), blue(annotation),'\n')
@@ -582,6 +582,7 @@ dbpmm.2steps.fit = function(
     if(all(is.na(best.fit$tail)))
     {
       cat(red('\n\n ===== Best dbpmm fit does not have a tail ===== \n\n'))
+      save(X, file = paste('Input-postMOBSTER.RData', sep = ''))
     }
     else
     {
@@ -590,7 +591,7 @@ dbpmm.2steps.fit = function(
       which.tail = which(best.fit$labels != 'Tail')
 
       X = X[which.tail, ]
-      save(X, file = paste('Input-noTail.RData', sep = ''))
+      save(X, file = paste('Input-postMOBSTER.RData', sep = ''))
 
       cat(green('\n\n ===== Best dbpmm fit with tail, removed',
                 (curX-nrow(X)),
