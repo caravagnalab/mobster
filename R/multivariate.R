@@ -199,23 +199,34 @@ MOBSTER_sciClone_fit = function(data, samples, minimumDepth = 30) {
   cat("\nTail detection")
   pio::pioDisp(data$data[, c(cnames)])
 
-
   # Projected SNVs
   data$projected.SNVs = data$SNVs
+
+  prj.names = paste0('VAF.projected.', samples)
 
   for(s in seq(samples))
   {
     original = data$projected.SNVs[[s]]$VAF
     clusters = data$data[, cnames[s]]
 
-    clusters[is.na(clusters)] = "Tail" # NAs have not been analyzed -- just ensure they're 0
-    original[clusters == "Tail"] = 0 # projection
+    original[is.na(clusters)] = 0      # projection
+    original[clusters == "Tail"] = 0   # projection
 
     data$projected.SNVs[[s]]$VAF = original
+    data$data = cbind(data$data, original)
+    colnames(data$data)[ncol(data$data)] = prj.names[s]
+  }
+
+  # we can further remove those that are all 0s everywhere
+  idx.remove = apply(data$data[, prj.names], 1, function(w) all(w==0))
+
+  for(s in seq(samples))
+  {
+    data$projected.SNVs[[s]][!idx.remove, ]
   }
 
   # Clustering projected read counts
-  pio::pioTit("sciClone fit on porjected read counts")
+  pio::pioTit("sciClone fit on projected read counts")
 
   library(sciClone)
   MOBSTER.sciClone.fit = sciClone(
@@ -234,3 +245,28 @@ MOBSTER_sciClone_fit = function(data, samples, minimumDepth = 30) {
   data
 }
 
+
+plot_2DVAF = function(data, x, y, cluster) {
+
+  require(ggplot2)
+  ggplot(data$data, aes(x = x, colour = cluster, y = y)) +
+    # geom_density_2d(aes(fill = ..level..), geom = "polygon", alpha = .5) +
+    geom_point(alpha = 0.3) +
+    labs(
+      title = paste(x, "vs", y),
+      subtitle = "",
+      x = x, y = y) +
+    xlim(0, 1) +
+    ylim(0, 1) +
+    scale_color_brewer(palette = "Spectral") +
+    guides(fill = guide_legend(title = "Cluster")) +
+    theme(legend.position="bottom")
+
+  ggMarginal(p2d, type="histogram", fill = "gainsboro", binwidth = 0.01, alpha = 1,
+             aes = aes(x = x, colour = cluster, y = y),
+             data = data,
+             xparams = list(colour = "black", size = 0.1),
+             yparams = list(colour = "black", size = 0.1))
+
+
+}
