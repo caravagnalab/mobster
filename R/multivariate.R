@@ -206,7 +206,7 @@ MOBSTER_sciClone_fit = function(data, samples, minimumDepth = 30) {
 
   for(s in seq(samples))
   {
-    original = data$projected.SNVs[[s]]$VAF
+    original = data$projected.SNVs[[s]]$VAF/100
     clusters = data$data[, cnames[s]]
 
     original[is.na(clusters)] = 0      # projection
@@ -222,7 +222,7 @@ MOBSTER_sciClone_fit = function(data, samples, minimumDepth = 30) {
 
   for(s in seq(samples))
   {
-    data$projected.SNVs[[s]][!idx.remove, ]
+    data$projected.SNVs[[s]] = data$projected.SNVs[[s]][!idx.remove, ]
   }
 
   # Clustering projected read counts
@@ -238,7 +238,8 @@ MOBSTER_sciClone_fit = function(data, samples, minimumDepth = 30) {
     minimumDepth = minimumDepth)
 
   factor.values = sort(unique(MOBSTER.sciClone.fit@vafs.merged$cluster))
-  data$data$MOBSTER.sciClone.cluster = factor(MOBSTER.sciClone.fit@vafs.merged$cluster, levels = factor.values)
+  data$data$MOBSTER.sciClone.cluster[!idx.remove] =
+    factor(MOBSTER.sciClone.fit@vafs.merged$cluster, levels = factor.values)
 
   data$MOBSTER.sciClone.fit = MOBSTER.sciClone.fit
 
@@ -246,27 +247,116 @@ MOBSTER_sciClone_fit = function(data, samples, minimumDepth = 30) {
 }
 
 
-plot_2DVAF = function(data, x, y, cluster) {
+#' Title
+#'
+#' @param data
+#' @param x
+#' @param y
+#' @param cluster
+#' @param marginal
+#'
+#' @return
+#' @export
+#'
+#' @examples
+plot_2DVAF = function(data, x, y, cluster, marginal = FALSE) {
+
+  data = data[!is.na(data[, cluster]), ]
+  data[, cluster] = paste(data[, cluster])
 
   require(ggplot2)
-  ggplot(data$data, aes(x = x, colour = cluster, y = y)) +
+
+  p = ggplot(data, aes(x = eval(parse(text = x)), colour = eval(parse(text = cluster)), y = eval(parse(text = y)))) +
+    # theme_minimal() +
+    theme(panel.border = element_blank(),
+              panel.grid.major = element_blank(),
+              # panel.grid.minor = element_blank(),
+              axis.line = element_line(size = 0.5, linetype = "solid",
+                                       colour = "black")) +
     # geom_density_2d(aes(fill = ..level..), geom = "polygon", alpha = .5) +
-    geom_point(alpha = 0.3) +
+    geom_point(alpha = 0.6) +
     labs(
       title = paste(x, "vs", y),
       subtitle = "",
       x = x, y = y) +
     xlim(0, 1) +
     ylim(0, 1) +
-    scale_color_brewer(palette = "Spectral") +
-    guides(fill = guide_legend(title = "Cluster")) +
+    scale_color_brewer(palette = "Set1") +
+    guides(colour = guide_legend(title = cluster)) +
     theme(legend.position="bottom")
 
-  ggMarginal(p2d, type="histogram", fill = "gainsboro", binwidth = 0.01, alpha = 1,
-             aes = aes(x = x, colour = cluster, y = y),
+  if(!marginal) return(p)
+
+  require(ggExtra)
+  ggMarginal(p, type="histogram", fill = "gainsboro", binwidth = 0.01, alpha = 1,
+             aes = aes(
+               x = eval(parse(text = x)),
+               colour = eval(parse(text = cluster)),
+               y = eval(parse(text = y))
+               ),
              data = data,
              xparams = list(colour = "black", size = 0.1),
              yparams = list(colour = "black", size = 0.1))
 
+}
 
+
+
+#' Grid plot for multivariate analysis.
+#'
+#' @param data
+#' @param samples
+#'
+#' @return
+#' @export
+#'
+#' @examples
+plot_grid = function(data, samples) {
+
+  require(ggplot2)
+
+  #  Diagonal
+  MB = data$best.MOBSTER
+  plots = lapply(
+    seq(MB),
+    function(w) plot(MB[[w]], silent = TRUE, main = paste("MOBSTER ", samples[w]) )[[1]])
+
+  for(s in seq(samples)) {
+    for(w in s:length(samples)) {
+      if(s != w) {
+
+        pl = plot_2DVAF(
+          data$data,
+          x = paste0('VAF.', samples[s]),
+          y = paste0('VAF.', samples[w]),
+          cluster = 'sciClone.cluster')
+
+        plots = append(plots, list(pl))
+      }
+    }
+  }
+
+  for(s in seq(samples)) {
+    for(w in s:length(samples)) {
+      if(s != w) {
+
+        pl = plot_2DVAF(
+          data$data,
+          x = paste0('VAF.projected.', samples[s]),
+          y = paste0('VAF.projected.', samples[w]),
+          cluster = 'MOBSTER.sciClone.cluster')
+
+        plots = append(plots, list(pl))
+      }
+    }
+  }
+
+  layout = matrix(0, ncol = length(samples), nrow = length(samples))
+  diag(layout) = 1:length(samples)
+
+  combs = length(samples) * (length(samples)-1) / 2
+  layout[lower.tri(layout)] = (1:combs) + length(samples)
+  layout[upper.tri(layout)] = (1:combs) + length(samples) + combs
+
+  .multiplot(plotlist = plots, layout = layout)
 }

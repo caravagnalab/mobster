@@ -15,7 +15,8 @@
 #'
 #' @examples something..
 plot.dbpmm = function(x, annotation = NULL, palette = 'Spectral', tail.color = c('gainsboro', 'darkgray'), alpha = .5, max.height.hist = TRUE, cex = 1,
-                      plaw.ranges = c(0.1, 0.3), bg.color = 'ivory2', main = 'DBPMM fit', ...)
+                      plaw.ranges = c(0.1, 0.3), bg.color = 'ivory2', main = 'DBPMM fit',
+                      silent = FALSE, ...)
 {
   domain = seq(0, 1, 0.01)
   labels = names(x$pi)
@@ -265,8 +266,9 @@ plot.dbpmm = function(x, annotation = NULL, palette = 'Spectral', tail.color = c
   top.layout = matrix(1, nrow = 2, ncol = 5)
   bottom.layout = 2:6
 
-  .multiplot(p, pinit, pa, h, r2, ps,
-            layout = rbind(top.layout, bottom.layout))
+  if(!silent)
+    .multiplot(p, pinit, pa, h, r2, ps,
+               layout = rbind(top.layout, bottom.layout))
 
   invisible(list(p, pa, h))
 }
