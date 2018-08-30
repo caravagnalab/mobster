@@ -229,7 +229,7 @@ MOBSTER_sciClone_fit = function(data, samples, minimumDepth = 30, projection.tai
     for(s in seq(samples))
     {
       data$projected.SNVs[[s]]$VAF[any.tail] = 0 # projection
-      data$data = cbind(data$data, data$projected.SNVs[[s]]$VAF)
+      data$data = cbind(data$data, data$projected.SNVs[[s]]$VAF/100)
       colnames(data$data)[ncol(data$data)] = prj.names[s]
     }
   }
