@@ -13,7 +13,8 @@ dbpmm.2steps.fit(X, output.folder = ".", fit.tail = TRUE,
   a1 = 1, b1 = 1, ngrid = 100, nburn = 5000, nsave = 10000, nskip = 3, ndisplay
   = 100, state = NULL, status = TRUE), vbdbmm.fit.params = list(K = 5, alpha_0
   = 1e-08, a_0 = 1, b_0 = 1, max_iter = NA, epsilon_conv = 1e-10, restarts = 10,
-  parallel = TRUE, silent = TRUE))
+  parallel = TRUE, silent = TRUE), bmix.fit.params = list(K.Binomials = 0:2,
+  K.BetaBinomials = 0:2, epsilon = 1e-08, samples = 10))
 }
 \arguments{
 \item{vbdbmm.fit.params}{}

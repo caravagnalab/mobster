@@ -30,6 +30,7 @@ plot.dbpmm = function(x, annotation = NULL, palette = 'Spectral', tail.color = c
   col = RColorBrewer::brewer.pal(
     RColorBrewer::brewer.pal.info[palette, 'maxcolors'], palette)
   col = colorRampPalette(col)(x$Kbeta)
+  col = scols(1:x$Kbeta, palette = palette)
 
   col.histogram = c(tail.color[1], col)
   col.lines = c(tail.color[2], col)
@@ -274,6 +275,29 @@ plot.dbpmm = function(x, annotation = NULL, palette = 'Spectral', tail.color = c
 }
 
 
+scols = function (v, palette = "Spectral")
+{
+  colors = NULL
+
+  pmax = RColorBrewer::brewer.pal.info[palette, "maxcolors"]
+
+  if (length(v) <= pmax)
+  {
+    colors = RColorBrewer::brewer.pal(n = length(v), palette)
+  }
+  else
+  {
+    colors = RColorBrewer::brewer.pal(n = pmax, palette)
+    colors = colorRampPalette(colors)(length(v))
+  }
+
+  names(colors) = v
+
+  return(colors)
+}
+
+
+
 # Multiple plot function
 #
 # ggplot objects can be passed in ..., or to plotlist (as a list of ggplot objects)
@@ -342,13 +366,24 @@ plot.dbpmm = function(x, annotation = NULL, palette = 'Spectral', tail.color = c
 
   range = c(min(x$ICL), outliers)
 
+  # pa = ggplot(data = x, aes(x = K, y = ICL, fill = K)) +
+  #   geom_jitter(position = position_jitter(width = 0.2, height = 0.005),
+  #               alpha = 0.05, aes(color = K),
+  #               size = 2) +
+  #   geom_violin(alpha = alpha, trim = FALSE) +
+  #   # geom_boxplot(alpha = alpha) +
+  #   scale_fill_brewer(palette = 'Set1') +
+  #   labs(title  = bquote(bold('ICL Score: ')~ .(nrow(x)) ~' runs' ~ '- no upper outliers')) +
+  #   xlab('K') + ylab(bquote(italic('ICL'))) +
+  #   theme_light() +
+  #   facet_wrap(~tail, nrow = 1) +
+  #   coord_cartesian(ylim = range * 1.05)
+
   pa = ggplot(data = x, aes(x = K, y = ICL, fill = K)) +
     geom_jitter(position = position_jitter(width = 0.2, height = 0.005),
-                alpha = 0.05, aes(color = K),
+                alpha = 0.8, aes(colour = K),
                 size = 2) +
-    geom_boxplot(alpha = alpha) +
-    scale_fill_brewer(palette = 'Set1') +
-    labs(title  = bquote(bold('ICL Score: ')~ .(nrow(x)) ~' runs' ~ '- no upper outliers')) +
+    labs(title  = bquote(bold('Model selection: ')~ .(nrow(x)) ~' runs')) +
     xlab('K') + ylab(bquote(italic('ICL'))) +
     theme_light() +
     facet_wrap(~tail, nrow = 1) +

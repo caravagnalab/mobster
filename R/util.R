@@ -99,8 +99,8 @@
   p = matrixStats::colMedians(srsave, na.rm = T)[1:K_fit]
   pi = matrixStats::colMedians(spropsave, na.rm = T)[1:K_fit]
 
-  fit$theta_k = p
-  fit$pi_k = pi/sum(pi)
+  fit$theta_k = paste(p, collapse = ':')
+  fit$pi_k = paste(pi/sum(pi), collapse = ':')
   # fit$alpha = alpha_fit
   # fit$prior = mfit$prior
   fit$K_fit = K_fit
@@ -110,6 +110,28 @@
 }
 
 
+.extract.Bmix.fit = function(bmix.fit)
+{
+  fit = NULL
+
+  tk = ttk = NULL
+  if(bmix.fit$K[1] > 0)
+  {
+   tk = paste(bmix.fit$B.params, collapse = ':')
+  }
+
+  if(bmix.fit$K[2] > 0)
+  {
+    ttk = paste(bmix.fit$BB.params[1, ], collapse = ':')
+  }
+
+  fit$theta_k = paste(tk, ttk, sep = '')
+  fit$pi_k = paste(bmix.fit$pi, collapse = ':')
+  fit$K_fit = sum(bmix.fit$K)
+
+  data.frame(fit)
+}
+
 .extract.vbdbmm.fit = function(mfit, pi.cutoff = 0.01, with.summary = FALSE)
 {
   fit = NULL
@@ -117,13 +139,14 @@
   which.selection = mfit$pi_k > pi.cutoff
   # which.selection = TRUE
 
-  fit$theta_k = mfit$theta_k[which.selection]
-  fit$pi_k = mfit$pi_k[which.selection]
-  fit$K_fit = length(fit$pi_k)
+  fit$theta_k = paste(mfit$theta_k[which.selection], collapse = ':')
+  fit$pi_k = paste(mfit$pi_k[which.selection], collapse = ':')
+  fit$K_fit = length(mfit$pi_k[which.selection])
 
   if(with.summary) fit$summary = summary(mfit)
 
   cat('Extracted mixtures components with minimum pi', pi.cutoff, '\n')
   data.frame(fit)
 }
+
 

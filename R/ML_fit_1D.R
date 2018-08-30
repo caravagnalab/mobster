@@ -50,6 +50,8 @@ dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'peaks', tail = TRUE, epsi
   TIME = as.POSIXct(Sys.time(), format = "%H:%M:%S")
 
   tests = expand.grid(K, 1:samples, tail, stringsAsFactors = FALSE)
+  tests = tests[order(tests[, 1]), ]
+
   colnames(tests) = c('K', 'Run', 'tail')
   ntests = nrow(tests)
 
@@ -82,7 +84,7 @@ dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'peaks', tail = TRUE, epsi
 
       flush.console()
 
-      cat(bgBlue('\n**** Inference', r, ' : '), yellow('K =', tests[r, 'K']), 'Run', tests[r, 'Run'], 'Tail', tests[r, 'tail'])
+      cat(bgBlue('\n**** Inference', sprintf('%3s', r), ' : '), yellow('K =', tests[r, 'K']), 'Run', tests[r, 'Run'], 'Tail', tests[r, 'tail'])
       if(is_verbose) cat('\n')
 
       obj = .dbpmm.EM(X, K = tests[r, 'K'], init = init, tail = tests[r, 'tail'], epsilon =epsilon, maxIter = maxIter, is_verbose = is_verbose, fit.type = fit.type)
@@ -479,13 +481,14 @@ dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'peaks', tail = TRUE, epsi
 #' @import ggplot2
 #' @import DPpackage
 #' @import vbdbmm
+#' @import BMix
 #'
 #' @examples will make some
 dbpmm.2steps.fit = function(
   X,
   output.folder = '.',
   fit.tail = TRUE,
-  second.fit = c('DP', 'vbdbmm'),
+  second.fit = c('DP', 'vbdbmm', 'BMix'),
   do.plots = TRUE,
   annotation = 'dbpmm.tumour',
   dbpmm.fit.params = list(
@@ -526,7 +529,13 @@ dbpmm.2steps.fit = function(
     restarts = 10,
     parallel = TRUE,
     silent = TRUE
-    )
+    ),
+  bmix.fit.params = list(
+    K.Binomials = 0:2,
+    K.BetaBinomials = 0:2,
+    epsilon = 1e-8,
+    samples = 10
+  )
   )
 {
   if(output.folder != '.') {
@@ -541,12 +550,19 @@ dbpmm.2steps.fit = function(
   stopifnot(ncol(X) >= 3)
   stopifnot(is.data.frame(X))
 
+  X = X[, 1:3]
+  colnames(X) == c("NV", "DP", "VAF")
+
+  pio::pioTit("Input data")
+  pio::pioDisp(X)
+
   # X$VAF = X[, 1]/X[, 2]
 
   fits.table = NULL
   fits.tail.table = NULL
 
   # First, if required fit a tail. If you do, then remove tail mutations
+  best.fit = NULL
   if (fit.tail)
   {
     cat(bgBlue(white('\n\n ===== Tail-detection via Dirichlet Beta-Pareto Mixtures ===== \n\n')))
@@ -574,7 +590,7 @@ dbpmm.2steps.fit = function(
 
     fits.tail.table = best.fit$beta[c('a', 'b', 'mean'), , drop = FALSE]
 
-    if(do.plots) plot(best.fit)
+    if(do.plots) plot(best.fit, silent = FALSE)
 
     save(best.fit, file = 'dbpmm.fit.RData')
 
@@ -603,30 +619,7 @@ dbpmm.2steps.fit = function(
     }
   }
 
-  if('vbdbmm' %in% second.fit)
-  {
-    cat(bgBlue(white('\n\n ===== Clustering via Variational Bayes Binomial Mixtures ===== \n\n')))
-
-    fit.vbdbmm = vbdbmm::vb_bmm1D_fit(
-      X = X,
-      K = vbdbmm.fit.params$K,
-      alpha_0 = vbdbmm.fit.params$alpha_0,
-      a_0 = vbdbmm.fit.params$a_0,
-      b_0 = vbdbmm.fit.params$b_0,
-      max_iter = vbdbmm.fit.params$max_iter,
-      epsilon_conv = vbdbmm.fit.params$epsilon_conv,
-      restarts = vbdbmm.fit.params$restarts,
-      parallel = vbdbmm.fit.params$parallel,
-      silent = vbdbmm.fit.params$silent
-    )
-
-    fits.table = append(fits.table, list(.extract.vbdbmm.fit(fit.vbdbmm)))
-    names(fits.table)[length(fits.table)] = 'vbdbmm'
-
-    if(do.plots) vbdbmm::vb_bmm_summary(fit.vbdbmm)
-
-    save(fit.vbdbmm, file = paste('vbdbmm.fit.RData'))
-  }
+  fit.vbdbmm = fit.DP = fit.bmix = NULL
 
   #### DP package
   if('DP' %in% second.fit)
@@ -657,6 +650,58 @@ dbpmm.2steps.fit = function(
     save(fit.DP, file = paste('DP.fit.RData'))
   }
 
+  #### vbdbmm package
+  if('vbdbmm' %in% second.fit)
+  {
+    cat(bgBlue(white('\n\n ===== Clustering via Variational Bayes Binomial Mixtures ===== \n\n')))
+
+    fit.vbdbmm = vbdbmm::vb_bmm1D_fit(
+      X = X,
+      K = vbdbmm.fit.params$K,
+      alpha_0 = vbdbmm.fit.params$alpha_0,
+      a_0 = vbdbmm.fit.params$a_0,
+      b_0 = vbdbmm.fit.params$b_0,
+      max_iter = vbdbmm.fit.params$max_iter,
+      epsilon_conv = vbdbmm.fit.params$epsilon_conv,
+      restarts = vbdbmm.fit.params$restarts,
+      parallel = vbdbmm.fit.params$parallel,
+      silent = vbdbmm.fit.params$silent
+    )
+
+    fits.table = append(fits.table, list(.extract.vbdbmm.fit(fit.vbdbmm)))
+    names(fits.table)[length(fits.table)] = 'vbdbmm'
+
+    if(do.plots) vbdbmm::vb_bmm_summary(fit.vbdbmm)
+
+    save(fit.vbdbmm, file = paste('vbdbmm.fit.RData'))
+  }
+
+  #### BMix package
+  if('BMix' %in% second.fit)
+  {
+    require(BMix)
+
+    cat(bgBlue(white('\n\n ===== Clustering via Dirichlet Process Binomial Mixtures ===== \n\n')))
+
+    fit.bmix = BMix::bmixfit(
+      X,
+      K.Binomials = bmix.fit.params$K.Binomials,
+      K.BetaBinomials = bmix.fit.params$K.BetaBinomials,
+      epsilon = bmix.fit.params$epsilon,
+      samples = bmix.fit.params$samples
+    )
+
+    fits.table = append(fits.table, list(.extract.Bmix.fit(fit.bmix)))
+    names(fits.table)[length(fits.table)] = 'Bmix'
+
+    if(do.plots) BMix:::plot.bmix(fit.bmix, data = X, coverage = mean(X[, 2]))
+
+    save(fit.bmix, file = paste('BMix.fit.RData'))
+  }
+
+  # second.fit = c('DP', 'vbdbmm', 'BMix'),
+
+
   cat(bgBlue(white('\n\n ===== MOBSTER ===== \n\n')))
 
   cat(bgBlue(white('TAIL')), '\n')
@@ -668,7 +713,7 @@ dbpmm.2steps.fit = function(
 
   cat(bgBlue(white('\nCLONES')), '\n')
   fits.table = Reduce(rbind, fits.table)
-  rownames(fits.table) = NULL
+  rownames(fits.table) = second.fit
   print(fits.table)
 
   save(fits.table, file = 'fits.table.RData')
@@ -676,5 +721,13 @@ dbpmm.2steps.fit = function(
   if(output.folder != '.') setwd(current.dir)
   if(do.plots) dev.off()
 
-  fits.table
+  fits = NULL
+  fits$MOBSTER = best.fit
+  fits$vbdbmm = fit.vbdbmm
+  fits$DP = fit.DP
+  fits$BMix = fit.bmix
+
+  fits$table = fits.table
+
+  fits
 }

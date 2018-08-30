@@ -140,7 +140,7 @@ sciClone_fit = function(data, samples, minimumDepth = 30) {
 #' @export
 #'
 #' @examples
-MOBSTER_sciClone_fit = function(data, samples, minimumDepth = 30) {
+MOBSTER_sciClone_fit = function(data, samples, minimumDepth = 30, projection.tails = "Global") {
 
   cnames = paste("MOBSTER", samples, "cluster", sep = '.')
   nc = ncol(data$data) + 1
@@ -196,25 +196,42 @@ MOBSTER_sciClone_fit = function(data, samples, minimumDepth = 30) {
   }
   head(data$data)
 
-  cat("\nTail detection")
+  cat("\nTail detection -- projection type: ", projection.tails)
   pio::pioDisp(data$data[, c(cnames)])
 
-  # Projected SNVs
+  # Projected SNVs -- 2 possible protocols
   data$projected.SNVs = data$SNVs
 
   prj.names = paste0('VAF.projected.', samples)
 
-  for(s in seq(samples))
+  if(projection.tails == 'Local')
   {
-    original = data$projected.SNVs[[s]]$VAF/100
-    clusters = data$data[, cnames[s]]
+    for(s in seq(samples))
+    {
+      original = data$projected.SNVs[[s]]$VAF/100
+      clusters = data$data[, cnames[s]]
 
-    original[is.na(clusters)] = 0      # projection
-    original[clusters == "Tail"] = 0   # projection
+      original[is.na(clusters)] = 0      # projection
+      original[clusters == "Tail"] = 0   # projection
 
-    data$projected.SNVs[[s]]$VAF = original
-    data$data = cbind(data$data, original)
-    colnames(data$data)[ncol(data$data)] = prj.names[s]
+      data$projected.SNVs[[s]]$VAF = original
+      data$data = cbind(data$data, original)
+      colnames(data$data)[ncol(data$data)] = prj.names[s]
+    }
+  }
+
+  if(projection.tails == 'Global')
+  {
+
+    any.tail = apply(data$data[, cnames], 1, function(x) any(x == 'Tail', na.rm = TRUE) )
+    data$data$any.tail = any.tail
+
+    for(s in seq(samples))
+    {
+      data$projected.SNVs[[s]]$VAF[any.tail] = 0 # projection
+      data$data = cbind(data$data, data$projected.SNVs[[s]]$VAF)
+      colnames(data$data)[ncol(data$data)] = prj.names[s]
+    }
   }
 
   # we can further remove those that are all 0s everywhere
