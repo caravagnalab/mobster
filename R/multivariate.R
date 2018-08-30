@@ -111,7 +111,7 @@ sciClone_input = function(data, CN, samples)
 #' @export
 #'
 #' @examples
-sciClone_fit = function(data, samples, minimumDepth = 30) {
+sciClone_fit = function(data, samples, minimumDepth = 30, ...) {
 
   library(sciClone)
   sciClone.fit = sciClone(
@@ -120,7 +120,7 @@ sciClone_fit = function(data, samples, minimumDepth = 30) {
     sampleNames = samples,
     clusterMethod = 'bmm',
     verbose = TRUE,
-    minimumDepth = minimumDepth)
+    minimumDepth = minimumDepth, ...)
 
   factor.values = sort(unique(sciClone.fit@vafs.merged$cluster))
   data$data$sciClone.cluster = factor(sciClone.fit@vafs.merged$cluster, levels = factor.values)
@@ -140,7 +140,7 @@ sciClone_fit = function(data, samples, minimumDepth = 30) {
 #' @export
 #'
 #' @examples
-MOBSTER_sciClone_fit = function(data, samples, minimumDepth = 30, projection.tails = "Global") {
+MOBSTER_sciClone_fit = function(data, samples, minimumDepth = 30, projection.tails = "Global", ...) {
 
   cnames = paste("MOBSTER", samples, "cluster", sep = '.')
   nc = ncol(data$data) + 1
@@ -252,7 +252,7 @@ MOBSTER_sciClone_fit = function(data, samples, minimumDepth = 30, projection.tai
     sampleNames = samples,
     clusterMethod = 'bmm',
     verbose = TRUE,
-    minimumDepth = minimumDepth)
+    minimumDepth = minimumDepth, ...)
 
   factor.values = sort(unique(MOBSTER.sciClone.fit@vafs.merged$cluster))
   data$data$MOBSTER.sciClone.cluster[!idx.remove] =
