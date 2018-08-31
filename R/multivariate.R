@@ -298,7 +298,7 @@ plot_2DVAF = function(data, x, y, cluster, marginal = FALSE) {
       x = x, y = y) +
     xlim(0, 1) +
     ylim(0, 1) +
-    scale_color_brewer(palette = "Set1") +
+    scale_color_brewer(palette = "Set1", drop=FALSE) +
     guides(colour = guide_legend(title = cluster)) +
     theme(legend.position="bottom")
 
