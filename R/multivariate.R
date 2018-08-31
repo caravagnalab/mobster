@@ -222,9 +222,17 @@ MOBSTER_sciClone_fit = function(data, samples, minimumDepth = 30, projection.tai
 
   if(projection.tails == 'Global')
   {
-
     any.tail = apply(data$data[, cnames], 1, function(x) any(x == 'Tail', na.rm = TRUE) )
-    data$data$any.tail = any.tail
+
+    # Some had VAF < in the original data, because they did not pass QC or minimum VAF.
+    # De facto these are considered tails, as they are not for sure a cluster. Thus one
+    # entry with negative VAF is enough to discard the SNV
+
+    samples.names = paste0('VAF.', samples)
+    any.negVAF = apply(data$data[, samples.names], 1, function(x) any(x < 0, na.rm = TRUE) )
+
+    data$data$any.negVAF = any.negVAF
+    data$data$any.tail = any.tail | any.negVAF
 
     for(s in seq(samples))
     {
