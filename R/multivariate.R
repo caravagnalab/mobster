@@ -20,14 +20,17 @@
 #' @param data input SNVs detected across all samples
 #' @param CN Copy Number segments
 #' @param samples samples ID
+#' @param VAF.range VAF range for mutations to analyze
+#' @param subsample VAF range for mutations to analyze
 #'
 #' @return data for input in sciClone
 #' @export
 #'
 #' @examples
-sciClone_input = function(data, CN, samples)
+format_input = function(data, CN, samples, VAF.range = c(0.05, 0.6), subsample = NULL)
 {
   cn = colnames(data)
+  vaf.columns = paste0("VAF.", samples)
 
   if(! all(paste0("DP.", samples) %in% cn)) stop("Missing DP entries?")
   if(! all(paste0("NV.", samples) %in% cn)) stop("Missing DP entries?")
@@ -57,8 +60,22 @@ sciClone_input = function(data, CN, samples)
                     segment_mean = 2)
   }
 
-  cat("Original dataframe\n")
+  pio::pioTit(paste("Original input dataframe - n =", nrow(data)))
   print(tibble::as.tibble(data))
+
+
+
+
+  if(!is.null(subsample))
+  {
+    pio::pioTit(paste0("Subsampling to ", subsample, " SNVs"))
+    if(nrow(data) > subsample)
+    {
+      data = data[sample(1:nrow(data), subsample), ]
+      message("Subsampling carried out succesfully")
+    }
+  }
+
 
   # Disassamble data
   input.SNVs = lapply(samples, function(w){
@@ -89,15 +106,12 @@ sciClone_input = function(data, CN, samples)
   names(input.SNVs) = names(input.CNs) = samples
 
 
-  inputs = list(data = data, SNVs = input.SNVs, CNs = input.CNs)
+  inputs = list(data = data, SNVs = input.SNVs, CNs = input.CNs, samples = samples)
 
   inputs
 }
 
-# input = sciClone_input(data, samples = c("B1", "B2"), CN = NULL)
-#
-# lapply(input$SNVs, head)
-# lapply(input$CNs, head)
+
 
 
 # data is obtained from the above function
@@ -111,7 +125,7 @@ sciClone_input = function(data, CN, samples)
 #' @export
 #'
 #' @examples
-sciClone_fit = function(data, samples, minimumDepth = 30, ...) {
+sciClone_fit = function(data, samples, minimumDepth = 30, maximumClusters = 10, ...) {
 
   library(sciClone)
   sciClone.fit = sciClone(
@@ -119,7 +133,8 @@ sciClone_fit = function(data, samples, minimumDepth = 30, ...) {
     copyNumberCalls = data$CNs,
     sampleNames = samples,
     clusterMethod = 'bmm',
-    verbose = TRUE,
+    maximumClusters = maximumClusters,
+    verbose = FALSE,
     minimumDepth = minimumDepth, ...)
 
   factor.values = sort(unique(sciClone.fit@vafs.merged$cluster))
@@ -140,7 +155,7 @@ sciClone_fit = function(data, samples, minimumDepth = 30, ...) {
 #' @export
 #'
 #' @examples
-MOBSTER_sciClone_fit = function(data, samples, minimumDepth = 30, projection.tails = "Global", ...) {
+MOBSTER_sciClone_fit = function(data, samples, VAF.adjustment.max = TRUE, minimumDepth = 30, projection.tails = "Global", ...) {
 
   cnames = paste("MOBSTER", samples, "cluster", sep = '.')
   nc = ncol(data$data) + 1
@@ -154,16 +169,22 @@ MOBSTER_sciClone_fit = function(data, samples, minimumDepth = 30, projection.tai
     samples,
     function(s)
     {
+      pio::pioTit(paste("MOBSTER fit for", s))
+
       # Run MOBSTER on each sample
       inputs = data$SNVs[[s]]
       inputs = inputs$VAF/100
+
+      # Gain "space" in the wider frequency spectrum
+      if(VAF.adjustment.max) inputs = inputs/max(inputs)
+
       inputs = inputs[inputs > 0]
 
       if(length(inputs) == 0) stop("0 entries with VAF > 0 in one MOBSTER input??")
 
       library(dbpmm)
 
-      dbpmm::dbpmm.fit(
+      dbpmm.fit(
         X = inputs,
         K = 1:3,
         samples = 3,
@@ -180,23 +201,22 @@ MOBSTER_sciClone_fit = function(data, samples, minimumDepth = 30, projection.tai
   names(MOBSTER.fits) = samples
   data$MOBSTER.fits = MOBSTER.fits
 
-  best.MOBSTER = lapply(MOBSTER.fits, function(w) w[[1]])
-  names(best.MOBSTER) = samples
-  data$best.MOBSTER = best.MOBSTER
+  data$best.MOBSTER = lapply(MOBSTER.fits, function(w) w$best)
+  names(data$best.MOBSTER) = samples
 
   pio::pioTit("MOBSTER fits")
-  print(best.MOBSTER)
+  print(data$best.MOBSTER)
 
   # MOBSTER clustering assignments
   for(s in seq(samples))
   {
     data$data[
       data$SNVs[[s]]$VAF > 0,
-      cnames[s]] = best.MOBSTER[[s]]$labels
+      cnames[s]] = data$best.MOBSTER[[s]]$labels
   }
   head(data$data)
 
-  cat("\nTail detection -- projection type: ", projection.tails)
+  pio::pioTit(paste("Tail detection -- projection type:", projection.tails))
   pio::pioDisp(data$data[, c(cnames)])
 
   # Projected SNVs -- 2 possible protocols
@@ -237,6 +257,9 @@ MOBSTER_sciClone_fit = function(data, samples, minimumDepth = 30, projection.tai
     for(s in seq(samples))
     {
       data$projected.SNVs[[s]]$VAF[any.tail] = 0 # projection
+      data$projected.SNVs[[s]]$refCount[any.tail] = 0 # projection
+
+
       data$data = cbind(data$data, data$projected.SNVs[[s]]$VAF/100)
       colnames(data$data)[ncol(data$data)] = prj.names[s]
     }
@@ -272,60 +295,6 @@ MOBSTER_sciClone_fit = function(data, samples, minimumDepth = 30, projection.tai
 }
 
 
-#' Title
-#'
-#' @param data
-#' @param x
-#' @param y
-#' @param cluster
-#' @param marginal
-#'
-#' @return
-#' @export
-#'
-#' @examples
-plot_2DVAF = function(data, x, y, cluster, marginal = FALSE) {
-
-  data = data[!is.na(data[, cluster]), ]
-  data[, cluster] = paste(data[, cluster])
-
-  require(ggplot2)
-
-  p = ggplot(data, aes(x = eval(parse(text = x)), colour = eval(parse(text = cluster)), y = eval(parse(text = y)))) +
-    # theme_minimal() +
-    theme(panel.border = element_blank(),
-              panel.grid.major = element_blank(),
-              # panel.grid.minor = element_blank(),
-              axis.line = element_line(size = 0.5, linetype = "solid",
-                                       colour = "black")) +
-    # geom_density_2d(aes(fill = ..level..), geom = "polygon", alpha = .5) +
-    geom_point(alpha = 0.6) +
-    labs(
-      title = paste(x, "vs", y),
-      subtitle = "",
-      x = x, y = y) +
-    xlim(0, 1) +
-    ylim(0, 1) +
-    scale_color_brewer(palette = "Set1", drop=FALSE) +
-    guides(colour = guide_legend(title = cluster)) +
-    theme(legend.position="bottom")
-
-  if(!marginal) return(p)
-
-  require(ggExtra)
-  ggMarginal(p, type="histogram", fill = "gainsboro", binwidth = 0.01, alpha = 1,
-             aes = aes(
-               x = eval(parse(text = x)),
-               colour = eval(parse(text = cluster)),
-               y = eval(parse(text = y))
-               ),
-             data = data,
-             xparams = list(colour = "black", size = 0.1),
-             yparams = list(colour = "black", size = 0.1))
-
-}
-
-
 
 #' Grid plot for multivariate analysis.
 #'
@@ -336,42 +305,56 @@ plot_2DVAF = function(data, x, y, cluster, marginal = FALSE) {
 #' @export
 #'
 #' @examples
-plot_grid = function(data, samples) {
+plot_grid = function(data, samples, below.cluster = 'sciClone.cluster', top.cluster = 'MOBSTER.sciClone.cluster',
+                     diagonal = 'MOBSTER') {
+
+  pio::pioHdr("MOBSTER - Multivariate grid plot",
+              c(`Bottom block` = below.cluster,
+                `Top block` = top.cluster,
+                `Diagonal` = paste(diagonal)
+                )
+   )
 
   require(ggplot2)
 
+  MB = plots = NULL
+
   #  Diagonal
-  MB = data$best.MOBSTER
-  plots = lapply(
-    seq(MB),
-    function(w) plot(MB[[w]], silent = TRUE, main = paste("MOBSTER ", samples[w]) )[[1]])
+  if(!is.null(diagonal) & diagonal == 'MOBSTER')
+    MB = plot_diagonal_MOBSTER(data$best.MOBSTER, samples)
 
-  for(s in seq(samples)) {
-    for(w in s:length(samples)) {
-      if(s != w) {
+  if(!is.null(below.cluster))
+  {
+    for(s in seq(samples)) {
+      for(w in s:length(samples)) {
+        if(s != w) {
 
-        pl = plot_2DVAF(
-          data$data,
-          x = paste0('VAF.', samples[s]),
-          y = paste0('VAF.', samples[w]),
-          cluster = 'sciClone.cluster')
+          pl = plot_2DVAF(
+            data$data,
+            x = paste0('VAF.', samples[s]),
+            y = paste0('VAF.', samples[w]),
+            cluster = below.cluster)
 
-        plots = append(plots, list(pl))
+          plots = append(plots, list(pl))
+        }
       }
     }
   }
 
-  for(s in seq(samples)) {
-    for(w in s:length(samples)) {
-      if(s != w) {
+  if(!is.null(top.cluster))
+  {
+    for(s in seq(samples)) {
+      for(w in s:length(samples)) {
+        if(s != w) {
 
-        pl = plot_2DVAF(
-          data$data,
-          x = paste0('VAF.projected.', samples[s]),
-          y = paste0('VAF.projected.', samples[w]),
-          cluster = 'MOBSTER.sciClone.cluster')
+          pl = plot_2DVAF(
+            data$data,
+            x = paste0('VAF.projected.', samples[s]),
+            y = paste0('VAF.projected.', samples[w]),
+            cluster = top.cluster)
 
-        plots = append(plots, list(pl))
+          plots = append(plots, list(pl))
+        }
       }
     }
   }
@@ -385,3 +368,213 @@ plot_grid = function(data, samples) {
 
   .multiplot(plotlist = plots, layout = layout)
 }
+
+#' Grid plot for multivariate analysis.
+#'
+#' @param data
+#' @param samples
+#'
+#' @return
+#' @export
+#'
+#' @examples
+plot_grid_plain = function(data, samples, VAF.range = c(0.05, 0.6), cex = 1, title = 'VAF pairwise plot') {
+
+  pio::pioHdr('MOBSTER - plot 2D VAF',
+              toPrint = c(
+                `Sample IDs` = paste(samples, collapse = ', '),
+                `VAF range` = paste(VAF.range, collapse = ' -- ')
+              ))
+
+  #  Diagonal is just a marginal freq historgram
+  plots = lapply(
+    samples,
+    function(w) {
+
+      w = paste0('VAF.', w)
+
+      ggplot(data[data[, w] >= VAF.range[1] & data[, w] <= VAF.range[2], ],
+             aes(eval(parse(text = w)), y = ..count../sum(..count..))) +
+        geom_histogram(alpha = .8, position = 'identity', binwidth = 0.01) +
+        labs(
+          title = w,
+          x = "Observed Frequency", y = "Density") +
+        theme_classic(base_size = 10 * cex)
+    })
+
+  require(ggplot2)
+
+  # 2D freq historgram
+  for(s in seq(samples)) {
+    for(w in s:length(samples)) {
+      if(s != w) {
+
+        pl = plot_2DVAF(
+          data,
+          x = paste0('VAF.', samples[s]),
+          y = paste0('VAF.', samples[w]),
+          cluster = NULL,
+          VAF.range = VAF.range)
+
+        plots = append(plots, list(pl))
+      }
+    }
+  }
+
+  layout = matrix(0, ncol = length(samples), nrow = length(samples))
+  diag(layout) = 1:length(samples)
+
+  combs = length(samples) * (length(samples)-1) / 2
+  layout[lower.tri(layout)] = (1:combs) + length(samples)
+
+  .multiplot(plotlist = plots, layout = layout, title = title)
+}
+
+
+#' Title
+#'
+#' @param x
+#' @param title
+#'
+#' @return
+#' @export
+#'
+#' @examples
+plot_data = function(x, VAF.columns, DP.columns, NV.columns, title = 'Raw data: VAF (full and low-freq.), DP, NV')
+{
+  x.orig = nrow(x)
+  x = x[complete.cases(x), ]
+  x.comp = nrow(x)
+
+  message("Droppping NA values reduced the dataset from ", x.orig, ' to ', x.comp, 'entries')
+
+
+  VAF.df = reshape::melt(x[, VAF.columns])
+  DP.df = reshape::melt(x[, DP.columns])
+  NV.df = reshape::melt(x[, NV.columns])
+
+  require(ggplot2)
+
+  min.VAF.above0 = min(VAF.df$value[VAF.df$value > 0], na.rm = T)
+
+  VAF.df = VAF.df[VAF.df$value >= min.VAF.above0, ]
+
+  max.VAF = max(VAF.df$value)
+  if(max.VAF < 1) max.VAF = 1
+
+  VAF = ggplot(VAF.df, aes(value, fill = variable)) +
+    geom_histogram(binwidth = 0.01) +
+    facet_wrap(~variable, nrow = 1) +
+    guides(fill = FALSE, color = FALSE) +
+    xlim(0, max.VAF)
+
+  VAF.low.range.left =  0.13
+
+  VAF.df = VAF.df[VAF.df$value <= VAF.low.range.left, ]
+  VAF.low = ggplot(VAF.df, aes(value, fill = variable)) +
+    geom_histogram(binwidth = 0.001) +
+    facet_wrap(~variable, nrow = 1) +
+    guides(fill = FALSE, color = FALSE) +
+    geom_vline(xintercept = seq(0.01, 0.05, 0.01), linetype = 'longdash', color = 'gray')
+
+  DP = ggplot(DP.df, aes(value, fill = variable)) +
+    geom_histogram(binwidth = 1) +
+    facet_wrap(~variable, nrow = 1) +
+    guides(fill = FALSE, color = FALSE)
+
+  NV.df = NV.df[NV.df$value > 0, ]
+  NV = ggplot(NV.df, aes(value, fill = variable)) +
+    geom_histogram(binwidth = 1) +
+    facet_wrap(~variable, nrow = 1) +
+    guides(fill = FALSE, color = FALSE)
+
+
+  .multiplot(VAF, VAF.low, DP, NV, cols = 1, title = title)
+}
+
+
+
+subset_VAF_inRange_across_all_samples = function(x, VAF.columns, VAF.range = c(0.05, 0.7))
+{
+  # Subset the data and keep only SNVs that are either not-called in a sample or that, if
+  # called, they have VAF above teh cutoff
+  suitable = apply(
+    x[, VAF.columns], 1,
+    function(y) {
+      xg0 = y > 0
+      xgc = y >= VAF.range[1] & y <= VAF.range[2]
+      if (all(!xg0)) return(FALSE)
+      else return(all(xgc[xg0]))
+    }
+  )
+  rejected = x[!suitable, ]
+  x = x[suitable, ]
+
+  pio::pioTit(paste0("SNVs that when called are in the VAF range [", VAF.range[1], "; ", VAF.range[2], "] - n = ", nrow(x)))
+  print(tibble::as.tibble(x))
+
+  list(data = x, rejected = rejected)
+}
+
+subset_DP_aboveValue_across_all_samples = function(x, DP.columns, DP.lower = 30)
+{
+  # Subset the data and keep only SNVs that are either not-called in a sample or that, if
+  # called, they have VAF above teh cutoff
+  suitable = apply(
+    x[, DP.columns], 1,
+    function(y) {
+      xg0 = y > 0
+      xgc = y >= DP.lower
+      if (all(!xg0)) return(FALSE)
+      else return(all(xgc[xg0]))
+    }
+  )
+  rejected = x[!suitable, ]
+  x = x[suitable, ]
+
+  pio::pioTit(paste0("SNVs that when called have at least DP ", DP.lower, " - n = ", nrow(x)))
+  print(tibble::as.tibble(x))
+
+  list(data = x, rejected = rejected)
+}
+
+
+project_VAF_belowValue_each_sample = function(x, VAF.columns, NV.columns, purity, VAF.lower = 0.05)
+{
+  ad.VAF.lower = VAF.lower/purity
+
+  # Subset the data and keep only SNVs that are either not-called in a sample or that, if
+  # called, they have VAF above cutoff. Keep the coverage information available
+  suitable = NULL
+  for(y in seq(VAF.columns))
+  {
+    v = x[, VAF.columns[y]]  < ad.VAF.lower[y]
+
+    x[v, VAF.columns[y]] = 0
+    x[v, NV.columns[y]] = 0
+  }
+
+  pio::pioTit(paste0("SNVs that when called are in the VAF above thresholds - n = ", nrow(x)))
+  pio::pioDisp(ad.VAF.lower)
+
+  cat('**** \n')
+
+  pio::pioDisp(x)
+
+  (x)
+}
+
+
+plot_diagonal_MOBSTER = function(MB, samples, cex = 1)
+{
+  lapply(seq(MB),
+         function(w)
+           plot(
+             MB[[w]],
+             silent = TRUE,
+             palette = 'Set1',
+             cex = cex,
+             histogram.main = paste("MOBSTER ", samples[w])
+           )$mainHist)
+}
+

@@ -15,7 +15,7 @@
     bsamp = function(fake) {
       repeat{
         m = runif(1)
-        v = runif(n = 1, min = 0.001, max = 0.25)
+        v = runif(n = 1, min = 0.0001, max = 0.01)
         p = c(.estBetaParams(m, v), mean=m, var=v)
         if(all(p > 0)) return(p)
       }
@@ -109,7 +109,7 @@
     # parameters (a and b are required to be strictly positive)
     bsamp = function(m) {
       repeat{
-        v = runif(n = 1, min = 0.001, max = 0.25)
+        v = runif(n = 1, min = 0.0001, max = 0.01)
         p = c(dbpmm:::.estBetaParams(m, v), mean=m, var=v)
         if(all(p > 0)) return(p)
       }
@@ -177,3 +177,33 @@
 }
 
 
+
+#' Title
+#'
+#' @param x
+#' @param peak.range
+#' @param m.peak
+#'
+#' @return
+#' @export
+#'
+#' @examples
+guess_purity_from_peaks = function(x, peak.range = c(0.2, 0.5), m.peak = 3)
+{
+  pio::pioTit(paste("Guessing purity via peak detection in", peak.range[1], '--', peak.range[2], 'for diploid SNVs'))
+
+  # Detect peaks
+  x = x[x>peak.range[1]]
+  x = x[x<peak.range[2]]
+  h = hist(x, breaks = seq(0, 1, 0.01), plot = FALSE)
+
+  peaks = dbpmm:::.find_peaks(h$density, m.peak)
+  x.peaks = (peaks * 0.01)
+
+  # diploid tumour and normal
+  guess = 2 * x.peaks
+
+  pio::pioDisp(guess)
+
+  guess
+}

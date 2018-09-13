@@ -23,6 +23,7 @@
 #' @param seed Seed for the random numbers generator
 #' @param top Number of top fits to return, ranked by ICL.
 #' @param annotation Subtitle annotation, if plotting.
+#' @param model.selection Criterion to pick the best model -- one of ICL, BIC, AIC, NLL or entropy. We advise to use only ICL and BIC.
 #'
 #' @return An object of class "dbpmm" which has methods for print and visualization.
 #' @export
@@ -33,16 +34,17 @@
 #' @import ggplot2
 #'
 #' @examples will make some
-dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'peaks', tail = TRUE, epsilon = 1e-10,
-                    maxIter = 100, is_verbose = FALSE, fit.type = 'MM', parallel = FALSE,
-                    cores.ratio = .8, file.dump = NA, seed = 12345, top = 10, annotation = NULL)
+dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'peaks', tail = c(TRUE, FALSE), epsilon = 1e-10,
+                     maxIter = 2000, is_verbose = FALSE, fit.type = 'MM', parallel = FALSE,
+                     cores.ratio = .8, file.dump = NA, seed = 12345, top = length(K) * samples * length(tail), annotation = NULL,
+                     model.selection = 'reICL')
 {
   best = obj = runs = NULL
   stopifnot(is.numeric(samples))
   set.seed(seed)
 
   cat(bgYellow(black(" [ MOBSTER ] ")),
-        yellow(' Finite Dirichelt Mixture Models with Beta and Pareto mixtures (univariate)\n'))
+      yellow(' Finite Dirichelt Mixture Models with Beta and Pareto mixtures (univariate)\n'))
 
   cat(cyan('\n\tDump:'), blue(file.dump), cyan('\t Annotation:'), blue(annotation),'\n')
 
@@ -57,7 +59,7 @@ dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'peaks', tail = TRUE, epsi
 
   cat(cyan('\n\t-'), 'N =',  length(X), cyan('samples with'), 'K =', K, cyan('Beta; Pareto Type-I power-law tail:'), ifelse(tail, green('ON'), red('OFF')))
   cat(cyan('\n\t- Fit   : '), yellow(fit.type), cyan('for'), maxIter, cyan('max. steps with'),
-      ifelse(all(is.character(init)), init, 'custom'), cyan('initialization;'),  yellow('\u03B5 ='), epsilon)
+      ifelse(all(is.character(init)), init, 'custom'), cyan('initialization;'),  yellow('\u03B5 ='), epsilon, cyan('. Model selection: '), yellow(model.selection))
   cat(cyan('\n\t- Runs  : '), samples, ' x ', length(K), ' x ', length(tail), '=', yellow(ntests), cyan(' with '),
       ifelse(parallel, paste(green('PARALLEL'), '[', cores.ratio * 100, '% of cores ]'), red('SERIAL')),
       cyan(' output is '),
@@ -84,22 +86,32 @@ dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'peaks', tail = TRUE, epsi
 
       flush.console()
 
-      cat(bgBlue('\n**** Inference', sprintf('%3s', r), ' : '), yellow('K =', tests[r, 'K']), 'Run', tests[r, 'Run'], 'Tail', tests[r, 'tail'])
+      cat(
+        bgBlue(
+          '\n**** Run',
+          sprintf('%3s /', r), sprintf('%3s', ntests), ' : '),
+        yellow(
+          sprintf("K = %-10s", paste0(tests[r, 'K'], ifelse(tests[r, 'tail'], " + Tail", "")))))
+
       if(is_verbose) cat('\n')
 
-      obj = .dbpmm.EM(X, K = tests[r, 'K'], init = init, tail = tests[r, 'tail'], epsilon =epsilon, maxIter = maxIter, is_verbose = is_verbose, fit.type = fit.type)
+      obj = .dbpmm.EM(X, K = tests[r, 'K'], init = init, tail = tests[r, 'tail'], epsilon = epsilon, maxIter = maxIter, is_verbose = is_verbose, fit.type = fit.type)
       runs[[r]] = obj
 
-      if (is.null(best) || (!is.null(best) && obj$scores$ICL < best$scores$ICL))
+      if (is.null(best) || (!is.null(best) && obj$scores[, model.selection] < best$scores[, model.selection]))
       {
         best = obj
 
-        cat(green( " New best ICL!"))
+        cat(green(" New best", model.selection))
       }
-      else cat(red('    Worst ICL!'))
+      else cat(red('    Worst', model.selection))
 
       LOCAL.TIME = difftime(as.POSIXct(Sys.time(), format = "%H:%M:%S"), LOCAL.TIME, units = "mins")
-      cat('', blue(round(LOCAL.TIME, 2)), 'mins; ICL =', obj$scores$ICL)
+      cat(' Min(s): ',
+          blue(
+            sprintf("%-8s", round(LOCAL.TIME, 2))
+          ),
+          ';', model.selection, ' = ', obj$scores[, model.selection])
     }
 
   }
@@ -122,7 +134,7 @@ dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'peaks', tail = TRUE, epsi
     for(i in 1:ntests) {
       obj = runs[[i]]
 
-      if (is.null(best) || (!is.null(best) && obj$scores$ICL < best$scores$ICL)) best = obj
+      if (is.null(best) || (!is.null(best) && obj$scores[, model.selection] < best$scores[, model.selection])) best = obj
     }
   }
 
@@ -131,36 +143,48 @@ dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'peaks', tail = TRUE, epsi
   cat(bold("\n\nCOMPLETED."), blue(round(TIME, 2)), cyan('mins'), '\n')
 
   #### SUBSET TOP FITS
-  cat(bold("\nTOP", top, "OF ALL FITS\n"))
+  cat(bold("\n", model.selection, "TOP", top, "OF ALL FITS\nn"))
 
-  tests$ICL = Inf
+  tests$model.selection = model.selection
+  tests = cbind(tests, Reduce(rbind, lapply(runs, function(w) w$scores)))
+  all.tests = tests
 
-  for(i in 1:length(runs)) tests$ICL[i] = runs[[i]]$scores$ICL
-  ranking = order(tests$ICL, decreasing = FALSE)
+  # clean up some repeated results
+  tests$Run = NULL
+  scores.columns = colnames(runs[[1]]$scores)
+  tests[, scores.columns] = apply(tests[, scores.columns], 2, round, digits = 2)
+
+  tests = tests[!duplicated(tests), ] # remove duplicated entries..
+  runs = runs[as.integer(rownames(tests))]
+  rownames(tests) = NULL
+
+  # sort entries by score
+  ranking = order(tests[, model.selection], decreasing = FALSE)
   tests = tests[ranking, ]
   runs = runs[ranking]
-  all.tests = tests
-  tests = tests[1:top, ]
 
-  rownames(tests) = NULL
-  if(ntests < top) print(tests)
-  else {
-    print(tests[1:top, ])
+  # at most store 'top' model fits
+  ntests = nrow(tests)
+  if(ntests > top)
+  {
+    tests = tests[1:top, ]
     runs = runs[1:top]
   }
+  print(tests)
+
 
   ###### SHOW BEST FIT
   cat(bold("\n BEST FIT\n\n"))
   print.dbpmm(best)
 
   ###### DUMP DATA TO DISK AS REQUIRED
+  result = list(fits.table = tests, runs = runs, best = best)
+
   if(!is.na(file.dump))
   {
-    res = list(tests = tests, runs = runs, best = best)
-
     cat(bold("\n DUMP\n\n"))
 
-    save(res, file = paste(file.dump, '-allRuns.RData', sep = ''))
+    save(result, file = paste(file.dump, '-allRuns.RData', sep = ''))
     cat(yellow('\n-  Results : '), paste(file.dump, '-allRuns.RData', sep = ''))
 
     pdf(paste(file.dump, '-topFits.pdf', sep = ''), height = 8, width = 13)
@@ -179,7 +203,8 @@ dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'peaks', tail = TRUE, epsi
     cat(yellow('\n-  Boxplot : '), paste(file.dump, '-boxplotFitScores.pdf', sep = ''))
   }
 
-  return(runs)
+
+  return(result)
 }
 
 
@@ -367,7 +392,7 @@ dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'peaks', tail = TRUE, epsi
     apply(fit$z_nk, 1,
           function(x) {
             names(fit$pi)[which(x == max(x, na.rm = TRUE))[1]]
-    }))
+          }))
 
   # Summary numbers
   fit$N.k = rep(0, fit$K)
@@ -387,10 +412,34 @@ dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'peaks', tail = TRUE, epsi
   BIC <- 2 * fit$NLL + numParams * log(fit$N)     # BIC = -2*ln(L) + params*ln(N)
   AIC <- 2 * fit$NLL + 2 * numParams              # AIC = -2*ln(L) + 2*params
 
-  entropy <- -sum(fit$z_nk * log(fit$z_nk), na.rm = TRUE)
-  ICL <- BIC + entropy            # Integrated Complete Likelihood criterion
 
-  fit$scores = data.frame(NLL = fit$NLL, BIC = BIC, AIC = AIC, entropy = entropy, ICL = ICL)
+  # Integrated Complete Likelihood criterion -- uses standard entropy
+  entropy <- -sum(fit$z_nk * log(fit$z_nk), na.rm = TRUE)
+  ICL <- BIC + entropy
+
+  # Integrated Complete Likelihood criterion with reduced entropy (only for
+  # latent variable that involve subclones -- i.e., Betas). I think this is also a sort of
+  # conditional entropy where we condition on the MAP estimate of a mutation being part
+  # of a clone, rather than tail.
+
+  # HTake the MAP estimates of z_nk, and select only entries that are assigned
+  # to a Beta component (i.e. those with arg_max != Tail)
+  fit$cz_nk = fit$z_nk[fit$labels != 'Tail', 2:ncol(fit$z_nk), drop = FALSE]
+
+  # This is un-normalized -- we compute the empirical normalizing constant (C)
+  C = rowSums(fit$cz_nk)
+  for(i in 1:nrow(fit$cz_nk)) fit$cz_nk [i, ] = fit$cz_nk [i, ]/C[i]
+
+  # The reduced entropy is the entropy of this distribution
+  rentropy = -sum(fit$cz_nk  * log(fit$cz_nk ), na.rm = TRUE)
+
+  # Integrated Complete Likelihood criterion with reduced entropy
+  reICL <- BIC + rentropy
+
+  fit$scores = data.frame(NLL = fit$NLL, BIC = BIC,
+                          AIC = AIC, entropy = entropy, ICL = ICL,
+                          reICL = reICL,
+                          size = numParams)
 
   if (is_verbose) {
     print.dbpmm(fit)
@@ -506,7 +555,7 @@ dbpmm.2steps.fit = function(
     seed = 12345,
     top = 10,
     annotation = NULL
-    ),
+  ),
   DP.fit.params = list(
     alpha_0 = 1e-4,
     a1 = 1,
@@ -518,7 +567,7 @@ dbpmm.2steps.fit = function(
     ndisplay = 100,
     state = NULL,
     status = TRUE
-    ),
+  ),
   vbdbmm.fit.params = list(
     K = 5,
     alpha_0 = 1e-8,
@@ -529,19 +578,19 @@ dbpmm.2steps.fit = function(
     restarts = 10,
     parallel = TRUE,
     silent = TRUE
-    ),
+  ),
   bmix.fit.params = list(
     K.Binomials = 0:2,
     K.BetaBinomials = 0:2,
     epsilon = 1e-8,
     samples = 10
   )
-  )
+)
 {
   if(output.folder != '.') {
-     current.dir = getwd()
-     dir.create(output.folder)
-     setwd(output.folder)
+    current.dir = getwd()
+    dir.create(output.folder)
+    setwd(output.folder)
   }
 
   if(do.plots) pdf('plot.pdf')
@@ -642,7 +691,7 @@ dbpmm.2steps.fit = function(
                   ndisplay = DP.fit.params$ndisplay),
       state = DP.fit.params$state,
       status = DP.fit.params$status
-      )
+    )
 
     fits.table = append(fits.table, list(.extract.DP.fit(fit.DP)))
     names(fits.table)[length(fits.table)] = 'DP'

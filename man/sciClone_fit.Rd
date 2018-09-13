@@ -4,7 +4,7 @@
 \alias{sciClone_fit}
 \title{Title}
 \usage{
-sciClone_fit(data, samples, minimumDepth = 30)
+sciClone_fit(data, samples, minimumDepth = 30, maximumClusters = 10, ...)
 }
 \arguments{
 \item{minimumDepth}{}

@@ -4,7 +4,8 @@
 \alias{MOBSTER_sciClone_fit}
 \title{Title}
 \usage{
-MOBSTER_sciClone_fit(data, samples, minimumDepth = 30)
+MOBSTER_sciClone_fit(data, samples, VAF.adjustment.max = TRUE,
+  minimumDepth = 30, projection.tails = "Global", ...)
 }
 \arguments{
 \item{minimumDepth}{}

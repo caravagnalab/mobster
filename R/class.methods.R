@@ -21,7 +21,7 @@ summary.dbpmm = function(x, ...) {print.dbpmm(x, ...)}
 #' @examples something..
 print.dbpmm = function(x, ...)
 {
-  cat(crayon::bgYellow(crayon::black("[ dbpmm ]")),
+  cat(crayon::bgYellow(crayon::black("[ MOBSTER ]")),
       'N =', x$N, crayon::cyan("samples with"),
       'K =', x$Kbeta, crayon::cyan("Beta clusters, fit by"),
       crayon::yellow(x$fit.type), crayon::cyan('in'), length(x$all.NLL), crayon::cyan("steps"),

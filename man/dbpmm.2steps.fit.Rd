@@ -5,7 +5,7 @@
 \title{Title}
 \usage{
 dbpmm.2steps.fit(X, output.folder = ".", fit.tail = TRUE,
-  second.fit = c("DP", "vbdbmm"), do.plots = TRUE,
+  second.fit = c("DP", "vbdbmm", "BMix"), do.plots = TRUE,
   annotation = "dbpmm.tumour", dbpmm.fit.params = list(K = 1, samples = 1,
   init = "peaks", tail = TRUE, epsilon = 1e-10, maxIter = 6000, is_verbose =
   FALSE, fit.type = "MM", parallel = F, cores.ratio = 0.8, file.dump = NA, seed
