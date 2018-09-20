@@ -34,10 +34,23 @@
 #' @import ggplot2
 #'
 #' @examples will make some
-dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'peaks', tail = c(TRUE, FALSE), epsilon = 1e-10,
-                     maxIter = 2000, is_verbose = FALSE, fit.type = 'MM', parallel = FALSE,
-                     cores.ratio = .8, file.dump = NA, seed = 12345, top = length(K) * samples * length(tail), annotation = NULL,
-                     model.selection = 'reICL')
+dbpmm.fit = function(X,
+                     K = 1:3,
+                     samples = 10,
+                     init = 'peaks',
+                     tail = c(TRUE, FALSE),
+                     epsilon = 1e-10,
+                     maxIter = 2000,
+                     is_verbose = FALSE,
+                     fit.type = 'MM',
+                     parallel = FALSE,
+                     cores.ratio = .8,
+                     file.dump = NA,
+                     seed = 12345,
+                     # top = length(K) * samples * length(tail),
+                     annotation = NULL,
+                     model.selection = 'reICL'
+)
 {
   best = obj = runs = NULL
   stopifnot(is.numeric(samples))
@@ -143,68 +156,74 @@ dbpmm.fit = function(X, K = 1:3, samples = 10, init = 'peaks', tail = c(TRUE, FA
   cat(bold("\n\nCOMPLETED."), blue(round(TIME, 2)), cyan('mins'), '\n')
 
   #### SUBSET TOP FITS
-  cat(bold("\n", model.selection, "TOP", top, "OF ALL FITS\nn"))
+  cat(bold("\n", model.selection, "TOP OF ALL DISTINCT FITS\nn"))
 
-  tests$model.selection = model.selection
+  # Get all scores
   tests = cbind(tests, Reduce(rbind, lapply(runs, function(w) w$scores)))
-  all.tests = tests
 
-  # clean up some repeated results
+  # clean up some repeated results -- show unique fits
   tests$Run = NULL
   scores.columns = colnames(runs[[1]]$scores)
   tests[, scores.columns] = apply(tests[, scores.columns], 2, round, digits = 2)
 
+  print(tests)
+  print(!duplicated(tests))
+
+  runs = runs[!duplicated(tests)] # remove duplicated entries..
   tests = tests[!duplicated(tests), ] # remove duplicated entries..
-  runs = runs[as.integer(rownames(tests))]
   rownames(tests) = NULL
 
-  # sort entries by score
-  ranking = order(tests[, model.selection], decreasing = FALSE)
-  tests = tests[ranking, ]
-  runs = runs[ranking]
+  # Model selection -- this will be returned later ..
+  model = model_selection(runs, scores.suitable = model.selection)
+  model = model$model.selection[[model.selection]]
+  model$model.selection = model.selection
 
   # at most store 'top' model fits
-  ntests = nrow(tests)
-  if(ntests > top)
-  {
-    tests = tests[1:top, ]
-    runs = runs[1:top]
-  }
-  print(tests)
-
+  # ntests = nrow(tests)
+  # if(ntests > top)
+  # {
+  #   tests = tests[1:top, ]
+  #   runs = runs[1:top]
+  # }
+  # print(tests)
 
   ###### SHOW BEST FIT
   cat(bold("\n BEST FIT\n\n"))
-  print.dbpmm(best)
+  print.dbpmm(model$best)
 
   ###### DUMP DATA TO DISK AS REQUIRED
-  result = list(fits.table = tests, runs = runs, best = best)
 
   if(!is.na(file.dump))
   {
     cat(bold("\n DUMP\n\n"))
 
-    save(result, file = paste(file.dump, '-allRuns.RData', sep = ''))
-    cat(yellow('\n-  Results : '), paste(file.dump, '-allRuns.RData', sep = ''))
+    save(model, file = paste(file.dump, '-allRuns.RData', sep = ''))
+    cat(yellow('\n- Results : '), paste(file.dump, '-allRuns.RData', sep = ''))
 
-    pdf(paste(file.dump, '-topFits.pdf', sep = ''), height = 8, width = 13)
-    lapply(runs, plot, annotation = annotation)
-    dev.off()
-    cat(yellow('\n- Top fits : '), paste(file.dump, '-topFits.pdf', sep = ''))
+    plot_report_MOBSTER(model,
+                        title = 'MOBSTER top fit', cex = 1, TOP = 5,
+                        palette = 'Set1', boxplot.ICL.range = NULL)
+    ggsave(paste0(file.dump, "-MOBSTER_fit.pdf"), width = 10, height = 10)
+    cat(yellow('\n   - Fits : '), paste(file.dump, '-MOBSTER_fit.pdf', sep = ''))
 
-    pdf(paste(file.dump, '-bestFit.pdf', sep = ''), height = 8, width = 13)
-    plot(best, annotation = annotation)
-    dev.off()
-    cat(yellow('\n- Best fit : '), paste(file.dump, '-bestFit.pdf', sep = ''))
-
-    pdf(paste(file.dump, '-boxplotFitScores.pdf', sep = ''), height = 5, width = 8)
-    .plot.fit.summary(all.tests)
-    dev.off()
-    cat(yellow('\n-  Boxplot : '), paste(file.dump, '-boxplotFitScores.pdf', sep = ''))
+    # pdf(paste(file.dump, '-topFits.pdf', sep = ''), height = 8, width = 13)
+    # lapply(runs, plot, annotation = annotation)
+    # dev.off()
+    # cat(yellow('\n- Top fits : '), paste(file.dump, '-topFits.pdf', sep = ''))
+    #
+    # pdf(paste(file.dump, '-bestFit.pdf', sep = ''), height = 8, width = 13)
+    # plot(best, annotation = annotation)
+    # dev.off()
+    # cat(yellow('\n- Best fit : '), paste(file.dump, '-bestFit.pdf', sep = ''))
+    #
+    # pdf(paste(file.dump, '-boxplotFitScores.pdf', sep = ''), height = 5, width = 8)
+    # .plot.fit.summary(all.tests)
+    # dev.off()
+    # cat(yellow('\n-  Boxplot : '), paste(file.dump, '-boxplotFitScores.pdf', sep = ''))
   }
 
 
-  return(result)
+  return(model)
 }
 
 

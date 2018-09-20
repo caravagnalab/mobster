@@ -86,7 +86,7 @@ model_selection = function(results, scores.suitable = c('ICL', 'BIC', 'AIC', 'NL
     # The reduced entropy is the entropy of this distribution
     rentropy = -sum(cz_nk * log(cz_nk), na.rm = TRUE)
 
-    cat("Entropy ", entropy, " [ Reduced ", rentropy,']\n')
+    # cat("Entropy ", entropy, " [ Reduced ", rentropy,']\n')
     rentropy
   }
 

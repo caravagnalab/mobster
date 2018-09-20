@@ -403,6 +403,11 @@ scols = function (v, palette = "Spectral")
 
 .plot.fit.summary = function(x, alpha = .5, silent = FALSE, range = NULL, cex = 1) {
 
+  model.selection = 'ICL'
+  if(!is.null(x$model.selection)) model.selection = x$model.selection
+
+  x = x$fits.table
+
   pio::pioTit("Creating boxplot of scores for model selection.")
   x = x[complete.cases(x), ]
 
@@ -418,20 +423,20 @@ scols = function (v, palette = "Spectral")
   x$tail = as.factor(x$tail)
   values = x[, model.selection]
 
-  outL = function(x) {
-    # compute lower and upper whiskers
-    boxplot.stats(values)$stats[5]
-  }
-
-  if(all(is.null(range)))
-  {
-    message('range = NULL : removing score outliers')
-    outliers = sapply(split(x, f = x$K), outL)
-    outliers = max(outliers)
-
-    range = c(min(values), outliers) * 1.05
-  }
-  else message("Using custom input range for ICL")
+  # outL = function(x) {
+  #   # compute lower and upper whiskers
+  #   boxplot.stats(values)$stats[5]
+  # }
+  #
+  # if(all(is.null(range)))
+  # {
+  #   message('range = NULL : removing score outliers')
+  #   outliers = sapply(split(x, f = x$K), outL)
+  #   outliers = max(outliers)
+  #
+  #   range = c(min(values), outliers) * 1.05
+  # }
+  # else message("Using custom input range for ICL")
 
 
   # pa = ggplot(data = x, aes(x = K, y = ICL, fill = K)) +
@@ -456,11 +461,11 @@ scols = function (v, palette = "Spectral")
     xlab('Beta components (K)') + ylab(bquote(italic(.(model.selection)))) +
     theme_light(base_size =  8 * cex) +
     facet_wrap(~tail, nrow = 1) +
-    coord_cartesian(ylim = range) +
+    # coord_cartesian(ylim = range) +
     guides(fill = FALSE, colour = FALSE)
 
 
-  require(ggrepel)
+  # require(ggrepel)
 
   if(!silent) print(pa)
 
@@ -813,7 +818,7 @@ plot_report_MOBSTER = function(res, fig.lab = "Figure 1", title = 'MOBSTER top f
 
   # Model selection boxplot
   boxP = .plot.fit.summary(
-    res$fits.table, alpha = .6, silent = TRUE, range = boxplot.ICL.range)$boxPlot
+    res, alpha = .6, silent = TRUE, range = boxplot.ICL.range)$boxPlot
 
   # Other solutions ranked below top best -- maximum TOP 4 fixed
   TOP.plot = min(4, nrow(scores))

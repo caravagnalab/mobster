@@ -460,5 +460,5 @@ MOBSTER_mplot_mapping2MOBSTER_clusters = function(data,
 
   ## ideally you'd remove the old strips, for now they're just covered
   new_plot <- gtable_stack(g1, new_strips)
-  as_ggplot(new_plot)
+  ggpubr::as_ggplot(new_plot)
 }

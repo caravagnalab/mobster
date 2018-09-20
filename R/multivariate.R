@@ -193,8 +193,7 @@ MOBSTER_sciClone_fit = function(data, samples, VAF.adjustment.max = TRUE, minimu
         fit.type = 'MM',
         maxIter = 6000,
         epsilon = 1e-8,
-        parallel = FALSE,
-        top = 10
+        parallel = FALSE
       )
 
     })
@@ -489,7 +488,17 @@ plot_data = function(x, VAF.columns, DP.columns, NV.columns, title = 'Raw data: 
     guides(fill = FALSE, color = FALSE)
 
 
-  .multiplot(VAF, VAF.low, DP, NV, cols = 1, title = title)
+  figure = ggpubr::ggarrange(
+    VAF,
+    VAF.low,
+    DP,
+    NV,
+    ncol = 1,
+    nrow = 4)
+
+  figure = ggpubr::annotate_figure(figure, top = title)
+
+  figure
 }
 
 
