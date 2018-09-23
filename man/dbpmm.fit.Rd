@@ -7,8 +7,7 @@
 dbpmm.fit(X, K = 1:3, samples = 10, init = "peaks", tail = c(TRUE,
   FALSE), epsilon = 1e-10, maxIter = 2000, is_verbose = FALSE,
   fit.type = "MM", parallel = FALSE, cores.ratio = 0.8, file.dump = NA,
-  seed = 12345, top = length(K) * samples * length(tail),
-  annotation = NULL, model.selection = "reICL")
+  seed = 12345, annotation = NULL, model.selection = "reICL")
 }
 \arguments{
 \item{X}{Data, a vector of observations in (0,1).}
@@ -44,11 +43,11 @@ and will plot all the fits in a PDF file.}
 
 \item{seed}{Seed for the random numbers generator}
 
-\item{top}{Number of top fits to return, ranked by ICL.}
-
 \item{annotation}{Subtitle annotation, if plotting.}
 
 \item{model.selection}{Criterion to pick the best model -- one of ICL, BIC, AIC, NLL or entropy. We advise to use only ICL and BIC.}
+
+\item{top}{Number of top fits to return, ranked by ICL.}
 }
 \value{
 An object of class "dbpmm" which has methods for print and visualization.

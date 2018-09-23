@@ -4,9 +4,10 @@
 \alias{MOBSTER_mplot_mapping2MOBSTER_clusters}
 \title{Title}
 \usage{
-MOBSTER_mplot_mapping2MOBSTER_clusters(data = MOB_sciC$data,
+MOBSTER_mplot_mapping2MOBSTER_clusters(data, MOBSTER.fits,
   cluster = "sciClone.cluster", samples, palette = "Set2", cex = 1,
-  title = paste0("Mapping of ", cluster, " clusters to MOBSTER ones"))
+  tail.color = "gray", title = paste0("Mapping of ", cluster,
+  " clusters to MOBSTER ones"))
 }
 \arguments{
 \item{title}{}

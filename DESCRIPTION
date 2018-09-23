@@ -1,4 +1,4 @@
-Package: dbpmm
+Package: mobster
 Type: Package
 Title: Finite Dirichlet Mixture Models with Beta and Pareto components
 Version: 0.1.0
