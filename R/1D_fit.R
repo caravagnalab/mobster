@@ -404,14 +404,6 @@ mobster_fit = function(x,
       # current =  data.frame(step = i, NLL = fit$NLL, 
       
       if(trace){
-        # step.density = template_density(fit, 
-        #                                 x.axis = seq(0, 1, 0.01), 
-        #                                 binwidth = 0.01, 
-        #                                 init = (i == 1),
-        #                                 reduce = TRUE)
-        # step.density$step = i
-        # fit$trace = dplyr::bind_rows(fit$trace, tibble::as.tibble(step.density))
-        
         step.density = fit$Clusters
         step.density$step = i
         fit$trace = dplyr::bind_rows(fit$trace, step.density)
@@ -421,16 +413,16 @@ mobster_fit = function(x,
       #       E-Step      #
       ##===================
       # When pi(Pareto) --> 0 the MLE fit for shape --> 0/0 = NaN and thus at some point we get NaN here
-
-      # print(fit$shape)
-
       for (k in 1:fit$K)
         fit$pdf.w[, k] = ddbpmm(fit,
                                 data = fit$data$VAF,
                                 components = k,
-                                # init = (i == 1),
+                                a = fit$a, 
+                                b = fit$b,
+                                pi = fit$pi,
+                                shape = fit$shape,
+                                scale = fit$scale,
                                 log = TRUE)
-
 
       # Calculate probabilities using the logSumExp trick for numerical stability
       Z          = apply(fit$pdf.w, 1, .log_sum_exp)
@@ -523,6 +515,7 @@ mobster_fit = function(x,
     names(fit$pi) =  colnames(fit$z_nk) = colnames(fit$pdf.w) = c(names.ParetoC, names.BetaC)
     names(fit$a) = names(fit$b) = names.BetaC
     
+    # Update fit table
     fit = .set_params_Beta(fit, fit$a, fit$b)
     fit = .set_params_Pareto(fit, fit$shape, fit$scale)
     fit = .set_params_Pi(fit, fit$pi)

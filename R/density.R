@@ -15,32 +15,26 @@
 #'
 #' @examples Will make some..
 ddbpmm = function(x, data = NULL, components = 1:x$K, 
-                  # init = FALSE, 
+                  a = NULL, b = NULL, pi = NULL, scale = NULL, shape = NULL,
                   log = TRUE) {
 
   stopifnot(length(components) > 0)
 
+  # Get parameters and data if these are not passed explicitly
   if(all(is.null(data))) data = x$data$VAF
 
-  # get params
-  # scale = .params_Pareto(x, init = init)$Scale
-  # shape = .params_Pareto(x, init = init)$Shape
-  # 
-  # tB = .params_Beta(x, init = init)
-  # 
-  # tM = .params_Pi(x, init = init)
-  scale = .params_Pareto(x)$Scale
-  shape = .params_Pareto(x)$Shape
+  if(is.null(scale)) scale = .params_Pareto(x)$Scale
+  if(is.null(shape)) shape = .params_Pareto(x)$Shape
 
-  tB = .params_Beta(x)
-
-  tM = .params_Pi(x)
+  if(all(is.null(a))) a = .params_Beta(x)$a
+  if(all(is.null(b))) b = .params_Beta(x)$b
   
+  if(all(is.null(pi))) pi = .params_Pi(x)
+  
+  # Mask what we do not compute
   mask = (1:x$K) %in% components
-  mask = as.integer(mask)
-  
-  # get the logs, force 0s where the component is not required
-  log_pi = log(tM)
+
+  log_pi = log(pi)
   
   logLik = 0
   
@@ -56,11 +50,11 @@ ddbpmm = function(x, data = NULL, components = 1:x$K,
   
   log_pi = log_pi[2:x$K]
   
-  for(k in 1:nrow(tB)) 
+  for(k in 1:length(log_pi)) 
     if(mask[k + 1])
       logLik = logLik +
         log_pi[k] + dbeta(data,
-                         shape1 = tB$a[k], shape2 = tB$b[k], log = TRUE) 
+                         shape1 = a[k], shape2 = b[k], log = TRUE) 
       
   if(!log) logLik = exp(logLik)
 
@@ -71,8 +65,6 @@ ddbpmm = function(x, data = NULL, components = 1:x$K,
 template_density = function(x, x.axis = seq(0, 1, 0.01), init = FALSE, binwidth = 0.01, reduce = FALSE)
 {
   labels = names(.params_Pi(x))
-  
-  # cat("template")
   
   values = lapply(
     1:x$K, # Component wise
