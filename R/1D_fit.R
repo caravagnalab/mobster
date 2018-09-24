@@ -75,9 +75,10 @@ mobster_fit = function(x,
   
   # Configurations that will be used for model selection 
   tests = expand.grid(K, 1:samples, tail, stringsAsFactors = FALSE)
-  tests = tests[order(tests[, 1]), ]
-  
+
   colnames(tests) = c('K', 'Run', 'tail')
+  tests = tests[order(tests$tail, tests$K), ]
+  
   ntests = nrow(tests)
   
   ###################### Print headers
@@ -148,28 +149,39 @@ mobster_fit = function(x,
     X$VAF[X$VAF == 1] = 1 - 1e-9
   }
   # END: Input Checks
-
+  
   if (!parallel)
   {
+    # formatter
+    fmt = function(x, n){ sprintf(paste0('%-', n,'s'), x) }
+    fmt = Vectorize(fmt, vectorize.args = 'x')
+    
+    # Header
+    tkS = 15
+    
+    pio::pioTit(
+      paste(fmt(c(paste0('| Run (tot. ', ntests, ')'), '| K ', '| Tail', "| Best", "| Time (m)"), tkS), collapse = '')
+    )
+    
     for (r in 1:ntests)
     {
       LOCAL.TIME = as.POSIXct(Sys.time(), format = "%H:%M:%S")
 
       flush.console()
 
-      cat(bgBlue(
-        '\n**** Run',
-        sprintf('%3s /', r),
-        sprintf('%3s', ntests),
-        ' : '
-      ),
-      yellow(sprintf("K = %-10s", paste0(
-        tests[r, 'K'], ifelse(tests[r, 'tail'], " + Tail", "")
-      ))))
+      # Print values
+      s.run = cyan(fmt(paste0('| ', r), tkS))
 
-      if (is_verbose)
-        cat('\n')
+      s.mod = paste0('| ', tests[r, 'K'])
+      s.mod = yellow(fmt(s.mod, tkS))
+      
+      s.tail = ifelse(tests[r, 'tail'], 
+                      green(fmt("| YES", tkS)), 
+                      red(fmt("| NO", tkS)))
 
+      cat(paste0('\n', s.run, s.mod, s.tail))
+      
+      # Compute fit
       obj = .dbpmm.EM(
         x,
         K = tests[r, 'K'],
@@ -184,26 +196,36 @@ mobster_fit = function(x,
       
       runs[[r]] = obj
 
+      # Best score
+      s.best = paste0("| ", round(obj$scores[, model.selection], 2))
+      s.best = fmt(s.best, tkS)
+      
       if (is.null(best) ||
           (!is.null(best) &&
            obj$scores[, model.selection] < best$scores[, model.selection]))
       {
         best = obj
 
-        cat(green(" New best", model.selection))
+        s.best = bgGreen(s.best)      
       }
-      else
-        cat(red('    Worst', model.selection))
+      else s.best = white(s.best)   
+      
 
+      
+      # timing
       LOCAL.TIME = difftime(as.POSIXct(Sys.time(), format = "%H:%M:%S"),
                             LOCAL.TIME,
                             units = "mins")
-      cat(' Min(s): ',
-          blue(sprintf("%-8s", round(LOCAL.TIME, 2))),
-          ';',
-          model.selection,
-          ' = ',
-          obj$scores[, model.selection])
+      
+      s.LOCAL.TIME = as.numeric(LOCAL.TIME, "mins")
+      if(s.LOCAL.TIME < 1) s.LOCAL.TIME = "< 1"
+      else s.LOCAL.TIME = round(s.LOCAL.TIME, 2)
+
+
+      s.time = fmt(paste0('| ', sprintf("%-4s", s.LOCAL.TIME)), tkS)
+      s.time = blue(s.time)
+      
+      cat(paste0(s.best, s.time))
     }
 
   }
@@ -249,10 +271,10 @@ mobster_fit = function(x,
 
   TIME = difftime(as.POSIXct(Sys.time(), format = "%H:%M:%S"), TIME, units = "mins")
 
-  cat(bold("\n\nCOMPLETED."), blue(round(TIME, 2)), cyan('mins'), '\n')
+  cat(bold("\n\nCOMPLETED."), round(TIME, 2), cyan('mins'), '\n')
 
   #### SUBSET TOP FITS
-  cat(bold("\n", model.selection, "TOP OF ALL DISTINCT FITS\nn"))
+  cat("\n", bold("TOP SCORES:", model.selection, "\n\n"))
 
   # Get all scores
   tests = cbind(tests, Reduce(rbind, lapply(runs, function(w)
@@ -263,7 +285,7 @@ mobster_fit = function(x,
   scores.columns = colnames(runs[[1]]$scores)
   tests[, scores.columns] = apply(tests[, scores.columns], 2, round, digits = 2)
 
-  print(tibble::as.tibble(tests))
+  # print(tibble::as.tibble(tests))
   # print(!duplicated(tests))
 
   runs = runs[!duplicated(tests)] # remove duplicated entries..
@@ -275,6 +297,8 @@ mobster_fit = function(x,
   model = model$model.selection[[model.selection]]
   model$model.selection = model.selection
 
+  print(tibble::as.tibble(model$model.rank))
+  
   # at most store 'top' model fits
   # ntests = nrow(tests)
   # if(ntests > top)

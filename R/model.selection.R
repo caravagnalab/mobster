@@ -62,7 +62,7 @@
 #' @export
 #'
 #' @examples
-model_selection = function(results, scores.suitable = c('ICL', 'BIC', 'AIC', 'NLL', 'reICL'))
+model_selection = function(results, scores.suitable = c('ICL', 'BIC', 'AIC', 'NLL', 'reICL'), silent = TRUE)
 {
   ####################################################################################################
   # New temporary code to update the implementation -- support for "reduced Enrtropy ICL"
@@ -132,9 +132,12 @@ model_selection = function(results, scores.suitable = c('ICL', 'BIC', 'AIC', 'NL
 
   model.rank$score = rownames(model.rank)
 
-  pio::pioTit("Model selection table")
-  pio::pioDisp(model.rank)
-
+  if(!silent)
+  {
+    pio::pioTit("Model selection table")
+    pio::pioDisp(model.rank)
+  }
+  
   return(list(model.rank = model.rank, model.selection = model.selection))
 }
 
