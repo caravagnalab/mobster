@@ -4,7 +4,8 @@
 \alias{ddbpmm}
 \title{Density function for a Dirichlet Beta-Pareto Mixture Model}
 \usage{
-ddbpmm(x, data = NULL, components = 1:x$K, init = FALSE, log = TRUE)
+ddbpmm(x, data = NULL, components = 1:x$K, a = NULL, b = NULL,
+  pi = NULL, scale = NULL, shape = NULL, log = TRUE)
 }
 \arguments{
 \item{x}{an object of class dbpmm}
@@ -14,9 +15,9 @@ ddbpmm(x, data = NULL, components = 1:x$K, init = FALSE, log = TRUE)
 \item{components}{a vector specifying which components should be used to compute the density (this is used in the implementation of the
 fitting algorithms for this mixture -- most users would not use this option).}
 
-\item{init}{if TRUE, it uses the initial values for model fit, otherwise final.}
-
 \item{log}{log-likelihood or just likelihood.}
+
+\item{init}{if TRUE, it uses the initial values for model fit, otherwise final.}
 }
 \value{
 The density for the data. Notice, this is NOT the negative LL returned during fit (which is this value with different sign).
