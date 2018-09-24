@@ -92,7 +92,7 @@ model_selection = function(results, scores.suitable = c('ICL', 'BIC', 'AIC', 'NL
 
   for(i in 1:length(results)) {
     z_nk = results[[i]]$z_nk
-    labels = results[[i]]$labels
+    labels = results[[i]]$data$cluster
 
     rentropy = reduced_entropy(z_nk, labels)
     results[[i]]$scores$reICL = results[[i]]$scores$BIC + rentropy
@@ -104,7 +104,7 @@ model_selection = function(results, scores.suitable = c('ICL', 'BIC', 'AIC', 'NL
   tab = lapply(results, function(w) {
     val = w$scores
     val$K = w$Kbeta
-    val$tail = !all(is.na(w$tail))
+    val$tail = w$fit.tail
     val
   })
 

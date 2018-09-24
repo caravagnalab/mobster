@@ -14,45 +14,84 @@
 #' @import sads
 #'
 #' @examples Will make some..
-ddbpmm = function(x, data = NULL, components = 1:x$K, init = FALSE, log = TRUE) {
+ddbpmm = function(x, data = NULL, components = 1:x$K, 
+                  # init = FALSE, 
+                  log = TRUE) {
 
   stopifnot(length(components) > 0)
 
-  if(is.null(data)) data = x$X
-  if(init){
-    if(!is.na(x$shape) & !is.na(x$scale)) {
-      x$shape = x$tail$shape.init
-      x$scale = x$tail$scale.init
-    }
+  if(all(is.null(data))) data = x$data$VAF
 
-    x$pi = x$pi.init
-    x$a = x$beta['a.init', ]
-    x$b = x$beta['b.init', ]
-  }
+  # get params
+  # scale = .params_Pareto(x, init = init)$Scale
+  # shape = .params_Pareto(x, init = init)$Shape
+  # 
+  # tB = .params_Beta(x, init = init)
+  # 
+  # tM = .params_Pi(x, init = init)
+  scale = .params_Pareto(x)$Scale
+  shape = .params_Pareto(x)$Shape
 
-  tail = 0
-  if(1 %in% components) # If one wants the tail
+  tB = .params_Beta(x)
+
+  tM = .params_Pi(x)
+  
+  mask = (1:x$K) %in% components
+  mask = as.integer(mask)
+  
+  # get the logs, force 0s where the component is not required
+  log_pi = log(tM)
+  
+  logLik = 0
+  
+  # Tail
+  if(mask[1])
   {
-    # If the parameters are defined, one gets the logLikelihood
-    if(!is.na(x$shape) & !is.na(x$scale))
-    {
-        tail = base::log(x$pi[1]) + sads::dpareto(data, shape = x$shape, scale = x$scale, log = TRUE)
-    }
-    else tail = rep(-Inf, length(data)) # Otherwise -Inf is the min achievable
+    if(x$fit.tail)
+      logLik = log_pi[1] + sads::dpareto(data, 
+              shape = shape, 
+              scale = scale, log = TRUE) * mask[1]
+    else logLik = rep(-Inf, length(data)) # Otherwise -Inf is the min achievable
   }
-
-  betas = 0
-  for (k in 2:x$K) {
-    if(k %in% components) {
-      betas = betas + base::log(x$pi[k]) + dbeta(data, shape1 = x$a[k-1], shape2 = x$b[k-1], log = TRUE)
-    }
-  }
-
-  logLik = betas + tail
-
+  
+  log_pi = log_pi[2:x$K]
+  
+  for(k in 1:nrow(tB)) 
+    if(mask[k + 1])
+      logLik = logLik +
+        log_pi[k] + dbeta(data,
+                         shape1 = tB$a[k], shape2 = tB$b[k], log = TRUE) 
+      
   if(!log) logLik = exp(logLik)
 
   logLik
+}
+
+
+template_density = function(x, x.axis = seq(0, 1, 0.01), init = FALSE, binwidth = 0.01, reduce = FALSE)
+{
+  labels = names(.params_Pi(x))
+  
+  # cat("template")
+  
+  values = lapply(
+    1:x$K, # Component wise
+    function(w)
+      data.frame(
+        cluster = labels[w],
+        x = x.axis,
+        y = ddbpmm(x, data = x.axis, components = w, 
+                   # init = init, 
+                   log = FALSE)))
+  
+  names(values) = labels
+  
+  # Scale density wrt binwidth
+  values = lapply(values, function(w) {w$y = w$y * binwidth; w}) 
+  
+  # Reduce if required
+  if(reduce) values = Reduce(rbind, values)
+  values
 }
 
 
@@ -60,28 +99,28 @@ ddbpmm = function(x, data = NULL, components = 1:x$K, init = FALSE, log = TRUE) 
 # UNUSED FUNCTION: numerical nlogLik for a Pareto component (the actual solution is analytical)
 # a, b parameters of the mixture, k the component ID, and x data
 # Creates a functional that depends only on a and b
-.NLLParetoMix = function(x, z_nk, pi, scale)
-{
-  f = function(shape) # NLL
-  {
-    # z[x,k] * { log pi[k] + log Pareto(x | shape, scale) }
-    -1 * z_nk[, 1] %*% (log(pi[1]) + sads::dpareto(x, shape = shape, scale = scale, log = TRUE))
-  }
-
-  return(f)
-}
+# .NLLParetoMix = function(x, z_nk, pi, scale)
+# {
+#   f = function(shape) # NLL
+#   {
+#     # z[x,k] * { log pi[k] + log Pareto(x | shape, scale) }
+#     -1 * z_nk[, 1] %*% (log(pi[1]) + sads::dpareto(x, shape = shape, scale = scale, log = TRUE))
+#   }
+# 
+#   return(f)
+# }
 
 
 # USED FOR NUMERICAL SOLUTION OF THE MLE ESTIMATORES FOR EACH BETA COMPONENT
 # a, b parameters of the mixture, k the component ID, and x data
 # Creates a functional that depends only on a and b
-.NLLBetaMix = function(k, x, z_nk, pi)
-{
-  f = function(a,b) # NLL
-  {
-    # z[x,k] * { log pi[k] + log beta(x | a,b) }
-    -1 * z_nk[, k] %*% (log(pi[k]) + dbeta(x, shape1 = a, shape2 = b, log = TRUE))
-  }
-
-  return(f)
-}
+# .NLLBetaMix = function(k, x, z_nk, pi)
+# {
+#   f = function(a,b) # NLL
+#   {
+#     # z[x,k] * { log pi[k] + log beta(x | a,b) }
+#     -1 * z_nk[, k] %*% (log(pi[k]) + dbeta(x, shape1 = a, shape2 = b, log = TRUE))
+#   }
+# 
+#   return(f)
+# }

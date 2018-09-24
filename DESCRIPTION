@@ -9,7 +9,7 @@ Description: Finite Dirichlet Mixture Models with Beta and Pareto components. Wi
 License: GPL
 Encoding: UTF-8
 LazyData: true
-Imports: sads, crayon, MCMCpack, ggplot2, ggthemes, stats4, R.utils, RColorBrewer, doParallel, grid, parallel, DPpackage, vbdbmm, sciClone 
+Imports: sads, crayon, MCMCpack, ggplot2, ggthemes, stats4, R.utils, RColorBrewer, doParallel, grid, parallel, DPpackage, vbdbmm, sciClone, tidyr, dplyr, magrittr 
 RoxygenNote: 6.0.1
 Suggests: knitr,
     rmarkdown
