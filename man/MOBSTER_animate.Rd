@@ -4,7 +4,9 @@
 \alias{MOBSTER_animate}
 \title{Title}
 \usage{
-MOBSTER_animate(x, density = 0.05, palette = "Set1", tail.color = "gray")
+MOBSTER_animate(x, density = 0.05, transition_length = 1,
+  state_length = 1, lib = "plotly", palette = "Set1",
+  tail.color = "gray")
 }
 \arguments{
 \item{x}{}

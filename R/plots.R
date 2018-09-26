@@ -30,28 +30,18 @@ plot.dbpmm = function(x,
   # Prepare variables
   domain = seq(0, 1, 0.01)
   
-  labels = x$Clusters %>%
-    dplyr::filter(type == 'Mixing proportion') %>%
-    dplyr::select(cluster) %>%
-    dplyr::pull()
+  labels = names(.params_Pi(x))
   
-  labels.betas = x$Clusters %>%
-    dplyr::filter(type == 'Mixing proportion', cluster != 'Tail') %>%
-    dplyr::select(cluster) %>%
-    dplyr::pull()
+  labels.betas = .params_Beta(x)$cluster
 
-  pi = x$Clusters %>%
-    dplyr::filter(type == 'Mixing proportion') %>%
-    dplyr::select(fit.value) %>%
-    dplyr::pull(var = 'fit.value')
-  names(pi) = labels
+  pi = .params_Pi(x)
   
   ICL = round(as.numeric(x$scores$ICL), 2)
   NLL = round(as.numeric(x$scores$NLL), 2)
   K = as.numeric(x$K)
 
   # Load colors
-  colors = getColors_model(x, alpha = 1, palette = palette, tail.color = tail.color)
+  colors = getColors_model(x, alpha = .9, palette = palette, tail.color = tail.color)
 
   ############### Plot 1 -- main histogram
   
@@ -115,11 +105,13 @@ plot.dbpmm = function(x,
 
 
   ############### Plot 2 -- initial Condition, density plot
+  n = x
+  n$Clusters$fit.value = n$Clusters$init.value
+  
   initial.densities = template_density(
-    x, 
+    n, 
     x.axis = domain[2:(length(domain) - 1)], # Restricted for numerical errors
     binwidth = 0.01,
-    init = TRUE,
     reduce = TRUE)
   
   den_init_pl = ggplot() +
@@ -200,8 +192,8 @@ plot.dbpmm = function(x,
   }
 
   box_mean_pl = ggplot(data = rbind(df.tail, df.pars), aes(x = Cluster, y = Sample, fill = Cluster)) +
-    geom_violin(alpha = alpha, trim = TRUE) +
-    geom_boxplot(width = .1) +
+    geom_violin(aes(color = NULL), alpha = alpha, trim = TRUE) +
+    geom_boxplot(width = .1, outlier.size = .5) +
     scale_fill_manual(values = colors, labels = names(colors)) +
     guides(fill=FALSE) +
     labs(title  = bquote('Means')) +
@@ -324,14 +316,13 @@ scols = function (v, palette = "Spectral")
   model.selection = 'ICL'
   if(!is.null(x$model.selection)) model.selection = x$model.selection
 
+  model.selection = x$model.selection[1]
   x = x$fits.table
 
   pio::pioTit("Creating boxplot of scores for model selection.")
   x = x[complete.cases(x), ]
 
   # It's in the table
-  model.selection = x$model.selection[1]
-
   pio::pioDisp(x)
 
   x$tail[x$tail] = 'With Tail'
@@ -694,28 +685,18 @@ plot_report_MOBSTER = function(res, fig.lab = "Figure 1", title = 'MOBSTER top f
     histogram.main = title,
     palette = palette,
     silent = TRUE,
-    annotation = paste0('Top-fit from N = ', length(res$best$X))
+    annotation = paste0('Top-fit from N = ', nrow(res$best$data))
   )
 
   # Extract scores table
-  scores = lapply(res$runs,
-                  function(x)
-                  {
-                    r = x$scores
-                    r$K = x$Kbeta
-                    r$Tail = ifelse(all(is.na(x$tail)), 'NO', 'YES')
-
-                    r
-                  }
-  )
-  scores = Reduce(rbind, scores)
+  scores = res$fits.table
 
   # Set format for columns with numbers
   scores.col = colnames(res$best$scores)
   scores[, scores.col] = apply(scores[, scores.col], 2, round, digit = 0)
 
   # Subset TOP scores and create a dataframe for plot
-  scores = scores[!duplicated(scores[, c('K', 'Tail')]), ]
+  # scores = scores[!duplicated(scores[, c('K', 'Tail')]), ]
   if(nrow(scores) > TOP) scores = scores[1:TOP, ]
   pio::pioTit("Table with TOP scores")
   pio::pioDisp(scores)

@@ -103,7 +103,103 @@ template_density = function(x, x.axis = seq(0, 1, 0.01), init = FALSE, binwidth 
 # }
 
 
-# USED FOR NUMERICAL SOLUTION OF THE MLE ESTIMATORES FOR EACH BETA COMPONENT
+
+#' Generate a random sample from a DBPMM model.
+#'
+#' @param x an object with computed from MOBSTER
+#' @param n number of samples required
+#' @param a if passed, `a` for the Beta components
+#' @param b if passed, `a` for the Beta components
+#' @param pi if passed, `pi` for the mixing proportions
+#' @param shape if passed, `shape` of the tail
+#' @param scale if passed, `scale` of the tail
+#' @param tail.cutoff reject Pareto Type I samples above this value (ensure that will be returned
+#' the number of samples required anyway).
+#'
+#' @return n samples from the mixture
+#' @export
+#'
+#' @examples
+#' a = b = 50
+#' names(a) = names(b) = "C1"
+#' 
+#' pi = c('Tail' = .6, 'C1' = .4)
+#' 
+#' v = rdbpmm(x = NULL, n = 1000, a = a, b = b, pi = pi, shape = 2, scale = 0.05)
+#' hist(v, breaks = seq(0, 1, 0.01))
+rdbpmm = function(x, 
+                  a = NULL,
+                  b = NULL,
+                  pi = NULL,
+                  shape = NULL,
+                  scale = NULL,
+                  n = 1,
+                  tail.cutoff = 1) 
+{
+  # Get parameters if these are not passed explicitly
+  if(all(is.null(scale)) | all(is.null(shape))) 
+  {
+    scale = .params_Pareto(x)$Scale
+    shape = .params_Pareto(x)$Shape
+  }
+  
+  if(all(is.null(a)) | all(is.null(b))) 
+  {
+    Betas = .params_Beta(x)
+    a = Betas$a
+    b = Betas$b
+    names(a) = names(b) = Betas$cluster
+  }
+  
+  if(all(is.null(pi))) pi = .params_Pi(x)
+  
+  ############################ Sample mixing prop.
+  pi.samples = sample(names(pi), size = n, prob = pi, replace = TRUE)
+  
+  ############################ Tail samples
+  n.tail = table(pi.samples)['Tail']
+  sample.tails = NULL
+  
+  if(!is.na(n.tail) & n.tail > 0) 
+  {
+    N = n.tail
+    
+    # as the model is an approximation to the VAF we reject values > 1.
+    repeat{
+      # Get `N` Pareto Type I samples
+      new.sample.tails = sads::rpareto(
+        N,
+        shape = shape,
+        scale = scale)
+      
+      # Store only values <= 1, which might be less than N
+      new.sample.tails = new.sample.tails[new.sample.tails <= tail.cutoff]
+      
+      sample.tails = c(sample.tails, new.sample.tails)
+      
+      # Stop if we accumulated `n.tail` samples
+      if(length(sample.tails) == n.tail) break;
+      
+      # Otherwise repeat drawing N-length(sample.tails)
+      N = N - length(new.sample.tails)
+    }
+  }
+
+  ############################ Beta samples
+  n.Betas = table(pi.samples)[names(table(pi.samples)) != 'Tail']
+  
+  sample.Betas = sapply(
+    names(n.Betas),
+    function(w)
+    {
+      rbeta(n.Betas[w], shape1 = a[w], shape2 = b[w])
+    }
+  )
+  
+  return(c(unlist(sample.Betas), unlist(sample.tails)))
+}  
+  
+ # USED FOR NUMERICAL SOLUTION OF THE MLE ESTIMATORES FOR EACH BETA COMPONENT
 # a, b parameters of the mixture, k the component ID, and x data
 # Creates a functional that depends only on a and b
 # .NLLBetaMix = function(k, x, z_nk, pi)

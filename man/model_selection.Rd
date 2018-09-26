@@ -5,7 +5,7 @@
 \title{Title}
 \usage{
 model_selection(results, scores.suitable = c("ICL", "BIC", "AIC", "NLL",
-  "reICL"))
+  "reICL"), silent = TRUE)
 }
 \arguments{
 \item{scores.suitable}{}

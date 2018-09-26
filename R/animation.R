@@ -8,10 +8,13 @@
 #' @return
 #' @export
 #'
+#' @import plotly 
+#'
 #' @examples
 MOBSTER_animate = function(x, density = 0.05,  
                            transition_length = 1,
                            state_length = 1,
+                           lib = 'plotly',
                            palette = 'Set1', tail.color = 'gray')
 {
   if(any(is.null(x$trace))) stop("Trace is null -- run fit with trace = TRUE.")
@@ -40,8 +43,25 @@ MOBSTER_animate = function(x, density = 0.05,
   
   tr.points = Reduce(rbind, tr.points)
   
+  if(lib == 'plotly')
+  {
+    require(plotly)
+    
+    p <- tr.points %>%
+      plot_ly(
+        x = ~x,
+        y = ~y,
+        frame = ~step,
+        color = ~cluster,
+        type = 'scatter',
+        mode = 'markers',
+        showlegend = TRUE
+      )
+    
+    return(p)
+  }
   
-  
+  # 
   require(ggplot2)
   require(gganimate)
   require(magrittr)
