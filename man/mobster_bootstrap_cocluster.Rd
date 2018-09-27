@@ -4,7 +4,7 @@
 \alias{mobster_bootstrap_cocluster}
 \title{Co-clustering probability from non-parametric bootstrap}
 \usage{
-mobster_bootstrap_cocluster(resamples, fits, background.color = "white")
+mobster_bootstrap_cocluster(x, resamples, fits, background.color = "white")
 }
 \arguments{
 \item{resamples}{Data resampled}

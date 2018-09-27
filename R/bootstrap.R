@@ -78,6 +78,8 @@ mobster_bootstrap = function(x,
   if (bootstrap == 'nonparametric')
     resamples = .nonparametric_bootstrap_resamples(x, n)
   
+  save(resamples, file = 'resamples.RData')
+  
   pio::pioTit("Running fits (might take some time)")
   
   # Setup clusters for parallel computing
@@ -92,12 +94,18 @@ mobster_bootstrap = function(x,
     .export = ls(globalenv(), all.names = TRUE)
   ) %dopar%
   {
-    # best fit from resample
-    mobster_fit(x = resamples[[num]],
+    # best fit from resample -- with control for errors
+    tryCatch({
+      
+      mobster_fit(x = resamples[[num]],
                 parallel = FALSE,
                 seed = NULL,
                 ...)$best
+      
+    }, error = function(e) NULL)
   }
+  
+  .stop_parallel(cl)
   
   return(list(resamples = resamples, fits = fits))
 }
@@ -327,8 +335,12 @@ mobster_bootstrap_cocluster = function(x, resamples, fits, background.color = 'w
     colnames(co.clustering) = 1:N
   
   # Extract co-clustering labels
+  pb = txtProgressBar(1, length(fits), style = 3)
+  
   for(w in seq(fits))
   {    
+    setTxtProgressBar(pb, w)
+    
     cluster.results = fits[[w]]$data
     
     cluster.labels = cluster.results$cluster
