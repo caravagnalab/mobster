@@ -4,9 +4,7 @@
 \alias{mobster_dataset}
 \title{Title}
 \usage{
-mobster_dataset(data, samples, description = "My own dataset",
-  DP.columns = paste0("DP.", samples), NV.columns = paste0("NV.", samples),
-  VAF.columns = paste0("VAF.", samples), na.rm = TRUE)
+mobster_dataset(data, samples, description = "My own dataset", na.rm = TRUE)
 }
 \arguments{
 \item{data}{}

@@ -221,6 +221,16 @@ print.mbst_data = function(x,
   }
 }
 
+#' Title
+#'
+#' @param x 
+#' @param segments 
+#' @param N.min 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 mobster_add_CN = function(x, 
                           segments,
                           N.min = 500
@@ -241,7 +251,7 @@ mobster_add_CN = function(x,
   
   # mutations 
   if(
-    all(!is.null(x$annotations)) |
+    is.null(x$annotations) |
     any(!(c('chr', 'from', 'to') %in% x$annotations$variable))
     )
   {
@@ -345,8 +355,9 @@ mobster_add_CN = function(x,
       select(id, variable, value)
   )
       
+  obj$data = tib_old
   
-  tib_old
+  obj
 }
 
 # m= 1!
