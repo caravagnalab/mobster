@@ -288,7 +288,7 @@ mobster_bootstrap_params = function(resamples, fits)
 #' @examples
 mobster_bootstrap_cocluster = function(x, resamples, fits, background.color = 'white') 
 {
-  # sum up occrences 
+  # sum up occurrences 
   .coocc = function(l, M) 
   {
     cluster.labels = unique(l)

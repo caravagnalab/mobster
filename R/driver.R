@@ -41,7 +41,7 @@
     # }
   }
 
-  if(is.character(init) && init == 'peaks')
+  if(is.character(init) & init == 'peaks')
   {
     # Compute KDE
     h = hist(X, breaks = seq(0, 1, 0.01), plot = FALSE)
