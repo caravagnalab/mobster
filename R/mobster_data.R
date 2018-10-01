@@ -18,46 +18,57 @@ mobster_dataset = function(
   na.rm = TRUE
 )
 {
+  pio::pioHdr("MOBSTER dataset")
+  
   if(!is.data.frame(data)) stop("Data must be a dataframe")
   
+  pio::pioStr('Number of mutations (N) =', nrow(data))
+  
+  # Columns with data
   DP.columns = paste0(samples, ".DP")
   NV.columns = paste0(samples, ".NV")
   VAF.columns = paste0(samples, ".VAF")
+  
+  all.columns = c(DP.columns, NV.columns, VAF.columns)
   
   if(any(!(DP.columns %in% colnames(data)))) stop("Missing DP columns in data.")
   if(any(!(NV.columns %in% colnames(data)))) stop("Missing NV columns in data.")
   if(any(!(VAF.columns %in% colnames(data)))) stop("Missing VAF columns in data.")
   
-  all.columns = c(DP.columns, NV.columns, VAF.columns)
-  
+  # mutations must have valid locations
+  if(any(!(c('chr', 'from', 'to') %in% colnames(data)))) stop("The position of the annotated mutations is missing.")
+
+  # NAs in any of the columns for values
   if(any(is.na(data[, all.columns, drop = FALSE])))
   {
-    pio::pioTit('Removing NAs')
-    
     data = data[
       complete.cases(data[, all.columns, drop = FALSE]), , drop = FALSE 
     ]
+    pio::pioStr('Removed NAs, N =', nrow(data))
   }
   
+  # ids
   if('id' %in% colnames(data)) {
-    warning("Data contains an $id column, will try to use it as mutation id.
-            If that is not a valid unique id, random things might happen.")
+    stop("Data contains an $id column, remove it.")
   }
   else data$id = paste0('__mut', 1:nrow(data))
   
-  tibdata = as_tibble(data)
+  # Prepare a tibble for the input data 
+  tib_data = as_tibble(data)
   
   pio::pioTit("Creating tibble for input data")
-  tibdata = tibdata %>% 
-    reshape2::melt(id = 'id')
-
-  tibdata$variable = paste(tibdata$variable)
-  tibdata = as_tibble(tibdata)
   
+  tib_data = tib_data %>% 
+    reshape2::melt(id = 'id') %>%
+    as_tibble
+
+  # make everything a chr
+  tib_data$variable = paste(tib_data$variable)
+
   ##=============================##
   # Create a mbst_data object  #
   ##=============================##
-  obj           = list()
+  obj = list()
   class(obj) <- "mbst_data"
   
   obj$samples = samples
@@ -65,35 +76,26 @@ mobster_dataset = function(
   
   obj$description = description
   
-  obj$DP.columns = DP.columns
-  obj$NV.columns = NV.columns
-  obj$VAF.columns = VAF.columns
+  # Annotations: anything but VAF/ CN values
+  obj$annotations = tib_data %>%
+    filter(!(variable %in% 
+               c(all.columns, 'chr', 'from', 'to')))
   
-  obj$all.columns = all.columns
-  
-  # Get a copy of the data, where there are no VAF values etc.
-  # obj$annotations = data[, !(colnames(data) %in% obj$all.columns), drop = FALSE]
-  # obj$annotations$id = data$id
-  
-  obj$annotations = tibdata %>%
-    filter(!(variable %in% all.columns))
-  
-  # Store data
-  obj$data = tibdata %>%
+  # Data: DP, NV and VAF
+  obj$data = tib_data %>%
     filter(variable %in% all.columns)
+  
+  obj$data$value = as.numeric(obj$data$value)
   
   sp = strsplit(obj$data$variable, '\\.')
   obj$data$variable = sapply(sp, function(w) w[2])
   obj$data$sample = sapply(sp, function(w) w[1])
   
-
-  # Handy format
-  # obj$data = obj$data %>% 
-  #   mutate(sample = strsplit(variable, '\\.')[[1]][2]) %>% 
-  #   mutate(variable = strsplit(variable, '\\.')[[1]][1]) 
+  # Locations: CN position of mutations
+  obj$locations = tib_data %>%
+    filter(variable %in%  c('chr', 'from', 'to'))
   
-  obj$data$value = as.numeric(obj$data$value)
-  
+  # Log creation
   obj$operationLog = ""
   obj = logOp(obj, "Initialization")
   
@@ -132,18 +134,6 @@ mobster_downsample = function(obj, N)
   obj
 }
 
-logOp = function(obj, op)
-{
-  Sys.time()
-  
-  obj$operationLog = paste(
-    obj$operationLog,
-    paste0(Sys.time(), " | ", op, '\n')
-  )
-  
-  obj
-}
-
 
 #' Title
 #'
@@ -165,8 +155,29 @@ print.mbst_data = function(x,
   pio::pioHdr(paste("MOBSTER dataset - ", x$description))
   
   pio::pioStr("Samples", paste(x$samples, collapse = ', '), prefix = '\t- ', suffix = '\n')
-  pio::pioStr("      N", x$N, prefix = '\t- ', suffix = '\n')
+  pio::pioStr("   N  =", x$N, prefix = '\t- ', suffix = '\n')
+   
+  prt = obj$data %>%
+    group_by(sample, variable) %>%
+    filter(value > 0) %>%
+    summarize(mean = mean(value), median = median(value), min = min(value))
+  
+  prt = prt %>%
+    arrange(sample)
+  
+  
+  # cat(
+  #   sprintf(
+  #     ''
+  #     )
+  # )
   # 
+  # for(i in 1:nrow(prt))
+  # {
+  #   cat(prt$sample[i], "")
+  #       
+  # }
+  
   # prt = function(x, 
   #                cols,
   #                v)
@@ -209,8 +220,12 @@ print.mbst_data = function(x,
     
   if(!is.null(x$annotation))
   {
-    pio::pioTit('ANNOTATION')
-    print((x$annotation))
+    lbl = head(unique(x$annotation$variable))
+    
+    # pio::pioTit('ANNOTATION')
+    # print((x$annotation))
+    pio::pioStr('Annotations', prefix = '\n\n',
+                paste0( c(lbl, '...'), collapse = ', '))
   }
   
   if(show.log)
@@ -233,11 +248,14 @@ print.mbst_data = function(x,
 #' @examples
 mobster_add_CN = function(x, 
                           segments,
+                          purity,
                           N.min = 500
                           ) 
 {
   Major.columns = paste0(x$samples, ".Major")
   minor.columns = paste0(x$samples, ".minor")
+  
+  if(any(!(names(purity) %in% x$samples))) stop("Missing purity for some samples?")
   
   # CN
   if(
@@ -249,136 +267,444 @@ mobster_add_CN = function(x,
     stop("Your segments do not look in the right format.")
   }
   
-  # mutations 
-  if(
-    is.null(x$annotations) |
-    any(!(c('chr', 'from', 'to') %in% x$annotations$variable))
-    )
+  # get tibble for the segments
+  tib_segmnets = as_tibble(segments)
+  tib_segmnets$id = paste0("_CN_seg", 1:nrow(tib_segmnets))
+  
+  tib_segmnets = tib_segmnets %>%
+    reshape2::melt(id = c('id', 'chr', 'from', 'to')) %>%
+    as_tibble
+  
+  tib_segmnets$variable = paste(tib_segmnets$variable)
+  
+  sp = strsplit(tib_segmnets$variable, '\\.')
+  tib_segmnets$variable = sapply(sp, function(w) w[2])
+  tib_segmnets$sample = sapply(sp, function(w) w[1])
+
+  # store segments in the obj
+  x$segments = tib_segmnets  
+  
+  # check that all samples have segments available
+  if(!all(x$samples %in% unique(x$segments$sample))) stop("Some samples are missing from the list of segments")
+
+  if(any(!(unique(x$segments$sample) %in% x$samples))) 
   {
-    stop("To add CN you sould have included annotations in your data
-         with the position of each of the annotated mutations.")
+    message("Your list of segments contains more sample IDs that those used -- will be dropped.")
+    
+    x$segments = x$segments %>%
+      filter(sample %in% x$samples)
   }
   
-  ######## Actual processing
+  # we create a map for each mutation to each segment
+  pio::pioTit("Mapping mutations to segments")
+  pb = txtProgressBar(min = 1, max = nrow(segments), style = 3) 
+  segments_ids = unique(x$segments$id)
   
-  # get tibble
-  tibsegmnets = as_tibble(segments)
-  tibsegmnets$id = paste0("_CN_seg", 1:nrow(tibsegmnets))
+  x$map_mut_seg = NULL
   
-  tibsegmnets = tibsegmnets %>%
-    reshape2::melt(id = c('id', 'chr', 'from', 'to')) 
-  
-  tibsegmnets$variable = paste(tibsegmnets$variable)
-  
-  sp = strsplit(tibsegmnets$variable, '\\.')
-  tibsegmnets$variable = sapply(sp, function(w) w[2])
-  tibsegmnets$sample = sapply(sp, function(w) w[1])
-  
-  tibsegmnets = as_tibble(tibsegmnets)
-  
-  obj$data$value = as.numeric(obj$data$value)
-  
-  # get mutation mapping stored in the object
-  muts_CN = x$annotations %>%
-    filter(variable %in% c('chr', 'from', 'to')) %>%
-    spread(variable, value)
-  
-  muts_CN$from = as.numeric(muts_CN$from)
-  muts_CN$to = as.numeric(muts_CN$to)
-  
-  muts_CN = muts_CN %>%
-    mutate(minor = NA, Major = NA)
-  
-  pb = txtProgressBar(min = 1, max = nrow(segments)) 
-  
-  pio::pioTit("Mapping mutations to CN segments")
-  pio::pioStr("Number of segments", nrow(segments), suffix = '\n')
-  pio::pioStr("         Minimum N", N.min, suffix = '\n')
-  
-  tib_new.data = NULL
-  
-  for(s in unique(tibsegmnets$id))
-  {
+  for(s in seq(segments_ids)) {
     setTxtProgressBar(pb, s)
     
-    thisSeg = tibsegmnets %>%
-      filter(id == s)
+    mapped = byLoc(x, segments_ids[s])
+    if(nrow(mapped) == 0) next;
     
-    which_muts = muts_CN %>%
-      filter(chr == thisSeg$chr[1], 
-             from >= thisSeg$from[1], 
-             to <= thisSeg$to[1])
+    mapped$seg_id = segments_ids[s]
     
-    pio::pioStr(sprintf('\n%15s', s), nrow(which_muts), '\n\n')
-    
-    # cat("Segment", s, "N = ", nrow(which_muts), '\n')
-    
-    if(nrow(which_muts) == 0 |
-       nrow(which_muts) < N.min
-       ) next;
-    
-    new.data = inner_join(which_muts, x$data, by = 'id') %>%
-      filter(variable == 'VAF')
-    
-    toPrint = NULL
-    
-    for(samp in x$samples) {
-      
-      new.data$minor = thisSeg %>% filter(sample == samp, variable == 'minor') %>% pull(value)
-      new.data$Major = thisSeg %>% filter(sample == samp, variable == 'Major') %>% pull(value)
-      
-      new.values = new.data %>%
-          filter(sample == samp) %>%
-          mutate(adj_VAF = 
-                   vaf_adjustCN(value,
-                                m = 1, # minor,
-                                M = Major,
-                                p = 1)
-          )
-
-      tib_new.data = bind_rows(tib_new.data, new.values)
-      toPrint = bind_rows(toPrint, new.values[1, ])
-    }
-    
-    print(toPrint)
+    x$map_mut_seg = bind_rows(x$map_mut_seg, mapped)
   }
   
-  tib_new.data$value = tib_new.data$adj_VAF  
+  # A summary table with the number of mutations per segment
+  size_table = x$map_mut_seg %>%
+    group_by(seg_id) %>%
+    summarise(N = length(unique(id)))
   
-  # merge to the old data where we change the VAF value
-  tib_old = x$data
-  tib_old = tib_old %>%
-    filter(variable != 'VAF')
+  # we reject those with N < N.min
+  rejected = size_table %>%
+    filter(N < N.min) %>%
+    arrange(desc(N)) %>%
+    inner_join(y = x$segments, by=c("seg_id" = "id")) %>%
+    select(seg_id, N, chr, from, to) %>%
+    distinct
   
-  tib_old = bind_rows(tib_old,
-    tib_new.data %>%
-      select(id, variable, value)
+  accepted = size_table %>%
+    filter(N >= N.min) %>%
+    arrange(desc(N)) %>%
+    inner_join(y = x$segments, by=c("seg_id" = "id")) %>%
+    select(seg_id, N, chr, from, to) %>%
+    distinct
+  
+  pio::pioTit(paste0("Discarded ", nrow(rejected)," segments with N < ", N.min))
+  print(rejected)
+  
+  pio::pioTit(paste0("Will use ", nrow(accepted)," segments with N >= ", N.min))
+  print(accepted)
+  
+  # Subset to match accepted
+  x$map_mut_seg = x$map_mut_seg %>%
+    filter(seg_id %in% accepted$seg_id)
+  
+  pio::pioTit(paste0("Adjusting the VAF for ",
+                     nrow(x$map_mut_seg)," entries across ", length(x$samples), " samples"))
+
+  new.VAF = NULL
+  
+  # for every segment to map
+  seg_to_match = unique(x$map_mut_seg$seg_id)
+  pb = txtProgressBar(min = 1, max = length(seg_to_match), style = 3) 
+  
+  for(seg in seq(seg_to_match))  
+  {
+    setTxtProgressBar(pb, seg)
+    
+    # for every sample 
+    for(s in x$samples) 
+    {
+      # get VAF values for these entries
+      values = VAF(x,
+        ids = x$map_mut_seg %>% filter(seg_id == seg_to_match[seg]) %>% pull(id), 
+        samples = s
+      ) %>% # Adjust VAF according to minor/ Major (CN=m+M)
+        mutate(
+          Major = Major(x, seg_to_match[seg], s),
+          minor = minor(x, seg_to_match[seg], s),
+          CN = Major + minor,
+          purity = purity[s],
+          adj_VAF = vaf_adjustCN(value, minor, Major, purity)
+        )
+
+      new.VAF = bind_rows(new.VAF, values)
+    }
+  }
+  
+  # cat("   10 Random entries\n\n")
+  # print(new.VAF[sample(1:nrow(new.VAF), 10), ])
+  # 
+  # Save a copy of the mapping
+  x$VAF_cn_adjustment = new.VAF
+     
+  new.VAF$value = new.VAF$adj_VAF  
+  new.VAF = new.VAF %>% select(id, variable, value, sample)
+  
+  x$data = bind_rows(
+    new.VAF,
+    DP(x),
+    NV(x)
   )
-      
-  obj$data = tib_old
+  
+  # Log creation
+  x = logOp(x, "Added CN and adjusted VAF")
+  
+  x
+}
+
+
+
+
+
+
+####################### Public getters
+keys = function(x) { unique(x$data$id) }
+
+VAF = function(x, ids = keys(x), samples = x$samples)
+{
+  x$data %>%
+    filter(variable == 'VAF', 
+           id %in% ids, 
+           sample %in% samples)
+}
+
+DP = function(x, ids = keys(x), samples = x$samples)
+{
+  x$data %>%
+    filter(variable == 'DP', 
+           id %in% ids, 
+           sample %in% samples)
+}
+
+NV = function(x, ids = keys(x), samples = x$samples)
+{
+  x$data %>%
+    filter(variable == 'NV', 
+           id %in% ids, 
+           sample %in% samples)
+}
+
+Annotations = function(x, ids = keys(x), 
+                       variable = unique(x$annotations$variable), samples = x$samples)
+{
+  x$annotations %>%
+    filter(variable %in% variable, 
+           id %in% ids, 
+           sample %in% samples)
+}
+
+####################### Private getters
+
+byLoc = function(x, loc.id) {
+  
+  muts_CN = x$locations %>%
+    spread(variable, value)
+  
+  thisSeg = x$segments %>%
+    filter(id == loc.id)
+  
+  which_muts = muts_CN %>%
+    filter(chr == thisSeg$chr[1], 
+           from >= thisSeg$from[1], 
+           to <= thisSeg$to[1])
+  
+  which_muts
+}
+
+minor = function(x, seg_id, samples = x$samples)
+{
+  x$segments %>% filter(id == seg_id, 
+                        sample == samples,
+                        variable == 'minor') %>% pull(value)
+}
+
+Major = function(x, seg_id, samples = x$samples)
+{
+  x$segments %>% filter(id == seg_id, 
+                        sample == samples,
+                        variable == 'Major') %>% pull(value)
+}
+
+N = function(x){
+  nrow(VAF(x, samples = x$samples[1]))
+}
+
+####################### Aux functions
+
+logOp = function(obj, op)
+{
+  Sys.time()
+  
+  obj$operationLog = paste(
+    obj$operationLog,
+    paste0(Sys.time(), " | ", op, '\n')
+  )
   
   obj
 }
 
-# m= 1!
-vaf_adjustCN = function(v, m, M, p)
+# map_SNV_2_CNA_segment = function(segments,
+#                                  segment.id,
+#                                  muts
+# )
+# {
+#   stopifnot(all(unlist(labels$Chromosome) %in% colnames(segments)))
+#   stopifnot(all(unlist(labels$Mutations) %in% colnames(muts)))
+#   
+#   map = NULL
+#   map = muts[muts[, labels$Mutations['chromosome']] == segments[segment.id, labels$Chromosome['chromosome']], ]
+#   map = map[map[, labels$Mutations['position']] >= segments[segment.id, labels$Chromosome['from']], ]
+#   map = map[map[, labels$Mutations['position']] <= segments[segment.id, labels$Chromosome['to']], ]
+#   
+#   map
+# }
+
+# as in GEL
+vaf_adjustCN = function(v, m, M, p, mut.allele =1)
 {
-  v * ((M-2) * p + 2) / (m*p)
+  CN = m+M
+  
+  
+  0.5 * v * ((CN-2) * p + 2) / (mut.allele * p) 
 }
 
-map_SNV_2_CNA_segment = function(segments,
-                                 segment.id,
-                                 muts
-                                 )
+####################### Plot functions
+
+
+plot_raw_data = function(x, 
+                         # by_genotype = FALSE, 
+                         title = x$description)
 {
-  stopifnot(all(unlist(labels$Chromosome) %in% colnames(segments)))
-  stopifnot(all(unlist(labels$Mutations) %in% colnames(muts)))
+  by_genotype = FALSE
+    
+  if(!by_genotype)
+  {
+    vaf = VAF(x)
+    
+    max.VAF = max(vaf$value)
+    if(max.VAF < 1) max.VAF = 1
+    
+    pl_vaf = ggplot(vaf, aes(value, fill = sample)) +
+      geom_histogram(binwidth = 0.01) +
+      facet_wrap(~sample, nrow = 1) +
+      theme_light(base_size = 8) +
+      guides(fill = FALSE) +
+      theme(legend.position="bottom",
+            legend.text = element_text(size = 8),
+            legend.key.size = unit(.3, "cm")
+      ) +
+      geom_vline(aes(xintercept = 0.5), colour = 'red', linetype = "longdash", size = .3) +
+      geom_vline(aes(xintercept = 0.25), colour = 'red', linetype = "longdash", size = .3) +
+      geom_vline(aes(xintercept = 0.33), colour = 'blue', linetype = "longdash", size = .3) +
+      geom_vline(aes(xintercept = 0.66), colour = 'blue', linetype = "longdash", size = .3) +
+      geom_vline(aes(xintercept = 1), colour = 'black', linetype = "longdash", size = .2) +
+      # geom_density() +
+      xlim(0, max.VAF) + 
+      labs(
+        title = "VAF histogram (raw data)",
+        x = 'VAF')
+    
+    DP_val = DP(x)
+    stats_DP_val = quantile(DP_val %>% pull(value))
+    stats_DP_val = data.frame(value = stats_DP_val, quantile = names(stats_DP_val))
+    
+    pl_DP = ggplot(DP_val, aes(value, fill = sample)) +
+      geom_histogram(binwidth = 1) +
+      geom_vline(xintercept = stats_DP_val$value, size = .3, linetype = 'dashed', show.legend = TRUE) +
+      geom_vline(xintercept = median(DP_val$value), size = .5, colour = 'steelblue') +
+      facet_wrap(~sample, nrow = 1, scales = "free") +
+      guides(fill = FALSE, color = guide_legend(title="Quantile")) +
+      labs(
+        title = "DP histogram (raw data)",
+        subtitle = paste0('Quantiles (dashed):', 
+                          paste0(stats_DP_val$quantile, collapse = ', '),
+                          '. Median (blue)  = ', round(median(DP_val$value), 0), 
+                          'x (var. ', round(var(DP_val$value), 0), ')'),
+        x = 'Coverage (DP)') +
+      theme_light(base_size = 8) +
+      theme(legend.position="bottom",
+            legend.text = element_text(size = 8),
+            legend.key.size = unit(.3, "cm")
+      ) 
+    
+    # 
+    # v = DP_val %>%
+    #   group_by(sample) %>%
+    #   summarize(
+    #     # n = n(),
+    #     min = min(value),
+    #     max = max(value),
+    #     mean = mean(value),
+    #     sd = sd(value),
+    #     median = median(value)
+    #   ) 
+    # 
+    # # v.size = v %>% select(-sample)
+    # # C.v.size = apply(v.size, 2, max)
+    # # v.size = data.frame(t(t(v.size)/C.v.size))
+    # # v.size$sample = v$sample
+    # # 
+    # v = reshape2::melt(v)
+    # v$value = round(v$value)
+    # 
+    # ggballoonplot(v, 
+    #               x = "sample", y = "variable",
+    #               size = "value", fill = "value", size.range = c(1, 5), ) 
+    # scale_fill_gradientn(colors = my_cols) +
+      # guides(size = FALSE) +
+      # facet_wrap(~variable, scales = 'free')
+    
+    
+    figure = ggpubr::ggarrange(
+      pl_vaf,
+      pl_DP,
+      ncol = 1,
+      nrow = 2)
+    
+    figure = ggpubr::annotate_figure(figure, top = title)
+    
+    return(figure)
+  }
   
-  map = NULL
-  map = muts[muts[, labels$Mutations['chromosome']] == segments[segment.id, labels$Chromosome['chromosome']], ]
-  map = map[map[, labels$Mutations['position']] >= segments[segment.id, labels$Chromosome['from']], ]
-  map = map[map[, labels$Mutations['position']] <= segments[segment.id, labels$Chromosome['to']], ]
   
-  map
+  stop("Not yet implemented -- plot histograms by CN genotype")
+  # 
+  # segments = x$segments %>% group_by(sample) %>% spread(variable, value) %>% mutate(CN = paste0(Major, ':', minor))
+  # 
+  # for(s in x$samples)
+  # {
+  #   sample.segments = segments %>% filter(sample == s)
+  #   
+  #   
+  #   sample.segments %>% group_by(id) %>% mutate(CN = minor + Major)
+  #   
+  #   
+  # }
+  
+
+  
 }
+
+MOBSTER_guessPurity = function(x, peak.range = c(0.2, 0.5), m.peak = 10)
+{
+  pio::pioTit(paste("Guessing purity via peak detection in", peak.range[1], '--', peak.range[2], 'for diploid SNVs'))
   
+  message("This thing makes sense only if your using all diploid SNVs \n\nWill improve it to take as input one segment id!")
+  
+  results = NULL
+  
+  for(s in x$samples)
+  {
+    v = VAF(x, samples = s) %>% pull(value)
+    
+    # Detect peaks
+    v = v[v > peak.range[1]]
+    v = v[v < peak.range[2]]
+    
+    h = hist(v, breaks = seq(0, 1, 0.01), plot = FALSE)
+    
+    peaks = mobster:::.find_peaks(h$density, m.peak)
+    x.peaks = (peaks * 0.01)
+    
+    # diploid tumour and normal
+    guess = data.frame(samples = s, purity = 2 * x.peaks)
+    
+    results = rbind(results, guess)
+  }
+  
+  results = as_tibble(results)
+  
+  results  
+}
+
+
+# Fitting 
+mobster_fit_multivariate = function(x, samples = x$samples, ...) {
+  x$fit.MOBSTER = lapply(samples,
+                         function(w)
+                         {
+                           mobster_fit(
+                             mobster:::VAF(x, samples = w) %>% 
+                               filter(value > 0) %>% 
+                               spread(variable, value),
+                             ...)
+                         })
+  
+  x
+}
+
+# filter for VAF below `VAF.lower` parameters. This sets to 0 everything both the VAF
+# and the NV entry, bute retains the coverage at the locus (DP). This function accepts
+# also a purity vector in input to adjust accordingly the cutoff
+filtered = dbpmm:::project_VAF_belowValue_each_sample(x, cutoff, 
+                                                      purity = purity)
+
+function(x, VAF.columns, NV.columns, purity, VAF.lower = 0.05)
+{
+  ad.VAF.lower = VAF.lower/purity
+  
+  # Subset the data and keep only SNVs that are either not-called in a sample or that, if
+  # called, they have VAF above cutoff. Keep the coverage information available
+  suitable = NULL
+  for(y in seq(VAF.columns))
+  {
+    v = x[, VAF.columns[y]]  < ad.VAF.lower[y]
+    
+    x[v, VAF.columns[y]] = 0
+    x[v, NV.columns[y]] = 0
+  }
+  
+  pio::pioTit(paste0("SNVs that when called are in the VAF above thresholds - n = ", nrow(x)))
+  pio::pioDisp(ad.VAF.lower)
+  
+  cat('**** \n')
+  
+  pio::pioDisp(x)
+  
+  (x)
+}
