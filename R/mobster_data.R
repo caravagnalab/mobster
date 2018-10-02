@@ -96,7 +96,6 @@ mobster_dataset = function(
     filter(variable %in%  c('chr', 'from', 'to'))
   
   # Log creation
-  obj$operationLog = ""
   obj = logOp(obj, "Initialization")
   
   return(obj)
@@ -155,16 +154,20 @@ print.mbst_data = function(x,
   pio::pioHdr(paste("MOBSTER dataset - ", x$description))
   
   pio::pioStr("Samples", paste(x$samples, collapse = ', '), prefix = '\t- ', suffix = '\n')
-  pio::pioStr("   N  =", x$N, prefix = '\t- ', suffix = '\n')
+  pio::pioStr("   N  =", N(x), prefix = '\t- ', suffix = '\n')
    
-  prt = obj$data %>%
+  prt = x$data %>%
     group_by(sample, variable) %>%
     filter(value > 0) %>%
-    summarize(mean = mean(value), median = median(value), min = min(value))
+    summarize(mean = mean(value), median = median(value), min = min(value), max = max(value)) %>%
+    arrange(variable)
   
-  prt = prt %>%
-    arrange(sample)
-  
+  # prt = prt %>%
+  #   nest() %>%
+  #   unlist(recursive = FALSE)
+  # 
+  # prt
+  # 
   
   # cat(
   #   sprintf(
@@ -210,11 +213,6 @@ print.mbst_data = function(x,
   # }
   # 
 
-  prt = obj$data %>%
-    group_by(sample, variable) %>%
-    filter(value > 0) %>%
-    summarize(mean = mean(value), median = median(value), min = min(value))
-  
   pio::pioTit('Coverage (DP), reads with mutant (NV) and allele frequency (VAF)')
   print(prt)
     
@@ -230,9 +228,10 @@ print.mbst_data = function(x,
   
   if(show.log)
   {
+    cat('\n')
     pio::pioTit('LOGGED OPERATIONS')
     
-    cat(obj$operationLog)
+    print(x$operationLog)
   }
 }
 
@@ -283,6 +282,9 @@ mobster_add_CN = function(x,
 
   # store segments in the obj
   x$segments = tib_segmnets  
+  
+  # store purity
+  x$purity = purity
   
   # check that all samples have segments available
   if(!all(x$samples %in% unique(x$segments$sample))) stop("Some samples are missing from the list of segments")
@@ -343,6 +345,13 @@ mobster_add_CN = function(x,
   x$map_mut_seg = x$map_mut_seg %>%
     filter(seg_id %in% accepted$seg_id)
   
+  # Non-accepted mutations can be immediately removed
+  x = delete_entries(x, 
+                     setdiff(
+                       keys(x), 
+                       unique(x$map_mut_seg$id)))
+  
+  
   pio::pioTit(paste0("Adjusting the VAF for ",
                      nrow(x$map_mut_seg)," entries across ", length(x$samples), " samples"))
 
@@ -391,10 +400,10 @@ mobster_add_CN = function(x,
     NV(x)
   )
   
-  # Log creation
+  # Log update
   x = logOp(x, "Added CN and adjusted VAF")
   
-  x
+  all_zeroes(x)
 }
 
 
@@ -405,27 +414,57 @@ mobster_add_CN = function(x,
 ####################### Public getters
 keys = function(x) { unique(x$data$id) }
 
+#' Title
+#'
+#' @param x 
+#' @param ids 
+#' @param samples 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 VAF = function(x, ids = keys(x), samples = x$samples)
 {
   x$data %>%
-    filter(variable == 'VAF', 
-           id %in% ids, 
+    filter(variable == 'VAF' & 
+           id %in% ids & 
            sample %in% samples)
 }
 
+#' Title
+#'
+#' @param x 
+#' @param ids 
+#' @param samples 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 DP = function(x, ids = keys(x), samples = x$samples)
 {
   x$data %>%
-    filter(variable == 'DP', 
-           id %in% ids, 
+    filter(variable == 'DP' & 
+           id %in% ids &  
            sample %in% samples)
 }
 
+#' Title
+#'
+#' @param x 
+#' @param ids 
+#' @param samples 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 NV = function(x, ids = keys(x), samples = x$samples)
 {
   x$data %>%
-    filter(variable == 'NV', 
-           id %in% ids, 
+    filter(variable == 'NV' & 
+           id %in% ids & 
            sample %in% samples)
 }
 
@@ -433,8 +472,8 @@ Annotations = function(x, ids = keys(x),
                        variable = unique(x$annotations$variable), samples = x$samples)
 {
   x$annotations %>%
-    filter(variable %in% variable, 
-           id %in% ids, 
+    filter(variable %in% variable &  
+           id %in% ids & 
            sample %in% samples)
 }
 
@@ -449,8 +488,8 @@ byLoc = function(x, loc.id) {
     filter(id == loc.id)
   
   which_muts = muts_CN %>%
-    filter(chr == thisSeg$chr[1], 
-           from >= thisSeg$from[1], 
+    filter(chr == thisSeg$chr[1] & 
+           from >= thisSeg$from[1] & 
            to <= thisSeg$to[1])
   
   which_muts
@@ -458,18 +497,26 @@ byLoc = function(x, loc.id) {
 
 minor = function(x, seg_id, samples = x$samples)
 {
-  x$segments %>% filter(id == seg_id, 
-                        sample == samples,
+  x$segments %>% filter(id == seg_id & 
+                        sample == samples & 
                         variable == 'minor') %>% pull(value)
 }
 
 Major = function(x, seg_id, samples = x$samples)
 {
-  x$segments %>% filter(id == seg_id, 
-                        sample == samples,
+  x$segments %>% filter(id == seg_id & 
+                        sample == samples & 
                         variable == 'Major') %>% pull(value)
 }
 
+#' Title
+#'
+#' @param x 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 N = function(x){
   nrow(VAF(x, samples = x$samples[1]))
 }
@@ -478,31 +525,12 @@ N = function(x){
 
 logOp = function(obj, op)
 {
-  Sys.time()
-  
-  obj$operationLog = paste(
-    obj$operationLog,
-    paste0(Sys.time(), " | ", op, '\n')
-  )
-  
+  new.entry = tribble(~time, ~operation, Sys.time(),  op)
+  obj$operationLog = bind_rows(obj$operationLog, new.entry)
+                               
   obj
 }
 
-# map_SNV_2_CNA_segment = function(segments,
-#                                  segment.id,
-#                                  muts
-# )
-# {
-#   stopifnot(all(unlist(labels$Chromosome) %in% colnames(segments)))
-#   stopifnot(all(unlist(labels$Mutations) %in% colnames(muts)))
-#   
-#   map = NULL
-#   map = muts[muts[, labels$Mutations['chromosome']] == segments[segment.id, labels$Chromosome['chromosome']], ]
-#   map = map[map[, labels$Mutations['position']] >= segments[segment.id, labels$Chromosome['from']], ]
-#   map = map[map[, labels$Mutations['position']] <= segments[segment.id, labels$Chromosome['to']], ]
-#   
-#   map
-# }
 
 # as in GEL
 vaf_adjustCN = function(v, m, M, p, mut.allele =1)
@@ -518,20 +546,23 @@ vaf_adjustCN = function(v, m, M, p, mut.allele =1)
 
 plot_raw_data = function(x, 
                          # by_genotype = FALSE, 
-                         title = x$description)
+                         title = x$description,
+                         scales = 'fixed')
 {
   by_genotype = FALSE
     
   if(!by_genotype)
-  {
-    vaf = VAF(x)
+  { 
+    # Full VAF plot
+    vaf = VAF(x) %>% filter(value > 0)
     
     max.VAF = max(vaf$value)
     if(max.VAF < 1) max.VAF = 1
     
     pl_vaf = ggplot(vaf, aes(value, fill = sample)) +
       geom_histogram(binwidth = 0.01) +
-      facet_wrap(~sample, nrow = 1) +
+      # geom_density() +
+      facet_wrap(~sample, nrow = 1, scales = scales) +
       theme_light(base_size = 8) +
       guides(fill = FALSE) +
       theme(legend.position="bottom",
@@ -546,10 +577,28 @@ plot_raw_data = function(x,
       # geom_density() +
       xlim(0, max.VAF) + 
       labs(
-        title = "VAF histogram (raw data)",
+        title = "Variant Allele Frequency (VAF)",
         x = 'VAF')
     
-    DP_val = DP(x)
+    # Low-frequency VAF
+    vaf = vaf %>% filter(value < 0.2)
+    
+    pl_vaf_lfreq = ggplot(vaf, aes(value, fill = sample)) +
+      geom_histogram(binwidth = 0.01) +
+      # geom_density() +
+      facet_wrap(~sample, nrow = 1, scales = scales) +
+      theme_light(base_size = 8) +
+      guides(fill = FALSE) +
+      theme(legend.position="bottom",
+            legend.text = element_text(size = 8),
+            legend.key.size = unit(.3, "cm")
+      ) +
+      labs(
+        title = "Low-freq. VAF < 0.20",
+        x = 'VAF')
+    
+    DP_val = DP(x) %>% filter(value > 0)
+    
     stats_DP_val = quantile(DP_val %>% pull(value))
     stats_DP_val = data.frame(value = stats_DP_val, quantile = names(stats_DP_val))
     
@@ -557,7 +606,7 @@ plot_raw_data = function(x,
       geom_histogram(binwidth = 1) +
       geom_vline(xintercept = stats_DP_val$value, size = .3, linetype = 'dashed', show.legend = TRUE) +
       geom_vline(xintercept = median(DP_val$value), size = .5, colour = 'steelblue') +
-      facet_wrap(~sample, nrow = 1, scales = "free") +
+      facet_wrap(~sample, nrow = 1,  scales = scales) +
       guides(fill = FALSE, color = guide_legend(title="Quantile")) +
       labs(
         title = "DP histogram (raw data)",
@@ -601,7 +650,7 @@ plot_raw_data = function(x,
     
     
     figure = ggpubr::ggarrange(
-      pl_vaf,
+      ggpubr::ggarrange(pl_vaf, pl_vaf_lfreq, ncol = 1, heights = c(2, 1.5), nrow = 2),
       pl_DP,
       ncol = 1,
       nrow = 2)
@@ -611,6 +660,31 @@ plot_raw_data = function(x,
     return(figure)
   }
   
+  
+  values = x$VAF_cn_adjustment %>% 
+    mutate(Genotype = paste0(Major, ':', minor))
+  
+  pio::pioStr('Available genotypes',
+              paste0(unique(values$Genotype), collapse = ', '))
+  
+  ggplot(values, aes(value, fill = sample)) +
+    geom_histogram(binwidth = 0.01) +
+    facet_wrap(Genotype ~ sample, scales = 'free') +
+    theme_light(base_size = 8) +
+    guides(fill = FALSE) +
+    theme(legend.position="bottom",
+          legend.text = element_text(size = 8),
+          legend.key.size = unit(.3, "cm")
+    ) +
+    geom_vline(aes(xintercept = 0.5), colour = 'red', linetype = "longdash", size = .3) +
+    geom_vline(aes(xintercept = 0.25), colour = 'red', linetype = "longdash", size = .3) +
+    geom_vline(aes(xintercept = 0.33), colour = 'blue', linetype = "longdash", size = .3) +
+    geom_vline(aes(xintercept = 0.66), colour = 'blue', linetype = "longdash", size = .3) +
+    geom_vline(aes(xintercept = 1), colour = 'black', linetype = "longdash", size = .2) +
+    # xlim(0, max.VAF) + 
+    labs(
+      title = "VAF histogram (raw data)",
+      x = 'VAF')
   
   stop("Not yet implemented -- plot histograms by CN genotype")
   # 
@@ -663,48 +737,162 @@ MOBSTER_guessPurity = function(x, peak.range = c(0.2, 0.5), m.peak = 10)
 }
 
 
+
+
 # Fitting 
 mobster_fit_multivariate = function(x, samples = x$samples, ...) {
   x$fit.MOBSTER = lapply(samples,
                          function(w)
                          {
+                           pio::pioTit(paste("Fitting with MOBSTER sample", w))
+                           
+                           data = mobster:::VAF(x, samples = w) %>% 
+                             filter(value > 0) %>% 
+                             spread(variable, value)
+                           
+                           print(data)
+                           
                            mobster_fit(
-                             mobster:::VAF(x, samples = w) %>% 
-                               filter(value > 0) %>% 
-                               spread(variable, value),
+                             x = data,
+                             annotation = w,
                              ...)
                          })
+  
+  names(x$fit.MOBSTER) = x$samples
+  
+  cat("\n")
+  pio::pioTit("MOBSTER fits")
+  
+  for(s in x$samples) print(x$fit.MOBSTER[[s]]$best)
   
   x
 }
 
-# filter for VAF below `VAF.lower` parameters. This sets to 0 everything both the VAF
+# Filters
+
+mutate_cond <- function(.data, condition, ..., envir = parent.frame()) {
+  condition <- eval(substitute(condition), .data, envir)
+  .data[condition, ] <- .data[condition, ] %>% mutate(...)
+  .data
+}
+
+
+# filter for VAF below `cutoff` parameters. This sets to 0 everything both the VAF
 # and the NV entry, bute retains the coverage at the locus (DP). This function accepts
 # also a purity vector in input to adjust accordingly the cutoff
-filtered = dbpmm:::project_VAF_belowValue_each_sample(x, cutoff, 
-                                                      purity = purity)
-
-function(x, VAF.columns, NV.columns, purity, VAF.lower = 0.05)
+ mobster_flt_minfreq = function(x, cutoff)
 {
-  ad.VAF.lower = VAF.lower/purity
-  
-  # Subset the data and keep only SNVs that are either not-called in a sample or that, if
-  # called, they have VAF above cutoff. Keep the coverage information available
-  suitable = NULL
-  for(y in seq(VAF.columns))
-  {
-    v = x[, VAF.columns[y]]  < ad.VAF.lower[y]
-    
-    x[v, VAF.columns[y]] = 0
-    x[v, NV.columns[y]] = 0
-  }
-  
-  pio::pioTit(paste0("SNVs that when called are in the VAF above thresholds - n = ", nrow(x)))
-  pio::pioDisp(ad.VAF.lower)
-  
-  cat('**** \n')
-  
-  pio::pioDisp(x)
-  
-  (x)
-}
+   # Adjusted cutoff
+   ad.cutoff = cutoff/x$purity
+   
+   pio::pioTit("Cutoff(s) adjusted for purity")
+   pio::pioDisp(ad.cutoff)
+   
+   for(s in x$samples)
+   {
+     ids = VAF(x, samples = s) %>% 
+       filter(value < ad.cutoff[s] & value > 0) %>% pull(id)
+     
+     pio::pioStr(
+       paste0("Sample ", s, ' - Number of entries below cutoff is N ='),
+       length(ids), prefix = '\n')
+     
+     x$data = x$data %>% mutate_cond(
+       id %in% ids & sample == s & variable %in% c("VAF", "NV"), value = 0)
+   }
+   
+   # Log update
+   x = logOp(x, paste0("VAF entries below (adjusted) cutoff ", cutoff, ' have been removed.'))
+   
+   all_zeroes(x)
+ }
+ 
+ # filter all mutations with VAF outside "VAF.range". Notice that the lower cutoff is 
+ # useless beacuse already we scaled for purity and removed some SNVs with the previous
+ # function. However, we can eliminate weird mutations which are in LOH regions wrongly
+ # called as diploid
+ mobster_flt_vafrange = function(x, min.vaf, max.vaf)
+ {
+   pio::pioTit(
+     paste0("Keeping only mutations with VAF in (", min.vaf, ' - ', max.vaf, ') in all samples')
+     )
+
+   ids = VAF(x) %>% 
+     filter(value > 0 & 
+              (value < min.vaf | value > max.vaf)) %>% 
+     select(id) %>%
+     distinct() %>% pull(id)
+   
+   pio::pioStr(
+     paste0("Numner of entries outside range is N ="),
+     length(ids), prefix = '\n', suffix = '\n')
+   
+   x = delete_entries(x, ids)
+   
+   # Log update
+   x = logOp(x, paste0("Entries with VAF outside range ", min.vaf, '-', max.vaf, ' removed.'))
+   
+   all_zeroes(x)
+ }
+ 
+ # Ad above but for DP
+ mobster_flt_dprange = function(x, min.DP, max.DP)
+ {
+   pio::pioTit(
+     paste0("Cutting any mutation with DP outside range", min.DP, '-', max.DP)
+   )
+
+   ids = DP(x) %>% 
+     filter(value > 0 & 
+              (value < min.DP | value > max.DP)) %>% 
+     select(id) %>%
+     distinct() %>% pull(id)
+   
+   pio::pioStr(
+     paste0("Number of entries outside range is N ="),
+     length(ids), prefix = '\n')
+   
+   x = delete_entries(x, ids)
+   
+   x = logOp(x, paste0("Entries with DP outside range ", min.DP, '-', max.DP, ' removed.'))
+   
+   all_zeroes(x)
+ }
+ 
+
+ delete_entries = function(x, ids)
+ {
+   x$data = x$data %>% 
+     filter(!id %in% ids)
+   
+   if(!is.null(x$map_mut_seg))
+     x$map_mut_seg = x$map_mut_seg %>% 
+       filter(!id %in% ids)
+   
+   if(!is.null(x$VAF_cn_adjustment))
+     x$VAF_cn_adjustment = x$VAF_cn_adjustment %>% 
+       filter(!id %in% ids)
+   
+   if(!is.null(x$locations))
+     x$locations = x$locations %>% 
+       filter(!id %in% ids)
+   
+   x
+ }
+ 
+ 
+ all_zeroes = function(x)
+ {
+   ids = VAF(x) %>%
+     filter(value == 0) %>%
+     group_by(id) %>%
+     summarise(nsamples = length(unique(sample))) %>%
+     filter(nsamples == length(x$samples)) %>%
+     pull(id)
+   
+   if(length(ids) > 0) {
+     pio::pioStr("Number of entries that have VAF = 0 in all samples; N =", length(ids))
+   }
+     
+   delete_entries(x, ids)
+ }
