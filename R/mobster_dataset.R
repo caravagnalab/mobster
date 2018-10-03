@@ -446,7 +446,7 @@ mobster_fit_multivariate = function(x, samples = x$samples, ...)
 #' @examples
 mobster_fit_sciClone = function(x, ...) 
 {
-  inputs = convert_sciClone_input(x)
+  inputs = mobster:::convert_sciClone_input(x)
   
   library(sciClone)
   

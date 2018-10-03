@@ -188,6 +188,8 @@ convert_sciClone_input = function(x)
       distinct() 
     colnames(CN.segment) = c("chr", 'start', 'stop')
     
+    CN.segment$chr = as.numeric(sapply(CN.segment$chr, function(w) substr(w, 4, nchar(w))))
+    
     CN.segment$segment_mean = CN.copies
       
     CN = append(CN, list(as.data.frame(CN.segment)))
@@ -214,19 +216,24 @@ convert_sciClone_input = function(x)
     sample.data = sample.data %>%
       mutate(refCount = DP - NV,
              varCount = NV,
-             VAF = VAF * 100) %>%
-      select(id, refCount, varCount, VAF)
+             vaf = VAF * 100) %>%
+      select(id, refCount, varCount, vaf)
   
     sample.locs = locs %>%  
       filter(id %in% sample.data$id) %>%
       mutate(start = from) %>%
       select(id, chr, start)
+    sample.locs$start = as.numeric(sample.locs$start)
     
+    df = full_join(sample.data, sample.locs, by = 'id')
+    df = df %>% select(chr, start, refCount, varCount, vaf)
+    
+    df$chr = as.numeric(sapply(df$chr, function(w) substr(w, 4, nchar(w))))
     
     MUTS = append(MUTS, 
                   list(
                     as.data.frame(
-                      full_join(sample.data, sample.locs, by = 'id')
+                      df
                     )))
   }
   
