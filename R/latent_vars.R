@@ -41,7 +41,6 @@ latent_vars = function(x, clusters_tibble = NULL) {
   
   NLL    = -sum(Z)  # Evaluate the NLL
   
-  
   return(list(NLL = NLL, z_nk = z_nk, pdf.w = pdf.w, a = a, b = b, pi = pi, shape = shape, scale = scale))
 }
 

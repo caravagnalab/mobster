@@ -558,59 +558,16 @@ mobster_fit = function(x,
 
     fit$N.k[names(obFreq)] = obFreq
     
+    
     ##==============================
     # Scores for model selection   #
     ##==============================
-    if (tail)
-      numParams = fit$K + 2 * fit$Kbeta + 1          # Total number of parameters i.e. pi (Beta + Pareto) + 2 * Kbeta (Beta) + 1 (Pareto)
-    else
-      numParams = (fit$K - 1) + 2 * fit$Kbeta         # Total number of parameters i.e. pi (Beta) + 2 * Kbeta (Beta)
+    fit$scores = latent_vars_scores(
+      latent_vars(fit), # Extract latent variables
+      fit$K, 
+      fit$fit.tail, 
+      fit$data$cluster)
 
-    BIC <-
-      2 * fit$NLL + numParams * log(fit$N)     # BIC = -2*ln(L) + params*ln(N)
-    AIC <-
-      2 * fit$NLL + 2 * numParams              # AIC = -2*ln(L) + 2*params
-
-
-    # Integrated Complete Likelihood criterion -- uses standard entropy
-    entropy <- -sum(fit$z_nk * log(fit$z_nk), na.rm = TRUE)
-    ICL <- BIC + entropy
-
-    # Integrated Complete Likelihood criterion with reduced entropy (only for
-    # latent variable that involve subclones -- i.e., Betas). I think this is also a sort of
-    # conditional entropy where we condition on the MAP estimate of a mutation being part
-    # of a clone, rather than tail.
-
-    # HTake the MAP estimates of z_nk, and select only entries that are assigned
-    # to a Beta component (i.e. those with arg_max != Tail)
-    fit$cz_nk = fit$z_nk[
-      fit$data$cluster!= 'Tail', 
-      2:ncol(fit$z_nk), 
-      drop = FALSE]
-
-    # This is un-normalized -- we compute the empirical normalizing constant (C)
-    C = rowSums(fit$cz_nk)
-    for (i in 1:nrow(fit$cz_nk))
-      fit$cz_nk [i, ] = fit$cz_nk [i, ] / C[i]
-
-    # The reduced entropy is the entropy of this distribution
-    rentropy = -sum(fit$cz_nk  * log(fit$cz_nk), na.rm = TRUE)
-
-    # Integrated Complete Likelihood criterion with reduced entropy
-    reICL <- BIC + rentropy
-
-    fit$scores = data.frame(
-      NLL = fit$NLL,
-      BIC = BIC,
-      AIC = AIC,
-      entropy = entropy,
-      ICL = ICL,
-      reICL = reICL,
-      size = numParams
-    )
-    
-    # fit$Clusters = prepare_Clusters_tibble(fit) 
-      
     if (is_verbose) {
       print.dbpmm(fit)
       cat('\n')
