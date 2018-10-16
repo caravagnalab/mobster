@@ -412,10 +412,15 @@ mobster_fit_multivariate = function(x, samples = x$samples, ...)
                            
                            print(data)
                            
-                           mobster_fit(
+                           mf = mobster_fit(
                              x = data,
                              annotation = w,
                              ...)
+                           
+                           # Log update
+                           x = logOp(x, paste0("Fit MOBSTER to", w, collapse = ', '))
+                           
+                           mf
                          })
   
   names(x$fit.MOBSTER) = x$samples
@@ -424,9 +429,6 @@ mobster_fit_multivariate = function(x, samples = x$samples, ...)
   pio::pioTit("MOBSTER fits")
   
   for(s in x$samples) print(x$fit.MOBSTER[[s]]$best)
-  
-  # Log update
-  x = logOp(x, paste0("Fit MOBSTER to", x$samples, collapse = ', '))
   
   x
 }
@@ -444,18 +446,30 @@ mobster_fit_multivariate = function(x, samples = x$samples, ...)
 #' @import sciClone
 #'
 #' @examples
-mobster_fit_sciClone = function(x, ...) 
+mobster_fit_sciClone = function(x, 
+                                minimumDepth = 0, 
+                                maximumClusters = 2 * length(x$samples),
+                                ...) 
 {
   inputs = mobster:::convert_sciClone_input(x)
+
+  names(inputs$CN) = x$samples
+  names(inputs$MUTS) = x$samples
   
   library(sciClone)
   
-  pio::pioTit("Fitting data with sciClone")
-  
+  pio::pioHdr("Fitting read counts with the Binomial model available in sciClone",
+              toPrint = c(
+                `Minimum depth` = minimumDepth,
+                `Maximum clusters` = maximumClusters
+              ))
+
   sciClone.fit = sciClone(
     vafs = inputs$MUTS,
     copyNumberCalls = inputs$CN,
     sampleNames = x$samples,
+    minimumDepth = minimumDepth,
+    maximumClusters = maximumClusters,
     clusterMethod = 'bmm',
     ...
     )
@@ -470,6 +484,47 @@ mobster_fit_sciClone = function(x, ...)
   
   # Log update
   x = logOp(x, paste0("Fit sciClone to", x$samples, collapse = ', '))
+  
+  x
+}
+
+
+#' Title
+#'
+#' @param x 
+#' @param ... 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+mobster_fit_BMM = function(x, ...) 
+{
+  DP_df = NV_df = NULL
+  
+  for(s in x$samples)
+  {
+    data = mobster:::DP(x, samples = s) %>% 
+      tidyr::spread(variable, value)
+    
+    colnames(data)[3] = s
+    DP_df = bind_cols(DP_df, data[, 3])
+    
+    data = mobster:::NV(x, samples = s) %>% 
+      tidyr::spread(variable, value)
+    
+    colnames(data)[3] = s
+    NV_df = bind_cols(NV_df, data[, 3])
+    
+  }
+  
+  x$fit.BMM = vbdbmm::bmm_mv_em(
+    successes = as.matrix(NV_df), 
+    trials = as.matrix(DP_df),
+    ...)
+  
+  # Log update
+  x = logOp(x, paste0("Fit BMM to ", x$samples, collapse = ', '))
   
   x
 }
@@ -518,9 +573,7 @@ mobster_purity = function(x, peak.range = c(0.2, 0.5), m.peak = 10)
 }
 
 
-###########################################################################   
 ####################### Private auxiliary functions #######################
-###########################################################################  
 
 logOp = function(obj, op)
 {

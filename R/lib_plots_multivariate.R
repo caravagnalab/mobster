@@ -275,7 +275,7 @@ plot_2DVAF = function(data, x, y, cluster = NULL,
 
   require(ggplot2)
 
-  data = data.frame(data)
+  # data = data.frame(data)
 
   if(!is.null(cluster))
     p = ggplot(data, aes(x = eval(parse(text = x)), colour = factor(eval(parse(text = cluster))), y = eval(parse(text = y)))) +

@@ -4,7 +4,7 @@
 \alias{mobster_flt_downsample}
 \title{Subsample data}
 \usage{
-mobster_flt_downsample(obj, N)
+mobster_flt_downsample(obj, n)
 }
 \arguments{
 \item{obj}{}

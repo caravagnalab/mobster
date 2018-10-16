@@ -128,6 +128,48 @@ MClusters = function(x, annotations = FALSE)
   MOBSTER_clusters
 }
 
+#' Getter for sciClone clustering
+#'
+#' @param x 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+SClusters = function(x, annotations = FALSE)
+{
+  if(is.null(x$fit.sciClone)) stop("sciClone clusters are not available!")
+  
+  # list.best = lapply(
+  #   x$fit.MOBSTER, 
+  #   function(w) return(w$best$data %>% select(-sample, -VAF))
+  # )
+  # 
+  # MOBSTER_clusters = list.best[[1]]
+  # 
+  # for(i in 2:length(list.best)) {
+  #   MOBSTER_clusters = full_join(MOBSTER_clusters, 
+  #                                list.best[[i]], 
+  #                                by = 'id', 
+  #                                suffix = 
+  #                                  c(
+  #                                    paste0('.', names(x$fit.MOBSTER)[i - 1]),
+  #                                    paste0('.', names(x$fit.MOBSTER)[i])
+  #                                  ))
+  # }
+  # 
+  # if(annotations) 
+  # {
+  #   annotations = Annotations(x, ids = MOBSTER_clusters$id) %>%
+  #     spread(variable, value)
+  #   
+  #   MOBSTER_clusters = full_join(MOBSTER_clusters, annotations, by = 'id')
+  #   MOBSTER_clusters = full_join(MOBSTER_clusters, x$map_mut_seg, by = 'id')
+  # }
+  # 
+  # MOBSTER_clusters
+}
+
 # 
 # MOBSTER_clusters$anyTail = 
 #   apply(MOBSTER_clusters, 1, function(w) any(w == 'Tail', na.rm = TRUE) )

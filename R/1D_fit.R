@@ -6,7 +6,7 @@
 #' @param X Data, a tibble with at least a VAF column  with values in (0,1).
 #' @param K A vector with the number of Beta components to use. A single  Pareto component is used to model
 #' tails, see also "tail". All values of K must be positive and strictly greater than 0.
-#' @param samples Number of fits that should be attempted for each value of K. This value >1 makes senso only if
+#' @param n Number of fits that should be attempted for each value of K. This value >1 makes senso only if
 #' one uses randomized initial conditions, of course.
 #' @param init Initial values for the paremeters. By using "ranodm" mean and variance for each Beta component
 #' are randomply sampled in the interval (0,1). PARETO??? If this is a list with K-dimensional vectors named 'a' and 'b',
@@ -41,7 +41,7 @@
 #' @examples will make some
 mobster_fit = function(x,
                        K = 1:3,
-                       samples = 10,
+                       n = 10,
                        init = 'peaks',
                        tail = c(TRUE, FALSE),
                        epsilon = 1e-10,
@@ -57,6 +57,8 @@ mobster_fit = function(x,
                        trace = FALSE)
 {
 
+  samples = n
+  
   # Check for basic input requirements
   stopifnot(is.numeric(samples))
   

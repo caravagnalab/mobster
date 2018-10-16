@@ -4,8 +4,7 @@
 \alias{Annotations}
 \title{Title}
 \usage{
-Annotations(x, ids = keys(x), variable = unique(x$annotations$variable),
-  samples = x$samples)
+Annotations(x, ids = keys(x), variables = unique(x$annotations$variable))
 }
 \arguments{
 \item{x}{}

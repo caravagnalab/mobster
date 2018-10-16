@@ -1,3 +1,48 @@
+#' Title
+#'
+#' @param x 
+#' @param type 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+mobster_flt_projection = function(x, type = 'global')
+{
+  clusters = MClusters(x) 
+  
+  colnames(clusters) = gsub('cluster.', '', colnames(clusters))
+  
+  cols.clusters = 2:ncol(clusters)
+
+  # Return object
+  y = x
+  
+  if(type == 'global')
+  {
+    clusters$projected = apply(
+      clusters[, cols.clusters, drop = FALSE], 
+      1, 
+      function(w) any(w == 'Tail', na.rm = TRUE))
+    
+    pio::pioTit("The following will be projected with a global strategy")
+    to_cancel = clusters %>% filter(projected)
+    
+    print(to_cancel)
+    
+    y = mobster:::delete_entries(x, to_cancel %>% pull(id))
+    
+    y = logOp(y, paste0("Projected read counts; type = ", type, ""))
+    
+  }
+  
+  if(type == 'local') stop("TODO")
+    
+  
+  return(y)
+}
+
+
 #'Subsample data
 #'
 #' @param obj 
@@ -13,9 +58,10 @@ mobster_flt_downsample = function(obj, n)
   {
     pio::pioTit(paste0("Subsampling ", n, "entries out of ", N(obj)))
     
-    ids = sample(keys(obj), n)
+    k = mobster:::keys(obj)
+    ids = sample(k, length(k) - n)
     
-    obj = delete_entries(x, ids)
+    obj = mobster:::delete_entries(obj, ids)
     obj = logOp(obj, paste0("Subsampled to N = ", n, ""))
   }
   
