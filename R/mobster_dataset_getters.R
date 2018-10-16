@@ -1,94 +1,226 @@
+####################### Getters for the plain tibble with the stored data
+
 #' Title
 #'
-#' @param x 
-#' @param ids 
-#' @param samples 
+#' @param x
+#' @param ids
+#' @param samples
+#' @param flatten
 #'
 #' @return
 #' @export
 #'
 #' @examples
-VAF = function(x, ids = keys(x), samples = x$samples)
+VAF = function(x,
+               ids = keys(x),
+               samples = x$samples)
 {
   x$data %>%
-    filter(variable == 'VAF' & 
-             id %in% ids & 
+        filter(variable == 'VAF' &
+                 id %in% ids &
+                 sample %in% samples)
+}
+
+#' Title
+#'
+#' @param x
+#' @param ids
+#' @param samples
+#'
+#' @return
+#' @export
+#'
+#' @examples
+DP = function(x,
+              ids = keys(x),
+              samples = x$samples)
+{
+  x$data %>%
+    filter(variable == 'DP' &
+             id %in% ids &
              sample %in% samples)
 }
 
 #' Title
 #'
-#' @param x 
-#' @param ids 
-#' @param samples 
+#' @param x
+#' @param ids
+#' @param samples
 #'
 #' @return
 #' @export
 #'
 #' @examples
-DP = function(x, ids = keys(x), samples = x$samples)
+NV = function(x,
+              ids = keys(x),
+              samples = x$samples)
 {
   x$data %>%
-    filter(variable == 'DP' & 
-             id %in% ids &  
+    filter(variable == 'NV' &
+             id %in% ids &
              sample %in% samples)
 }
 
 #' Title
 #'
-#' @param x 
-#' @param ids 
-#' @param samples 
+#' @param x
+#' @param ids
+#' @param variable
+#' @param samples
 #'
 #' @return
 #' @export
 #'
 #' @examples
-NV = function(x, ids = keys(x), samples = x$samples)
-{
-  x$data %>%
-    filter(variable == 'NV' & 
-             id %in% ids & 
-             sample %in% samples)
-}
-
-#' Title
-#'
-#' @param x 
-#' @param ids 
-#' @param variable 
-#' @param samples 
-#'
-#' @return
-#' @export
-#'
-#' @examples
-Annotations = function(x, ids = keys(x), 
+Annotations = function(x,
+                       ids = keys(x),
                        variables = unique(x$annotations$variable))
 {
-  
   x$annotations %>%
-    filter(variable %in% variables &  
+    filter(variable %in% variables &
              id %in% ids)
 }
 
 
 #' Title
 #'
-#' @param x 
+#' @param x
 #'
 #' @return
 #' @export
 #'
 #' @examples
-N = function(x){
+N = function(x) {
   nrow(VAF(x, samples = x$samples[1]))
 }
 
 
-#' Getter for MOBSTER clustering
+
+####################### Getters for the tibble that are trasnformed to a table with the stored data
+
+#' Title
 #'
 #' @param x 
+#' @param ids 
+#' @param samples 
+#' @param suffix stirng suffix for colnames
+#'
+#' @return
+#' @export
+#'
+#' @examples
+VAF_table = function(x,
+               ids = keys(x),
+               samples = x$samples,
+               suffix = '.VAF')
+{
+  output = tibble(`id` = ids)
+  
+  for(s in samples) {
+    entry = VAF(x, ids = ids, samples = s) %>% spread(variable, value) %>% select(id, VAF) 
+    # %>% rename(!!s := VAF)
+
+    output = full_join(entry, output, by = 'id')  
+  }
+  
+  colnames(output) = c('id', paste0(samples, suffix))
+  
+  output
+}
+
+#' Title
+#'
+#' @param x 
+#' @param ids 
+#' @param samples 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+NV_table = function(x,
+                     ids = keys(x),
+                     samples = x$samples,
+                     suffix = '.NV')
+{
+  output = tibble(`id` = ids)
+  
+  for(s in samples) {
+    entry = NV(x, ids = ids, samples = s) %>% spread(variable, value) %>% select(id, NV) 
+    # %>% rename(!!s := NV)
+    
+    output = full_join(entry, output, by = 'id')  
+  }
+  
+  colnames(output) = c('id', paste0(samples, suffix))
+  
+  output
+}
+
+
+#' Title
+#'
+#' @param x 
+#' @param ids 
+#' @param samples 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+DP_table = function(x,
+                    ids = keys(x),
+                    samples = x$samples,
+                    suffix = '.DP')
+{
+  output = tibble(`id` = ids)
+  
+  for(s in samples) {
+    entry = DP(x, ids = ids, samples = s) %>% spread(variable, value) %>% select(id, DP) 
+    # %>% rename(!!s := NV)
+    
+    output = full_join(entry, output, by = 'id')  
+  }
+  
+  colnames(output) = c('id', paste0(samples, suffix))
+  
+  output
+}
+
+#' Title
+#'
+#' @param x 
+#' @param ids 
+#' @param samples 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+Data_table = function(x,
+                    ids = keys(x),
+                    samples = x$samples)
+{
+  full_join(
+    full_join(
+      VAF_table(x, ids, samples),
+      DP_table(x, ids, samples),
+      by = 'id'),
+    NV_table(x, ids, samples),
+    by = 'id'
+  )
+}
+
+
+
+
+
+
+
+
+#' Getter for MOBSTER clustering
+#'
+#' @param x
 #'
 #' @return
 #' @export
@@ -96,27 +228,27 @@ N = function(x){
 #' @examples
 MClusters = function(x, annotations = FALSE)
 {
-  if(is.null(x$fit.MOBSTER)) stop("MOBSTER clusters are not available!")
+  if (is.null(x$fit.MOBSTER))
+    stop("MOBSTER clusters are not available!")
   
-  list.best = lapply(
-    x$fit.MOBSTER, 
-    function(w) return(w$best$data %>% select(-sample, -VAF))
-    )
+  list.best = lapply(x$fit.MOBSTER,
+                     function(w)
+                       return(w$best$data %>% select(-sample,-VAF)))
   
   MOBSTER_clusters = list.best[[1]]
   
-  for(i in 2:length(list.best)) {
-    MOBSTER_clusters = full_join(MOBSTER_clusters, 
-                                 list.best[[i]], 
-                                 by = 'id', 
-                                 suffix = 
-                                   c(
-                                     paste0('.', names(x$fit.MOBSTER)[i - 1]),
-                                     paste0('.', names(x$fit.MOBSTER)[i])
-                                   ))
+  for (i in 2:length(list.best)) {
+    MOBSTER_clusters = full_join(
+      MOBSTER_clusters,
+      list.best[[i]],
+      by = 'id',
+      suffix =
+        c(paste0('.', names(x$fit.MOBSTER)[i - 1]),
+          paste0('.', names(x$fit.MOBSTER)[i]))
+    )
   }
   
-  if(annotations) 
+  if (annotations)
   {
     annotations = Annotations(x, ids = MOBSTER_clusters$id) %>%
       spread(variable, value)
@@ -130,7 +262,7 @@ MClusters = function(x, annotations = FALSE)
 
 #' Getter for sciClone clustering
 #'
-#' @param x 
+#' @param x
 #'
 #' @return
 #' @export
@@ -138,52 +270,54 @@ MClusters = function(x, annotations = FALSE)
 #' @examples
 SClusters = function(x, annotations = FALSE)
 {
-  if(is.null(x$fit.sciClone)) stop("sciClone clusters are not available!")
+  if (is.null(x$fit.sciClone))
+    stop("sciClone clusters are not available!")
   
   # list.best = lapply(
-  #   x$fit.MOBSTER, 
+  #   x$fit.MOBSTER,
   #   function(w) return(w$best$data %>% select(-sample, -VAF))
   # )
-  # 
+  #
   # MOBSTER_clusters = list.best[[1]]
-  # 
+  #
   # for(i in 2:length(list.best)) {
-  #   MOBSTER_clusters = full_join(MOBSTER_clusters, 
-  #                                list.best[[i]], 
-  #                                by = 'id', 
-  #                                suffix = 
+  #   MOBSTER_clusters = full_join(MOBSTER_clusters,
+  #                                list.best[[i]],
+  #                                by = 'id',
+  #                                suffix =
   #                                  c(
   #                                    paste0('.', names(x$fit.MOBSTER)[i - 1]),
   #                                    paste0('.', names(x$fit.MOBSTER)[i])
   #                                  ))
   # }
-  # 
-  # if(annotations) 
+  #
+  # if(annotations)
   # {
   #   annotations = Annotations(x, ids = MOBSTER_clusters$id) %>%
   #     spread(variable, value)
-  #   
+  #
   #   MOBSTER_clusters = full_join(MOBSTER_clusters, annotations, by = 'id')
   #   MOBSTER_clusters = full_join(MOBSTER_clusters, x$map_mut_seg, by = 'id')
   # }
-  # 
+  #
   # MOBSTER_clusters
 }
 
-# 
-# MOBSTER_clusters$anyTail = 
+#
+# MOBSTER_clusters$anyTail =
 #   apply(MOBSTER_clusters, 1, function(w) any(w == 'Tail', na.rm = TRUE) )
-# 
+#
 
 
 
 
 
 ####################### Private getters
-keys = function(x) { unique(x$data$id) }
+keys = function(x) {
+  unique(x$data$id)
+}
 
 byLoc = function(x, loc.id) {
-  
   muts_CN = x$locations %>%
     spread(variable, value)
   
@@ -191,8 +325,8 @@ byLoc = function(x, loc.id) {
     filter(id == loc.id)
   
   which_muts = muts_CN %>%
-    filter(chr == thisSeg$chr[1] & 
-             from >= thisSeg$from[1] & 
+    filter(chr == thisSeg$chr[1] &
+             from >= thisSeg$from[1] &
              to <= thisSeg$to[1])
   
   which_muts
@@ -200,15 +334,15 @@ byLoc = function(x, loc.id) {
 
 minor = function(x, seg_id, samples = x$samples)
 {
-  x$segments %>% filter(id == seg_id & 
-                          sample == samples & 
+  x$segments %>% filter(id == seg_id &
+                          sample == samples &
                           variable == 'minor') %>% pull(value)
 }
 
 Major = function(x, seg_id, samples = x$samples)
 {
-  x$segments %>% filter(id == seg_id & 
-                          sample == samples & 
+  x$segments %>% filter(id == seg_id &
+                          sample == samples &
                           variable == 'Major') %>% pull(value)
 }
 
@@ -219,40 +353,39 @@ convert_sciClone_input = function(x)
   
   # CNA
   CN = NULL
-  for(s in x$samples)
+  for (s in x$samples)
   {
-
     CN.copies = mobster:::minor(x, seg_id = seg_ids, samples = s) +
       mobster:::Major(x, seg_id = seg_ids, samples = s)
-      
-    CN.segment = x$segments %>% 
+    
+    CN.segment = x$segments %>%
       select(chr, from, to) %>%
-      distinct() 
+      distinct()
     colnames(CN.segment) = c("chr", 'start', 'stop')
     
-    CN.segment$chr = as.numeric(sapply(CN.segment$chr, function(w) substr(w, 4, nchar(w))))
+    CN.segment$chr = as.numeric(sapply(CN.segment$chr, function(w)
+      substr(w, 4, nchar(w))))
     
     CN.segment$segment_mean = CN.copies
-      
+    
     CN = append(CN, list(as.data.frame(CN.segment)))
   }
   
   names(CN) = x$samples
-
+  
   # MUTAITONS
   locs = x$locations %>% spread(variable, value)
   
   MUTS = NULL
   
-  for(s in x$samples)
+  for (s in x$samples)
   {
-    sample.data = bind_rows(
-      VAF(x, samples = s),
-      DP(x, samples = s),
-      NV(x, samples = s))
+    sample.data = bind_rows(VAF(x, samples = s),
+                            DP(x, samples = s),
+                            NV(x, samples = s))
     
     sample.data = sample.data %>% spread(variable, value)
-    sample.data = sample.data[complete.cases(sample.data), ]
+    sample.data = sample.data[complete.cases(sample.data),]
     
     sample.data = sample.data %>% select(id, DP, NV, VAF)
     sample.data = sample.data %>%
@@ -260,8 +393,8 @@ convert_sciClone_input = function(x)
              varCount = NV,
              vaf = VAF * 100) %>%
       select(id, refCount, varCount, vaf)
-  
-    sample.locs = locs %>%  
+    
+    sample.locs = locs %>%
       filter(id %in% sample.data$id) %>%
       mutate(start = from) %>%
       select(id, chr, start)
@@ -270,15 +403,12 @@ convert_sciClone_input = function(x)
     df = full_join(sample.data, sample.locs, by = 'id')
     df = df %>% select(chr, start, refCount, varCount, vaf)
     
-    df$chr = as.numeric(sapply(df$chr, function(w) substr(w, 4, nchar(w))))
+    df$chr = as.numeric(sapply(df$chr, function(w)
+      substr(w, 4, nchar(w))))
     
-    MUTS = append(MUTS, 
-                  list(
-                    as.data.frame(
-                      df
-                    )))
+    MUTS = append(MUTS,
+                  list(as.data.frame(df)))
   }
   
   list(CN = CN, MUTS = MUTS)
 }
-
