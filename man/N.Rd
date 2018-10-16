@@ -2,13 +2,16 @@
 % Please edit documentation in R/mobster_dataset_getters.R
 \name{N}
 \alias{N}
-\title{Title}
+\title{Return the number of mutations in the dataset.}
 \usage{
 N(x)
 }
 \arguments{
-\item{x}{}
+\item{x}{A \code{mbst_data} object}
+}
+\value{
+The number of mutations in the dataset.
 }
 \description{
-Title
+Return the number of mutations in the dataset.
 }

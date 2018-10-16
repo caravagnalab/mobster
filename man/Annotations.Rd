@@ -2,19 +2,25 @@
 % Please edit documentation in R/mobster_dataset_getters.R
 \name{Annotations}
 \alias{Annotations}
-\title{Title}
+\title{Extract annotation values.}
 \usage{
 Annotations(x, ids = keys(x), variables = unique(x$annotations$variable))
 }
 \arguments{
-\item{x}{}
+\item{x}{A \code{mbst_data} object}
 
-\item{ids}{}
+\item{ids}{The IDs of the mutations to extract, all by default.}
 
-\item{variable}{}
-
-\item{samples}{}
+\item{samples}{The samples for which we extract the data, all by default.}
+}
+\value{
+A tibble of the required entries
 }
 \description{
-Title
+Extract from the internal representation of an object all the entries
+that refer to the annotation values. These are all values which are not
+any of VAF, DP or NV, or any of the location coordinates for the input
+mutations. As for the other getters, you can subset by sample and mutation
+ID; by default all entries are returbed. The output is a tibble; no other
+transformations are executed.
 }

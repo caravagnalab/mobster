@@ -1,13 +1,19 @@
 ####################### Getters for the plain tibble with the stored data
 
-#' Title
+#' Extract VAF values.
+#' 
+#' @description 
+#' 
+#' Extract from the internal representation of an object all the entries
+#' that refer to the VAF values. These can be subset by sample and mutation
+#' ID; by default all entries are returbed. The output is a tibble; no other
+#' transformations are executed.
 #'
-#' @param x
-#' @param ids
-#' @param samples
-#' @param flatten
+#' @param x A \code{mbst_data} object
+#' @param ids The IDs of the mutations to extract, all by default.
+#' @param samples The samples for which we extract the data, all by default.
 #'
-#' @return
+#' @return A tibble of the required entries
 #' @export
 #'
 #' @examples
@@ -21,13 +27,20 @@ VAF = function(x,
                  sample %in% samples)
 }
 
-#' Title
+#' Extract DP values.
+#' 
+#' @description 
+#' 
+#' Extract from the internal representation of an object all the entries
+#' that refer to the DP values. These can be subset by sample and mutation
+#' ID; by default all entries are returbed. The output is a tibble; no other
+#' transformations are executed.
 #'
-#' @param x
-#' @param ids
-#' @param samples
+#' @param x A \code{mbst_data} object
+#' @param ids The IDs of the mutations to extract, all by default.
+#' @param samples The samples for which we extract the data, all by default.
 #'
-#' @return
+#' @return A tibble of the required entries
 #' @export
 #'
 #' @examples
@@ -41,13 +54,20 @@ DP = function(x,
              sample %in% samples)
 }
 
-#' Title
+#' Extract NV values.
+#' 
+#' @description 
+#' 
+#' Extract from the internal representation of an object all the entries
+#' that refer to the NV values. These can be subset by sample and mutation
+#' ID; by default all entries are returbed. The output is a tibble; no other
+#' transformations are executed.
 #'
-#' @param x
-#' @param ids
-#' @param samples
+#' @param x A \code{mbst_data} object
+#' @param ids The IDs of the mutations to extract, all by default.
+#' @param samples The samples for which we extract the data, all by default.
 #'
-#' @return
+#' @return A tibble of the required entries
 #' @export
 #'
 #' @examples
@@ -61,17 +81,26 @@ NV = function(x,
              sample %in% samples)
 }
 
-#' Title
+#' Extract annotation values.
+#' 
+#' @description 
+#' 
+#' Extract from the internal representation of an object all the entries
+#' that refer to the annotation values. These are all values which are not
+#' any of VAF, DP or NV, or any of the location coordinates for the input
+#' mutations. As for the other getters, you can subset by sample and mutation
+#' ID; by default all entries are returbed. The output is a tibble; no other
+#' transformations are executed.
 #'
-#' @param x
-#' @param ids
-#' @param variable
-#' @param samples
+#' @param x A \code{mbst_data} object
+#' @param ids The IDs of the mutations to extract, all by default.
+#' @param samples The samples for which we extract the data, all by default.
 #'
-#' @return
+#' @return A tibble of the required entries
 #' @export
 #'
 #' @examples
+
 Annotations = function(x,
                        ids = keys(x),
                        variables = unique(x$annotations$variable))
@@ -81,31 +110,22 @@ Annotations = function(x,
              id %in% ids)
 }
 
+####################### Getters for the tibble, which we trasnform to a table with the stored data
 
-#' Title
+#' Tabular VAF values.
+#' 
+#' @description 
+#' 
+#' Similarly to \code{VAF}, this function however returns a spread-like table 
+#' with one column per VAF value. As \code{VAF} the entries can be subset as
+#' required, and the columns named with a particular format.
 #'
-#' @param x
+#' @param x A \code{mbst_data} object
+#' @param ids The IDs of the mutations to extract, all by default.
+#' @param samples The samples for which we extract the data, all by default.
+#' @param suffix Every column will be called as \code{sample_name.VAF} when \code{suffix = '.VAF'}
 #'
-#' @return
-#' @export
-#'
-#' @examples
-N = function(x) {
-  nrow(VAF(x, samples = x$samples[1]))
-}
-
-
-
-####################### Getters for the tibble that are trasnformed to a table with the stored data
-
-#' Title
-#'
-#' @param x 
-#' @param ids 
-#' @param samples 
-#' @param suffix stirng suffix for colnames
-#'
-#' @return
+#' @return A spread tibble of the required entries.
 #' @export
 #'
 #' @examples
@@ -128,13 +148,20 @@ VAF_table = function(x,
   output
 }
 
-#' Title
+#' Tabular NV values.
+#' 
+#' @description 
+#' 
+#' Similarly to \code{NV}, this function however returns a spread-like table 
+#' with one column per VAF value. As \code{NV} the entries can be subset as
+#' required, and the columns named with a particular format.
 #'
-#' @param x 
-#' @param ids 
-#' @param samples 
+#' @param x A \code{mbst_data} object
+#' @param ids The IDs of the mutations to extract, all by default.
+#' @param samples The samples for which we extract the data, all by default.
+#' @param suffix Every column will be called as \code{sample_name.NV} when \code{suffix = '.NV'}
 #'
-#' @return
+#' @return A spread tibble of the required entries.
 #' @export
 #'
 #' @examples
@@ -158,13 +185,20 @@ NV_table = function(x,
 }
 
 
-#' Title
+#' Tabular DP values.
+#' 
+#' @description 
+#' 
+#' Similarly to \code{DP}, this function however returns a spread-like table 
+#' with one column per VAF value. As \code{DP} the entries can be subset as
+#' required, and the columns named with a particular format.
 #'
-#' @param x 
-#' @param ids 
-#' @param samples 
+#' @param x A \code{mbst_data} object
+#' @param ids The IDs of the mutations to extract, all by default.
+#' @param samples The samples for which we extract the data, all by default.
+#' @param suffix Every column will be called as \code{sample_name.DP} when \code{suffix = '.DP'}
 #'
-#' @return
+#' @return A spread tibble of the required entries.
 #' @export
 #'
 #' @examples
@@ -187,13 +221,18 @@ DP_table = function(x,
   output
 }
 
-#' Title
+#' Tabular VAF, DP and NV values.
+#' 
+#' @description 
+#' 
+#' This is just a wrapper to a combined call of function \code{VAF_table}, \code{DP_table} and 
+#' \code{NV_table}. The resulting outputs are bound by column; ususal subset options are available.
 #'
-#' @param x 
-#' @param ids 
-#' @param samples 
+#' @param x A \code{mbst_data} object
+#' @param ids The IDs of the mutations to extract, all by default.
+#' @param samples The samples for which we extract the data, all by default.
 #'
-#' @return
+#' @return A spread tibble of the required entries.
 #' @export
 #'
 #' @examples
@@ -212,10 +251,21 @@ Data_table = function(x,
 }
 
 
+####################### Getters for the cohort size, etc.
 
+#' Return the number of mutations in the dataset.
+#'
+#' @param x A \code{mbst_data} object
+#'
+#' @return The number of mutations in the dataset.
+#' @export
+#'
+#' @examples
+N = function(x) {
+  nrow(VAF(x, samples = x$samples[1]))
+}
 
-
-
+####################### Getters for the clustering computed
 
 
 #' Getter for MOBSTER clustering

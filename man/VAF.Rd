@@ -2,17 +2,23 @@
 % Please edit documentation in R/mobster_dataset_getters.R
 \name{VAF}
 \alias{VAF}
-\title{Title}
+\title{Extract VAF values.}
 \usage{
 VAF(x, ids = keys(x), samples = x$samples)
 }
 \arguments{
-\item{x}{}
+\item{x}{A \code{mbst_data} object}
 
-\item{ids}{}
+\item{ids}{The IDs of the mutations to extract, all by default.}
 
-\item{samples}{}
+\item{samples}{The samples for which we extract the data, all by default.}
+}
+\value{
+A tibble of the required entries
 }
 \description{
-Title
+Extract from the internal representation of an object all the entries
+that refer to the VAF values. These can be subset by sample and mutation
+ID; by default all entries are returbed. The output is a tibble; no other
+transformations are executed.
 }
