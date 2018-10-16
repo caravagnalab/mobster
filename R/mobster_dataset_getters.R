@@ -265,8 +265,9 @@ N = function(x) {
   nrow(VAF(x, samples = x$samples[1]))
 }
 
-####################### Getters for the clustering computed
+# K = 
 
+####################### Getters for the clustering computed
 
 #' Getter for MOBSTER clustering
 #'
@@ -323,34 +324,14 @@ SClusters = function(x, annotations = FALSE)
   if (is.null(x$fit.sciClone))
     stop("sciClone clusters are not available!")
   
-  # list.best = lapply(
-  #   x$fit.MOBSTER,
-  #   function(w) return(w$best$data %>% select(-sample, -VAF))
-  # )
-  #
-  # MOBSTER_clusters = list.best[[1]]
-  #
-  # for(i in 2:length(list.best)) {
-  #   MOBSTER_clusters = full_join(MOBSTER_clusters,
-  #                                list.best[[i]],
-  #                                by = 'id',
-  #                                suffix =
-  #                                  c(
-  #                                    paste0('.', names(x$fit.MOBSTER)[i - 1]),
-  #                                    paste0('.', names(x$fit.MOBSTER)[i])
-  #                                  ))
-  # }
-  #
-  # if(annotations)
-  # {
-  #   annotations = Annotations(x, ids = MOBSTER_clusters$id) %>%
-  #     spread(variable, value)
-  #
-  #   MOBSTER_clusters = full_join(MOBSTER_clusters, annotations, by = 'id')
-  #   MOBSTER_clusters = full_join(MOBSTER_clusters, x$map_mut_seg, by = 'id')
-  # }
-  #
-  # MOBSTER_clusters
+  sciClone.fit = x$fit.sciClone
+  
+  clusters = as_tibble(sciClone.fit@vafs.merged)
+  
+  clusters = clusters %>% select(NA1, cluster, starts_with('cluster'))
+  colnames(clusters)[c(1,2)] = c('id', 'cluster.MOBSTER')
+  
+  clusters
 }
 
 #
@@ -451,7 +432,7 @@ convert_sciClone_input = function(x)
     sample.locs$start = as.numeric(sample.locs$start)
     
     df = full_join(sample.data, sample.locs, by = 'id')
-    df = df %>% select(chr, start, refCount, varCount, vaf)
+    df = df %>% select(chr, start, refCount, varCount, vaf, id)
     
     df$chr = as.numeric(sapply(df$chr, function(w)
       substr(w, 4, nchar(w))))
