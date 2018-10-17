@@ -4,8 +4,9 @@
 \alias{plot_report_MOBSTER}
 \title{Title}
 \usage{
-plot_report_MOBSTER(res, fig.lab = "Figure 1", title = "MOBSTER top fit",
-  palette = "Set1", TOP = 5, cex = 1, boxplot.ICL.range = NULL)
+plot_report_MOBSTER(res, fig.lab = "Figure 1",
+  title = "MOBSTER top fit", palette = "Set1", TOP = 5, cex = 1,
+  boxplot.ICL.range = NULL)
 }
 \arguments{
 \item{boxplot.ICL.range}{}

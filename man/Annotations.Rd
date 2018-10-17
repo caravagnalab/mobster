@@ -4,7 +4,8 @@
 \alias{Annotations}
 \title{Extract annotation values.}
 \usage{
-Annotations(x, ids = keys(x), variables = unique(x$annotations$variable))
+Annotations(x, ids = keys(x),
+  variables = unique(x$annotations$variable))
 }
 \arguments{
 \item{x}{A \code{mbst_data} object}

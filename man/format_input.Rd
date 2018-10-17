@@ -4,7 +4,8 @@
 \alias{format_input}
 \title{Prepare multivariate inputs.}
 \usage{
-format_input(data, CN, samples, VAF.range = c(0.05, 0.6), subsample = NULL)
+format_input(data, CN, samples, VAF.range = c(0.05, 0.6),
+  subsample = NULL)
 }
 \arguments{
 \item{data}{input SNVs detected across all samples}
@@ -19,6 +20,9 @@ format_input(data, CN, samples, VAF.range = c(0.05, 0.6), subsample = NULL)
 }
 \value{
 data for input in sciClone
+}
+\description{
+Prepare multivariate inputs.
 }
 \details{
 Requirement for a multivariate analysis, a data frame with this format

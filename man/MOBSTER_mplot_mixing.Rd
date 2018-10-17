@@ -4,8 +4,8 @@
 \alias{MOBSTER_mplot_mixing}
 \title{Title}
 \usage{
-MOBSTER_mplot_mixing(data, cluster, title = "Mixing proportions", cex = 1,
-  cutoff = 0.05, palette = "Set1", free = FALSE)
+MOBSTER_mplot_mixing(data, cluster, title = "Mixing proportions",
+  cex = 1, cutoff = 0.05, palette = "Set1", free = FALSE)
 }
 \arguments{
 \item{free}{}

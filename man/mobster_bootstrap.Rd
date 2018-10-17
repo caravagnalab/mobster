@@ -5,8 +5,9 @@
 \title{Parallel implementation of parametric/ nonparametric 
 bootstrap for MOBSTER.}
 \usage{
-mobster_bootstrap(x, n = 100, bootstrap = "parametric", palette = "Set1",
-  alpha = 1, tail.color = "darkgray", cores.ratio = 0.8, ...)
+mobster_bootstrap(x, n = 100, bootstrap = "parametric",
+  palette = "Set1", alpha = 1, tail.color = "darkgray",
+  cores.ratio = 0.8, ...)
 }
 \arguments{
 \item{x}{a fit by MOBSTER}

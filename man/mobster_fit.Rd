@@ -4,10 +4,11 @@
 \alias{mobster_fit}
 \title{MOBSTER fitting function}
 \usage{
-mobster_fit(x, K = 1:3, n = 10, init = "peaks", tail = c(TRUE, FALSE),
-  epsilon = 1e-10, maxIter = 2000, is_verbose = FALSE, fit.type = "MM",
-  parallel = FALSE, cores.ratio = 0.8, file.dump = NA, seed = 12345,
-  annotation = NULL, model.selection = "reICL", trace = FALSE)
+mobster_fit(x, K = 1:3, n = 10, init = "peaks", tail = c(TRUE,
+  FALSE), epsilon = 1e-10, maxIter = 2000, is_verbose = FALSE,
+  fit.type = "MM", parallel = FALSE, cores.ratio = 0.8,
+  file.dump = NA, seed = 12345, annotation = NULL,
+  model.selection = "reICL", trace = FALSE)
 }
 \arguments{
 \item{K}{A vector with the number of Beta components to use. A single  Pareto component is used to model
