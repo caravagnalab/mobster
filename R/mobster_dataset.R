@@ -488,6 +488,109 @@ mobster_fit_sciClone = function(x,
   x
 }
 
+#' Title
+#'
+#' @param x 
+#' @param ... 
+#'
+#' @return
+#' 
+#' @export
+#' 
+#' @import sciClone
+#'
+#' @examples
+MOBSTER_fit_pyClone <- 
+  function(dataset, iterations=10000, burnin=1000, seed=100) {
+    
+    
+    # Check inputs:
+    if (!is.numeric(iterations) | !is.numeric(burnin)){
+      stop("Parameters 'interations' or 'burnin' not numeric.\n")
+    }
+    
+    if (is.na(iterations) | is.na(burnin)) {
+      stop("Parameters 'interations' and 'burnin' can not be 'NA'.\n")
+    }
+    
+    if (!"mbst_data" %in% class(dataset)) {
+      stop("Parameters 'dataset' has to be a mobster object.\n")
+    }
+    
+    
+    # Export data:
+    
+    pyclone_workdir <- tempfile(pattern="")
+    dir.create(pyclone_workdir, recursive=TRUE, showWarnings=FALSE)
+    
+    samples <- dataset$samples
+    
+    sfiles <- file.path(pyclone_workdir, paste0(samples, ".tsv"))  # output file names.
+    
+    sdata <- lapply(samples, function(sample) { # construct list of data
+      mut_ids = mobster:::keys(dataset)
+      
+      nv = NV(dataset, ids=mut_ids, samples=sample)
+      nv = nv[match(mut_ids, nv$id),] # ensure correct order
+      
+      dp = DP(dataset, ids=mut_ids, samples=sample)
+      dp = dp[match(mut_ids, dp$id),] # ensure correct order
+      
+      
+      # return
+      data.frame(
+        mutation_id = mut_ids,
+        ref_counts = dp$value - nv$value,
+        var_counts = nv$value,
+        normal_cn = 2,
+        minor_cn = 1,
+        major_cn = 1
+      )
+    })
+    
+    
+    for (i in seq(samples)) {# write tables
+      write.table(sdata[[i]], sfiles[i], sep="\t", row.names=FALSE, quote=FALSE)
+    }
+    
+    
+    # Sys call to PyClone:
+    cmd = paste0("PyClone run_analysis_pipeline", " \\\n",
+                 "   --in_files ", paste(sfiles, collapse = " ")," \\\n",
+                 "   --samples ", paste(samples, collapse = " "), " \\\n",
+                 "   --num_iters ", iterations, " \\\n",
+                 "   --burnin ", burnin, " \\\n",
+                 "   --seed ", seed, " \\\n",
+                 #"   --max_clusters ", max_clusters, " \\\n",
+                 "   --working_dir ", pyclone_workdir)
+    
+    cat(crayon::red("Calling PyClone:\n\n"), crayon::blue(cmd))
+    log = system(cmd, intern = TRUE)
+    
+    
+    # Load PyClone outputs:
+    trace_files = list.files(file.path(pyclone_workdir, "trace"), full.names = 1)
+    trace_data  = lapply(trace_files, read.delim, stringsAsFactor = 0)
+    names(trace_data) = gsub("[.]tsv[.]bz2$", "", basename(trace_files))
+    
+    cluster_file = file.path(pyclone_workdir, "tables", "cluster.tsv")
+    cluster_data = read.delim(cluster_file, stringsAsFactor = 0)
+    
+    loci_file = file.path(pyclone_workdir, "tables", "loci.tsv")
+    loci_data = read.delim(loci_file, stringsAsFactor = 0)
+    
+    results = list(loci = loci_data, clusters = cluster_data, traces = trace_data)
+    
+    
+    # Clean up temp dir:
+    unlink(pyclone_workdir, recursive = TRUE)
+    
+    
+    # return
+    dataset$fit.pyClone = results
+    return(dataset)
+  }
+
 
 #' Title
 #'

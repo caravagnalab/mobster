@@ -334,6 +334,32 @@ SClusters = function(x, annotations = FALSE)
   clusters
 }
 
+
+#' Getter for pyClone clustering
+#'
+#' @param x
+#'
+#' @return
+#' @export
+#'
+#' @examples
+PClusters <- function(x, annotations = FALSE) {
+  
+  if (is.null(x$fit.pyClone)) 
+    stop("pyClone clusters are not available!\n")
+  
+  fit = x$fit.pyClone
+  
+  clusters = unique(fit$loci[,c("mutation_id","cluster_id")])
+  clusters = as_tibble(clusters)
+  colnames(clusters)[c(1,2)] = c("id", "cluster.pyClone")
+  
+  clusters = clusters[match(mobster:::keys(x), clusters$id),]
+  
+  return(clusters)
+}
+
+
 #
 # MOBSTER_clusters$anyTail =
 #   apply(MOBSTER_clusters, 1, function(w) any(w == 'Tail', na.rm = TRUE) )
