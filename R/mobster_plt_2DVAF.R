@@ -53,7 +53,7 @@ mobster_plt_2DVAF = function(obj,
       y = eval(parse(text = y))
     )) +
     scale_color_brewer(palette = palette, drop = FALSE) +
-    geom_point(alpha = 0.3, size = .2)
+    geom_point(alpha = 0.3)
   
   if (is.null(cluster))
     p = ggplot(data, aes(
@@ -61,7 +61,7 @@ mobster_plt_2DVAF = function(obj,
       colour = 'Unclustered',
       y = eval(parse(text = y))
     )) +
-    geom_point(alpha = 0.3, colour = 'black', size = .2)
+    geom_point(alpha = 0.3, colour = 'black')
   
   if (max(data[, x], na.rm = T) < 1)
     p = p + xlim(0, 1)

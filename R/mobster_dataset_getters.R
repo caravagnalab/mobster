@@ -329,7 +329,7 @@ SClusters = function(x, annotations = FALSE)
   clusters = as_tibble(sciClone.fit@vafs.merged)
   
   clusters = clusters %>% select(NA1, cluster, starts_with('cluster'))
-  colnames(clusters)[c(1,2)] = c('id', 'cluster.MOBSTER')
+  colnames(clusters)[c(1,2)] = c('id', 'cluster.sciClone')
   
   clusters
 }
