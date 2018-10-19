@@ -5,8 +5,8 @@
 \title{Title}
 \usage{
 mobster_plt_2DVAF(obj, x, y, cluster = NULL, cluster.label = "cluster",
-  marginal = FALSE, cex = 1, VAF.range = c(0.05, 0.6),
-  marginal.remove.zeroes = T, palette = "Set1")
+  marginal = FALSE, cex = 1, marginal.remove.zeroes = T,
+  palette = "Set1")
 }
 \arguments{
 \item{marginal}{}

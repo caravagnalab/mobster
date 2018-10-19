@@ -7,18 +7,25 @@
 #' @param title 
 #' @param ... 
 #' @param samples
+#' @param MOBSTER 
+#' @param cex 
+#' @param panel.labels 
 #'
 #' @return
-#' @export
+#' @import pio
 #'
+#' @export
+#' 
 #' @examples
 mobster_plt_2DVAF_matrix = function(
   x,
   samples = x$samples,
+  MOBSTER = !is.null(x$fit.MOBSTER),
   cluster = NULL,
   cluster.label = 'cluster',  
   title = x$description,
   cex = 1,
+  panel.labels = LETTERS,
   ...)
 {
   # pio::pioHdr("MOBSTER - Multivariate fits plot",
@@ -31,19 +38,23 @@ mobster_plt_2DVAF_matrix = function(
   # 
   require(ggplot2)
   
-  best.MOBSTER = lapply(x$fit.MOBSTER, function(w) w$best)
-  best.MOBSTER.plots = mobster:::plot_diagonal_MOBSTER(best.MOBSTER, samples, cex = cex)
   
-  #  Diagonal
-  MB.figure = ggpubr::ggarrange(
-    plotlist = best.MOBSTER.plots,
-    nrow = 1,
-    ncol = length(best.MOBSTER),
-    labels = LETTERS[seq(best.MOBSTER)]
-  )
-  
-  labels = LETTERS[-seq(best.MOBSTER)]
-  
+  MB.figure = best.MOBSTER.plots = NULL
+  if(MOBSTER)
+  {
+    best.MOBSTER = lapply(x$fit.MOBSTER, function(w) w$best)
+    best.MOBSTER.plots = mobster:::plot_diagonal_MOBSTER(best.MOBSTER, samples, cex = cex)
+    
+    MB.figure = ggpubr::ggarrange(
+      plotlist = best.MOBSTER.plots,
+      nrow = 1,
+      ncol = length(best.MOBSTER),
+      labels = LETTERS[seq(best.MOBSTER)]
+    )
+    
+    panel.labels = panel.labels[-seq(best.MOBSTER)]
+  }
+
   plots = NULL
   id = 1
   
@@ -55,11 +66,10 @@ mobster_plt_2DVAF_matrix = function(
           obj = x, 
           x = samples[s], 
           y = samples[w],
-          cluster = SClusters(x), 
+          cluster = cluster, 
           cluster.label = cluster.label)
 
-        
-        fig = ggpubr::ggarrange(pl.1, nrow = 1, ncol = 1, labels = labels[id])
+        fig = ggpubr::ggarrange(pl.1, nrow = 1, ncol = 1, labels = panel.labels[id])
         
         plots = append(plots, list(fig))
         id = id + 1
@@ -67,30 +77,35 @@ mobster_plt_2DVAF_matrix = function(
     }
   }
   
-  # k = ceiling(sqrt(length(samples)))
+  k = ceiling(sqrt(length(plots)))
+
+  twoBtwo = ggpubr::ggarrange(
+    plotlist = plots,
+    ncol = k,
+    nrow = k
+  )
   
-  # twoBtwo = ggpubr::ggarrange(
-  #   plotlist = plots,
-  #   ncol = k,
-  #   nrow = k
-  # )
+  figure = ggpubr::ggarrange(
+    MB.figure, 
+    twoBtwo,
+    ncol = 1,
+    nrow = 2,
+    heights = c(.15, 1)
+  )
   
-  # figure = ggpubr::ggarrange(
-  #   MB.figure,
-  #   twoBtwo,
-  #   ncol = 1,
-  #   nrow = 2,
-  #   heights = c(.15, 1)
-  # )
+  figure
   
-  layout = matrix(0, ncol = length(samples), nrow = length(samples))
-  diag(layout) = 1:length(samples)
+  # S = length(samples)
+  # 
+  # layout = matrix(0, ncol = S, nrow = S)
+  # if(MOBSTER) diag(layout) = 1:S
+  # 
+  # combs = S * (S-1) / 2
+  # layout[lower.tri(layout)] = (1:combs) + max(layout)
+  # 
+  # mobster:::.multiplot(plotlist = append(best.MOBSTER.plots, plots), layout = layout, title = title)
+  # # plotlist = append(list(MB.figure), plots)
   
-  combs = length(samples) * (length(samples)-1) / 2
-  layout[lower.tri(layout)] = (1:combs) + length(samples)
-  
-  mobster:::.multiplot(plotlist = append(best.MOBSTER.plots, plots), layout = layout, title = title)
-  # plotlist = append(list(MB.figure), plots)
   # figure = ggpubr::ggarrange(
   #   plotlist = plotlist,
   #   nrow = length(plotlist),

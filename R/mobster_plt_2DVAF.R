@@ -17,21 +17,21 @@ mobster_plt_2DVAF = function(obj,
                              cluster.label = 'cluster',
                              marginal = FALSE,
                              cex = 1,
-                             VAF.range = c(0.05, 0.6),
+                             # VAF.range = c(0.05, 0.6),
                              marginal.remove.zeroes = T,
                              palette = 'Set1') 
 {
-  pio::pioHdr(
-    header = 'MOBSTER -- plot 2D VAF',
-    prefix = '\t-',
-    toPrint = c(
-      `Sample IDs` = paste(x, y, sep = ' -vs- '),
-      `VAF range` = paste(VAF.range, collapse = ' -- ')
-    )
-  )
+  # pio::pioHdr(
+  #   header = 'MOBSTER -- plot 2D VAF',
+  #   prefix = '\t-',
+  #   toPrint = c(
+  #     `Sample IDs` = paste(x, y, sep = ' -vs- '),
+  #     `VAF range` = paste(VAF.range, collapse = ' -- ')
+  #   )
+  # )
   
   data = VAF_table(obj, samples = c(x, y), suffix = '') 
-
+  
   if (!is.null(cluster)) {
     
     stopifnot(cluster.label %in% colnames(cluster))
@@ -53,7 +53,7 @@ mobster_plt_2DVAF = function(obj,
       y = eval(parse(text = y))
     )) +
     scale_color_brewer(palette = palette, drop = FALSE) +
-    geom_point(alpha = 0.3)
+    geom_point(alpha = 0.1, size = .8)
   
   if (is.null(cluster))
     p = ggplot(data, aes(
@@ -61,7 +61,7 @@ mobster_plt_2DVAF = function(obj,
       colour = 'Unclustered',
       y = eval(parse(text = y))
     )) +
-    geom_point(alpha = 0.3, colour = 'black')
+    geom_point(alpha = 0.1, colour = 'black', size = .8)
   
   if (max(data[, x], na.rm = T) < 1)
     p = p + xlim(0, 1)
@@ -88,7 +88,7 @@ mobster_plt_2DVAF = function(obj,
     labs(
       title = paste(x, "vs", y),
       # subtitle = paste0("",
-      caption = paste0("Dashed cutoffs (", VAF.range[1], ', ', VAF.range[2], ')'),
+      # caption = paste0("Dashed cutoffs (", VAF.range[1], ', ', VAF.range[2], ')'),
       x = x,
       y = y
     ) +
@@ -98,19 +98,20 @@ mobster_plt_2DVAF = function(obj,
       legend.position = "bottom",
       legend.key.size = unit(.3 * cex, "cm"),
       legend.text = element_text(size = 8 * cex)
-    ) +
-    geom_vline(xintercept = VAF.range[1],
-               colour = "black",
-               linetype = "longdash", size = .3) +
-    geom_hline(yintercept = VAF.range[1],
-               colour = "black",
-               linetype = "longdash", size = .3) +
-    geom_vline(xintercept = VAF.range[2],
-               colour = "black",
-               linetype = "longdash", size = .3) +
-    geom_hline(yintercept = VAF.range[2],
-               colour = "black",
-               linetype = "longdash", size = .3)
+    ) 
+    # geom_vline(xintercept = max(VAF(obj, samples = x) %>% pull(value)),
+    #            colour = "black",
+    #            linetype = "longdash", size = .3) +
+    # geom_hline(yintercept = max(VAF(obj, samples = y) %>% pull(value)),
+    #            colour = "black",
+    #            linetype = "longdash", size = .3) +
+    # geom_vline(xintercept = min(VAF(obj, samples = x) %>% pull(value)),
+    #            colour = "black",
+    #            linetype = "longdash", size = .3) +
+    # geom_hline(yintercept = min(VAF(obj, samples = y) %>% pull(value)),
+    #            colour = "black",
+    #            linetype = "longdash", size = .3)
+    # 
   
   
   if (!marginal)

@@ -5,7 +5,9 @@
 \title{Title}
 \usage{
 mobster_plt_2DVAF_matrix(x, samples = x$samples, cluster = NULL,
-  cluster.label = "cluster", title = x$description, ...)
+  cluster.label = "cluster", title = x$description,
+  MOBSTER = is.null(x$fit.MOBSTER), cex = 1, panel.labels = LETTERS,
+  ...)
 }
 \arguments{
 \item{x}{}

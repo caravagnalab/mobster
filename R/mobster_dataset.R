@@ -26,7 +26,7 @@ mobster_dataset = function(
   
   if(!is.data.frame(data)) stop("Data must be a dataframe")
   
-  pio::pioStr('Number of mutations (N) =', nrow(data))
+  pioStr('Mutations', paste0('N = ', nrow(data)))
   
   # Columns with data
   DP.columns = paste0(samples, ".DP")
@@ -48,7 +48,8 @@ mobster_dataset = function(
     data = data[
       complete.cases(data[, all.columns, drop = FALSE]), , drop = FALSE 
     ]
-    pio::pioStr('Removed NAs, N =', nrow(data))
+    
+    pioStr('Removed NAs', paste0('N = ', nrow(data)))
   }
   
   # ids
@@ -62,11 +63,13 @@ mobster_dataset = function(
   # Prepare a tibble for the input data 
   tib_data = as_tibble(data)
   
-  pio::pioTit("Creating tibble for input data")
+  pioStr("Melting data", "")
   
   tib_data = tib_data %>% 
     reshape2::melt(id = 'id') %>%
     as_tibble
+  
+  cat("OK\n")
 
   # make everything a chr
   tib_data$variable = paste(tib_data$variable)
@@ -183,7 +186,7 @@ mobster_dataset = function(
     pnum = num/N(x) * 100
     
     pio::pioStr(
-      'Mutations outside the input segments', 
+      '\nMutations outside segments', 
       paste0('N = ', num),
       suffix = paste0('(', round(pnum, 0), '%)')
     )
@@ -211,10 +214,12 @@ mobster_dataset = function(
     select(seg_id, N, chr, from, to) %>%
     distinct
   
-  pio::pioTit(paste0("Discarded ", nrow(rejected)," segments with N < ", N.min))
+  pioTit(paste0("Segments report (cutoff " , N.min, ' muts/seg)'))
+  
+  pioStr(paste0("N < ", N.min), nrow(rejected), suffix = '(rejected)\n')
   print(rejected)
   
-  pio::pioTit(paste0("Will use ", nrow(accepted)," segments with N >= ", N.min))
+  pioStr(paste0("N >= ", N.min), nrow(rejected), suffix = '(accepted)')
   print(accepted)
   
   if(nrow(accepted) == 0)
@@ -417,18 +422,18 @@ mobster_fit_multivariate = function(x, samples = x$samples, ...)
                              annotation = w,
                              ...)
                            
-                           # Log update
-                           x = logOp(x, paste0("Fit MOBSTER to", w, collapse = ', '))
-                           
                            mf
                          })
   
-  names(x$fit.MOBSTER) = x$samples
+  names(x$fit.MOBSTER) = samples
   
   cat("\n")
   pio::pioTit("MOBSTER fits")
   
-  for(s in x$samples) print(x$fit.MOBSTER[[s]]$best)
+  for(s in samples) print(x$fit.MOBSTER[[s]]$best)
+  
+  # Log update
+  x = logOp(x, paste0("Fit MOBSTER to ", paste0(samples, collapse = ', ')))
   
   x
 }

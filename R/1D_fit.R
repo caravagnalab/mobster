@@ -243,7 +243,7 @@ mobster_fit = function(x,
       .export = ls(globalenv(), all.names = TRUE)
     ) %dopar%
     {
-      obj = .dbpmm.EM(
+      .dbpmm.EM(
         x,
         K = tests[num, 'K'],
         init = init,

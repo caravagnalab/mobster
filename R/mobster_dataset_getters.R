@@ -269,6 +269,31 @@ N = function(x) {
 
 ####################### Getters for the clustering computed
 
+#' Getter for clustering
+#'
+#' @param x MOBSTER dataset.
+#' @param cluster Use one of MOBSTER (M), sciClone (S), pyClone (P), Binomial (B).
+#' @param annotations TRUE or FALSE will return also the latent variables if possible.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+Clusters = function(x, cluster, annotations = FALSE){
+  
+  switch(cluster,
+         MOBSTER = return(MClusters(x, annotations)),
+         M = return(MClusters(x, annotations)),
+         sciClone = return(SClusters(x, annotations)),
+         S = return(MClusters(x, annotations)),
+         pyClone = return(PClusters(x, annotations)),
+         P = return(PClusters(x, annotations)),
+         Binomial = return(BClusters(x, annotations)),
+         B = return(BClusters(x, annotations)))
+  
+  stop("Cluster code not recognized; use one of MOBSTER (M), sciClone (S), pyClone (P), Binomial (B)")
+}
+
 #' Getter for MOBSTER clustering
 #'
 #' @param x
@@ -359,6 +384,21 @@ PClusters <- function(x, annotations = FALSE) {
   return(clusters)
 }
 
+#' Getter for Binomial clustering
+#'
+#' @param x
+#'
+#' @return
+#' @export
+#'
+#' @examples
+BClusters <- function(x, annotations = FALSE) {
+  
+  if (is.null(x$fit.Binomial)) 
+    stop("Binomial clusters are not available!\n")
+  
+  return(x$fit.Binomial$X)
+}
 
 #
 # MOBSTER_clusters$anyTail =
