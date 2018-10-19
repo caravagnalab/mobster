@@ -2,14 +2,15 @@
 #' Title
 #'
 #' @param x 
-#' @param cluster 
-#' @param cluster.label 
 #' @param title 
 #' @param ... 
 #' @param samples
+#' @param lower.cluster 
+#' @param lower.cluster.label 
+#' @param upper.cluster 
+#' @param upper.cluster.label 
+#' @param palette 
 #' @param MOBSTER 
-#' @param cex 
-#' @param panel.labels 
 #'
 #' @return
 #' @import pio
@@ -18,13 +19,16 @@
 #' 
 #' @examples
 mobster_plt_2DVAF_matrix = function(
-  x,
-  samples = x$samples,
-  MOBSTER = !is.null(x$fit.MOBSTER),
-  cluster = NULL,
-  cluster.label = 'cluster',  
-  title = x$description,
-  panel.labels = LETTERS,
+  lower.x,
+  upper.x = NULL,
+  samples = lower.x$samples,
+  MOBSTER = !is.null(lower.x$fit.MOBSTER),
+  lower.cluster = NULL,
+  lower.cluster.label = 'cluster',  
+  upper.cluster = NULL,
+  upper.cluster.label = 'cluster',  
+  title = lower.x$description,
+  palette = list(MOBSTER = 'Set1', lower = "Set2", upper = "Spectral"), 
   ...)
 {
   # pio::pioHdr("MOBSTER - Multivariate fits plot",
@@ -37,62 +41,115 @@ mobster_plt_2DVAF_matrix = function(
   # 
   require(ggplot2)
   
+  k = length(samples)
+  layout = matrix(1:(k*k), ncol = k, byrow = T)
   
-  MB.figure = best.MOBSTER.plots = NULL
-  if(MOBSTER)
-  {
-    best.MOBSTER = lapply(x$fit.MOBSTER, function(w) w$best)
-    best.MOBSTER.plots = mobster:::plot_diagonal_MOBSTER(best.MOBSTER, samples, ...)
-    
-    MB.figure = ggpubr::ggarrange(
-      plotlist = best.MOBSTER.plots,
-      nrow = 1,
-      ncol = length(best.MOBSTER),
-      labels = LETTERS[seq(best.MOBSTER)]
-    )
-    
-    panel.labels = panel.labels[-seq(best.MOBSTER)]
-  }
-
+  eplot = ggplot() + geom_blank() + theme_void()
   plots = NULL
-  id = 1
   
-  for (s in seq(samples)) {
-    for (w in s:length(samples)) {
-      if (s != w) {
-        
-        pl.1 = mobster_plt_2DVAF(
-          obj = x, 
-          x = samples[s], 
-          y = samples[w],
-          cluster = cluster, 
-          cluster.label = cluster.label,
-          ...)
-
-        fig = ggpubr::ggarrange(pl.1, nrow = 1, ncol = 1, labels = panel.labels[id])
-        
-        plots = append(plots, list(fig))
-        id = id + 1
-      }
+  for (s in 1:k) {
+    for (w in 1:k) {
+      fig = eplot
+      
+      # Diagonal is MOBSTER if it exists
+      if(s == w & MOBSTER) fig = plot(
+        lower.x$fit.MOBSTER[[s]]$best,
+        palette = palette$MOBSTER,
+        histogram.main = paste("MOBSTER ", samples[w]),
+        silent = TRUE, ...)$mainHist
+      
+      # Lower triangular is a 2D VAF plot with lower.cluster
+      if(s > w & !is.null(lower.cluster)) fig = mobster_plt_2DVAF(
+        obj = lower.x, 
+        x = samples[s], 
+        y = samples[w],
+        cluster = lower.cluster, 
+        cluster.label = lower.cluster.label,
+        ...)
+      
+      # Upper triangular is a 2D VAF plot with upper.cluster
+      if(s < w & !is.null(upper.cluster)) fig = mobster_plt_2DVAF(
+        obj = upper.x, 
+        x = samples[s], 
+        y = samples[w],
+        cluster = upper.cluster, 
+        cluster.label = upper.cluster.label,
+        ...)
+      
+      # queue the figure
+      plots = append(plots, list(fig))
     }
   }
   
-  k = ceiling(sqrt(length(plots)))
-  k = length(plots)/3
-
-  twoBtwo = ggpubr::ggarrange(
+  # 
+  # MB.figure = best.MOBSTER.plots = NULL
+  # if(MOBSTER)
+  # {
+  #   best.MOBSTER = lapply(x$fit.MOBSTER, function(w) w$best)
+  #   best.MOBSTER.plots = mobster:::plot_diagonal_MOBSTER(best.MOBSTER, samples, ...)
+  #   
+  #   MB.figure = ggpubr::ggarrange(
+  #     plotlist = best.MOBSTER.plots,
+  #     nrow = 1,
+  #     ncol = length(best.MOBSTER),
+  #     labels = LETTERS[seq(best.MOBSTER)]
+  #   )
+  #   
+  #   panel.labels = panel.labels[-seq(best.MOBSTER)]
+  # }
+  # 
+  # plots = NULL
+  # id = 1
+  # 
+  # for (s in seq(samples)) {
+  #   for (w in s:length(samples)) {
+  #     if (s != w) {
+  #       
+  #       pl.1 = mobster_plt_2DVAF(
+  #         obj = x, 
+  #         x = samples[s], 
+  #         y = samples[w],
+  #         cluster = cluster, 
+  #         cluster.label = cluster.label,
+  #         ...)
+  # 
+  #       fig = ggpubr::ggarrange(pl.1, nrow = 1, ncol = 1, labels = panel.labels[id])
+  #       
+  #       plots = append(plots, list(fig))
+  #       id = id + 1
+  #     }
+  #   }
+  # }
+  # 
+  # k = ceiling(sqrt(length(plots)))
+  # k = length(plots)/3
+  # 
+  # if(k < 1) k = 1
+  # 
+  # twoBtwo = ggpubr::ggarrange(
+  #   plotlist = plots,
+  #   ncol = 3,
+  #   nrow = k
+  # )
+  # 
+  # figure = ggpubr::ggarrange(
+  #   MB.figure, 
+  #   twoBtwo,
+  #   ncol = 1,
+  #   nrow = 2,
+  #   heights = c(.25, 1)
+  # )
+  
+  figure = ggpubr::ggarrange(
     plotlist = plots,
-    ncol = 3,
+    ncol = k,
     nrow = k
   )
   
-  figure = ggpubr::ggarrange(
-    MB.figure, 
-    twoBtwo,
-    ncol = 1,
-    nrow = 2,
-    heights = c(.25, 1)
-  )
+  figure = ggpubr::annotate_figure(figure, 
+                                   top = title, 
+                                   left = ifelse(is.null(lower.cluster), "" , lower.cluster.label),
+                                   right = ifelse(is.null(upper.cluster), "" , upper.cluster.label))
   
   figure
   
@@ -116,118 +173,3 @@ mobster_plt_2DVAF_matrix = function(
   # )
 }
 
-
-#' #' Title
-#' #'
-#' #' @param data
-#' #' @param samples
-#' #' @param VAF.range
-#' #'
-#' #' @return
-#' #' @export
-#' #'
-#' #' @examples
-#' mobster_plt_2DVAF_matrix = function(
-#'   x,
-#'   samples = x$samples,
-#'   cluster1 = 'sciClone.cluster',
-#'   cluster2 = 'MOBSTER.sciClone.cluster',
-#'   palette.cluster1 = 'Set1',
-#'   palette.cluster2 = 'Spectral',
-#'   cex = 1,
-#'   VAF.range = c(0.05, 0.6))
-#' {
-#'   
-#'   pio::pioHdr("MOBSTER - Multivariate fits plot",
-#'               c(`Cluster 1` = cluster1,
-#'                 `Cluster 2` = cluster2,
-#'                 `Samples` = paste(samples, collapse = ',')
-#'               )
-#'   )
-#'   
-#'   
-#'   require(ggplot2)
-#'   
-#'   best.MOBSTER = lapply(x$fit.MOBSTER, function(w) w$best)
-#'   
-#'   #  Diagonal
-#'   MB.figure = ggpubr::ggarrange(
-#'     plotlist = mobster:::plot_diagonal_MOBSTER(best.MOBSTER, samples, cex = cex),
-#'     nrow = 1,
-#'     ncol = length(best.MOBSTER),
-#'     labels = LETTERS[seq(best.MOBSTER)]
-#'   )
-#'   
-#'   labels = LETTERS[-seq(best.MOBSTER)]
-#'   
-#'   plots = NULL
-#'   id = 1
-#'   
-#'   for (s in seq(samples)) {
-#'     for (w in s:length(samples)) {
-#'       if (s != w) {
-#'         
-#'         pl.1 = mobster_plt_2DVAF(
-#'           fit, 
-#'           x = samples[s], 
-#'           y = samples[w],
-#'           cluster = SClusters(fit), 
-#'           cluster.label = )
-#'         
-#'         pl.1 = plot_2DVAF(
-#'           data$data,
-#'           x = paste0('VAF.', samples[s]),
-#'           y = paste0('VAF.', samples[w]),
-#'           cluster = cluster1,
-#'           palette = palette.cluster1,
-#'           VAF.range = VAF.range,
-#'           cex = cex
-#'         )
-#'         
-#'         pl.2 = plot_2DVAF(
-#'           data$data,
-#'           x = paste0('VAF.projected.', samples[s]),
-#'           y = paste0('VAF.projected.', samples[w]),
-#'           cluster = cluster2,
-#'           palette = palette.cluster2,
-#'           VAF.range = VAF.range,
-#'           cex = cex
-#'         )
-#'         
-#'         fig = ggpubr::ggarrange(pl.1,
-#'                                 pl.2,
-#'                                 nrow = 1,
-#'                                 ncol = 2,
-#'                                 labels = labels[id])
-#'         
-#'         plots = append(plots, list(fig))
-#'         id = id + 1
-#'       }
-#'     }
-#'   }
-#'   
-#'   twoBtwo = ggpubr::ggarrange(
-#'     plotlist = plots,
-#'     ncol = 2,
-#'     nrow = length(plots)/2
-#'   )
-#'   
-#'   figure = ggpubr::ggarrange(
-#'     MB.figure,
-#'     twoBtwo,
-#'     ncol = 1,
-#'     nrow = 2,
-#'     heights = c(.15, 1)
-#'   )
-#'   
-#'   figure
-#'   
-#'   # plotlist = append(list(MB.figure), plots)
-#'   # figure = ggpubr::ggarrange(
-#'   #   plotlist = plotlist,
-#'   #   nrow = length(plotlist),
-#'   #   ncol = 1,
-#'   #   common.legend = T,
-#'   #   heights = c(.75, rep(1, length(plotlist)))
-#'   # )
-#' }

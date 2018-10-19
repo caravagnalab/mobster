@@ -155,13 +155,14 @@ mobster_dataset = function(
   
   # we create a map for each mutation to each segment
   pio::pioTit("Mapping mutations to segments")
-  pb = txtProgressBar(min = 1, max = nrow(segments), style = 3) 
+  
+  if(nrow(segments) > 1) pb = txtProgressBar(min = 1, max = nrow(segments), style = 3) 
   segments_ids = unique(x$segments$id)
   
   x$map_mut_seg = NULL
   
   for(s in seq(segments_ids)) {
-    setTxtProgressBar(pb, s)
+    if(nrow(segments) > 1) setTxtProgressBar(pb, s)
     
     mapped = mobster:::byLoc(x, segments_ids[s])
     if(nrow(mapped) == 0) next;
@@ -186,9 +187,9 @@ mobster_dataset = function(
     pnum = num/N(x) * 100
     
     pio::pioStr(
-      '\nMutations outside segments', 
+      '\n\nOutside segments', 
       paste0('N = ', num),
-      suffix = paste0('(', round(pnum, 0), '%)')
+      suffix = paste0('(', round(pnum, 0), '%)\n')
     )
     
     x = mobster:::delete_entries(x, unmapped)
@@ -242,11 +243,12 @@ mobster_dataset = function(
   
   # for every segment to map
   seg_to_match = unique(x$map_mut_seg$seg_id)
-  pb = txtProgressBar(min = 1, max = length(seg_to_match), style = 3) 
+  
+  if(nrow(segments) > 1) pb = txtProgressBar(min = 1, max = length(seg_to_match), style = 3) 
   
   for(seg in seq(seg_to_match))  
   {
-    setTxtProgressBar(pb, seg)
+    if(nrow(segments) > 1)setTxtProgressBar(pb, seg)
     
     # for every sample 
     for(s in x$samples) 

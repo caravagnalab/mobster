@@ -432,7 +432,7 @@ vb_bmm_MV <-
     cat('\n')
     
     # MAP clustering assignment, and add it to data together with the ID
-    labels = tibble(Binomial.cluster = mobster:::latent_vars_hard_assignments(lv = list(`z_nk` = r_nk, `pi` = pi_k)))
+    labels = tibble(cluster.Binomial = mobster:::latent_vars_hard_assignments(lv = list(`z_nk` = r_nk, `pi` = pi_k)))
     X = bind_cols(labels, X)
     
     
@@ -533,7 +533,7 @@ choose_clusters = function(x, pi.cutoff)
   names(mapping) = table_pi$cluster
   
   # rename all entries with reference to the labels
-  x$X$Binomial.cluster = mapping[x$X$Binomial.cluster]
+  x$X$Binomial.cluster = mapping[x$X$cluster.Binomial]
   
   names(x$alpha) = names(x$pi_k) = names(x$alpha_0) = mapping[names(x$alpha_0)]
   
@@ -582,7 +582,7 @@ choose_clusters = function(x, pi.cutoff)
   labels = mobster:::latent_vars_hard_assignments(lv = list(`z_nk` = x$r_nk,
                                                             `pi` = x$pi_k))
   
-  x$X$Binomial.cluster = labels
+  x$X$cluster.Binomial = labels
   
   # Update num of clusters
   x$K = K

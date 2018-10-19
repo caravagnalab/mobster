@@ -43,10 +43,7 @@ mobster_plt_2DVAF = function(obj,
 
   data = data  %>% select(-id)
 
-  require(ggplot2)
-  
-  # data = data.frame(data)
-  
+  ######################  If a clustering is assigned, we set colour according to the labels
   if (!is.null(cluster))
     p = ggplot(data, aes(
       x = eval(parse(text = x)),
@@ -54,25 +51,45 @@ mobster_plt_2DVAF = function(obj,
       y = eval(parse(text = y))
     )) +
     scale_color_brewer(palette = palette, drop = FALSE) +
-    geom_point(alpha = alpha, size = 1 * cex)
+    geom_point(alpha = alpha, size = 2 * cex)
+  
+  ###################### If it is not, we use a density-depenednt coloring
+  
+  # Get density of points in 2 dimensions.
+  # @param x A numeric vector.
+  # @param y A numeric vector.
+  # @param n Create a square n by n grid to compute density.
+  # @return The density within each square.
+  get_density <- function(x, y, n = 100) {
+    dens <- MASS::kde2d(x = x, y = y, n = n)
+    ix <- findInterval(x, dens$x)
+    iy <- findInterval(y, dens$y)
+    ii <- cbind(ix, iy)
+    return(dens$z[ii])
+  }
+  
+  require(viridis)
+  
+  # annotated density
+  data$density =  get_density(data %>% pull(!!x), data %>% pull(!!y))
   
   if (is.null(cluster))
     p = ggplot(data, aes(
       x = eval(parse(text = x)),
-      colour = 'Unclustered',
       y = eval(parse(text = y))
     )) +
-    geom_point(alpha = alpha, colour = 'black', size = 1 * cex)
+    scale_color_viridis() +
+    geom_point(alpha = alpha, aes(color = density), size = 2 * cex)
   
+  ###################### Adjust plot ranges if smaller than 1  
   if (max(data[, x], na.rm = T) < 1)
     p = p + xlim(0, 1)
 
   if (max(data[, y], na.rm = T) < 1)
     p = p + ylim(0, 1)
   
-  
+  ###################### Plot style
   p = p +
-    # theme_minimal() +
     theme(
       panel.border = element_blank(),
       panel.grid.major = element_blank(),

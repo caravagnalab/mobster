@@ -9,15 +9,13 @@
 #' @examples
 mobster_flt_projection = function(x, type = 'global')
 {
+  # get clusters
   clusters = MClusters(x) 
   
   colnames(clusters) = gsub('cluster.', '', colnames(clusters))
   
   cols.clusters = 2:ncol(clusters)
 
-  # Return object
-  y = x
-  
   if(type == 'global')
   {
     clusters$projected = apply(
@@ -25,47 +23,80 @@ mobster_flt_projection = function(x, type = 'global')
       1, 
       function(w) any(w == 'Tail', na.rm = TRUE))
     
-    pio::pioTit("The following will be projected with a global strategy")
-    to_cancel = clusters %>% filter(projected)
+    pio::pioTit("Global projection strategy")
     
+    to_cancel = clusters %>% filter(projected)
+
+    pio::pioStr("Entries to project", nrow(to_cancel), suffix = '\n')
     print(to_cancel)
     
-    y = mobster:::delete_entries(x, to_cancel %>% pull(id))
+    x = mobster:::delete_entries(x, to_cancel %>% pull(id))
     
-    y = logOp(y, paste0("Projected read counts; type = ", type, ""))
+    x = logOp(x, paste0("Projected read counts; type = ", type, ""))
     
   }
   
-  if(type == 'local') stop("TODO")
+  if(type == 'local') {
     
-  
-  return(y)
+    clusters = clusters %>% reshape2::melt(id = 'id') %>% as_tibble
+    clusters$variable = gsub('cluster.', '', clusters$variable)
+    
+    clusters = clusters %>% filter(value == 'Tail')
+    # clusters %>% group_by(variable) %>% summarize(n = n())
+    
+    pio::pioStr("Entries to project", nrow(clusters), suffix = '\n')
+    print(clusters)
+    
+    pio::pioStr("Distributed as ...", '\n')
+    print(clusters %>% group_by(variable) %>% summarize(n = n()))
+    
+    for(i in 1:nrow(clusters))
+    {
+      entry = clusters[i, ]
+      
+      x$data = x$data %>% 
+        mobster:::mutate_cond(
+          id == entry$id & sample == entry$variable & variable == "VAF", 
+          value = 0)
+      
+      x$data = x$data %>% 
+        mobster:::mutate_cond(
+          id == entry$id & sample == entry$variable & variable == "NV", 
+          value = 0)
+    }
+    
+    x = all_zeroes(x)
+    
+    x = logOp(x, paste0("Projected read counts; type = ", type, ""))
+  }
+    
+  return(x)
 }
 
 
 #'Subsample data
 #'
-#' @param obj 
+#' @param x 
 #' @param N 
 #'
 #' @return
 #' @export
 #'
 #' @examples
-mobster_flt_downsample = function(obj, n)
+mobster_flt_downsample = function(x, n)
 {
-  if(n < N(obj))
+  if(n < N(x))
   {
-    pio::pioTit(paste0("Subsampling ", n, "entries out of ", N(obj)))
+    pio::pioTit(paste0("Subsampling ", n, "entries out of ", N(x)))
     
-    k = mobster:::keys(obj)
+    k = mobster:::keys(x)
     ids = sample(k, length(k) - n)
     
-    obj = mobster:::delete_entries(obj, ids)
-    obj = logOp(obj, paste0("Subsampled to N = ", n, ""))
+    x = mobster:::delete_entries(x, ids)
+    x = logOp(x, paste0("Subsampled to N = ", n, ""))
   }
   
-  obj
+  all_zeroes(x)
 }
 
 
@@ -180,9 +211,6 @@ mobster_flt_dprange = function(x, min.DP, max.DP)
   
   all_zeroes(x)
 }
-
-
-
 
 # Private functions to subset the data
 delete_entries = function(x, ids)
