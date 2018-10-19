@@ -65,6 +65,7 @@ mobster_plt_2DVAF_matrix = function(
         y = samples[w],
         cluster = lower.cluster, 
         cluster.label = lower.cluster.label,
+        palette = palette$lower,
         ...)
       
       # Upper triangular is a 2D VAF plot with upper.cluster
@@ -74,6 +75,7 @@ mobster_plt_2DVAF_matrix = function(
         y = samples[w],
         cluster = upper.cluster, 
         cluster.label = upper.cluster.label,
+        palette = palette$upper,
         ...)
       
       # queue the figure
