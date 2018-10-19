@@ -24,7 +24,6 @@ mobster_plt_2DVAF_matrix = function(
   cluster = NULL,
   cluster.label = 'cluster',  
   title = x$description,
-  cex = 1,
   panel.labels = LETTERS,
   ...)
 {
@@ -43,7 +42,7 @@ mobster_plt_2DVAF_matrix = function(
   if(MOBSTER)
   {
     best.MOBSTER = lapply(x$fit.MOBSTER, function(w) w$best)
-    best.MOBSTER.plots = mobster:::plot_diagonal_MOBSTER(best.MOBSTER, samples, cex = cex)
+    best.MOBSTER.plots = mobster:::plot_diagonal_MOBSTER(best.MOBSTER, samples, ...)
     
     MB.figure = ggpubr::ggarrange(
       plotlist = best.MOBSTER.plots,
@@ -67,7 +66,8 @@ mobster_plt_2DVAF_matrix = function(
           x = samples[s], 
           y = samples[w],
           cluster = cluster, 
-          cluster.label = cluster.label)
+          cluster.label = cluster.label,
+          ...)
 
         fig = ggpubr::ggarrange(pl.1, nrow = 1, ncol = 1, labels = panel.labels[id])
         
@@ -78,10 +78,11 @@ mobster_plt_2DVAF_matrix = function(
   }
   
   k = ceiling(sqrt(length(plots)))
+  k = length(plots)/3
 
   twoBtwo = ggpubr::ggarrange(
     plotlist = plots,
-    ncol = k,
+    ncol = 3,
     nrow = k
   )
   
@@ -90,7 +91,7 @@ mobster_plt_2DVAF_matrix = function(
     twoBtwo,
     ncol = 1,
     nrow = 2,
-    heights = c(.15, 1)
+    heights = c(.25, 1)
   )
   
   figure
