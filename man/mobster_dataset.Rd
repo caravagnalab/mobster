@@ -5,7 +5,7 @@
 \title{Title}
 \usage{
 mobster_dataset(data, samples, description = "My own dataset", segments,
-  purity, N.min = 500, na.rm = TRUE)
+  purity, N.min = 500, na.rm = TRUE, avoid.centromers = TRUE)
 }
 \arguments{
 \item{data}{}

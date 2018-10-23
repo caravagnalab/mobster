@@ -78,6 +78,9 @@ template_density = function(x, x.axis = seq(0, 1, 0.01), init = FALSE, binwidth 
   
   names(values) = labels
   
+  # remove tail if not required, which is entry #1
+  if(!x$fit.tail) values = values[2:x$K]
+  
   # Scale density wrt binwidth
   values = lapply(values, function(w) {w$y = w$y * binwidth; w}) 
   

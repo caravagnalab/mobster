@@ -32,16 +32,16 @@ plot.dbpmm = function(x,
   
   labels = names(.params_Pi(x))
   
-  labels.betas = .params_Beta(x)$cluster
+  labels.betas = mobster:::.params_Beta(x)$cluster
 
-  pi = .params_Pi(x)
+  pi = mobster:::.params_Pi(x)
   
   ICL = round(as.numeric(x$scores$ICL), 2)
   NLL = round(as.numeric(x$scores$NLL), 2)
   K = as.numeric(x$K)
 
   # Load colors
-  colors = getColors_model(x, alpha = .9, palette = palette, tail.color = tail.color)
+  colors = mobster:::getColors_model(x, alpha = .9, palette = palette, tail.color = tail.color)
 
   ############### Plot 1 -- main histogram
   
@@ -52,13 +52,21 @@ plot.dbpmm = function(x,
   conv.steps = length(x$all.NLL)
   conv.epsilon = 0
   if(conv.steps >= 2) conv.epsilon = abs(rev(x$all.NLL)[1] - rev(x$all.NLL)[2])
-  conv.epsilon = formatC(conv.epsilon, format = "e", digits = 2)
+  conv.epsilon = formatC(conv.epsilon, format = "e", digits = 0)
   
   # Text for the plot -- fit type
-  label.fit = ifelse(x$fit.type == 'MM', 'Moments Matching', "Maximum Likelihood")
-  label.fit = bquote(
-    .(label.fit) ~
-      ':' ~ .(conv.steps) ~ 'steps,' ~ epsilon ~ '=' ~ .(conv.epsilon))
+  # label.fit = ifelse(x$fit.type == 'MM', 'MM', "MLE")
+  
+  label.fit = paste0(
+    ifelse(x$fit.tail, 'Tail ON', "Tail OFF"), " | ",
+    ifelse(x$fit.type == 'MM', 'MM', "MLE"), ' (', conv.steps, ' steps; eps. = ', conv.epsilon, ') | ',
+    ifelse(x$status, 'CONVERGED', "NOT CONVERGED")
+    )
+  # label.fit = expression(label.fit)
+  
+  # label.fit = bquote(
+    # .(label.fit) ~ .(conv.steps) ~ 'steps; ' ~ epsilon ~ '=' ~ .(conv.epsilon) ~ '|')
+  # label.fit = label.fit ~ ifelse(x$fit.tail, 'With tail', "Without tail")
 
   # Main ggplot object
   hist_pl = ggplot(x$data, aes(VAF, fill = cluster, y = ..count../sum(..count..))) +
@@ -78,7 +86,7 @@ plot.dbpmm = function(x,
     )
   
   #### Prepare plot for density values
-  densities = template_density(
+  densities = mobster:::template_density(
     x, 
     x.axis = domain, 
     binwidth = 0.01, 
@@ -108,7 +116,7 @@ plot.dbpmm = function(x,
   n = x
   n$Clusters$fit.value = n$Clusters$init.value
   
-  initial.densities = template_density(
+  initial.densities = mobster:::template_density(
     n, 
     x.axis = domain[2:(length(domain) - 1)], # Restricted for numerical errors
     binwidth = 0.01,
@@ -136,6 +144,8 @@ plot.dbpmm = function(x,
     dplyr::filter(type == 'Mixing proportion')
   
   Proportions$fit.value = round(Proportions$fit.value, 2)
+  
+  if(!x$fit.tail) Proportions = Proportions %>% filter(cluster != 'Tail')
   
   prop_hist_pl = ggplot(data = Proportions, aes(x = cluster, y = fit.value, fill = cluster)) +
     geom_bar(stat = "identity", alpha = alpha, width = 0.3 * cex) +
@@ -235,12 +245,12 @@ scols = function (v, palette = "Spectral")
 
   if (length(v) <= pmax)
   {
-    colors = RColorBrewer::brewer.pal(n = length(v), palette)
+    colors = suppressWarnings(RColorBrewer::brewer.pal(n = length(v), palette))
     colors = colors[1:length(v)]
   }
   else
   {
-    colors = RColorBrewer::brewer.pal(n = pmax, palette)
+    colors = suppressWarnings(RColorBrewer::brewer.pal(n = pmax, palette))
     colors = colorRampPalette(colors)(length(v))
   }
 
@@ -651,145 +661,3 @@ plot.fits = function(fits)
 #
 # }
 
-
-#' Title
-#'
-#' @param res
-#' @param fig.lab
-#' @param title
-#' @param palette
-#' @param TOP
-#' @param cex
-#' @param boxplot.ICL.range
-#'
-#' @return
-#' @export
-#'
-#' @examples
-plot_report_MOBSTER = function(res, fig.lab = "Figure 1", title = 'MOBSTER top fit', palette = 'Set1', TOP = 5, cex = 1, boxplot.ICL.range = NULL)
-{
-  # require(dbpmm)
-  require(ggplot2)
-  require(ggpubr)
-
-  # Best model fit -- get plots
-  best = plot.dbpmm(
-    res$best,
-    plot.rsquare = F,
-    plot.scores = F,
-    alpha = .9,
-    tail.color = c('darkgray', 'dimgrey'),
-    bg.color = 'gainsboro',
-    cex = 1 * cex,
-    title = "",
-    histogram.main = title,
-    palette = palette,
-    silent = TRUE,
-    annotation = paste0('Top-fit from N = ', nrow(res$best$data))
-  )
-
-  # Extract scores table
-  scores = res$fits.table
-
-  # Set format for columns with numbers
-  scores.col = colnames(res$best$scores)
-  scores[, scores.col] = apply(scores[, scores.col], 2, round, digit = 0)
-
-  # Subset TOP scores and create a dataframe for plot
-  # scores = scores[!duplicated(scores[, c('K', 'Tail')]), ]
-  if(nrow(scores) > TOP) scores = scores[1:TOP, ]
-  pio::pioTit("Table with TOP scores")
-  pio::pioDisp(scores)
-
-  library(ggpubr)
-  df.scores = ggtexttable(scores, rows = NULL,
-                          theme = ttheme(base_size = 6 * cex,
-                                         tbody.style = tbody_style(
-                                           fill = rev(get_palette("RdBu", TOP)),
-                                           size = 6 * cex)))
-
-  for(s in scores.col){
-    idx = which.min(scores[, s]) + 1
-    df.scores = table_cell_bg(df.scores, row = idx, column = which(colnames(scores) == s),
-                              linewidth = 2.5,
-                              fill=alpha("darkgreen", .5))
-  }
-
-  # Model selection boxplot
-  boxP = .plot.fit.summary(
-    res, alpha = .6, silent = TRUE, range = boxplot.ICL.range)$boxPlot
-
-  # Other solutions ranked below top best -- maximum TOP 4 fixed
-  TOP.plot = min(4, nrow(scores))
-
-  solutions = as.integer(rownames(scores)[2:(TOP.plot + 1)])
-  solutions = solutions[!is.na(solutions)]
-
-  other.best = lapply(
-    seq(solutions),
-    function(w)
-      plot(
-        res$runs[[solutions[w]]],
-        histogram.main = paste0("Solution #", 1+w),
-        annotation = paste0("Overall rank : ", solutions[w]),
-        silent = T,
-        palette = palette,
-        cex = .6 * cex)$mainHist
-  )
-
-  # Final layout
-  top_panel_best = ggarrange(
-    best$mainHist,
-    ggarrange(
-      best$Initialization,
-      best$Parameters,
-      best$Proportions,
-      ncol = 3,
-      nrow = 1,
-      labels = c("B", "C", "D")
-    ),
-    ggarrange(
-      boxP,
-      df.scores,
-      ncol = 2,
-      nrow = 1,
-      labels = c("E", "F"),
-      widths = c(1, 1.5)
-    ),
-    heights = c(2.5, 1),
-    nrow = 3,
-    ncol = 1,
-    common.legend = T,
-    labels = 'A'
-  )
-
-  right_panel = ggarrange(
-    plotlist = other.best,
-    ncol = 1,
-    nrow = length(other.best),
-    labels = LETTERS[7:(7 + TOP.plot - 1)]
-  )
-
-  figure = ggarrange(
-    top_panel_best,
-    right_panel,
-    widths = c(1.5,1),
-    nrow = 1, ncol = 2
-  )
-
-  figure = annotate_figure(
-    figure,
-    top = text_grob("MOBSTER (model selection)", color = "black", face = "bold", size = 22 * cex),
-    bottom = text_grob(
-      " Panels: (A-D) Best fit; (E,F) Scores from model selection; (G-*) Lower-scoring fits.",
-      color = "black",
-      face = "bold",
-      hjust = 0,
-      x = 0,
-      size = 8 * cex),
-    fig.lab = fig.lab,
-    fig.lab.face = "bold"
-  )
-
-  return(figure)
-}

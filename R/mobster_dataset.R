@@ -19,7 +19,8 @@ mobster_dataset = function(
   segments,
   purity,
   N.min = 500,
-  na.rm = TRUE
+  na.rm = TRUE,
+  avoid.centromers = TRUE
 )
 {
   pio::pioHdr("MOBSTER dataset")
@@ -164,7 +165,7 @@ mobster_dataset = function(
   for(s in seq(segments_ids)) {
     if(nrow(segments) > 1) setTxtProgressBar(pb, s)
     
-    mapped = mobster:::byLoc(x, segments_ids[s])
+    mapped = mobster:::byLoc(x, segments_ids[s], avoid.centromers)
     if(nrow(mapped) == 0) next;
     
     mapped$seg_id = segments_ids[s]
@@ -248,7 +249,7 @@ mobster_dataset = function(
   
   for(seg in seq(seg_to_match))  
   {
-    if(nrow(segments) > 1)setTxtProgressBar(pb, seg)
+    if(length(seg_to_match) > 1) setTxtProgressBar(pb, seg)
     
     # for every sample 
     for(s in x$samples) 

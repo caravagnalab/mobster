@@ -5,14 +5,16 @@ getColors_model = function(x, alpha = 1, palette = 'Set1', tail.color = 'darkgra
     dplyr::select(cluster) %>%
     dplyr::pull()
   
-  # brewer palettes
-    colors = c(
-      `Tail` = tail.color,
-      scols(labels.betas, palette = palette)
-    )
-
+  # brewer palettes, plus tail color
+  colors = scols(labels.betas, palette = palette)
+  if(x$fit.tail) colors = c(`Tail` = tail.color, colors)
+   
+  # alpha 
   colors = ggplot2::alpha(colors, alpha)
-  names(colors) = c('Tail', labels.betas)
-  
+
+  # name the vector 
+  if(x$fit.tail) names(colors) = c('Tail', labels.betas)
+  else names(colors) = labels.betas
+
   colors
 }

@@ -414,17 +414,60 @@ keys = function(x) {
   unique(x$data$id)
 }
 
-byLoc = function(x, loc.id) {
+
+split_segments_around_centromers = function()
+{
+  data("cytoband_hg19")
+  
+  new.segments = NULL
+  
+  for(i in 1:nrow(x$segments)) {
+    
+    seg = x$segments[i, ]
+    
+    SEG.cytoband = cytoband[cytoband$chr == seg$chr, ]
+    SEG.cytoband = SEG.cytoband[SEG.cytoband$region == 'acen', ]
+    
+    ends_before = seg$to < SEG.cytoband$from[1]
+    starts_after = seg$from > SEG.cytoband$to[2]
+    
+    # 
+    if(ends_before | starts_after) new.segments = rbind(new.segments, seg)
+    else {
+      
+      
+    }
+    
+    
+  }
+  
+  
+}
+
+byLoc = function(x, loc.id, avoid.centromers) {
   muts_CN = x$locations %>%
     spread(variable, value)
   
   thisSeg = x$segments %>%
     filter(id == loc.id)
   
+  # Within segment
   which_muts = muts_CN %>%
     filter(chr == thisSeg$chr[1] &
              from >= thisSeg$from[1] &
              to <= thisSeg$to[1])
+  
+  # load centromers data
+  if(avoid.centromers){
+    data("cytoband_hg19")
+    
+    SEG.cytoband = cytoband[cytoband$chr == thisSeg$chr[1], ]
+    SEG.cytoband = SEG.cytoband[SEG.cytoband$region == 'acen', ]
+
+    which_muts = which_muts %>%
+      filter(from < SEG.cytoband$from[1] |
+               to > SEG.cytoband$to[2])
+  }
   
   which_muts
 }

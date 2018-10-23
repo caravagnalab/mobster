@@ -112,9 +112,8 @@ mobster_flt_downsample = function(x, n)
 #' @export
 #'
 #' @examples
-mobster_flt_minfreq = function(x, cutoff)
+mobster_flt_minvaf = function(x, cutoff)
 {
-  
   # Adjusted cutoff
   ad.cutoff = cutoff/x$purity
   
@@ -125,6 +124,37 @@ mobster_flt_minfreq = function(x, cutoff)
   {
     ids = VAF(x, samples = s) %>% 
       filter(value < ad.cutoff[s] & value > 0) %>% pull(id)
+    
+    pio::pioStr(
+      paste0("Sample ", s, ' - Number of entries below cutoff is N ='),
+      length(ids), prefix = '\n')
+    
+    x$data = x$data %>% mutate_cond(
+      id %in% ids & sample == s & variable %in% c("VAF", "NV"), value = 0)
+  }
+  
+  # Log update
+  x = logOp(x, paste0("VAF entries below (adjusted) cutoff ", cutoff, ' have been removed.'))
+  
+  all_zeroes(x)
+}
+
+
+# Samve as above but with NV
+#'
+#' @param x 
+#' @param cutoff 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+mobster_flt_minnv = function(x, cutoff)
+{
+  for(s in x$samples)
+  {
+    ids = NV(x, samples = s) %>% 
+      filter(value < cutoff & value > 0) %>% pull(id)
     
     pio::pioStr(
       paste0("Sample ", s, ' - Number of entries below cutoff is N ='),

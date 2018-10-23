@@ -4,7 +4,7 @@
 \alias{plot.mbst_data}
 \title{Plot a dataset.}
 \usage{
-plot.mbst_data(x, title = x$description, scales = "fixed")
+\method{plot}{mbst_data}(x, title = x$description, scales = "fixed")
 }
 \arguments{
 \item{x}{}

@@ -4,7 +4,7 @@
 \alias{summary.vb_bmm}
 \title{Title}
 \usage{
-summary.vb_bmm(x, ...)
+\method{summary}{vb_bmm}(x, ...)
 }
 \arguments{
 \item{...}{}
