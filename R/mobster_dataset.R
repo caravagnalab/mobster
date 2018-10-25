@@ -225,7 +225,7 @@ mobster_dataset = function(
   pioStr(paste0("\nN < ", N.min), nrow(rejected), suffix = '(rejected)\n')
   print(rejected)
   
-  pioStr(paste0(\n"N >= ", N.min), nrow(accepted), suffix = '(accepted)')
+  pioStr(paste0("\nN >= ", N.min), nrow(accepted), suffix = '(accepted)')
   print(accepted)
   
   if(nrow(accepted) == 0)
