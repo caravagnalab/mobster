@@ -54,13 +54,17 @@ mobster_dataset = function(
   }
   
   # ids
-  if('id' %in% colnames(data)) {
-    stop("Data contains an $id column, remove it.")
-  }
-  else {
-    data$id = paste0('__mut', 1:nrow(data))
-  }
+  id_col = c('id', 'ID')
   
+  if(!all(id_col %in% colnames(data)))
+    data$id = paste0('__mut', 1:nrow(data))
+  else
+  {
+    message("Found an id/ID column, will use that as identifier.")
+    
+    if(id_col[2] %in% colnames(data)) data$id = data$ID
+  }
+
   # Prepare a tibble for the input data 
   tib_data = as_tibble(data)
   
@@ -218,10 +222,10 @@ mobster_dataset = function(
   
   pioTit(paste0("Segments report (cutoff " , N.min, ' muts/seg)'))
   
-  pioStr(paste0("N < ", N.min), nrow(rejected), suffix = '(rejected)\n')
+  pioStr(paste0("\nN < ", N.min), nrow(rejected), suffix = '(rejected)\n')
   print(rejected)
   
-  pioStr(paste0("N >= ", N.min), nrow(rejected), suffix = '(accepted)')
+  pioStr(paste0(\n"N >= ", N.min), nrow(accepted), suffix = '(accepted)')
   print(accepted)
   
   if(nrow(accepted) == 0)
