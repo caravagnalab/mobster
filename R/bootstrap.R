@@ -335,7 +335,7 @@ mobster_bootstrap_cocluster = function(x, resamples, fits, background.color = 'w
     colnames(co.clustering) = 1:N
   
   # Extract co-clustering labels
-  pb = txtProgressBar(1, length(fits), style = 3)
+  pb = txtProgressBar(0, length(fits), style = 3)
   
   for(w in seq(fits))
   {    

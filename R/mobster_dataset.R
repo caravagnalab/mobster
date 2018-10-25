@@ -161,7 +161,7 @@ mobster_dataset = function(
   # we create a map for each mutation to each segment
   pio::pioTit("Mapping mutations to segments")
   
-  if(nrow(segments) > 1) pb = txtProgressBar(min = 1, max = nrow(segments), style = 3) 
+  if(nrow(segments) > 1) pb = txtProgressBar(min = 0, max = nrow(segments), style = 3) 
   segments_ids = unique(x$segments$id)
   
   x$map_mut_seg = NULL
@@ -249,7 +249,7 @@ mobster_dataset = function(
   # for every segment to map
   seg_to_match = unique(x$map_mut_seg$seg_id)
   
-  if(nrow(segments) > 1) pb = txtProgressBar(min = 1, max = length(seg_to_match), style = 3) 
+  if(nrow(segments) > 1) pb = txtProgressBar(min = 0, max = length(seg_to_match), style = 3) 
   
   for(seg in seq(seg_to_match))  
   {
