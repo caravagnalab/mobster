@@ -55,31 +55,35 @@ mobster_plt_2DVAF = function(obj,
   
   ###################### If it is not, we use a density-depenednt coloring
   
-  # Get density of points in 2 dimensions.
-  # @param x A numeric vector.
-  # @param y A numeric vector.
-  # @param n Create a square n by n grid to compute density.
-  # @return The density within each square.
-  get_density <- function(x, y, n = 100) {
-    dens <- MASS::kde2d(x = x, y = y, n = n)
-    ix <- findInterval(x, dens$x)
-    iy <- findInterval(y, dens$y)
-    ii <- cbind(ix, iy)
-    return(dens$z[ii])
-  }
   
-  require(viridis)
-  
-  # annotated density
-  data$density =  get_density(data %>% pull(!!x), data %>% pull(!!y))
   
   if (is.null(cluster))
+  {  
+    # Get density of points in 2 dimensions.
+    # @param x A numeric vector.
+    # @param y A numeric vector.
+    # @param n Create a square n by n grid to compute density.
+    # @return The density within each square.
+    get_density <- function(x, y, n = 100) {
+      dens <- MASS::kde2d(x = x, y = y, n = n)
+      ix <- findInterval(x, dens$x)
+      iy <- findInterval(y, dens$y)
+      ii <- cbind(ix, iy)
+      return(dens$z[ii])
+    }
+    
+    require(viridis)
+    
+    # annotated density
+    data$density =  get_density(data %>% pull(!!x), data %>% pull(!!y))
+    
     p = ggplot(data, aes(
       x = eval(parse(text = x)),
       y = eval(parse(text = y))
-    )) +
-    scale_color_viridis() +
-    geom_point(alpha = alpha, aes(color = density), size = 2 * cex)
+      )) +
+      scale_color_viridis() +
+      geom_point(alpha = alpha, aes(color = density), size = 2 * cex)
+  }
   
   ###################### Adjust plot ranges if smaller than 1  
   if (max(data[, x], na.rm = T) < 1)

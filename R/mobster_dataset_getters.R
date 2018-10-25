@@ -451,6 +451,15 @@ byLoc = function(x, loc.id, avoid.centromers) {
   thisSeg = x$segments %>%
     filter(id == loc.id)
   
+  # Enforce the correct types!
+  muts_CN$chr = as.character(muts_CN$chr)
+  muts_CN$from = as.numeric(muts_CN$from)
+  muts_CN$to = as.numeric(muts_CN$to)
+  
+  thisSeg$chr = as.character(thisSeg$chr)
+  thisSeg$from = as.numeric(thisSeg$from)
+  thisSeg$to = as.numeric(thisSeg$to)
+  
   # Within segment
   which_muts = muts_CN %>%
     filter(chr == thisSeg$chr[1] &

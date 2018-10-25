@@ -4,7 +4,7 @@
 \alias{plot.dbpmm}
 \title{Plot an object of class dbpmm. This is a set of multiple frames plot via ggplot2.}
 \usage{
-\method{plot}{dbpmm}(x, annotation = NULL, palette = "Set1",
+plot.dbpmm(x, annotation = NULL, palette = "Set1",
   tail.color = "darkgray", alpha = 0.8, max.height.hist = TRUE,
   cex = 1, histogram.main = "Fit", bg.color = "ivory2",
   title = "MOBSTER", silent = FALSE, ...)
