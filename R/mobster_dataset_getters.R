@@ -140,7 +140,7 @@ VAF_table = function(x,
     entry = VAF(x, ids = ids, samples = s) %>% spread(variable, value) %>% select(id, VAF) 
     # %>% rename(!!s := VAF)
 
-    output = full_join(entry, output, by = 'id')  
+    output = full_join(output, entry, by = 'id')  
   }
   
   colnames(output) = c('id', paste0(samples, suffix))
@@ -176,7 +176,7 @@ NV_table = function(x,
     entry = NV(x, ids = ids, samples = s) %>% spread(variable, value) %>% select(id, NV) 
     # %>% rename(!!s := NV)
     
-    output = full_join(entry, output, by = 'id')  
+    output = full_join(output, entry, by = 'id')  
   }
   
   colnames(output) = c('id', paste0(samples, suffix))
@@ -213,7 +213,7 @@ DP_table = function(x,
     entry = DP(x, ids = ids, samples = s) %>% spread(variable, value) %>% select(id, DP) 
     # %>% rename(!!s := NV)
     
-    output = full_join(entry, output, by = 'id')  
+    output = full_join(output, entry, by = 'id')  
   }
   
   colnames(output) = c('id', paste0(samples, suffix))

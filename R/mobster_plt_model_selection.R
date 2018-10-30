@@ -11,6 +11,7 @@
 #' @param boxplot.ICL.range
 #'
 #' @return
+#' @import ggpubr
 #' @export
 #'
 #' @examples
@@ -30,17 +31,12 @@ mobster_plt_model_selection = function(res,
   # Best model fit -- get plots
   best = plot.dbpmm(
     res$best,
-    # plot.rsquare = F,
-    # plot.scores = F,
-    # alpha = .9,
-    # tail.color = c('darkgray', 'dimgrey'),
-    # bg.color = 'gainsboro',
     cex = 1 * cex,
     title = "",
     histogram.main = title,
     # palette = palette,
     silent = TRUE,
-    annotation = paste0('Top-fit from N = ', nrow(res$best$data)),
+    annotation = paste0('Top-fit; N = ', nrow(res$best$data), ' mutations.'),
     ...
   )
   
@@ -89,15 +85,17 @@ mobster_plt_model_selection = function(res,
   # Other solutions ranked below top best -- maximum TOP 4 fixed
   TOP.plot = min(4, nrow(scores))
   
-  solutions = as.integer(rownames(scores)[2:(TOP.plot + 1)])
-  solutions = solutions[!is.na(solutions)]
+  # solutions = as.integer(rownames(scores)[2:(TOP.plot + 1)])
+  # solutions = solutions[!is.na(solutions)]
+  solutions = 
   
-  other.best = lapply(seq(solutions),
+  # other.best = lapply(seq(solutions),
+  other.best = lapply(2:(TOP.plot + 1),
                       function(w)
                         plot.dbpmm(
-                          res$runs[[solutions[w]]],
-                          histogram.main = paste0("Solution #", 1 + w),
-                          annotation = paste0("Overall rank : ", solutions[w]),
+                          res$runs[[w]],
+                          histogram.main = paste0("Solution #", w),
+                          # annotation = paste0("Overall rank : ", solutions[w]),
                           silent = TRUE,
                           cex = .6 * cex
                         )$mainHist)
@@ -154,10 +152,10 @@ mobster_plt_model_selection = function(res,
     bottom = text_grob(
       " Panels: (A-D) Best fit; (E,F) Scores from model selection; (G-*) Lower-scoring fits.",
       color = "black",
-      face = "bold",
+      # face = "bold",
       hjust = 0,
       x = 0,
-      size = 8 * cex
+      size = 6 * cex
     ),
     fig.lab = fig.lab,
     fig.lab.face = "bold"
