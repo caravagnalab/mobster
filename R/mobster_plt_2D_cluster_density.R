@@ -3,38 +3,38 @@ plot_2D_cluster_density = function(x, s.x, s.y, b.c, col = 'red', cov = 100, cut
 {
   binfit = x$fit.Binomial
   rownames(binfit$theta_k) = x$samples
-  
+
   # mixing proportion
   pi = binfit$pi_k[b.c]
-  
+
   # Binomial parameters
   p.x = binfit$theta_k[s.x, b.c]
   p.y = binfit$theta_k[s.y, b.c]
-  
+
   # less than 1% do not plot anything
   eplot = function() {
-    ggplot() + annotation_custom(text_grob(paste0('< ', cutoff), size = 10)) + theme(element_blank(), axis.text = element_blank()) 
+    ggplot() + annotation_custom(text_grob(paste0('< ', cutoff), size = 10)) + theme(element_blank(), axis.text = element_blank())
   }
-  
+
   if(all(p.x < cutoff, p.y < cutoff)) return(eplot())
-  
-  # Otherwise plot 
+
+  # Otherwise plot
   domain = seq(0, 1, 0.01)
-  
+
   grid = expand.grid(domain, domain, stringsAsFactors = FALSE)
   colnames(grid) = c('x', 'y')
-  
+
   grid$nv.x = round(grid$x * cov)
   grid$nv.y = round(grid$y * cov)
-  
+
   mpdf = function(x, y, b.c) {
     p.x = binfit$theta_k[s.x, b.c]
     p.y = binfit$theta_k[s.y, b.c]
-    
+
     pi * dbinom(x, size = cov, prob = p.x) *
-      dbinom(y, size = cov, prob = p.y) 
+      dbinom(y, size = cov, prob = p.y)
   }
-  
+
   all.points = lapply(
     b.c,
     # colnames(binfit$theta_k),
@@ -45,19 +45,65 @@ plot_2D_cluster_density = function(x, s.x, s.y, b.c, col = 'red', cov = 100, cut
             pdf =  apply(grid, 1, function(w)
               mpdf(w['nv.x'], w['nv.y'], b.c = cl)))
     })
-  
+
   all.points = Reduce(rbind, all.points)
-  
-  ggplot(all.points, aes(x = x, y = y)) + 
+
+  ggplot(all.points, aes(x = x, y = y)) +
     geom_raster(aes(fill = pdf), interpolate = TRUE) +
-    theme_light(base_size = 10) + 
-    facet_wrap(~group) + 
+    theme_light(base_size = 10) +
+    facet_wrap(~group) +
     scale_fill_gradient (low = 'gainsboro', high = col) +
     theme(legend.position="none") +
     labs(x = s.x, y = s.y) +
     geom_hline(yintercept = cutoff, size = .3, color = 'red',linetype = "longdash") +
-    geom_vline(xintercept = cutoff, size = .3, color = 'red',linetype = "longdash") 
+    geom_vline(xintercept = cutoff, size = .3, color = 'red',linetype = "longdash")
 }
+
+
+binomial2D_cluster_template_density = function(x, s.x, s.y, col = 'red', cov = 100, cutoff = 0.05)
+{
+  if (is.null(x$fit.Binomial))
+    stop("Binomial clusters are not available!")
+  
+  binfit = x$fit.Binomial
+  rownames(binfit$theta_k) = x$samples
+  
+  # mixing proportion
+  pi = binfit$pi_k
+  
+  # purity (we have to adjust the binomial parameters for purity if we want to plto with adjusted VAF)
+  purity = x$purity
+  
+  # Otherwise plot 
+  domain = seq(0, 1, 0.02)
+  
+  grid = expand.grid(domain, domain, stringsAsFactors = FALSE)
+  colnames(grid) = c('x', 'y')
+  
+  grid$nv.x = round(grid$x * cov)
+  grid$nv.y = round(grid$y * cov)
+  
+  mpdf = function(x, y, b.c) {
+    p.x = binfit$theta_k[s.x, b.c] / purity[s.x]
+    p.y = binfit$theta_k[s.y, b.c] / purity[s.y]
+    
+    pi[b.c] * dbinom(x, size = cov, prob = p.x) *
+      dbinom(y, size = cov, prob = p.y) 
+  }
+  
+  all.points = lapply(
+    colnames(binfit$theta_k),
+    function(cl)
+    {
+      cbind(grid,
+            group = cl,
+            pdf =  apply(grid, 1, function(w)
+              mpdf(w['nv.x'], w['nv.y'], b.c = cl)))
+    })
+  
+  Reduce(rbind, all.points)
+}
+
 
 #' Title
 #'
@@ -69,7 +115,7 @@ plot_2D_cluster_density = function(x, s.x, s.y, b.c, col = 'red', cov = 100, cut
 #' @export
 #'
 #' @examples
-mobster_plt_2D_cluster_density = function(x, palette = "Set1", ...) {
+mobster_plt_2D_cluster_density = function(x, cov = 100, palette = "Set1", ...) {
   stopifnot(!is.null(x$fit.Binomial))
   
   # Get colors

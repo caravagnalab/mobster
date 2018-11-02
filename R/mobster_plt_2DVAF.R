@@ -16,21 +16,20 @@ mobster_plt_2DVAF = function(obj,
                              cluster = NULL,
                              cluster.label = 'cluster',
                              marginal = FALSE,
+                             density = TRUE,
                              cex = 1,
                              alpha = 0.3,
+                             downsample = 1000,
+                             scales.fixed = TRUE,
                              # VAF.range = c(0.05, 0.6),
                              marginal.remove.zeroes = T,
                              palette = 'Set1') 
 {
-  # pio::pioHdr(
-  #   header = 'MOBSTER -- plot 2D VAF',
-  #   prefix = '\t-',
-  #   toPrint = c(
-  #     `Sample IDs` = paste(x, y, sep = ' -vs- '),
-  #     `VAF range` = paste(VAF.range, collapse = ' -- ')
-  #   )
-  # )
+  caption = ""
   
+  ####
+  # Prepare input VAF data. Match clusters if required
+  # and downsample if there are too many entries
   data = VAF_table(obj, samples = c(x, y), suffix = '') 
   
   if (!is.null(cluster)) {
@@ -41,24 +40,35 @@ mobster_plt_2DVAF = function(obj,
     data = full_join(data, cluster, by = 'id')    
   }
 
+  # downsample data if too many
+  if(!is.null(downsample) & nrow(data) > downsample)
+  {
+    stopifnot(is.numeric(downsample))
+    data = data[sample(1:nrow(data), downsample), , drop = FALSE]
+    
+    caption = paste0(caption, "Downsampled (N = ", downsample, ')')
+  }
+  
   data = data  %>% select(-id)
-
-  ######################  If a clustering is assigned, we set colour according to the labels
+  
+  ####
+  # Ggplot object, depends on clustering or not.  With clustering, we set colour
+  # of the points according to the labels. If it is not, we use a density-depenednt coloring
   if (!is.null(cluster))
-    p = ggplot(data, aes(
-      x = eval(parse(text = x)),
-      colour = factor(eval(parse(text = cluster.label))),
-      y = eval(parse(text = y))
-    )) +
-    scale_color_brewer(palette = palette, drop = FALSE) +
-    geom_point(alpha = alpha, size = 2 * cex)
-  
-  ###################### If it is not, we use a density-depenednt coloring
-  
-  
-  
-  if (is.null(cluster))
-  {  
+  { 
+    labels = unique(data[, cluster.label]) %>% pull(!!cluster.label)
+    colors = mobster:::scols(sort(labels), palette)
+    
+    p = ggplot(data = data,
+               aes(
+                 x = eval(parse(text = x)),
+                 y = eval(parse(text = y)),
+                 color = factor(eval(parse(text = cluster.label)))
+               )) +
+      scale_color_manual(values = colors) +
+      geom_point(alpha = alpha, size = 1 * cex)
+  }
+  else {
     # Get density of points in 2 dimensions.
     # @param x A numeric vector.
     # @param y A numeric vector.
@@ -77,46 +87,58 @@ mobster_plt_2DVAF = function(obj,
     # annotated density
     data$density =  get_density(data %>% pull(!!x), data %>% pull(!!y))
     
-    p = ggplot(data, aes(
-      x = eval(parse(text = x)),
-      y = eval(parse(text = y))
-      )) +
+    p = ggplot(data,
+               aes(x = eval(parse(text = x)),
+                   y = eval(parse(text = y)))) +
       scale_color_viridis() +
       geom_point(alpha = alpha, aes(color = density), size = 2 * cex)
   }
   
-  ###################### Adjust plot ranges if smaller than 1  
-  if (max(data[, x], na.rm = T) < 1)
-    p = p + xlim(0, 1)
-
-  if (max(data[, y], na.rm = T) < 1)
-    p = p + ylim(0, 1)
+  ####
+  # Add density points if required. Density plot can only go with clustering  
+  if(density)
+  {
+    if(is.null(cluster)) stop("Density requires also Binomial clusters")
   
-  ###################### Plot style
+    # Get median coverage of the data
+    den.coverage = DP(obj, samples = c(x,y)) %>% pull(value)
+    den.coverage = round(median(den.coverage, na.rm = TRUE))
+    
+    # Compute the density
+    density.points = binomial2D_cluster_template_density(obj, x, y)
+
+    p = p + 
+      geom_contour(data = density.points, 
+                   aes(x = x, y = y, z = pdf, color = group),
+                   inherit.aes = F) 
+    
+    caption = paste0(caption, 
+                     '\n', den.coverage, "x density adjusted for purity (",
+                     x, ' = ', obj$purity[x], '; ',
+                     y, ' = ', obj$purity[y], 
+                     ")")
+  }
+  
+  ####
+  # Adjust plot ranges if required 
+  if (scales.fixed & max(data[, x], na.rm = T) < 1) p = p + xlim(0, 1)
+  if (scales.fixed & max(data[, y], na.rm = T) < 1) p = p + ylim(0, 1)
+  
+  ####
+  # Plot style
   p = p +
-    theme(
-      panel.border = element_blank(),
-      panel.grid.major = element_blank(),
-      # panel.grid.minor = element_blank(),
-      axis.line = element_line(
-        size = 0.5,
-        linetype = "solid",
-        colour = "white"
-      )
-    ) +
     geom_vline(xintercept = 0, colour = "darkgray", size = .3) +
     geom_hline(yintercept = 0, colour = "darkgray", size = .3) +
-    # geom_density_2d(aes(fill = ..level..), geom = "polygon", alpha = .5) +
     labs(
-      title = paste(x, "vs", y),
-      # subtitle = paste0("",
-      # caption = paste0("Dashed cutoffs (", VAF.range[1], ', ', VAF.range[2], ')'),
+      title = bquote(bold(.(x)) ~ "vs" ~ bold(.(y))),
+      caption = caption,
       x = x,
       y = y
     ) +
-    guides(colour = guide_legend(title = cluster.label)) +
+    guides(color = guide_legend(title = cluster.label)) +
     theme_light(base_size = 8 * cex) +
     theme(
+      panel.background = element_rect(fill = alpha("gray95", 1)),
       legend.position = "bottom",
       legend.key.size = unit(.3 * cex, "cm"),
       legend.text = element_text(size = 8 * cex)
@@ -136,16 +158,18 @@ mobster_plt_2DVAF = function(obj,
     # 
   
   
-  if (!marginal)
-    return(p)
+  ####
+  # Return the object or add the marginal histogram
+  if (!marginal) return(p)
   
   data = data[data[, x] > 0,]
   data = data[data[, y] > 0,]
   
   require(ggExtra)
+  
   ggMarginal(
     p,
-    fill = "gainsboro",
+    fill = "black",
     binwidth = 0.01,
     alpha = 1,
     aes = aes(

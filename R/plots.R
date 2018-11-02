@@ -57,15 +57,13 @@ plot.dbpmm = function(x,
   # Text for the plot -- fit type
   # label.fit = ifelse(x$fit.type == 'MM', 'MM', "MLE")
   
-  label.fit = paste0(
-    ifelse(x$fit.tail, 'Tail ON', "Tail OFF"), " | ",
-    ifelse(x$fit.type == 'MM', 'MM', "MLE"), ' (', conv.steps, ' steps; eps. = ', conv.epsilon, ') | ',
-    ifelse(x$status, 'CONVERGED', "NOT CONVERGED")
-    )
-  # label.fit = expression(label.fit)
-  
-  # label.fit = bquote(
-    # .(label.fit) ~ .(conv.steps) ~ 'steps; ' ~ epsilon ~ '=' ~ .(conv.epsilon) ~ '|')
+  # label.fit = paste0(
+  #   # ifelse(x$fit.tail, 'Tail ON', "Tail OFF"), " | ",
+  #   ifelse(x$fit.type == 'MM', 'Mom. Match.', "M.L.E"), ' (', conv.steps, ' steps; eps. = ', conv.epsilon, ')'
+  #   # ifelse(x$status, 'CONVERGED', "NOT CONVERGED")
+  #   )
+
+  label.fit = bquote(.(x$fit.type) *" ("*omega*" = "* .(conv.steps) ~ 'steps; ' * epsilon ~ '=' ~ .(conv.epsilon) * ')')
   # label.fit = label.fit ~ ifelse(x$fit.tail, 'With tail', "Without tail")
 
   # Main ggplot object
@@ -82,6 +80,7 @@ plot.dbpmm = function(x,
     theme(
       legend.position = "bottom",
       legend.key.size = unit(.3 * cex, "cm"),
+      panel.background = element_rect(fill = 'white'),
       plot.caption = element_text(color = ifelse(x$status, "darkgreen",  "red"))
     )
   
