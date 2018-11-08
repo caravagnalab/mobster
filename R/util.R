@@ -43,7 +43,7 @@
   if (cores < 1) cores = 1
 
   cat(cyan('\n\tRegistering to use', cores, 'cores out of', detectCores(), 'via \"parallel\" ...'))
-  cl = makeCluster(cores)
+  cl = makeCluster(cores, outfile = "")
   registerDoParallel(cl)
   cat(bgGreen(" OK.\n"))
 

@@ -221,6 +221,7 @@ DP_table = function(x,
   output
 }
 
+
 #' Tabular VAF, DP and NV values.
 #' 
 #' @description 

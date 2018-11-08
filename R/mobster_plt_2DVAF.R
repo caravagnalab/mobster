@@ -21,6 +21,8 @@ mobster_plt_2DVAF = function(obj,
                              alpha = 0.3,
                              downsample = 1000,
                              scales.fixed = TRUE,
+                             exclude = NULL,
+                             exclude.color = 'black',
                              # VAF.range = c(0.05, 0.6),
                              marginal.remove.zeroes = T,
                              palette = 'Set1') 
@@ -58,6 +60,11 @@ mobster_plt_2DVAF = function(obj,
   { 
     labels = unique(data[, cluster.label]) %>% pull(!!cluster.label)
     colors = mobster:::scols(sort(labels), palette)
+    
+    if(!is.null(exclude)) colors[exclude] = exclude.color
+    
+    caption = paste0(caption, 
+                     '\n', paste(exclude, collapse = ', '), " excluded")
     
     p = ggplot(data = data,
                aes(
@@ -183,4 +190,38 @@ mobster_plt_2DVAF = function(obj,
     yparams = list(colour = "black", size = 0.1)
   )
   
+}
+
+
+
+#' Title
+#'
+#' @param f 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+prioritize_Clusters = function(x, binomial_cutoff = 0.05, biopsies_cutoff = 1)
+{
+  pio::pioTit(paste0("Selecting Binomial clusters in >", biopsies_cutoff, " biopsies and peak >", binomial_cutoff))
+  
+  nom_C = round(x$fit.Binomial$theta_k, 4)
+  nom_C = data.frame(nom_C)
+  
+  nom_C[nom_C <= binomial_cutoff] = 0
+  nom_C[nom_C == 0] = NA
+  nom_C$sample = x$samples
+  
+  pio::pioDisp(nom_C)
+  nom_C[nom_C > 0] = 1
+  
+  private = which(colSums(nom_C[, 1:(ncol(nom_C) - 1)], na.rm = TRUE) <= biopsies_cutoff)
+  
+  if(length(private) == 0) private = NULL
+  else private = colnames(nom_C)[private]
+  
+  pio::pioStr(paste0("Rejected"), paste(private, collapse = ', '))
+  
+  private
 }

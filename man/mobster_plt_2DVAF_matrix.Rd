@@ -4,16 +4,17 @@
 \alias{mobster_plt_2DVAF_matrix}
 \title{Title}
 \usage{
-mobster_plt_2DVAF_matrix(lower.x, upper.x = NULL,
-  samples = lower.x$samples, MOBSTER = !is.null(lower.x$fit.MOBSTER),
-  lower.cluster = NULL, lower.cluster.label = "cluster",
-  upper.cluster = NULL, upper.cluster.label = "cluster",
-  title = lower.x$description, palette = list(MOBSTER = "Set1", lower =
-  "Set2", upper = "Spectral"), ...)
+mobster_plt_2DVAF_matrix(lower.x, lower.cluster = NULL,
+  lower.cluster.label = NULL, lower.exclude = NULL, upper.x = NULL,
+  upper.cluster = NULL, upper.cluster.label = NULL,
+  upper.exclude = NULL, MOBSTER = NULL, samples = lower.x$samples,
+  lower.description = lower.x$description,
+  upper.description = ifelse(is.null(upper.x), "", upper.x$description),
+  palette = list(MOBSTER = "Set1", lower = "Set2", upper = "Spectral"),
+  bg = list(MOBSTER = "gainsboro", lower = "darkslategray4", upper =
+  "ivory3"), ...)
 }
 \arguments{
-\item{MOBSTER}{}
-
 \item{lower.cluster}{}
 
 \item{lower.cluster.label}{}
@@ -22,13 +23,15 @@ mobster_plt_2DVAF_matrix(lower.x, upper.x = NULL,
 
 \item{upper.cluster.label}{}
 
-\item{title}{}
+\item{MOBSTER}{}
 
 \item{palette}{}
 
 \item{...}{}
 
 \item{x}{}
+
+\item{title}{}
 }
 \description{
 Title

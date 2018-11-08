@@ -22,9 +22,11 @@ mobster_plt_2DVAF_matrix = function(
   lower.x,
   lower.cluster = NULL,
   lower.cluster.label = NULL,  
+  lower.exclude = NULL,
   upper.x = NULL,
   upper.cluster = NULL,
   upper.cluster.label = NULL,  
+  upper.exclude = NULL,
   MOBSTER = NULL,
   samples = lower.x$samples,
   lower.description = lower.x$description,
@@ -69,6 +71,7 @@ mobster_plt_2DVAF_matrix = function(
           cluster = lower.cluster, 
           cluster.label = lower.cluster.label,
           palette = palette$lower,
+          exclude = lower.exclude,
           ...) +
             theme(plot.background = element_rect(fill = bg$lower))
       
@@ -81,6 +84,7 @@ mobster_plt_2DVAF_matrix = function(
           cluster = upper.cluster, 
           cluster.label = upper.cluster.label,
           palette = palette$upper,
+          exclude = upper.exclude,
           ...) +
             theme(plot.background = element_rect(fill = bg$upper))
       
