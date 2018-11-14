@@ -7,11 +7,14 @@
 mobster_plt_2DVAF(obj, x, y, cluster = NULL, cluster.label = "cluster",
   marginal = FALSE, density = TRUE, cex = 1, alpha = 0.3,
   downsample = 1000, scales.fixed = TRUE, exclude = NULL,
-  exclude.color = "black", marginal.remove.zeroes = T,
-  palette = "Set1")
+  exclude.color = "black", annotate = NULL,
+  marginal.remove.zeroes = T, palette = "Set1")
 }
 \arguments{
 \item{marginal}{}
+}
+\value{
+
 }
 \description{
 Title

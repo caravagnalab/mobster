@@ -7,6 +7,8 @@
 #' @param marginal
 #'
 #' @return
+#' 
+#' @import ggrepel
 #' @export
 #'
 #' @examples
@@ -23,7 +25,7 @@ mobster_plt_2DVAF = function(obj,
                              scales.fixed = TRUE,
                              exclude = NULL,
                              exclude.color = 'black',
-                             # VAF.range = c(0.05, 0.6),
+                             annotate = NULL,
                              marginal.remove.zeroes = T,
                              palette = 'Set1') 
 {
@@ -73,7 +75,15 @@ mobster_plt_2DVAF = function(obj,
                  color = factor(eval(parse(text = cluster.label)))
                )) +
       scale_color_manual(values = colors) +
-      geom_point(alpha = alpha, size = 1 * cex)
+      # geom_count(alpha = alpha, size = 1 * cex) +
+      geom_bin2d(alpha = alpha, binwidth = 0.01, show.legend = FALSE) +
+      scale_fill_gradient(name = "count", 
+                          trans = "log", 
+                          labels = function(x) round(x),
+                          low = "gainsboro", high = "black") +
+      guides(count = guide_legend("Counts (log)"))
+    
+    
   }
   else {
     # Get density of points in 2 dimensions.
@@ -117,7 +127,7 @@ mobster_plt_2DVAF = function(obj,
     p = p + 
       geom_contour(data = density.points, 
                    aes(x = x, y = y, z = pdf, color = group),
-                   inherit.aes = F) 
+                   inherit.aes = F, size = .2, alpha = 1) 
     
     caption = paste0(caption, 
                      '\n', den.coverage, "x density adjusted for purity (",
@@ -142,7 +152,7 @@ mobster_plt_2DVAF = function(obj,
       x = x,
       y = y
     ) +
-    guides(color = guide_legend(title = cluster.label)) +
+    guides(color = guide_legend(title = cluster.label), fill = FALSE) +
     theme_light(base_size = 8 * cex) +
     theme(
       panel.background = element_rect(fill = alpha("gray95", 1)),
@@ -164,6 +174,19 @@ mobster_plt_2DVAF = function(obj,
     #            linetype = "longdash", size = .3)
     # 
   
+  if(!is.null(annotate))
+  {
+    p = p +
+      geom_label_repel(data = annotate, 
+                       aes(
+                         label = label, 
+                         color = factor(eval(parse(text = cluster.label)))
+                         ),
+                       size = 1.5 * cex,
+                       box.padding = 1, 
+                       segment.size = .2 * cex, force = 1) +
+      geom_point(data = annotate, size = .3 * cex, alpha = 1)
+  }
   
   ####
   # Return the object or add the marginal histogram
@@ -177,7 +200,7 @@ mobster_plt_2DVAF = function(obj,
   ggMarginal(
     p,
     fill = "black",
-    binwidth = 0.01,
+    binwidth = 1e-2,
     alpha = 1,
     aes = aes(
       x = eval(parse(text = x)),

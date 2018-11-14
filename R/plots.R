@@ -4,6 +4,15 @@
 #' @param palette a palette for colours from RColorBrewer
 #' @param tail.color a 2-components vector for the color of the tail, and the estimated density
 #' @param alpha alpha channel
+#' @param annotation 
+#' @param binwidth 
+#' @param max.height.hist 
+#' @param cex 
+#' @param histogram.main 
+#' @param bg.color 
+#' @param title 
+#' @param silent 
+#' @param ... 
 #'
 #' @return if assigned, it return the list of ggplot2 objects.
 #' @export
@@ -19,7 +28,9 @@ plot.dbpmm = function(x,
                       palette = 'Set1', 
                       tail.color = 'darkgray', 
                       alpha = .8, 
+                      binwidth = 0.01,
                       max.height.hist = TRUE, 
+                      annotate = NULL,
                       cex = 1,
                       histogram.main = 'Fit', # Title of the histogram
                       bg.color = 'ivory2',    # Background color
@@ -28,7 +39,7 @@ plot.dbpmm = function(x,
                       ...)
 {
   # Prepare variables
-  domain = seq(0, 1, 0.01)
+  domain = seq(0, 1, binwidth)
   
   labels = names(.params_Pi(x))
   
@@ -54,22 +65,22 @@ plot.dbpmm = function(x,
   if(conv.steps >= 2) conv.epsilon = abs(rev(x$all.NLL)[1] - rev(x$all.NLL)[2])
   conv.epsilon = formatC(conv.epsilon, format = "e", digits = 0)
   
-  # Text for the plot -- fit type
-  # label.fit = ifelse(x$fit.type == 'MM', 'MM', "MLE")
-  
-  # label.fit = paste0(
-  #   # ifelse(x$fit.tail, 'Tail ON', "Tail OFF"), " | ",
-  #   ifelse(x$fit.type == 'MM', 'Mom. Match.', "M.L.E"), ' (', conv.steps, ' steps; eps. = ', conv.epsilon, ')'
-  #   # ifelse(x$status, 'CONVERGED', "NOT CONVERGED")
-  #   )
+  sse = max(.compute_fit_sqerr(x, binning = binwidth)$cum.y)
+  sse = formatC(sse, format = "e", digits = 3)
 
-  label.fit = bquote(.(x$fit.type) *" ("*omega*" = "* .(conv.steps) ~ 'steps; ' * epsilon ~ '=' ~ .(conv.epsilon) * ')')
+  label.fit = bquote(
+    .(x$fit.type) *
+      " ("*omega*" = "* .(conv.steps) ~ 'steps; ' * epsilon ~ '=' ~ .(conv.epsilon) *
+      "; SSE"~.(sse)*')')
+  
   # label.fit = label.fit ~ ifelse(x$fit.tail, 'With tail', "Without tail")
 
+  
   # Main ggplot object
-  hist_pl = ggplot(x$data, aes(VAF, fill = cluster, y = ..count../sum(..count..))) +
-    geom_histogram(alpha = alpha, position = 'identity', binwidth = 0.01) +
+  hist_pl = ggplot(x$data, aes(VAF, fill = factor(cluster), y = ..count../sum(..count..))) +
+    geom_histogram(alpha = alpha, position = 'identity', binwidth = binwidth) +
     scale_fill_manual(values = colors, labels = names(colors)) +
+    guides(fill = guide_legend(title = "Cluster")) + 
     labs(
       title = bquote(bold(.(histogram.main))),
       subtitle = annotation,
@@ -88,12 +99,12 @@ plot.dbpmm = function(x,
   densities = mobster:::template_density(
     x, 
     x.axis = domain, 
-    binwidth = 0.01, 
+    binwidth = binwidth, 
     reduce = TRUE)
     
   # Add the trace and the mean of each component
   hist_pl = hist_pl + 
-    geom_line(data = densities, aes(y = y, x = x, color = cluster)) +
+    geom_line(data = densities, aes(y = y, x = x, color = factor(cluster)), size = 1 * cex) +
     scale_color_manual(values = colors, labels = names(colors)) +
     guides(color = FALSE)
     
@@ -109,7 +120,64 @@ plot.dbpmm = function(x,
     yMax = max(ggplot_build(hist_pl)$data[[1]]$y)
     hist_pl = hist_pl + ylim(0, yMax)
   }
+  
+  #### Overall density and SSE
+  densities = tibble::as_tibble(densities)
+  densities = densities %>% group_by(x) %>% summarise(y = sum(y), cluster = 'f(x)')
+  
+  m = max(densities$y, na.rm = TRUE)
 
+  hist_pl = hist_pl +
+    geom_line(data = densities %>% mutate(y = y + m * 0.02), 
+              aes(y = y, x = x), 
+              color = 'black',
+              alpha = .8,
+              size = .5 * cex,
+              linetype = 'dashed',
+              inherit.aes = FALSE)
+  
+  # SSE
+  error = .compute_fit_sqerr(x, binning = binwidth)
+
+  # scale to percentage for plotting
+  me = max(error$cum.y)
+  error = error %>% mutate(cum.y = (cum.y / me) * m )
+  
+  hist_pl = hist_pl +
+    geom_line(data = error, aes(y = cum.y, x = x), 
+              color = 'darkgray',
+              alpha = 1,
+              size = .2 * cex,
+              linetype = 'dashed',
+              inherit.aes = FALSE) +
+    scale_y_continuous(sec.axis = sec_axis(~./ m * 100, name = "SSE [cumulative %]"))  
+
+  # Annotation of input entries
+  if(!is.null(annotate) & all(c("VAF", 'label') %in% colnames(annotate)))
+  {
+    # Position the point at coord x = VAF and y = density
+    m = max(densities$y, na.rm = TRUE)
+
+    annotate$y = round(annotate$VAF/binwidth)
+    annotate$y = densities$y[annotate$y] + m * 0.02
+    
+    hist_pl = hist_pl +
+      geom_label_repel(data = annotate, 
+                       aes(
+                         x = VAF, 
+                         y = y,
+                         label = label, 
+                         color = factor(cluster)
+                         # fill = factor(cluster)
+                       ),
+                       size = 1.5 * cex,
+                       inherit.aes = FALSE,
+                       box.padding = 0.95, 
+                       segment.size = .2 * cex, force = 1) +
+      geom_point(data = annotate, aes(x = VAF, y = y,  color = factor(cluster)), 
+                 size = .3 * cex, alpha = 1, 
+                 inherit.aes = FALSE)
+  }
 
   ############### Plot 2 -- initial Condition, density plot
   n = x
@@ -320,70 +388,57 @@ scols = function (v, palette = "Spectral")
   }
 }
 
-.plot.fit.summary = function(x, alpha = .5, silent = FALSE, range = NULL, cex = 1) {
+
+.plot.fit.summary = function(x, TOP = 5, alpha = .5, silent = FALSE, range = NULL, cex = 1) {
 
   model.selection = 'ICL'
-  if(!is.null(x$model.selection)) model.selection = x$model.selection
-
+   if(!is.null(x$model.selection)) model.selection = x$model.selection
+  # 
   model.selection = x$model.selection[1]
   x = x$fits.table
-
+  
   pio::pioTit("Creating boxplot of scores for model selection.")
   x = x[complete.cases(x), ]
-
+  
   # It's in the table
   pio::pioDisp(x)
-
+  
   x$tail[x$tail] = 'With Tail'
   x$tail[x$tail == 'FALSE'] = 'Without Tail'
-
+  
   x$K = as.factor(x$K)
   x$tail = as.factor(x$tail)
   values = x[, model.selection]
-
-  # outL = function(x) {
-  #   # compute lower and upper whiskers
-  #   boxplot.stats(values)$stats[5]
-  # }
-  #
-  # if(all(is.null(range)))
-  # {
-  #   message('range = NULL : removing score outliers')
-  #   outliers = sapply(split(x, f = x$K), outL)
-  #   outliers = max(outliers)
-  #
-  #   range = c(min(values), outliers) * 1.05
-  # }
-  # else message("Using custom input range for ICL")
-
-
-  # pa = ggplot(data = x, aes(x = K, y = ICL, fill = K)) +
-  #   geom_jitter(position = position_jitter(width = 0.2, height = 0.005),
-  #               alpha = 0.05, aes(color = K),
-  #               size = 2) +
-  #   geom_violin(alpha = alpha, trim = FALSE) +
-  #   # geom_boxplot(alpha = alpha) +
-  #   scale_fill_brewer(palette = 'Set1') +
-  #   labs(title  = bquote(bold('ICL Score: ')~ .(nrow(x)) ~' runs' ~ '- no upper outliers')) +
-  #   xlab('K') + ylab(bquote(italic('ICL'))) +
-  #   theme_light() +
-  #   facet_wrap(~tail, nrow = 1) +
-  #   coord_cartesian(ylim = range * 1.05)
-
-  pa = ggplot(data = x, aes(x = K, y = ICL, fill = K)) +
-    geom_jitter(position = position_jitter(width = 0.2, height = 0.005),
-                alpha = alpha, aes(colour = K),
-                size = 2) +
+  
+  x$rank = 1:nrow(x)
+  
+  pos <- position_jitter(width = 0.2, seed = 1)
+  
+  pa = ggplot(data = x, aes(x = K, y = ICL, fill = interaction(K,tail), colour = interaction(K,tail))) +
+    geom_point(alpha = alpha, position = pos, size = 2) + 
+    # geom_jitter(position = position_jitter(width = 0.2, height = 0.005),
+    #             alpha = alpha, aes(colour = K),
+    #             size = 2) +
     labs(title  = bquote(bold('Model selection')),
          subtitle = bquote(.(nrow(x)) ~' runs')) +
     xlab('Beta components (K)') + ylab(bquote(italic(.(model.selection)))) +
     theme_light(base_size =  8 * cex) +
-    facet_wrap(~tail, nrow = 1) +
-    # coord_cartesian(ylim = range) +
+    facet_grid(K~tail) +
     guides(fill = FALSE, colour = FALSE)
-
-
-  # require(ggrepel)
+  
+  
+  
+  library(ggrepel)
+  pa = pa + geom_label_repel(data = x[1:TOP, ], aes(label = rank), 
+                        position = pos,
+                        fontface = 'bold', 
+                        color = 'black', 
+                        angle = 45,
+                        box.padding = 0.95, 
+                        size = 0.5 * cex,
+                        segment.size = 0.2 * cex,
+                        segment.color = 'gainsboro')
+  
 
   if(!silent) print(pa)
 
@@ -391,158 +446,160 @@ scols = function (v, palette = "Spectral")
 }
 
 
-plot.fits = function(fits)
-{
-  .getGGplotHistogram(fits[[1]])
 
 
-}
+# plot.fits = function(fits)
+# {
+#   .getGGplotHistogram(fits[[1]])
+# 
+# 
+# }
 
 
-.getGGplotHistogram = function(x, annotation = NULL, palette = 'Spectral',
-                               tail.color = c('gainsboro', 'darkgray'),
-                               alpha = .5, max.height.hist = TRUE, cex = 1,
-                               bg.color = 'ivory2', main = 'MOBSTER fit', ...)
-{
-  domain = seq(0, 1, 0.01)
-
-  labels = names(x$pi)
-  labels.betas = colnames(x$beta)
-
-  pi = x$pi
-  ICL = round(as.numeric(x$scores$ICL), 2)
-  NLL = round(as.numeric(x$scores$NLL), 2)
-  K = as.numeric(x$K)
-
-  col = RColorBrewer::brewer.pal(
-    RColorBrewer::brewer.pal.info[palette, 'maxcolors'], palette)
-  col = colorRampPalette(col)(x$Kbeta)
-
-  col.histogram = c(tail.color[1], col)
-  col.lines = c(tail.color[2], col)
-
-  names(col.histogram) = names(col.lines) = labels
-
-
-  # Plot 1 -- main histogram
-  df = data.frame(X = x$X, Cluster = x$labels, Color = col[x$labels])
-  vvv = lapply(1:x$K,
-               function(w)
-                 data.frame(X = domain,
-                            Cluster = labels[w],
-                            y = ddbpmm(x, data = domain, components = w, log = FALSE)))
-  names(vvv) = labels
-
-  # Histogram coloured according to clustering assignments
-  tit = bquote(bold(.(main)))
-
-  extented.labels = levels(df$Cluster)
-  if(!all(is.na(x$tail))) extented.labels['Tail'] = paste('Tail : ', round(x$shape, 2), '; x >', round(x$scale, 2), sep ='')
-  else extented.labels['Tail'] = bquote('Tail: OFF')
-
-  betavals = x$beta[c('mean', 'var'), , drop = FALSE]
-  betavals['mean', ] = round(betavals['mean', ], 3)
-  betavals['var', ]  = format(betavals['var', ] , scientific = T, digits = 3)
-
-  for(clus in paste('C', 1:x$Kbeta, sep = ''))
-    extented.labels[clus] = paste(clus, ' : ', betavals['mean', clus], ' (', betavals['var', clus], ')', sep = '')
-
-
-  p = ggplot(df, aes(X, fill = Cluster, y = ..count../sum(..count..))) +
-    geom_histogram(alpha = alpha, position = 'identity', binwidth = 0.01) +
-    scale_fill_manual(values = col.histogram, labels = extented.labels) +
-    labs(
-      title = tit,
-      subtitle = annotation,
-      x = "Observed Frequency", y = "") +
-    theme_classic(base_size = 10 * cex)
-
-
-  if(max.height.hist) {
-    yMax = max(ggplot_build(p)$data[[1]]$y)
-    p = p + ylim(0, yMax)
-  }
-
-
-  df.m = data.frame(variable = labels.betas, Mean = x$beta['mean', labels.betas])
-  rownames(df.m) = df.m$variable
-
-  # Add densities to the plot
-  vvv = lapply(vvv, function(w) {w$y = w$y * 0.01; w}) # Scale density wrt binwidth
-
-  for(i in seq(labels)) p = p + geom_line(data = vvv[[i]], aes(y = y, x = X), colour = col.lines[i])
-
-  # Add means for Beta components
-  for(i in labels.betas) p = p +  geom_vline(data = df.m[i ,], aes(xintercept = Mean), colour = col.lines[i], linetype = "longdash")
-
-  # Annotate convergency value
-  if(x$status) p = p + annotate("text", x = .9, y = yMax , label = paste(x$fit.type, ': CONVERGED'), size = 3, colour = 'darkgreen')
-  else  p = p + annotate("text", x = .9, y = yMax, label = paste(x$fit.type, ': NOT CONVERGED'), size = 3, colour = 'red')
-
-  p
-}
-
-
-
-.getIconGGplotHistogram = function(x, palette = 'Spectral',
-                                   tail.color = c('gainsboro', 'darkgray'),
-                                   alpha = .5, max.height.hist = TRUE, cex = 1,
-                                   bg.color = 'ivory2')
-{
-  domain = seq(0, 1, 0.01)
-
-  labels = names(x$pi)
-  labels.betas = colnames(x$beta)
-
-  pi = x$pi
-  ICL = round(as.numeric(x$scores$ICL), 2)
-  NLL = round(as.numeric(x$scores$NLL), 2)
-  K = as.numeric(x$K)
-
-  col = RColorBrewer::brewer.pal(
-    RColorBrewer::brewer.pal.info[palette, 'maxcolors'], palette)
-  col = colorRampPalette(col)(x$Kbeta)
-
-  col.histogram = c(tail.color[1], col)
-  col.lines = c(tail.color[2], col)
-
-  names(col.histogram) = names(col.lines) = labels
-
-
-  # Plot 1 -- main histogram
-  df = data.frame(X = x$X, Cluster = x$labels, Color = col[x$labels])
-  vvv = lapply(1:x$K,
-               function(w)
-                 data.frame(X = domain,
-                            Cluster = labels[w],
-                            y = ddbpmm(x, data = domain, components = w, log = FALSE)))
-  names(vvv) = labels
-
-  # Histogram coloured according to clustering assignments
-
-  p = ggplot(df, aes(X, fill = Cluster, y = ..count../sum(..count..))) +
-    geom_histogram(alpha = alpha, position = 'identity', binwidth = 0.01) +
-    scale_fill_manual(values = col.histogram, labels = labels) +
-    theme_void(base_size = 10 * cex) +
-    guides(fill = FALSE)
-
-
-  if(max.height.hist) {
-    yMax = max(ggplot_build(p)$data[[1]]$y)
-    p = p + ylim(0, yMax)
-  }
-
-
-  df.m = data.frame(variable = labels.betas, Mean = x$beta['mean', labels.betas])
-  rownames(df.m) = df.m$variable
-
-  # Add densities to the plot
-  vvv = lapply(vvv, function(w) {w$y = w$y * 0.01; w}) # Scale density wrt binwidth
-
-  for(i in seq(labels)) p = p + geom_line(data = vvv[[i]], aes(y = y, x = X), colour = col.lines[i])
-
-  p
-}
+# .getGGplotHistogram = function(x, annotation = NULL, palette = 'Spectral',
+#                                tail.color = c('gainsboro', 'darkgray'),
+#                                alpha = .5, max.height.hist = TRUE, cex = 1,
+#                                bg.color = 'ivory2', main = 'MOBSTER fit', ...)
+# {
+#   domain = seq(0, 1, 0.01)
+# 
+#   labels = names(x$pi)
+#   labels.betas = colnames(x$beta)
+# 
+#   pi = x$pi
+#   ICL = round(as.numeric(x$scores$ICL), 2)
+#   NLL = round(as.numeric(x$scores$NLL), 2)
+#   K = as.numeric(x$K)
+# 
+#   col = RColorBrewer::brewer.pal(
+#     RColorBrewer::brewer.pal.info[palette, 'maxcolors'], palette)
+#   col = colorRampPalette(col)(x$Kbeta)
+# 
+#   col.histogram = c(tail.color[1], col)
+#   col.lines = c(tail.color[2], col)
+# 
+#   names(col.histogram) = names(col.lines) = labels
+# 
+# 
+#   # Plot 1 -- main histogram
+#   df = data.frame(X = x$X, Cluster = x$labels, Color = col[x$labels])
+#   vvv = lapply(1:x$K,
+#                function(w)
+#                  data.frame(X = domain,
+#                             Cluster = labels[w],
+#                             y = ddbpmm(x, data = domain, components = w, log = FALSE)))
+#   names(vvv) = labels
+# 
+#   # Histogram coloured according to clustering assignments
+#   tit = bquote(bold(.(main)))
+# 
+#   extented.labels = levels(df$Cluster)
+#   if(!all(is.na(x$tail))) extented.labels['Tail'] = paste('Tail : ', round(x$shape, 2), '; x >', round(x$scale, 2), sep ='')
+#   else extented.labels['Tail'] = bquote('Tail: OFF')
+# 
+#   betavals = x$beta[c('mean', 'var'), , drop = FALSE]
+#   betavals['mean', ] = round(betavals['mean', ], 3)
+#   betavals['var', ]  = format(betavals['var', ] , scientific = T, digits = 3)
+# 
+#   for(clus in paste('C', 1:x$Kbeta, sep = ''))
+#     extented.labels[clus] = paste(clus, ' : ', betavals['mean', clus], ' (', betavals['var', clus], ')', sep = '')
+# 
+# 
+#   p = ggplot(df, aes(X, fill = Cluster, y = ..count../sum(..count..))) +
+#     geom_histogram(alpha = alpha, position = 'identity', binwidth = 0.01) +
+#     scale_fill_manual(values = col.histogram, labels = extented.labels) +
+#     labs(
+#       title = tit,
+#       subtitle = annotation,
+#       x = "Observed Frequency", y = "") +
+#     theme_classic(base_size = 10 * cex)
+# 
+# 
+#   if(max.height.hist) {
+#     yMax = max(ggplot_build(p)$data[[1]]$y)
+#     p = p + ylim(0, yMax)
+#   }
+# 
+# 
+#   df.m = data.frame(variable = labels.betas, Mean = x$beta['mean', labels.betas])
+#   rownames(df.m) = df.m$variable
+# 
+#   # Add densities to the plot
+#   vvv = lapply(vvv, function(w) {w$y = w$y * 0.01; w}) # Scale density wrt binwidth
+# 
+#   for(i in seq(labels)) p = p + geom_line(data = vvv[[i]], aes(y = y, x = X), colour = col.lines[i])
+# 
+#   # Add means for Beta components
+#   for(i in labels.betas) p = p +  geom_vline(data = df.m[i ,], aes(xintercept = Mean), colour = col.lines[i], linetype = "longdash")
+# 
+#   # Annotate convergency value
+#   if(x$status) p = p + annotate("text", x = .9, y = yMax , label = paste(x$fit.type, ': CONVERGED'), size = 3, colour = 'darkgreen')
+#   else  p = p + annotate("text", x = .9, y = yMax, label = paste(x$fit.type, ': NOT CONVERGED'), size = 3, colour = 'red')
+# 
+#   p
+# }
+# 
+# 
+# 
+# .getIconGGplotHistogram = function(x, palette = 'Spectral',
+#                                    tail.color = c('gainsboro', 'darkgray'),
+#                                    alpha = .5, max.height.hist = TRUE, cex = 1,
+#                                    bg.color = 'ivory2')
+# {
+#   domain = seq(0, 1, 0.01)
+# 
+#   labels = names(x$pi)
+#   labels.betas = colnames(x$beta)
+# 
+#   pi = x$pi
+#   ICL = round(as.numeric(x$scores$ICL), 2)
+#   NLL = round(as.numeric(x$scores$NLL), 2)
+#   K = as.numeric(x$K)
+# 
+#   col = RColorBrewer::brewer.pal(
+#     RColorBrewer::brewer.pal.info[palette, 'maxcolors'], palette)
+#   col = colorRampPalette(col)(x$Kbeta)
+# 
+#   col.histogram = c(tail.color[1], col)
+#   col.lines = c(tail.color[2], col)
+# 
+#   names(col.histogram) = names(col.lines) = labels
+# 
+# 
+#   # Plot 1 -- main histogram
+#   df = data.frame(X = x$X, Cluster = x$labels, Color = col[x$labels])
+#   vvv = lapply(1:x$K,
+#                function(w)
+#                  data.frame(X = domain,
+#                             Cluster = labels[w],
+#                             y = ddbpmm(x, data = domain, components = w, log = FALSE)))
+#   names(vvv) = labels
+# 
+#   # Histogram coloured according to clustering assignments
+# 
+#   p = ggplot(df, aes(X, fill = Cluster, y = ..count../sum(..count..))) +
+#     geom_histogram(alpha = alpha, position = 'identity', binwidth = 0.01) +
+#     scale_fill_manual(values = col.histogram, labels = labels) +
+#     theme_void(base_size = 10 * cex) +
+#     guides(fill = FALSE)
+# 
+# 
+#   if(max.height.hist) {
+#     yMax = max(ggplot_build(p)$data[[1]]$y)
+#     p = p + ylim(0, yMax)
+#   }
+# 
+# 
+#   df.m = data.frame(variable = labels.betas, Mean = x$beta['mean', labels.betas])
+#   rownames(df.m) = df.m$variable
+# 
+#   # Add densities to the plot
+#   vvv = lapply(vvv, function(w) {w$y = w$y * 0.01; w}) # Scale density wrt binwidth
+# 
+#   for(i in seq(labels)) p = p + geom_line(data = vvv[[i]], aes(y = y, x = X), colour = col.lines[i])
+# 
+#   p
+# }
 
 
 # mobster_oncoplot = function(data, samples, col.clonal = 'steelblue', col.subclonal = 'orange', col.private = 'red', col.below.cutoff = 'darkgray', col.background = 'gainsboro', cutoff = 0.05)
@@ -660,3 +717,35 @@ plot.fits = function(fits)
 #
 # }
 
+.plot.goodness_of_fit = function(x, binning = 1e-2, TOP = 5, cex = 1) 
+{
+  points = lapply(x$runs, function(w) mobster:::.compute_fit_sqerr(w, binning = binning))
+  points = lapply(seq_along(points), function(w) { 
+    points[[w]]$K = x$fits.table$K[w]
+    points[[w]]$tail = x$fits.table$tail[w]
+    points[[w]]$run = w
+    
+    
+    points[[w]] })
+  
+  points = points[1:TOP]
+  points = Reduce(bind_rows, points)
+  
+  
+  ggplot(points, aes(x = x, y = cum.y, fill = factor(run), color = factor(run))) +
+    geom_line(show.legend = TRUE) +
+    theme_light(base_size =  8 * cex) +
+    # guides(colour = FALSE) +
+    xlab('VAF') + 
+    ylab("SSE") +
+    labs(
+      title = bquote(bold('Goodnees of fit')), 
+      subtitle = paste0('Binwidth = ', binning)
+    ) +
+    guides(fill = FALSE, color = guide_legend(title = "Solution")) + 
+    theme(
+      legend.position = "bottom",
+      legend.key.size = unit(.3 * cex, "cm"),
+      panel.background = element_rect(fill = 'white')
+    )
+}

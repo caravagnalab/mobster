@@ -258,4 +258,29 @@
 #   data.frame(fit)
 # }
 
+.compute_fit_sqerr = function(x, binning = 1e-2)
+{
+  densities = mobster:::template_density(
+    x, 
+    x.axis = seq(binning, 1-binning, by = binning), # Restricted for numerical errors
+    binwidth = binning,
+    reduce = TRUE)
+  
+  densities = tibble::as_tibble(densities)
+  densities = densities %>% group_by(x) %>% summarise(y = sum(y), cluster = 'f(x)')
+  
+  # Empirical density
+  empirical = hist(x$data$VAF, breaks = seq(0, 1, binning), plot = FALSE)$density
+  empirical = empirical[-length(empirical)]
+  empirical = empirical * binning # adjust for binwidth
+  
+  # Error
+  error = densities
+  error$cluster = 'e(x)'
+  error$y = (densities$y - empirical)^2
+  error$cum.y = cumsum(error$y)
+  
+  error
+}
+
 

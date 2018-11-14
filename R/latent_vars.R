@@ -14,7 +14,7 @@ latent_vars = function(x, clusters_tibble = NULL) {
   shape = ifelse(x$fit.tail, mobster:::.params_Pareto(x)$Shape, NA)
   scale = ifelse(x$fit.tail, mobster:::.params_Pareto(x)$Scale, NA)
   
-  # Extract Mixin Prop
+  # Extract Mixin Proportions
   pi = mobster:::.params_Pi(x)  
   
   # Reconstruct latent variables, responsibilities and weighted densities
@@ -22,7 +22,7 @@ latent_vars = function(x, clusters_tibble = NULL) {
   z_nk  = matrix(0, nrow = N, ncol = x$K)       
   pdf.w = z_nk
   
-  # Get density per component
+  # Get log density per component
   for (k in 1:x$K)
     pdf.w[, k] = ddbpmm(x,
                         data = x$data$VAF,
@@ -44,8 +44,6 @@ latent_vars = function(x, clusters_tibble = NULL) {
   return(list(NLL = NLL, z_nk = z_nk, pdf.w = pdf.w, a = a, b = b, pi = pi, shape = shape, scale = scale))
 }
 
-# lv = latent_vars(x, clusters_tibble)
-# 
 latent_vars_hard_assignments = function(lv) {
   
   # Cluster labels of each data point. Each data point is assigned to the cluster
@@ -106,6 +104,7 @@ latent_vars_scores = function(lv, K, tail, cluster)
     AIC = AIC,
     entropy = entropy,
     ICL = ICL,
+    reduced.entropy = rentropy,
     reICL = reICL,
     size = numParams
   )

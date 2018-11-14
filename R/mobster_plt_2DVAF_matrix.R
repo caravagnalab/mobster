@@ -93,7 +93,7 @@ mobster_plt_2DVAF_matrix = function(
     }
   }
   
-  # Now arrange the plots in a k x k matrux
+  # Now arrange the plots in a k x k matrix
   figure = ggarrange(
     plotlist = plots,
     ncol = k,

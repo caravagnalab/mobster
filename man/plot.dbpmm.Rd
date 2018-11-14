@@ -5,18 +5,36 @@
 \title{Plot an object of class dbpmm. This is a set of multiple frames plot via ggplot2.}
 \usage{
 plot.dbpmm(x, annotation = NULL, palette = "Set1",
-  tail.color = "darkgray", alpha = 0.8, max.height.hist = TRUE,
-  cex = 1, histogram.main = "Fit", bg.color = "ivory2",
-  title = "MOBSTER", silent = FALSE, ...)
+  tail.color = "darkgray", alpha = 0.8, binwidth = 0.01,
+  max.height.hist = TRUE, cex = 1, histogram.main = "Fit",
+  bg.color = "ivory2", title = "MOBSTER", silent = FALSE, ...)
 }
 \arguments{
 \item{x}{an object of class dbpmm}
+
+\item{annotation}{}
 
 \item{palette}{a palette for colours from RColorBrewer}
 
 \item{tail.color}{a 2-components vector for the color of the tail, and the estimated density}
 
 \item{alpha}{alpha channel}
+
+\item{binwidth}{}
+
+\item{max.height.hist}{}
+
+\item{cex}{}
+
+\item{histogram.main}{}
+
+\item{bg.color}{}
+
+\item{title}{}
+
+\item{silent}{}
+
+\item{...}{}
 }
 \value{
 if assigned, it return the list of ggplot2 objects.

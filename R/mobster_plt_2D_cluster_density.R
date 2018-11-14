@@ -75,7 +75,7 @@ binomial2D_cluster_template_density = function(x, s.x, s.y, col = 'red', cov = 1
   purity = x$purity
   
   # Otherwise plot 
-  domain = seq(0, 1, 0.02)
+  domain = seq(0, 1, 0.01)
   
   grid = expand.grid(domain, domain, stringsAsFactors = FALSE)
   colnames(grid) = c('x', 'y')

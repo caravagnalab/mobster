@@ -50,6 +50,7 @@ mobster_plt_model_selection = function(res,
   # Subset TOP scores and create a dataframe for plot
   if (nrow(scores) > TOP)
     scores = scores[1:TOP,]
+  else TOP = nrow(scores)
   
   pio::pioTit("TOP scores")
   pio::pioDisp(scores)
@@ -78,63 +79,93 @@ mobster_plt_model_selection = function(res,
   
   # Model selection boxplot
   boxP = .plot.fit.summary(res,
+                           TOP = TOP,
                            alpha = .6,
                            silent = TRUE,
+                           cex = cex,
                            range = boxplot.ICL.range)$boxPlot
   
-  # Other solutions ranked below top best -- maximum TOP 4 fixed
-  TOP.plot = min(4, nrow(scores))
+  # SSE plot
+  GOFP = .plot.goodness_of_fit(res, TOP = TOP, cex = cex)
   
+  # # Other solutions ranked below top best -- maximum TOP 4 fixed
+  TOP.plot = min(4, nrow(scores))
+  # 
   # solutions = as.integer(rownames(scores)[2:(TOP.plot + 1)])
   # solutions = solutions[!is.na(solutions)]
-  solutions = 
+  # solutions = 
   
   # other.best = lapply(seq(solutions),
-  other.best = lapply(2:(TOP.plot + 1),
-                      function(w)
-                        plot.dbpmm(
-                          res$runs[[w]],
-                          histogram.main = paste0("Solution #", w),
-                          # annotation = paste0("Overall rank : ", solutions[w]),
-                          silent = TRUE,
-                          cex = .6 * cex
-                        )$mainHist)
+  other.best = NULL
   
-  # Final layout
-  top_panel_best = ggarrange(
+  if(TOP > 1)
+    other.best = lapply(2:TOP,
+                        function(w)
+                          plot.dbpmm(
+                            res$runs[[w]],
+                            histogram.main = paste0("Solution #", w),
+                            silent = TRUE,
+                            cex = .6 * cex
+                          )$mainHist)
+  
+  
+  
+  
+  ######################## Final layout
+  # Best model
+  bestplot = ggarrange(
+    best$Initialization,
+    best$Parameters,
+    best$Proportions,
+    ncol = 3,
+    nrow = 1,
+    labels = c("B", "C", "D")
+  )
+  
+  bestplot = ggarrange(
     best$mainHist,
-    ggarrange(
-      best$Initialization,
-      best$Parameters,
-      best$Proportions,
-      ncol = 3,
-      nrow = 1,
-      labels = c("B", "C", "D")
-    ),
-    ggarrange(
-      boxP,
-      df.scores,
-      ncol = 2,
-      nrow = 1,
-      labels = c("E", "F"),
-      widths = c(1, 1.5)
-    ),
-    heights = c(2.5, 1),
-    nrow = 3,
+    bestplot,
     ncol = 1,
-    common.legend = TRUE,
-    labels = 'A'
+    nrow = 2,
+    heights = c(1, .5),
+    labels = c("A", '')
+  )
+    
+  # Scores 
+  scores_sseplot = ggarrange(
+    boxP,
+    GOFP,
+    ncol = 2,
+    nrow = 1,
+    labels = c("E", "F"),
+    widths = c(1, 1)
+  )
+  
+  scores_sseplot = ggarrange(
+    scores_sseplot,
+    df.scores,
+    ncol = 1,
+    nrow = 2,
+    labels = c('', "G"), common.legend = TRUE)
+    
+  # Left panel
+  left_panel = ggarrange(
+    bestplot,
+    scores_sseplot,
+    heights = c(2, 1),
+    nrow = 2,
+    ncol = 1
   )
   
   right_panel = ggarrange(
     plotlist = other.best,
     ncol = 1,
     nrow = length(other.best),
-    labels = LETTERS[7:(7 + TOP.plot - 1)]
+    labels = LETTERS[7 + 1:length(other.best)]
   )
   
   figure = ggarrange(
-    top_panel_best,
+    left_panel,
     right_panel,
     widths = c(1.5, 1),
     nrow = 1,
@@ -150,7 +181,7 @@ mobster_plt_model_selection = function(res,
       size = 18 * cex
     ),
     bottom = text_grob(
-      " Panels: (A-D) Best fit; (E,F) Scores from model selection; (G-*) Lower-scoring fits.",
+      " Panels: (A-D) Best fit; (E,F, G) Scores from model selection, and goodnes of fit; (G-*) Lower-scoring fits.",
       color = "black",
       # face = "bold",
       hjust = 0,

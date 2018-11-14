@@ -119,12 +119,13 @@ mobster_bootstrap = function(x,
 #'
 #' @param resamples Data resampled
 #' @param fits Fits (one per resample)
+#' @param tail.color 
 #'
 #' @return A figure
 #' @export
 #'
 #' @examples
-mobster_bootstrap_params = function(resamples, fits) 
+mobster_bootstrap_params = function(resamples, fits, tail.color = 'darkgray') 
 {
   n = length(resamples)
   

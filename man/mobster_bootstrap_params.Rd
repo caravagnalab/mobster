@@ -4,12 +4,14 @@
 \alias{mobster_bootstrap_params}
 \title{Analyze fits by bootstrap.}
 \usage{
-mobster_bootstrap_params(resamples, fits)
+mobster_bootstrap_params(resamples, fits, tail.color = "darkgray")
 }
 \arguments{
 \item{resamples}{Data resampled}
 
 \item{fits}{Fits (one per resample)}
+
+\item{tail.color}{}
 }
 \value{
 A figure
