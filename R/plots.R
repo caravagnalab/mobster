@@ -414,7 +414,7 @@ scols = function (v, palette = "Spectral")
   
   pos <- position_jitter(width = 0.2, seed = 1)
   
-  pa = ggplot(data = x, aes(x = K, y = ICL, fill = interaction(K,tail), colour = interaction(K,tail))) +
+  pa = ggplot(data = x, aes(x = K, y = eval(paste(text = model.selection)), fill = interaction(K,tail), colour = interaction(K,tail))) +
     geom_point(alpha = alpha, position = pos, size = 2) + 
     # geom_jitter(position = position_jitter(width = 0.2, height = 0.005),
     #             alpha = alpha, aes(colour = K),
@@ -748,4 +748,176 @@ scols = function (v, palette = "Spectral")
       legend.key.size = unit(.3 * cex, "cm"),
       panel.background = element_rect(fill = 'white')
     )
+}
+
+
+
+############### Plot 1 -- main histogram for a MOBSTER fit
+.mobster_fit_histogram = function(
+  x,
+  alpha,
+  binwidth,
+  palette, 
+  tail.color,
+  cex,
+  annotate
+) 
+{
+  # Fit variables
+  domain = seq(0, 1, binwidth)
+  
+  labels = names(.params_Pi(x))
+  labels.betas = mobster:::.params_Beta(x)$cluster
+  
+  pi = mobster:::.params_Pi(x)
+  K = as.numeric(x$K)
+  
+  # Load colors
+  colors = mobster:::getColors_model(x, alpha = alpha, palette = palette, tail.color = tail.color)
+  
+  # Main plotting data
+  x$data$cluster = factor(x$data$cluster, levels = names(colors))
+  
+  ##### Text for the plot -- convergence status below the plot
+  # - number of steps
+  # - epsilon
+  # - SSE
+  conv.steps = length(x$all.NLL)
+  
+  conv.epsilon = ifelese(
+    conv.steps < 2,
+    0,
+    formatC(
+      abs(rev(x$all.NLL)[1] - rev(x$all.NLL)[2]),
+      format = "e", 
+      digits = 0
+    )
+  )
+
+  SSE_fit = .compute_fit_sqerr(x, binning = binwidth)$cum.y
+  conv.sse = formatC(max(SSE_fit), format = "e", digits = 3)
+  
+  label.fit = bquote(
+    .(x$fit.type) *
+      " ("*omega*" = "* .(conv.steps) ~ 'steps; ' * epsilon ~ '=' ~ .(conv.epsilon) *
+      "; SSE"~.(conv.sse)*')')
+  
+  ##### Main ggplot object -- histogram
+  hist_pl = ggplot(x$data, 
+                   aes(
+                     VAF, 
+                     fill = factor(cluster), 
+                     y = ..count.. /sum(..count..))) +
+    geom_histogram(alpha = alpha,
+                   position = 'identity',
+                   binwidth = binwidth) +
+    scale_fill_manual(values = colors, labels = names(colors)) +
+    guides(fill = guide_legend(title = "MOBSTER\nClusters")) +
+    labs(
+      title = bquote(bold(.(histogram.main))),
+      subtitle = annotation,
+      caption = label.fit,
+      x = "Observed Frequency",
+      y = "Density [a.u.]"
+    ) +
+    theme_classic(base_size = 10 * cex) +
+    geom_vline(
+      xintercept = min(x$data$VAF),
+      colour = 'black',
+      linetype = "longdash",
+      size = 05 * cex
+    ) +
+    theme(
+      legend.position = "bottom",
+      legend.key.size = unit(.3 * cex, "cm"),
+      panel.background = element_rect(fill = 'white'),
+      plot.caption = element_text(color = ifelse(x$status, "darkgreen",  "red"))
+    )
+  
+  ##### Mixture compoenent density on top of the histogram
+  densities = mobster:::template_density(
+    x, 
+    x.axis = domain, 
+    binwidth = binwidth, 
+    reduce = TRUE)
+  
+  # Add the trace and the mean of each component
+  hist_pl = hist_pl + 
+    geom_line(data = densities, aes(y = y, x = x, color = factor(cluster)), size = 1 * cex) +
+    scale_color_manual(values = colors, labels = names(colors)) +
+    guides(color = FALSE)
+  
+  Beta_peaks = x$Clusters %>%
+    dplyr::filter(type == 'Mean', cluster != 'Tail')
+  
+  hist_pl = hist_pl + 
+    geom_vline(data = Beta_peaks, aes(xintercept = fit.value, color = cluster), linetype = "longdash")
+  
+  # Rescale y in case the density goes too high (which could happen with the power law)
+  if(max.height.hist) 
+  {
+    yMax = max(ggplot_build(hist_pl)$data[[1]]$y)
+    hist_pl = hist_pl + ylim(0, yMax)
+  }
+  
+  ##### Overall density and SSE
+  # - cumulative density
+  densities = tibble::as_tibble(densities)
+  densities = densities %>% group_by(x) %>% summarise(y = sum(y), cluster = 'f(x)')
+  
+  m = max(densities$y, na.rm = TRUE)
+  
+  hist_pl = hist_pl +
+    geom_line(data = densities %>% mutate(y = y + m * 0.02), # offset by 2% of the max to avoid overlays
+              aes(y = y, x = x), 
+              color = 'black',
+              alpha = .8,
+              size = .5 * cex,
+              linetype = 'dashed',
+              inherit.aes = FALSE)
+  
+  # SSE
+  error = .compute_fit_sqerr(x, binning = binwidth)
+  
+  # scale to percentage for plotting
+  me = max(SSE_fit$cum.y)
+  error = error %>% mutate(cum.y = (cum.y / me) * m )
+  
+  hist_pl = hist_pl +
+    geom_line(data = SSE_fit, aes(y = cum.y, x = x), 
+              color = 'darkgray',
+              alpha = 1,
+              size = .2 * cex,
+              linetype = 'dashed',
+              inherit.aes = FALSE) +
+    scale_y_continuous(sec.axis = sec_axis(~./ m * 100, name = "SSE [cumulative %]"))  
+  
+  # Annotation of input entries
+  if(!is.null(annotate) & all(c("VAF", 'label') %in% colnames(annotate)))
+  {
+    # Position the point at coord x = VAF and y = density
+    m = max(densities$y, na.rm = TRUE)
+    
+    annotate$y = round(annotate$VAF/binwidth)
+    annotate$y = densities$y[annotate$y] + m * 0.02
+    
+    hist_pl = hist_pl +
+      geom_label_repel(data = annotate, 
+                       aes(
+                         x = VAF, 
+                         y = y,
+                         label = label, 
+                         color = factor(cluster)
+                         # fill = factor(cluster)
+                       ),
+                       size = 1.5 * cex,
+                       inherit.aes = FALSE,
+                       box.padding = 0.95, 
+                       segment.size = .2 * cex, force = 1) +
+      geom_point(data = annotate, aes(x = VAF, y = y,  color = factor(cluster)), 
+                 size = .3 * cex, alpha = 1, 
+                 inherit.aes = FALSE)
+  }
+  
+  hist_pl
 }

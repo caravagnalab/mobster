@@ -5,14 +5,13 @@
 \title{Parallel implementation of parametric/ nonparametric 
 bootstrap for MOBSTER.}
 \usage{
-mobster_bootstrap(x, n = 100, bootstrap = "parametric",
+mobster_bootstrap(x, n.resamples = 100, bootstrap = "parametric",
   palette = "Set1", alpha = 1, tail.color = "darkgray",
-  cores.ratio = 0.8, ...)
+  cores.ratio = 0.8, incremental = paste0(sample(LETTERS, 8),
+  "bootstrap_computation.RDS"), ...)
 }
 \arguments{
 \item{x}{a fit by MOBSTER}
-
-\item{n}{number of parametric resamples (drawn via \code{rdbpmm})}
 
 \item{bootstrap}{"parametric" or "nonparametric"}
 
@@ -25,6 +24,8 @@ mobster_bootstrap(x, n = 100, bootstrap = "parametric",
 \item{cores.ratio}{ratio of cores to use}
 
 \item{...}{fit parameters for \code{mobster_fit}}
+
+\item{n}{number of parametric resamples (drawn via \code{rdbpmm})}
 }
 \value{
 Data from the fits, resamples and a plottable figure.

@@ -6,8 +6,9 @@
 \usage{
 plot.dbpmm(x, annotation = NULL, palette = "Set1",
   tail.color = "darkgray", alpha = 0.8, binwidth = 0.01,
-  max.height.hist = TRUE, cex = 1, histogram.main = "Fit",
-  bg.color = "ivory2", title = "MOBSTER", silent = FALSE, ...)
+  max.height.hist = TRUE, annotate = NULL, cex = 1,
+  histogram.main = "Fit", bg.color = "ivory2", title = "MOBSTER",
+  silent = FALSE, ...)
 }
 \arguments{
 \item{x}{an object of class dbpmm}
