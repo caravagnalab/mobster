@@ -146,7 +146,7 @@ mobster_fit = function(x,
     X$VAF[X$VAF == 0] = 1e-9
   }
 
-  if (any(X == 1)) {
+  if (any(X$VAF == 1)) {
     cat(crayon::red('\n[VAFs = 1] setting them to 1-1e-9 to avoid numerical errors'))
     X$VAF[X$VAF == 1] = 1 - 1e-9
   }

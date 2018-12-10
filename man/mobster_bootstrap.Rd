@@ -7,8 +7,8 @@ bootstrap for MOBSTER.}
 \usage{
 mobster_bootstrap(x, n.resamples = 100, bootstrap = "parametric",
   palette = "Set1", alpha = 1, tail.color = "darkgray",
-  cores.ratio = 0.8, incremental = paste0(sample(LETTERS, 8),
-  "bootstrap_computation.RDS"), ...)
+  cores.ratio = 0.8, incremental = paste0(paste0(sample(LETTERS, 8),
+  collapse = ""), "_bootstrap_computation.RDS"), ...)
 }
 \arguments{
 \item{x}{a fit by MOBSTER}

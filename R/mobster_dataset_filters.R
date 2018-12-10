@@ -285,3 +285,62 @@ all_zeroes = function(x)
   
   delete_entries(x, ids)
 }
+
+
+# UNUSED!
+break_around_centromers = function(segments, offset = 1e6, relative = TRUE)
+{
+  # Get coordinates and offset the centromers by "offset"
+  data('chr_coordinate_hg19', package = 'mobster')
+  
+  chr_coordinate_hg19 = chr_coordinate_hg19 %>% 
+    mutate(
+      centromerStart = centromerStart - offset,
+      centromerEnd = centromerEnd + offset)
+  
+  # Work out where the segments map, first rescale them if relative
+  if(relative)
+  {
+    segments = segments %>% left_join(chr_coordinate_hg19, by = 'chr')
+    segments = segments %>% mutate(from = from.x + from.y, to = from.y + to.x)
+    # segments = segments %>% select(-from.x, -to.x, -from.y, -to.y, -centromerStart, -centromerEnd)
+  }
+  
+  
+  # chopper
+  segment_chop = function(a, b, x, y) {
+    a = as.numeric(a)
+    b = as.numeric(b)
+    x = as.numeric(x)
+    y = as.numeric(y)
+    if(a >= y || b <= x) return(data.frame(from = a, to = b, stringsAsFactors = FALSE))
+    if(b >= x & b <= y) return(data.frame(from = a, to = x, stringsAsFactors = FALSE))
+    if(a >= x & a <= y) return(data.frame(from = y, to = b, stringsAsFactors = FALSE))
+    if(a <= x & b >= y) return(data.frame(from = c(a, y), to = c(x, b), stringsAsFactors = FALSE))
+    if(a >= x & b <= y) return(NULL)
+    stop("error")
+  }
+  
+  # segments$from = 
+  
+  newsegments = apply(segments, 1, function(w) {
+    
+    print(w)
+    
+    seg = segment_chop(a = w['from'], b = w['to'], x = w['centromerStart'], y = w['centromerEnd'])
+    if(is.null(seg)) return(NULL)
+    
+    replicates = do.call("rbind", replicate(nrow(seg), w, simplify = FALSE))
+    replicates = as_tibble(replicates)
+    
+    replicates = replicates %>% select(-from.x, -to.x, -from.y, -to.y, -centromerStart, -centromerEnd, -length)
+    replicates = bind_cols(replicates, seg)
+    
+    replicates %>% mutate(length = to - from)
+  })
+  
+  newsegments = Reduce(rbind, newsegments)
+  rownames(newsegments) = NULL
+
+  newsegments
+}

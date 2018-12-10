@@ -43,6 +43,9 @@
 #' @param bootstrap "parametric" or "nonparametric"
 #'
 #' @return Data from the fits, resamples and a plottable figure.
+#' 
+#' @import easypar
+#' 
 #' @export
 #'
 #' @examples
@@ -53,11 +56,7 @@ mobster_bootstrap = function(x,
                              alpha = 1,
                              tail.color = 'darkgray',
                              cores.ratio = 0.8,
-                             incremental = 
-                               paste0(
-                                 paste0(sample(LETTERS, 8), collapse = ''),
-                                 "_bootstrap_computation.RDS")
-                             ,
+                             cache = NULL,
                              ...)
 {
   pio::pioHdr(
@@ -83,53 +82,71 @@ mobster_bootstrap = function(x,
   if (bootstrap == 'nonparametric')
     resamples = .nonparametric_bootstrap_resamples(x, n.resamples)
   
+  resamples = lapply(resamples, list)
+  
   save(resamples, file = 'resamples.RData')
   
   pio::pioTit("Running fits (might take some time)")
   
-  # Setup clusters for parallel computing
-  cl = .setup_parallel(cores.ratio = cores.ratio)
+  # easypar
+  fits = easypar::run(
+    FUN = function(w) {
+      mobster_fit(x = w,
+                  parallel = FALSE,
+                  seed = NULL,
+                  ...)$best
+    },
+    PARAMS = resamples,
+    packages = c("crayon", "mobster"),
+    export = ls(globalenv(), all.names = TRUE),
+    cores.ratio = cores.ratio,
+    parallel = TRUE, 
+    cache = cache
+  )
   
-  # perform parallel inferences with custom parameters
-  # -- disable internal parallelism
-  # -- randomize seed
-  fits = foreach(
-    num = 1:n.resamples,
-    .packages = c("crayon", "mobster"),
-    .export = ls(globalenv(), all.names = TRUE)
-  ) %dopar%
-  {
-    # best fit from resample -- with control for errors
-    tryCatch({
-      
-      fit = mobster_fit(x = resamples[[num]],
-                parallel = FALSE,
-                seed = NULL,
-                ...)$best
-      
-      # Incremental saves of the computation so that we get some results as 
-      # soon as they are computed
-      if(!is.null(incremental)) 
-      {
-        pio::pioStr("CACHING RESULTS : ", incremental)
-        
-        obj = NULL
-        if(file.exists(incremental)) obj = readRDS(incremental)
-
-        obj = append(obj, list(fit))
-        saveRDS(obj, file = incremental)
-      }
-      
-      fit
-      
-    }, error = function(e) NULL)
-  }
-  
-  .stop_parallel(cl)
+  # # Setup clusters for parallel computing
+  # cl = .setup_parallel(cores.ratio = cores.ratio)
+  # 
+  # 
+  # 
+  # # perform parallel inferences with custom parameters
+  # # -- disable internal parallelism
+  # # -- randomize seed
+  # fits = foreach(
+  #   num = 1:n.resamples,
+  #   .packages = c("crayon", "mobster"),
+  #   .export = ls(globalenv(), all.names = TRUE)
+  # ) %dopar%
+  # {
+  #   # best fit from resample -- with control for errors
+  #   tryCatch({
+  #     
+  #     fit = mobster_fit(x = resamples[[num]],
+  #               parallel = FALSE,
+  #               seed = NULL,
+  #               ...)$best
+  #     
+  #     # Incremental saves of the computation so that we get some results as 
+  #     # soon as they are computed
+  #     if(!is.null(incremental)) 
+  #     {
+  #       pio::pioStr("CACHING RESULTS : ", incremental)
+  #       
+  #       obj = NULL
+  #       if(file.exists(incremental)) obj = readRDS(incremental)
+  # 
+  #       obj = append(obj, list(fit))
+  #       saveRDS(obj, file = incremental)
+  #     }
+  #     
+  #     fit
+  #     
+  #   }, error = function(e) NULL)
+  # }
+  # 
+  # .stop_parallel(cl)
   
   return(list(resamples = resamples, fits = fits))
 }
-
-
 
 

@@ -25,6 +25,7 @@ mobster_plt_2DVAF = function(obj,
                              scales.fixed = TRUE,
                              exclude = NULL,
                              exclude.color = 'black',
+                             points.type = 'points',
                              annotate = NULL,
                              marginal.remove.zeroes = T,
                              palette = 'Set1') 
@@ -74,8 +75,13 @@ mobster_plt_2DVAF = function(obj,
                  y = eval(parse(text = y)),
                  color = factor(eval(parse(text = cluster.label)))
                )) +
-      scale_color_manual(values = colors) +
-      # geom_count(alpha = alpha, size = 1 * cex) +
+      scale_color_manual(values = colors) 
+    
+    if(points.type == 'points') 
+      p = p + geom_point(alpha = alpha, size = 1 * cex)
+    
+    if(points.type == '2dsquares')
+      p = p +
       geom_bin2d(alpha = alpha, binwidth = 0.01, show.legend = FALSE) +
       scale_fill_gradient(name = "count", 
                           trans = "log", 
@@ -83,7 +89,11 @@ mobster_plt_2DVAF = function(obj,
                           low = "gainsboro", high = "black") +
       guides(count = guide_legend("Counts (log)"))
     
+
+    if(points.type == 'counts')
+      p = p + geom_count(alpha = alpha, size = 1 * cex)
     
+        
   }
   else {
     # Get density of points in 2 dimensions.

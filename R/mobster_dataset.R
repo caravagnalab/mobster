@@ -20,19 +20,31 @@ mobster_dataset = function(
   purity,
   N.min = 500,
   na.rm = TRUE,
-  avoid.centromers = TRUE
+  # avoid.centromers = TRUE,
+  # skip_centromers = TRUE,
+  # skip_centromers.offset = 1e6,
+  relative.coordinates = TRUE,
+  offset_around_centromers = 1e6
 )
 {
   pio::pioHdr("MOBSTER dataset")
   
+  #########################################
+  # Check input formats as required  
+  #########################################
+  
+  # data should be dataframe
   if(!is.data.frame(data)) stop("Data must be a dataframe")
   
   pioStr('Mutations', paste0('N = ', nrow(data)))
   
-  # Columns with data
+  # Columns with data 
   DP.columns = paste0(samples, ".DP")
   NV.columns = paste0(samples, ".NV")
   VAF.columns = paste0(samples, ".VAF")
+  
+  Major.columns = paste0(samples, ".Major")
+  minor.columns = paste0(samples, ".minor")
   
   all.columns = c(DP.columns, NV.columns, VAF.columns)
   
@@ -40,9 +52,9 @@ mobster_dataset = function(
   if(any(!(NV.columns %in% colnames(data)))) stop("Missing NV columns in data.")
   if(any(!(VAF.columns %in% colnames(data)))) stop("Missing VAF columns in data.")
   
-  # mutations must have valid locations
-  if(any(!(c('chr', 'from', 'to') %in% colnames(data)))) stop("The position of the annotated mutations is missing.")
-
+  # mutations must have locations
+  if(any(!(c('chr', 'from', 'to') %in% colnames(data)))) stop("The chromosomal position of the annotated mutations is missing (chr, from, to).")
+  
   # NAs in any of the columns for values
   if(any(is.na(data[, all.columns, drop = FALSE])))
   {
@@ -53,21 +65,66 @@ mobster_dataset = function(
     pioStr('Removed NAs', paste0('N = ', nrow(data)))
   }
   
-  # ids
+  # Assign new IDs if required
   id_col = c('id', 'ID')
   
   if(!all(id_col %in% colnames(data)))
     data$id = paste0('__mut', 1:nrow(data))
   else
   {
-    message("Found an id/ID column, will use that as identifier.")
+    message("Found 'id' / 'ID' column, will use that as identifier.")
     
     if(id_col[2] %in% colnames(data)) data$id = data$ID
   }
-
-  # Prepare a tibble for the input data 
-  tib_data = as_tibble(data)
   
+  
+  if(any(!(names(purity) %in% samples))) stop("Missing purity for some samples?")
+  
+  # Copy Number must havea similar format
+  if(
+    !is.data.frame(segments) |
+    !all(c('chr', 'from', 'to') %in% colnames(segments)) |
+    !all(Major.columns %in% colnames(segments)) |
+    !all(minor.columns %in% colnames(segments))
+  ) {
+    stop("Your segments do not look in the right format.")
+  }
+
+  #########################################################################################
+  # Scale relative from/ to coordinates to absolute values, required
+  #########################################################################################
+  tib_data = as_tibble(data)
+  tib_segments = as_tibble(segments)
+  
+  if(relative.coordinates)
+  {
+    pio::pioStr("Switching to absolute chromosomal coordinates for", 'ref. hg19')
+    
+    data('chr_coordinate_hg19', package = 'mobster')
+    
+    starts = chr_coordinate_hg19$from
+    names(starts) = chr_coordinate_hg19$chr
+    
+    tib_data = tib_data %>% mutate(
+      relative.from = from,
+      relative.to = to,
+      from = from + starts[chr],
+      to = to + starts[chr]
+    )
+
+    tib_segments = tib_segments %>% mutate(
+      relative.from = from,
+      relative.to = to,
+      from = from + starts[chr],
+      to = to + starts[chr]
+    )
+  }
+  
+  #########################################################################################
+  # Scale relative from/ to coordinates to absolute values, required
+  #########################################################################################
+  
+  # Melt data
   pioStr("Melting data", "")
   
   tib_data = tib_data %>% 
@@ -79,9 +136,9 @@ mobster_dataset = function(
   # make everything a chr
   tib_data$variable = paste(tib_data$variable)
 
-  ##=============================##
-  # Create a mbst_data object  #
-  ##=============================##
+  #########################################################################################
+  # Create a mbst_data object  
+  #########################################################################################
   x = list()
   class(x) <- "mbst_data"
   
@@ -111,38 +168,33 @@ mobster_dataset = function(
   # Log creation
   x = logOp(x, "Initialization")
   
-  ########## Mapping mutations to CNAs
-  Major.columns = paste0(x$samples, ".Major")
-  minor.columns = paste0(x$samples, ".minor")
+  #########################################################################################
+  # Mapping mutations to CNAs
+  #########################################################################################
+  #  tibble for the segments, we ID them
+  tib_segments$id = paste0("_CN_seg", 1:nrow(tib_segments))
   
-  if(any(!(names(purity) %in% x$samples))) stop("Missing purity for some samples?")
+  # check if it requires to break around centromers
+  # if(skip_centromers) {
+  #   pio::pioStr(paste0("Breaking segments around centromers"), '')
+  #   nb = nrow(tib_segmnets)
+  #   tib_segmnets = break_around_centromers(tib_segmnets, offset = 1e6, relative = TRUE)
+  #   pio::pioStr(paste0("Before"), nb, suffix = '\n')
+  #   pio::pioStr(paste0("After"), nb, suffix = '\n')
+  # }
   
-  # CN
-  if(
-    !is.data.frame(segments) |
-    !all(c('chr', 'from', 'to') %in% colnames(segments)) |
-    !all(Major.columns %in% colnames(segments)) |
-    !all(minor.columns %in% colnames(segments))
-  ) {
-    stop("Your segments do not look in the right format.")
-  }
-  
-  # get tibble for the segments
-  tib_segmnets = as_tibble(segments)
-  tib_segmnets$id = paste0("_CN_seg", 1:nrow(tib_segmnets))
-  
-  tib_segmnets = tib_segmnets %>%
+  tib_segments = tib_segments %>%
     reshape2::melt(id = c('id', 'chr', 'from', 'to')) %>%
     as_tibble
   
-  tib_segmnets$variable = paste(tib_segmnets$variable)
+  tib_segments$variable = paste(tib_segments$variable)
   
-  sp = strsplit(tib_segmnets$variable, '\\.')
-  tib_segmnets$variable = sapply(sp, function(w) w[2])
-  tib_segmnets$sample = sapply(sp, function(w) w[1])
+  sp = strsplit(tib_segments$variable, '\\.')
+  tib_segments$variable = sapply(sp, function(w) w[2])
+  tib_segments$sample = sapply(sp, function(w) w[1])
   
   # store segments in the obj
-  x$segments = tib_segmnets  
+  x$segments = tib_segments  
   
   # store purity
   x$purity = purity
@@ -159,7 +211,8 @@ mobster_dataset = function(
   }
   
   # we create a map for each mutation to each segment
-  pio::pioTit("Mapping mutations to segments")
+  pio::pioTit(paste0("Mapping mutations to segments -- relative chr. coordinates ", relative.coordinates))
+  pio::pioStr("Offset around centromers", offset_around_centromers, '\n')
   
   if(nrow(segments) > 1) pb = txtProgressBar(min = 0, max = nrow(segments), style = 3) 
   segments_ids = unique(x$segments$id)
@@ -169,7 +222,7 @@ mobster_dataset = function(
   for(s in seq(segments_ids)) {
     if(nrow(segments) > 1) setTxtProgressBar(pb, s)
     
-    mapped = mobster:::byLoc(x, segments_ids[s], avoid.centromers)
+    mapped = mobster:::byLoc(x, segments_ids[s], offset_around_centromers)
     if(nrow(mapped) == 0) next;
     
     mapped$seg_id = segments_ids[s]

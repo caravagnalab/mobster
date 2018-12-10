@@ -445,7 +445,7 @@ split_segments_around_centromers = function()
   
 }
 
-byLoc = function(x, loc.id, avoid.centromers) {
+byLoc = function(x, loc.id, offset_around_centromers) {
   muts_CN = x$locations %>%
     spread(variable, value)
   
@@ -467,16 +467,42 @@ byLoc = function(x, loc.id, avoid.centromers) {
              from >= thisSeg$from[1] &
              to <= thisSeg$to[1])
   
-  # load centromers data
-  if(avoid.centromers){
-    data("cytoband_hg19")
-    
-    SEG.cytoband = cytoband[cytoband$chr == thisSeg$chr[1], ]
-    SEG.cytoband = SEG.cytoband[SEG.cytoband$region == 'acen', ]
+  ws = nrow(which_muts)
 
+  # thisSeg
+  pio::pioStr("Chromosome", thisSeg$chr[1], suffix = '')
+  pio::pioStr(" from", thisSeg$from[1], suffix = '')
+  pio::pioStr(" to", thisSeg$to[1], suffix = '')
+  pio::pioStr(" : n =", ws, suffix = '')
+  
+  # load centromers data -- these are in absolute location format, so we update the from/ to locations
+  if(offset_around_centromers > 0) {
+    
+    # data("cytoband_hg19")
+    # 
+    # SEG.cytoband = cytoband[cytoband$chr == thisSeg$chr[1], ]
+    # SEG.cytoband = SEG.cytoband[SEG.cytoband$region == 'acen', ]
+    # 
+    # which_muts = which_muts %>%
+    #   filter(from < SEG.cytoband$from[1] |
+    #            to > SEG.cytoband$to[2])
+   
+    # Get coordinates and offset the centromers by "offset"
+    data('chr_coordinate_hg19', package = 'mobster')
+    
+    chr_coordinate_hg19 = chr_coordinate_hg19 %>% 
+      mutate(
+        centromerStart = centromerStart - offset_around_centromers,
+        centromerEnd = centromerEnd + offset_around_centromers
+        ) %>% 
+      filter(chr == thisSeg$chr[1])
+    
     which_muts = which_muts %>%
-      filter(from < SEG.cytoband$from[1] |
-               to > SEG.cytoband$to[2])
+      filter(to < chr_coordinate_hg19$centromerStart[1] |
+               from > chr_coordinate_hg19$centromerEnd[1])
+    
+    ws_nc = nrow(which_muts)
+    pio::pioStr("off centromer", ws_nc, suffix = '\n')
   }
   
   which_muts
