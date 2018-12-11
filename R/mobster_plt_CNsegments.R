@@ -69,12 +69,15 @@ plt_CNsegments = function(x, sample, chromosomes = paste0('chr', c(1:22, 'X', 'Y
     filter(sample == !!sample, chr %in% chromosomes) %>% 
     spread(variable, value) %>% arrange(chr)
   
-  baseplot = baseplot +     
-    geom_rect(
-      data = segments %>% filter(Major == 1, minor == 1), 
-      aes(xmin = from, xmax = to, ymin = -Inf, ymax = Inf),
-      alpha = .2,
-      fill = 'forestgreen') 
+  # if there are 1-1 segments, shadow them
+  one_one = segments %>% filter(Major == 1, minor == 1)
+  if(nrow(one_one) > 0)
+    baseplot = baseplot +     
+      geom_rect(
+        data = one_one, 
+        aes(xmin = from, xmax = to, ymin = -Inf, ymax = Inf),
+        alpha = .2,
+        fill = 'forestgreen') 
         
   # Segments
   baseplot = baseplot + 
@@ -83,7 +86,7 @@ plt_CNsegments = function(x, sample, chromosomes = paste0('chr', c(1:22, 'X', 'Y
                  aes(x = from, xend = to, y = minor, yend = minor), size = 1, colour = 'steelblue')
   
   # Scale size
-  if(max(segments$Major < 5))
+  if(max(segments$Major) < 5)
     baseplot = baseplot + ylim(-0.5, 5)
   
   # Histogram of mutation counts

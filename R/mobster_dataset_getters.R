@@ -510,16 +510,20 @@ byLoc = function(x, loc.id, offset_around_centromers) {
 
 minor = function(x, seg_id, samples = x$samples)
 {
-  x$segments %>% filter(id == seg_id &
+  as.numeric(
+    x$segments %>% filter(id == seg_id &
                           sample == samples &
                           variable == 'minor') %>% pull(value)
+    )
 }
 
 Major = function(x, seg_id, samples = x$samples)
 {
-  x$segments %>% filter(id == seg_id &
+  as.numeric(
+    x$segments %>% filter(id == seg_id &
                           sample == samples &
                           variable == 'Major') %>% pull(value)
+  )
 }
 
 # Converter for sciCLone inputs
