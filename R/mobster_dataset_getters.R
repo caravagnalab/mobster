@@ -592,3 +592,69 @@ convert_sciClone_input = function(x)
   
   list(CN = CN, MUTS = MUTS)
 }
+
+
+# # Phylogenetic tree REVOLVER
+# as_revolver_dataset = function(x, 
+#                                clonal,
+#                                drivers,
+#                                patientID = "MyPatient",
+#                                variantID = 'id',
+#                                remove_clusters = NULL
+# ) {
+#   
+#   # # VAF  + Annotations 
+#   # vaf = VAF_table(x)
+#   # 
+#   # matched = full_join(vaf, annotations, by = 'id')  
+#   # 
+#   
+#   # Clusters
+#   matched = BClusters(x) %>% select(id, cluster.Binomial)
+#   matched = matched %>% rename(cluster = cluster.Binomial)
+#   if(!is.null(remove_clusters)) matched = matched %>% filter(!(cluster %in% remove_clusters))
+#   
+#   
+#   matched$Misc = ""
+#   
+#   # patientID
+#   matched$patientID = patientID
+#   
+#   # drivers and clonal
+#   annotations = Annotations(x) %>% spread(variable, value) %>% 
+#     filter(gene %in% drivers) %>% filter(type == 'exonic') %>% pull(id)
+#   
+#   matched = matched %>% mutate(is.clonal = cluster == clonal)
+#   matched = matched %>% mutate(is.driver = id %in% annotations)
+#   
+#   # CCF
+#   vaf = VAF(x) %>% mutate(entry = paste0(sample, ':', value))
+#   vaf = vaf %>% group_by(id) %>% summarize(CCF = paste(entry, collapse = ';'))
+#   
+#   matched = matched %>% left_join(vaf, by = 'id')  
+#   
+#   # variant key
+#   matched = matched %>% rename(variantID = !!variantID)
+#   
+#   matched
+# }
+# 
+# fitgp_dataset = as_revolver_dataset(fitgp, clonal = 'C1', drivers, patientID = "AfterMOB_all")
+# fitgp_prv_dataset = as_revolver_dataset(fitgp, clonal = 'C1', drivers, patientID = "PRV_AfterMOB_all", remove_clusters = prioritize_Clusters(fitgp))
+# 
+# fit_dataset = as_revolver_dataset(fit, clonal = 'C2', drivers, patientID = "NoMOB_all")
+# fit_prv_dataset = as_revolver_dataset(fit, clonal = 'C2', drivers, patientID = "PRV_NoMOB_all", remove_clusters = prioritize_Clusters(fit))
+# 
+# all_datasets = bind_rows(fitgp_dataset, fitgp_prv_dataset, fit_dataset, fit_prv_dataset)
+# 
+# library(revolver)
+# cohort = revolver_cohort(as.data.frame(all_datasets))
+# 
+# cohort = revolver_compute_phylogenies(cohort, 'AfterMOB_all')
+# cohort = revolver_compute_phylogenies(cohort, 'NoMOB_all')
+# cohort = revolver_compute_phylogenies(cohort, 'PRV_AfterMOB_all')
+# cohort = revolver_compute_phylogenies(cohort, 'PRV_NoMOB_all')
+# 
+# 
+# revolver_report_patient(cohort, 'MyPatient')
+
