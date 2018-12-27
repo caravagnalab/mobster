@@ -7,7 +7,7 @@
 mobster_plt_2DVAF(obj, x, y, cluster = NULL, cluster.label = "cluster",
   marginal = FALSE, density = TRUE, cex = 1, alpha = 0.3,
   downsample = 1000, scales.fixed = TRUE, exclude = NULL,
-  exclude.color = "black", annotate = NULL,
+  exclude.color = "black", points.type = "points", annotate = NULL,
   marginal.remove.zeroes = T, palette = "Set1")
 }
 \arguments{

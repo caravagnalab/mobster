@@ -35,7 +35,7 @@ mobster_plt_CNsegments = function(x,
 
 plt_CNsegments = function(x, sample, chromosomes = paste0('chr', c(1:22, 'X', 'Y'))) 
 {
-  data('chr_coordinate_hg19', package = 'mobster')
+  data('chr_coordinates_hg19', package = 'mobster')
   
   chr_coordinate_hg19 = chr_coordinate_hg19 %>% filter(chr %in% chromosomes)
 
@@ -89,7 +89,7 @@ plt_CNsegments = function(x, sample, chromosomes = paste0('chr', c(1:22, 'X', 'Y
   if(max(segments$Major) < 5)
     baseplot = baseplot + ylim(-0.5, 5)
   
-  # Histogram of mutation counts
+  # Mutation VAF
   mutations = x$map_mut_seg %>% 
     filter(chr %in% chromosomes)
   vaf = VAF(x, ids = mutations %>% pull(id), samples = sample) %>% filter(value > 0) %>% pull(id)
@@ -99,11 +99,35 @@ plt_CNsegments = function(x, sample, chromosomes = paste0('chr', c(1:22, 'X', 'Y
   vaf_mutations = VAF(x, ids = mutations %>% pull(id), samples = sample)
   vaf_mutations = vaf_mutations %>% left_join(mutations, by = 'id')
   
+  quant = quantile(vaf_mutations$value, probs = c(.1, .99))
+  vaf_mutations = vaf_mutations %>% filter(value > quant[1], value < quant[2])
+  
+  dpplot = ggplot(vaf_mutations, aes(x = from, y = value, color = value)) +
+    stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE, alpha = 1, n = 100) +
+    scale_fill_distiller(palette= "Spectral") +
+    theme_classic() +
+    xlim(low, upp) + 
+    # ylim()
+    theme(
+      axis.text.x = element_blank(), 
+      axis.ticks.x = element_blank(),
+      axis.title.x=element_blank()
+    ) +
+    ggpubr::rotate_y_text() +
+    labs(y = 'Den.') +
+    # scale_y_continuous(breaks = scales::pretty_breaks(n = 1), limits = c(0, 1)) +
+    # ylim(0, 1) + 
+    guides(fill = FALSE)
+  
   pplot = ggplot(vaf_mutations, aes(x = from, y = value, color = value)) +
-    geom_point(size = 1e-2) +
+    geom_point(size = 1e-2, alpha = .3) +
+    # stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE, alpha = 1) +
+    # scale_fill_distiller(palette= "Spectral") +
     geom_hline(yintercept = 0.5, col = 'forestgreen', size = .3, linetype = 'dashed') +
     geom_hline(yintercept = 0.25, col = 'steelblue', size = .3, linetype = 'dashed') +
     geom_hline(yintercept = 0.5+0.25, col = 'darkred', size = .3, linetype = 'dashed') +
+    geom_hline(yintercept = 0, col = 'black', size = .3, linetype = 'dashed') +
+    geom_hline(yintercept = 1, col = 'black', size = .3, linetype = 'dashed') +
     theme_classic() +
     xlim(low, upp) + 
     # scale_x_continuous(breaks = c(low, upp)) +
@@ -121,7 +145,49 @@ plt_CNsegments = function(x, sample, chromosomes = paste0('chr', c(1:22, 'X', 'Y
       limits = c(0, 1), 
       breaks = seq(0, 1, by = 0.2)) +
     guides(colour = FALSE)
-    
+  
+  # Mutation coverage
+  mutations = x$map_mut_seg %>% 
+    filter(chr %in% chromosomes)
+  depth = DP(x, ids = mutations %>% pull(id), samples = sample) %>% filter(value > 0) %>% pull(id)
+  mutations = mutations %>%
+    filter(id %in% depth)
+  
+  depth_mutations = DP(x, ids = mutations %>% pull(id), samples = sample)
+  depth_mutations = depth_mutations %>% left_join(mutations, by = 'id')
+  
+  q_cov = quantile(depth_mutations$value, probs = c(.01, .99))
+  names(q_cov) = q_cov
+  
+  pplot_depth = ggplot(depth_mutations, aes(x = from, y = value, color = value)) +
+    geom_point(size = 1e-2, alpha = .3) +
+    geom_hline(yintercept = median(depth_mutations$value), 
+               col = 'black', 
+               size = .3, 
+               linetype = 'dashed') +
+    geom_hline(yintercept = q_cov[1], col = 'black', size = .3, linetype = 'dashed') +
+    geom_hline(yintercept = q_cov[2], col = 'black', size = .3, linetype = 'dashed') +
+    # geom_hline(yintercept = 0.25, col = 'steelblue', size = .3, linetype = 'dashed') +
+    # geom_hline(yintercept = 0.5+0.25, col = 'darkred', size = .3, linetype = 'dashed') +
+    theme_classic() +
+    xlim(low, upp) + 
+    # scale_x_continuous(breaks = c(low, upp)) +
+    scale_y_continuous(breaks = q_cov, limits = q_cov) +
+    theme(
+      axis.text.x = element_blank(), 
+      axis.ticks.x = element_blank(),
+      axis.title.x=element_blank()
+    ) +
+    ggpubr::rotate_y_text() +
+    labs(y = 'DP') +
+    # scale_y_continuous(breaks = scales::pretty_breaks(n = 3)) +
+    scale_color_gradientn(    
+      colours = c('steelblue', 'orange', 'darkred'), 
+      breaks = c(q_cov[1], median(depth_mutations$value), q_cov[2]),
+      limits = q_cov) +
+    guides(colour = FALSE)
+  
+  # Histogram of mutation counts with 1 megabase bins
   binsize = 1e6
   
   hplot = ggplot(mutations, aes(x = from)) +
@@ -140,14 +206,14 @@ plt_CNsegments = function(x, sample, chromosomes = paste0('chr', c(1:22, 'X', 'Y
     ggpubr::rotate_y_text() +
     # scale_y_continuous(
     #   breaks = c(0, m+1, m + 10), labels = c(0, m, '')) +
-    scale_y_continuous(breaks = scales::pretty_breaks(n = 1), limits = c(0, m)) +
+    scale_y_continuous(breaks = scales::pretty_breaks(n = 2), limits = c(0, m)) +
     labs(y = 'n') 
     # geom_hline(yintercept = m, linetype = 'dashed', size = 0.3, color = 'gray') +
     # annotate("text", x = 0, y = m*0.9, label = ceiling(m), size = 2)
 
-  figure = ggarrange(hplot, pplot, baseplot,
-    nrow = 3, ncol = 1,
-    heights = c(.2, .2, 1)
+  figure = ggarrange(hplot,  pplot, pplot_depth, baseplot,
+    nrow = 4, ncol = 1,
+    heights = c(.2, .2, .2, 1)
   )
 
   annotate_figure(

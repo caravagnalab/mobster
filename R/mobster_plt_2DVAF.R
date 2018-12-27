@@ -249,7 +249,7 @@ prioritize_Clusters = function(x, binomial_cutoff = 0.05, biopsies_cutoff = 1)
   pio::pioDisp(nom_C)
   nom_C[nom_C > 0] = 1
   
-  private = which(colSums(nom_C[, 1:(ncol(nom_C) - 1)], na.rm = TRUE) <= biopsies_cutoff)
+  private = which(colSums(nom_C[, 1:(ncol(nom_C) - 1), drop = FALSE], na.rm = TRUE) <= biopsies_cutoff)
   
   if(length(private) == 0) private = NULL
   else private = colnames(nom_C)[private]
