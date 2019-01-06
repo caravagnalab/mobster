@@ -38,8 +38,8 @@ mobster_wrp_neutralitytest = function(x, samples = x$samples, ql = 0.05, qr = 0.
                    # fmin = round(min(points), 4)
                    # fmax = round(max(points), 4)
                    # 5 an 95% quantiles..
-                   fmin = quantile(points, ql)
-                   fmax = quantile(points, qr)   
+                   fmin = round(quantile(points, ql), 2)
+                   fmax = round(quantile(points, qr), 2)  
                    
                    lsq = neutralitytestr::neutralitytest(points, fmin = fmin, fmax = fmax)
                    lsq$N_tail = length(points)
@@ -47,9 +47,9 @@ mobster_wrp_neutralitytest = function(x, samples = x$samples, ql = 0.05, qr = 0.
                    pio::pioStr("Lower quantile =", ql)
                    pio::pioStr("Upper quantile =", qr)
                    
-                  pio::pioStr("Integration range =",
+                   pio::pioStr("Integration range =",
                                paste0('[', fmin, ', ', fmax, ']\n'))
-
+                   
                    pio::pioStr("Tail size = ",
                                paste0(length(points), '\n'))
                    
