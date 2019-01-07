@@ -41,7 +41,7 @@ plot.dbpmm = function(x,
   # Prepare variables
   domain = seq(0, 1, binwidth)
   
-  labels = names(.params_Pi(x))
+  labels = names(mobster:::.params_Pi(x))
   
   labels.betas = mobster:::.params_Beta(x)$cluster
 
@@ -65,7 +65,7 @@ plot.dbpmm = function(x,
   if(conv.steps >= 2) conv.epsilon = abs(rev(x$all.NLL)[1] - rev(x$all.NLL)[2])
   conv.epsilon = formatC(conv.epsilon, format = "e", digits = 0)
   
-  sse = max(.compute_fit_sqerr(x, binning = binwidth)$cum.y)
+  sse = max(mobster:::.compute_fit_sqerr(x, binning = binwidth)$cum.y)
   sse = formatC(sse, format = "e", digits = 3)
 
   label.fit = bquote(
