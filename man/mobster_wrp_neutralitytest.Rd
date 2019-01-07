@@ -4,7 +4,8 @@
 \alias{mobster_wrp_neutralitytest}
 \title{Title}
 \usage{
-mobster_wrp_neutralitytest(x, samples = x$samples)
+mobster_wrp_neutralitytest(x, samples = x$samples, ql = 0.05,
+  qr = 0.95)
 }
 \arguments{
 \item{samples}{}

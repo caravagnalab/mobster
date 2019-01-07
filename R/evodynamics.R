@@ -43,7 +43,8 @@ subcloneparameters <- function(fit, mu, subclonenumber = 1){
   
   res <- tibble::tibble(time = time,
                         subclonefrequency = subclonefrequency,
-                        subclonemutations = subclonemutations)
+                        subclonemutations = subclonemutations,
+                        cluster = clusters$cluster[subclonenumber])
   
   return(res)
 }
@@ -151,12 +152,9 @@ selection2clonenested <- function(time1, time2, time_end,
 #' populations (\eqn{\lambda h}) vs subclone (\eqn{\lambda s}):
 #' \deqn{1+s=\lambda h / \lambda s}
 #' 
-#' @param time1 time subclone 1 emerges (in tumour doublings)
-#' @param time2 time subclone 2 emerges (in tumour doublings)
-#' @param time_end Time when tumour is sampled (in tumour doublings)
-#' @param subclonefrequency1 Frequency of subclone 1
-#' @param subclonefrequency2 Frequency of subclone 2
-#' @return s
+#' @param fit An object fit by MOBSTER
+#' @param Nmax Time when tumour is sampled (in tumour doublings)
+#' @return Mutation rate, time of emergence and selection coefficient of subclones.
 #' @examples
 #' 
 #' mobsterfit = mobster_fit(subclonedynamics, K = 1:2, tail = c(T, F))
