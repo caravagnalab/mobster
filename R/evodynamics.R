@@ -14,7 +14,7 @@
 #' @export
 mutationrate <- function(fit, lq = 0.025, uq = 0.975){
   VAFs <- dplyr::filter(fit$best$data, cluster == 'Tail') %>%
-    filter(VAF < quantile(VAF, uq) & VAF > quantile(VAFs, lq)) %>%
+    filter(VAF < quantile(VAF, uq) & VAF > quantile(VAF, lq)) %>%
     dplyr::pull(VAF)
   mu <- fit$best$N.k[[1]] / (1/min(VAFs) - 1/max(VAFs))
   return(mu)
@@ -155,6 +155,8 @@ selection2clonenested <- function(time1, time2, time_end,
 #' 
 #' @param fit An object fit by MOBSTER
 #' @param Nmax Time when tumour is sampled (in tumour doublings)
+#' @param lq Lower quantile
+#' @param uq Upper quantile
 #' @return Mutation rate, time of emergence and selection coefficient of subclones.
 #' @examples
 #' 
@@ -162,13 +164,13 @@ selection2clonenested <- function(time1, time2, time_end,
 #' evolutionary_parameters(mobsterfit, Nmax = 10^6)
 #' 
 #' @export
-evolutionary_parameters <- function(fit, Nmax = 10^10){
+evolutionary_parameters <- function(fit, Nmax = 10^10, lq = 0.025, uq = 0.975){
   
   if (fit$best$fit.tail == FALSE) stop("No tail detected, 
                                        evolutionary inference not possible")
   
   nsubclones <- fit$best$Kbeta - 1 #remove 1 for clonal mutations
-  mu <- mutationrate(fit)
+  mu <- mutationrate(fit, lq = lq, uq = uq)
   powerlawexponent <- fit$best$shape + 1
   
   if (nsubclones == 0){
