@@ -12,8 +12,9 @@
 #' @examples
 #' mutationrate(mobsterfit)
 #' @export
-mutationrate <- function(fit){
+mutationrate <- function(fit, lq = 0.025, uq = 0.975){
   VAFs <- dplyr::filter(fit$best$data, cluster == 'Tail') %>%
+    filter(VAF < quantile(VAF, uq) & VAF > quantile(VAFs, lq)) %>%
     dplyr::pull(VAF)
   mu <- fit$best$N.k[[1]] / (1/min(VAFs) - 1/max(VAFs))
   return(mu)
@@ -161,7 +162,7 @@ selection2clonenested <- function(time1, time2, time_end,
 #' evolutionary_parameters(mobsterfit, Nmax = 10^6)
 #' 
 #' @export
-evolutionary_parameters <- function(fit, Nmax = 10^9){
+evolutionary_parameters <- function(fit, Nmax = 10^10){
   
   if (fit$best$fit.tail == FALSE) stop("No tail detected, 
                                        evolutionary inference not possible")
