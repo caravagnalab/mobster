@@ -520,7 +520,7 @@ minor = function(x, seg_id, samples = x$samples)
 {
   as.numeric(
     x$segments %>% filter(id == seg_id &
-                          sample == samples &
+                          sample %in% samples &
                           variable == 'minor') %>% pull(value)
     )
 }
@@ -529,7 +529,7 @@ Major = function(x, seg_id, samples = x$samples)
 {
   as.numeric(
     x$segments %>% filter(id == seg_id &
-                          sample == samples &
+                          sample %in% samples &
                           variable == 'Major') %>% pull(value)
   )
 }
