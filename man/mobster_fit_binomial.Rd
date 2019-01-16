@@ -8,16 +8,16 @@ mobster_fit_binomial(x, K = 2 * length(x$samples), alpha_0 = 1e-06,
   a_0 = 1, b_0 = 1, max_iter = 5000, epsilon_conv = 1e-10,
   pi_cutoff = 0.01, restarts = 10, is_verbose = FALSE,
   iterative = FALSE, parallel = FALSE, cores.ratio = 0.8,
-  silent = FALSE)
+  silent = FALSE, init_kmeans = FALSE)
 }
 \arguments{
 \item{x}{}
 
 \item{pi_cutoff}{}
 
-\item{cores.ratio}{}
-
 \item{silent}{}
+
+\item{init_kmeans}{}
 }
 \description{
 Variational fit Dirichelt Mixture Model with Binomial data

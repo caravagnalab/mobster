@@ -13,7 +13,9 @@
 #' @param x 
 #' @param pi_cutoff 
 #' @param silent 
+#' @param q_init 
 #' @param cores.ratio
+#' @param trace
 #'
 #' @return
 #' @export
@@ -32,7 +34,10 @@ mobster_fit_binomial = function(x,
                                 iterative = FALSE,
                                 parallel = FALSE,
                                 cores.ratio = .8,
-                                silent = FALSE)
+                                silent = FALSE,
+                                q_init = 'prior', # or kmeans, or private
+                                trace = FALSE
+)
 {
   best = NULL
   
@@ -52,6 +57,8 @@ mobster_fit_binomial = function(x,
   
   pioStr("\nDirichlet", paste0('alpha = ', alpha_0), suffix = "(conc.)")
   pioStr("\n     Beta", paste0('a0 = ', a_0, '; b0 =', b_0), suffix = "(shape)\n")
+  pioStr("\n     Beta (posterior)", ifelse(q_init, "With kmeans", "Prior"), suffix = "(variational distributions, `q``)")
+  
   
   pioStr(
     "\n Optimize",
@@ -86,7 +93,9 @@ mobster_fit_binomial = function(x,
       epsilon_conv = epsilon_conv,
       is_verbose = is_verbose,
       iterative = iterative,
-      silent = silent
+      silent = silent,
+      trace = trace,
+      q_init = q_init
     )
   }
   
@@ -130,7 +139,7 @@ mobster_fit_binomial = function(x,
     }
     
     models = r
-
+    
     .stop_parallel(cl)
   }
   
@@ -157,22 +166,22 @@ mobster_fit_binomial = function(x,
       "Selecting output clusters: requested minimum size is ",
       pi_cutoff
     ))
-    
-    best = choose_clusters(best, pi_cutoff)
-    
-    # Final output
-    cat(bold(paste0("\n\n\tOUTPUT\n")))
-    print(best)
-    
-    TIME = difftime(as.POSIXct(Sys.time(), format = "%H:%M:%S"), TIME, units = "mins")
-    cat(
-      bold("\n\nCOMPLETED: ") %+% cyan(round(TIME, 2), 'mins, with status', best$status, '\n')
-    )
-    
-    x$fit.Binomial = best
-    x = logOp(x, "Binomial clustering of read counts")
-    
-    return(x)
+  
+  best = choose_clusters(best, pi_cutoff)
+  
+  # Final output
+  cat(bold(paste0("\n\n\tOUTPUT\n")))
+  print(best)
+  
+  TIME = difftime(as.POSIXct(Sys.time(), format = "%H:%M:%S"), TIME, units = "mins")
+  cat(
+    bold("\n\nCOMPLETED: ") %+% cyan(round(TIME, 2), 'mins, with status', best$status, '\n')
+  )
+  
+  x$fit.Binomial = best
+  x = logOp(x, "Binomial clustering of read counts")
+  
+  return(x)
 }
 
 
@@ -188,7 +197,10 @@ vb_bmm_MV <-
            epsilon_conv,
            is_verbose,
            iterative,
-           silent)
+           silent,
+           trace = FALSE,
+           q_init = 'prior' # or kmeans, or private
+  )
   {
     # Use the log sum exp trick for having numeric stability
     log_sum_exp <- function(x) {
@@ -220,7 +232,7 @@ vb_bmm_MV <-
     
     cluster_names = paste0("C", 1:K)
     sample_names = x_DP$id
-    dimensions_names = paste0("W", 1:W)
+    dimensions_names = gsub('.NV', '', colnames(Sn))
     
     r_nk = log_r_nk = log_lambda_nk = matrix(0, nrow = N, ncol = K)
     rownames(r_nk) = rownames(log_r_nk) = rownames(log_lambda_nk) = sample_names
@@ -235,6 +247,7 @@ vb_bmm_MV <-
     names(alpha_0) = cluster_names
     
     # Beta (a_0, b_0) with small randomness (~10e-3) to render different components
+    a_0_scalar = a_0
     a_0 = rep(a_0, K * W) + runif(K * W) / 100
     b_0 = rep(b_0, K * W) + runif(K * W) / 100
     
@@ -245,11 +258,59 @@ vb_bmm_MV <-
     rownames(a_0) = rownames(b_0) = dimensions_names
     colnames(a_0) = colnames(b_0) = cluster_names
     
-    ### Posterior approximations, which get initialized to the prior's value in the very beginnig
-    alpha = a = b = rep(0, K)
+    # Posterior approximations, 3 different ways to initialize the 
+    # variational distribution q (via `q_init`)
+    # - random : q_init = to the prior's value 
+    # - kmeans : via kmeans clustering
+    # - private: assigning clusters to private mutations (plus the prior)
     alpha = alpha_0
-    a = a_0
-    b = b_0
+    
+    if(q_init == 'prior')
+    {
+      pio::pioStr("Initializing variational distribution", paste0(q_init, " (as the prior)"))
+      a = a_0
+      b = b_0
+    }
+    
+    if(q_init == 'kmeans') # Special case: kmeans initialization
+    {
+      pio::pioStr("Initializing variational distribution", paste0(q_init, " (kmeans)"))
+      
+      # get parameters from kmeans
+      kmeans_params = initial_condition_Binomial_kmeans(x_NV, x_DP, K, a_0_scalar)
+      
+      a = kmeans_params$a
+      b = kmeans_params$b
+    }  
+    
+    if(q_init == 'private') # Special case: prior plus private clusters
+    {
+      pio::pioStr("Initializing variational distribution", paste0(q_init, " (private clusters, plus kmeans)"))
+      
+      # get private clusters, 
+      prv_params = initial_condition_prv_clusters(x_NV, x_DP)
+      K_prv_params = ncol(prv_params$a)
+      
+      a = prv_params$a
+      b = prv_params$b
+      
+      # other clusters are requested, so we take them with kmeans
+      if(K > K_prv_params) 
+      {
+        X_not_ass = prv_params$X %>% 
+          as_tibble() %>%
+          filter(is.na(private.cluster)) %>% pull(id)
+        
+        kmeans_params = initial_condition_Binomial_kmeans(
+          x_NV %>% filter(id %in% X_not_ass), 
+          x_DP %>% filter(id %in% X_not_ass), 
+          K - K_prv_params, 
+          a_0_scalar)
+        
+        a = cbind(a, kmeans_params$a)
+        b = cbind(b, kmeans_params$b)
+      }
+    }  
     
     ### normalization constants for the priors, required for the ELBO
     # ln Cn -- log of Binomial data
@@ -261,6 +322,9 @@ vb_bmm_MV <-
     
     # Computation status to be updated in the end
     status = ''
+    
+    # The trace of the fit
+    fit_trace = NULL
     
     # Iterate to find optimal parameters
     i = 1
@@ -296,6 +360,16 @@ vb_bmm_MV <-
       Z        <- apply(log_lambda_nk, 1, log_sum_exp)
       log_r_nk <- log_lambda_nk - Z              # log of r_nk
       r_nk     <- apply(log_r_nk, 2, exp)        # r_nk
+      
+      # Save this entry in the trace
+      if(trace) {
+        fit_trace = bind_rows(fit_trace,
+                              tibble(
+                                cluster.Binomial = mobster:::latent_vars_hard_assignments(lv = list(`z_nk` = r_nk, `pi` = alpha_0)),
+                                step = i))
+      }
+      
+      
       
       # Variational M-Step
       
@@ -397,7 +471,7 @@ vb_bmm_MV <-
       
       # Checks -- decreasing ELBO
       if (i > 1 && L[i] < L[i - 1])
-        warning("ELBO decreased at step #", i)
+        warning("ELBO decreased by ", (L[i - 1]-L[i]) ,"at step #", i)
       
       # Checks -- convergence by epsilon_conv
       if (!is.na(epsilon_conv) && i > 1 &&
@@ -435,6 +509,13 @@ vb_bmm_MV <-
     labels = tibble(cluster.Binomial = mobster:::latent_vars_hard_assignments(lv = list(`z_nk` = r_nk, `pi` = pi_k)))
     X = bind_cols(labels, X)
     
+    if(trace) {
+      fit_trace = bind_rows(fit_trace,
+                            tibble(
+                              cluster.Binomial = mobster:::latent_vars_hard_assignments(lv = list(`z_nk` = r_nk, `pi` = alpha_0)),
+                              step = i))
+    }
+    
     
     obj <-
       structure(
@@ -454,7 +535,8 @@ vb_bmm_MV <-
           alpha_0 = alpha_0,
           epsilon_conv = epsilon_conv,
           status = status,
-          ELBO = L
+          ELBO = L,
+          trace = fit_trace
         ),
         class = "vb_bmm",
         call = match.call(),
@@ -589,3 +671,133 @@ choose_clusters = function(x, pi.cutoff)
   
   x
 }
+
+initial_condition_prv_clusters = function(x_NV, x_DP)
+{
+  # reconstruct thw raw VAF profile for each sample
+  vaf = (x_NV %>% select(-id))/(x_DP %>% select(-id))
+  colnames(vaf) = gsub('.NV', '', colnames(vaf))
+  vaf[is.na(vaf)] = 0
+  
+  ret_vaf = vaf %>% as_tibble()
+  ret_vaf$id = x_NV$id
+  ret_vaf$private.cluster = NA
+  
+  W = ncol(vaf)
+  
+  # Private clusters have only one positive entry in the vaf
+  prv = apply(vaf, 1, function(w) sum(w>0)) == 1
+  ret_vaf$private.cluster = apply(ret_vaf, 1,
+                                  function(w)
+                                  {
+                                    pos_entries = as.numeric(w[1:W]) > 0
+                                    
+                                    if (sum(pos_entries) > 1)
+                                      return(NA)
+                                    else
+                                      return(colnames(ret_vaf)[which(pos_entries)])
+                                  })
+  
+  prv = vaf[prv, ]
+  
+  
+  # Make a list of params
+  prv = lapply(1:ncol(prv), function(w) unlist(prv[prv[, w] > 0, w]))
+  names(prv) = fitgp$samples
+  
+  # Where we have the 'a' and the "b", for each mean and variance value
+  prv_beta_params = rbind(
+    sapply(prv, mean),
+    sapply(prv, var))
+  
+  prv_size = sapply(prv, length)
+  
+  # Assemble everything into a dataframe
+  prv_beta_params = apply(prv_beta_params, 2, function(w) data.frame(mobster:::.estBetaParams(w[1], w[2])))
+  prv_beta_params = Reduce(rbind, prv_beta_params)
+  rownames(prv_beta_params) = names(prv)
+  
+  prv_beta_params = cbind(prv_beta_params, n = prv_size)
+  
+  # Now, we create the matrix of a and b parameters for the Beta where each dimension has
+  # pdf concentrated on 0 (b >> a), and the private parameters per cluster
+  
+  a_Beta = b_Beta = matrix(NA, ncol = nrow(prv_beta_params), nrow = W)
+  rownames(a_Beta) = rownames(b_Beta) = rownames(prv_beta_params)
+  
+  a_Beta = apply(a_Beta, c(1,2), function(w) 1+runif(1)) 
+  b_Beta = apply(a_Beta, c(1,2), function(w) 30+runif(1))   
+  
+  
+  for(i in 1:nrow(prv_beta_params)) {
+    # Get a and b for a single dimension
+    a_Beta[i, i] = prv_beta_params[i, 'a']
+    b_Beta[i, i] = prv_beta_params[i, 'b']
+  }
+  
+  return(list(a=a_Beta,b=b_Beta, X=ret_vaf))
+}
+
+initial_condition_Binomial_kmeans = function(x_NV, x_DP, K, a_0)
+{
+  # Data
+  XVAF = (x_NV %>% select(-id))/(x_DP %>% select(-id)) %>% as_tibble()
+  colnames(XVAF) = gsub('.NV', '', colnames(XVAF))
+  XVAF[is.na(XVAF)] = 0
+  
+  W = ncol(XVAF)
+  
+  # Kmeans with K clusters
+  km_cl = kmeans(XVAF, centers = K, nstart = 25)
+  XVAF$cluster.kmeans = km_cl$cluster
+  
+  # Beta means as Gaussian means
+  beta_mu = km_cl$centers[, 1:W]
+  
+  # Beta variances from posterior assignments
+  beta_var = XVAF %>%
+    reshape2::melt(id = 'cluster.kmeans') %>% as_tibble() %>%
+    arrange(cluster.kmeans) %>%
+    group_by(cluster.kmeans, variable) %>% summarise(value = var(value))  %>%
+    spread(variable, value) %>%
+    ungroup() %>%
+    select(-cluster.kmeans)
+  
+  a_0 = rep(a_0, K * W) + runif(K * W) / 100
+  a_0 = matrix(a_0, ncol = K)
+  
+  a = b = a_0
+  
+  beta_mu = t(beta_mu)
+  beta_var = t(beta_var)
+  
+  for(i in 1:nrow(beta_mu))
+  {
+    for(j in 1:ncol(beta_mu))
+    {
+      a[i,j] = mobster:::.estBetaParams(beta_mu[i,j], beta_var[i,j])$a
+      b[i,j] = mobster:::.estBetaParams(beta_mu[i,j], beta_var[i,j])$b
+    }
+  }
+  
+  extr = function(x){
+    if(is.na(x)) return(runif(1) / 100)
+    x
+  }
+  a = apply(a, c(1,2), extr)
+  b = apply(b, c(1,2), extr)
+  
+  return(list(a=a, b=b, X = XVAF %>% as_tibble()))
+}
+
+
+# 
+# fit_trace
+# Xr = VAF_table(x)
+# Xr$cluster = fit_trace %>% filter(step == 46) %>% pull(cluster.Binomial)
+# 
+# ggplot(Xr, aes(x=Set7_55.VAF, y= Set7_57.VAF, color = factor(cluster)))+
+#   geom_point(alpha = .3) + 
+#   facet_wrap(~factor(cluster)) 
+# # geom_point(data = bp, color = 'black') +
+# # guides(color = FALSE)
