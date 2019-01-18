@@ -267,7 +267,7 @@ vb_bmm_MV <-
     
     if(q_init == 'prior')
     {
-      pio::pioStr("Initializing variational distribution", paste0(q_init, " (as the prior)"))
+      pio::pioStr("Initializing variational distribution", paste0(q_init, " (=prior)"))
       a = a_0
       b = b_0
     }
