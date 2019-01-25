@@ -260,14 +260,14 @@ mobster_dataset = function(
   
   # we reject those with N < N.min
   rejected = size_table %>%
-    filter(N < N.min) %>%
+    filter(N < !!N.min) %>%
     arrange(desc(N)) %>%
     inner_join(y = x$segments, by=c("seg_id" = "id")) %>%
     select(seg_id, N, chr, from, to) %>%
     distinct
   
   accepted = size_table %>%
-    filter(N >= N.min) %>%
+    filter(N >= !!N.min) %>%
     arrange(desc(N)) %>%
     inner_join(y = x$segments, by=c("seg_id" = "id")) %>%
     select(seg_id, N, chr, from, to) %>%
