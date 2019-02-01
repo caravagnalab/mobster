@@ -5,10 +5,10 @@
 #' MOBSTER can extract these parameters from the VAF distribution.
 #' Mutation rate: 25.0
 #' Number of subclones: 1
-#' Subclone time: 11.0 (tumour doublings)
+#' Subclone time: 9.0 (tumour doublings)
 #' Subclone Mutations: 325
 #' Subclone frequency: 0.53
-#' Fitness advantage of subclone: 1.25
+#' Fitness advantage of subclone: 0.8
 #' Tumour population size: 10^6
 #' Clonal mutations: 500
 #' 
