@@ -8,16 +8,20 @@
 #' \eqn{M} is the number of mutations between \eqn{fmin} and \eqn{fmax}.
 #' 
 #' @param fit Mobster fit
+#' @param lq lower quantile of VAF (0.05)
+#' @param uq upper quantile of VAF (0.95)
+#' @param ploidy of mutations (2)
+#' @param ncells Number of cells that accumulate mutations at each division 1 or 2, default is 1
 #' @return Mutation rate per tumour doubling
 #' @examples
 #' mutationrate(mobsterfit)
 #' @export
-mutationrate <- function(fit, lq = 0.05, uq = 0.95){
+mutationrate <- function(fit, lq = 0.05, uq = 0.95, ploidy = 2, ncells = 1){
   VAFvec <- dplyr::filter(fit$best$data, cluster == 'Tail') %>%
     dplyr::filter(VAF < quantile(VAF, uq) & VAF > quantile(VAF, lq)) %>%
     dplyr::pull(VAF)
-  mu <- length(VAFvec) / (1/(2 * min(VAFvec)) - 1/(2 * max(VAFvec)))
-  return(mu)
+  mu <- length(VAFvec) / (1/(ploidy * min(VAFvec)) - 1/(ploidy * max(VAFvec)))
+  return(mu / ncells)
 }
 
 #' Extract relevent parameters from MOBSTER fit
@@ -155,8 +159,10 @@ selection2clonenested <- function(time1, time2, time_end,
 #' 
 #' @param fit An object fit by MOBSTER
 #' @param Nmax Time when tumour is sampled (in tumour doublings)
-#' @param lq Lower quantile
-#' @param uq Upper quantile
+#' @param lq lower quantile of VAF (0.05)
+#' @param uq upper quantile of VAF (0.95)
+#' @param ploidy of mutations (2)
+#' @param ncells Number of cells that accumulate mutations at each division 1 or 2, default is 1
 #' @return Mutation rate, time of emergence and selection coefficient of subclones.
 #' @examples
 #' 
@@ -164,13 +170,13 @@ selection2clonenested <- function(time1, time2, time_end,
 #' evolutionary_parameters(mobsterfit, Nmax = 10^6)
 #' 
 #' @export
-evolutionary_parameters <- function(fit, Nmax = 10^10, lq = 0.025, uq = 0.975){
+evolutionary_parameters <- function(fit, Nmax = 10^10, lq = 0.1, uq = 0.9, ploidy = 2, ncells = 1){
   
   if (fit$best$fit.tail == FALSE) stop("No tail detected, 
                                        evolutionary inference not possible")
   
   nsubclones <- fit$best$Kbeta - 1 #remove 1 for clonal mutations
-  mu <- mutationrate(fit, lq = lq, uq = uq)
+  mu <- mutationrate(fit, lq = lq, uq = uq, ploidy = ploidy, ncells = ncells)
   powerlawexponent <- fit$best$shape + 1
   
   if (nsubclones == 0){
