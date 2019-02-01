@@ -13,10 +13,10 @@
 #' mutationrate(mobsterfit)
 #' @export
 mutationrate <- function(fit, lq = 0.025, uq = 0.975){
-  VAFs <- dplyr::filter(fit$best$data, cluster == 'Tail') %>%
-    filter(VAF < quantile(VAF, uq) & VAF > quantile(VAFs, lq)) %>%
+  VAFvec <- dplyr::filter(fit$best$data, cluster == 'Tail') %>%
+    dplyr::filter(VAF < quantile(VAF, uq) & VAF > quantile(VAF, lq)) %>%
     dplyr::pull(VAF)
-  mu <- fit$best$N.k[[1]] / (1/min(VAFs) - 1/max(VAFs))
+  mu <- length(VAFvec) / (1/min(VAFvec) - 1/max(VAFvec))
   return(mu)
 }
 
@@ -35,8 +35,8 @@ subcloneparameters <- function(fit, mu, subclonenumber = 1){
   clusters <- fit$best$Clusters %>%
     dplyr::select(-init.value) %>%
     dplyr::filter(cluster != "Tail") %>%
-    spread(type, fit.value) %>%
-    arrange(Mean)
+    dplyr::spread(type, fit.value) %>%
+    dlpyr::arrange(Mean)
   
   subclonemutations <- clusters$`Mixing proportion`[subclonenumber] * fit$best$N
   subclonefrequency <- clusters$Mean[subclonenumber] * 2 #need ccf so times by 2
@@ -162,13 +162,13 @@ selection2clonenested <- function(time1, time2, time_end,
 #' evolutionary_parameters(mobsterfit, Nmax = 10^6)
 #' 
 #' @export
-evolutionary_parameters <- function(fit, Nmax = 10^10){
+evolutionary_parameters <- function(fit, Nmax = 10^10, lq = 0.025, uq = 0.975){
   
   if (fit$best$fit.tail == FALSE) stop("No tail detected, 
                                        evolutionary inference not possible")
   
   nsubclones <- fit$best$Kbeta - 1 #remove 1 for clonal mutations
-  mu <- mutationrate(fit)
+  mu <- mutationrate(fit, lq = lq, uq = uq)
   powerlawexponent <- fit$best$shape + 1
   
   if (nsubclones == 0){
