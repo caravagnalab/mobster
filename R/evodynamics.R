@@ -11,12 +11,12 @@
 #' @param lq lower quantile of VAF (0.05)
 #' @param uq upper quantile of VAF (0.95)
 #' @param ploidy of mutations (2)
-#' @param ncells Number of cells that accumulate mutations at each division 1 or 2, default is 1
+#' @param ncells Number of cells that accumulate mutations at each division 1 or 2, default is 2
 #' @return Mutation rate per tumour doubling
 #' @examples
 #' mutationrate(mobsterfit)
 #' @export
-mutationrate <- function(fit, lq = 0.05, uq = 0.95, ploidy = 2, ncells = 1){
+mutationrate <- function(fit, lq = 0.05, uq = 0.95, ploidy = 2, ncells = 2){
   VAFvec <- dplyr::filter(fit$best$data, cluster == 'Tail') %>%
     dplyr::filter(VAF < quantile(VAF, uq) & VAF > quantile(VAF, lq)) %>%
     dplyr::pull(VAF)
@@ -170,7 +170,7 @@ selection2clonenested <- function(time1, time2, time_end,
 #' evolutionary_parameters(mobsterfit, Nmax = 10^6)
 #' 
 #' @export
-evolutionary_parameters <- function(fit, Nmax = 10^10, lq = 0.1, uq = 0.9, ploidy = 2, ncells = 1){
+evolutionary_parameters <- function(fit, Nmax = 10^10, lq = 0.1, uq = 0.9, ploidy = 2, ncells = 2){
   
   if (fit$best$fit.tail == FALSE) stop("No tail detected, 
                                        evolutionary inference not possible")
