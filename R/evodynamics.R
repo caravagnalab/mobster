@@ -35,7 +35,7 @@ subcloneparameters <- function(fit, mu, subclonenumber = 1){
   clusters <- fit$best$Clusters %>%
     dplyr::select(-init.value) %>%
     dplyr::filter(cluster != "Tail") %>%
-    dplyr::spread(type, fit.value) %>%
+    tidyr::spread(type, fit.value) %>%
     dlpyr::arrange(Mean)
   
   subclonemutations <- clusters$`Mixing proportion`[subclonenumber] * fit$best$N
