@@ -4,7 +4,7 @@
 \alias{mutationrate}
 \title{Estimate mutation rate from MOBSTER fit}
 \usage{
-mutationrate(fit)
+mutationrate(fit, lq = 0.025, uq = 0.975)
 }
 \arguments{
 \item{fit}{Mobster fit}

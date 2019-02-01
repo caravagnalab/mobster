@@ -155,6 +155,8 @@ selection2clonenested <- function(time1, time2, time_end,
 #' 
 #' @param fit An object fit by MOBSTER
 #' @param Nmax Time when tumour is sampled (in tumour doublings)
+#' @param lq Lower quantile
+#' @param uq Upper quantile
 #' @return Mutation rate, time of emergence and selection coefficient of subclones.
 #' @examples
 #' 

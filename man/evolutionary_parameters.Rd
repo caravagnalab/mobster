@@ -4,12 +4,16 @@
 \alias{evolutionary_parameters}
 \title{Extract evolutionary parameters using MOBSTER fit}
 \usage{
-evolutionary_parameters(fit, Nmax = 10^9)
+evolutionary_parameters(fit, Nmax = 10^10, lq = 0.025, uq = 0.975)
 }
 \arguments{
 \item{fit}{An object fit by MOBSTER}
 
 \item{Nmax}{Time when tumour is sampled (in tumour doublings)}
+
+\item{lq}{Lower quantile}
+
+\item{uq}{Upper quantile}
 }
 \value{
 Mutation rate, time of emergence and selection coefficient of subclones.

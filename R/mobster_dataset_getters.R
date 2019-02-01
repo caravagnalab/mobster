@@ -292,6 +292,7 @@ Clusters = function(x, cluster, annotations = FALSE){
          Binomial = return(BClusters(x, annotations)),
          B = return(BClusters(x, annotations)))
   
+  
   stop("Cluster code not recognized; use one of MOBSTER (M), sciClone (S), pyClone (P), Binomial (B)")
 }
 
@@ -312,18 +313,26 @@ MClusters = function(x, annotations = FALSE)
                      function(w)
                        return(w$best$data %>% select(-sample,-VAF)))
   
-  MOBSTER_clusters = list.best[[1]]
+  MOBSTER_clusters = list.best %>% purrr::reduce(full_join, by = "id")
+  colnames(MOBSTER_clusters)[2:ncol(MOBSTER_clusters)] = paste0('cluster.', names(x$fit.MOBSTER)) 
   
-  for (i in 2:length(list.best)) {
-    MOBSTER_clusters = full_join(
-      MOBSTER_clusters,
-      list.best[[i]],
-      by = 'id',
-      suffix =
-        c(paste0('.', names(x$fit.MOBSTER)[i - 1]),
-          paste0('.', names(x$fit.MOBSTER)[i]))
-    )
-  }
+  # Reduce(
+  #   function(w) {full_join},
+  #   list.best
+  # )
+  
+  # MOBSTER_clusters = list.best[[1]]
+  # 
+  # for (i in 2:length(list.best)) {
+  #   MOBSTER_clusters = full_join(
+  #     MOBSTER_clusters,
+  #     list.best[[i]],
+  #     by = 'id',
+  #     suffix =
+  #       c(paste0('.', names(x$fit.MOBSTER)[i - 1]),
+  #         paste0('.', names(x$fit.MOBSTER)[i]))
+  #   )
+  # }
   
   if (annotations)
   {
@@ -357,6 +366,15 @@ SClusters = function(x, annotations = FALSE)
   clusters = clusters %>% select(NA1, cluster, starts_with('cluster'))
   colnames(clusters)[c(1,2)] = c('id', 'cluster.sciClone')
   
+  if (annotations)
+  {
+    annotations = Annotations(x, ids = clusters$id) %>%
+      spread(variable, value)
+    
+    clusters = full_join(clusters, annotations, by = 'id')
+    clusters = full_join(clusters, x$map_mut_seg, by = 'id')
+  }
+  
   clusters
 }
 
@@ -382,6 +400,15 @@ PClusters <- function(x, annotations = FALSE) {
   
   clusters = clusters[match(mobster:::keys(x), clusters$id),]
   
+  if (annotations)
+  {
+    annotations = Annotations(x, ids = clusters$id) %>%
+      spread(variable, value)
+    
+    clusters = full_join(clusters, annotations, by = 'id')
+    clusters = full_join(clusters, x$map_mut_seg, by = 'id')
+  }
+  
   return(clusters)
 }
 
@@ -398,7 +425,18 @@ BClusters <- function(x, annotations = FALSE) {
   if (is.null(x$fit.Binomial)) 
     stop("Binomial clusters are not available!\n")
   
-  return(x$fit.Binomial$X)
+  clusters = x$fit.Binomial$X
+  
+  if (annotations)
+  {
+    annotations = Annotations(x, ids = clusters$id) %>%
+      spread(variable, value)
+    
+    clusters = full_join(clusters, annotations, by = 'id')
+    clusters = full_join(clusters, x$map_mut_seg, by = 'id')
+  }
+  
+  clusters
 }
 
 #
@@ -512,7 +550,7 @@ minor = function(x, seg_id, samples = x$samples)
 {
   as.numeric(
     x$segments %>% filter(id == seg_id &
-                          sample == samples &
+                          sample %in% samples &
                           variable == 'minor') %>% pull(value)
     )
 }
@@ -521,7 +559,7 @@ Major = function(x, seg_id, samples = x$samples)
 {
   as.numeric(
     x$segments %>% filter(id == seg_id &
-                          sample == samples &
+                          sample %in% samples &
                           variable == 'Major') %>% pull(value)
   )
 }
