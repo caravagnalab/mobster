@@ -12,11 +12,11 @@
 #' @examples
 #' mutationrate(mobsterfit)
 #' @export
-mutationrate <- function(fit, lq = 0.025, uq = 0.975){
+mutationrate <- function(fit, lq = 0.05, uq = 0.95){
   VAFvec <- dplyr::filter(fit$best$data, cluster == 'Tail') %>%
     dplyr::filter(VAF < quantile(VAF, uq) & VAF > quantile(VAF, lq)) %>%
     dplyr::pull(VAF)
-  mu <- length(VAFvec) / (1/min(VAFvec) - 1/max(VAFvec))
+  mu <- length(VAFvec) / (1/(2 * min(VAFvec)) - 1/(2 * max(VAFvec)))
   return(mu)
 }
 
