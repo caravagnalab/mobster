@@ -1,6 +1,16 @@
-####################### Getters for the plain tibble with the stored data
+#' Extract keys to id mutations loaded inside a MOBSTER dataset.
+#'
+#' @param x A MOBSTER \code{mbst_data} object
+#'
+#' @return The keys that id mutations.
+#' @export
+#'
+#' @examples
+keys = function(x) {
+  unique(x$data$id)
+}
 
-#' Extract VAF values.
+#' Extract VAF values from a MOBSTER dataset.
 #' 
 #' @description 
 #' 
@@ -9,7 +19,7 @@
 #' ID; by default all entries are returbed. The output is a tibble; no other
 #' transformations are executed.
 #'
-#' @param x A \code{mbst_data} object
+#' @param x A MOBSTER \code{mbst_data} object
 #' @param ids The IDs of the mutations to extract, all by default.
 #' @param samples The samples for which we extract the data, all by default.
 #'
@@ -27,7 +37,7 @@ VAF = function(x,
                  sample %in% samples)
 }
 
-#' Extract DP values.
+#' Extract depth values from a MOBSTER dataset.
 #' 
 #' @description 
 #' 
@@ -36,7 +46,7 @@ VAF = function(x,
 #' ID; by default all entries are returbed. The output is a tibble; no other
 #' transformations are executed.
 #'
-#' @param x A \code{mbst_data} object
+#' @param x A MOBSTER \code{mbst_data} object.
 #' @param ids The IDs of the mutations to extract, all by default.
 #' @param samples The samples for which we extract the data, all by default.
 #'
@@ -54,7 +64,7 @@ DP = function(x,
              sample %in% samples)
 }
 
-#' Extract NV values.
+#' Extract the number of reads with the alternative allele from a MOBSTER dataset.
 #' 
 #' @description 
 #' 
@@ -63,7 +73,7 @@ DP = function(x,
 #' ID; by default all entries are returbed. The output is a tibble; no other
 #' transformations are executed.
 #'
-#' @param x A \code{mbst_data} object
+#' @param x A MOBSTER \code{mbst_data} object.
 #' @param ids The IDs of the mutations to extract, all by default.
 #' @param samples The samples for which we extract the data, all by default.
 #'
@@ -92,7 +102,7 @@ NV = function(x,
 #' ID; by default all entries are returbed. The output is a tibble; no other
 #' transformations are executed.
 #'
-#' @param x A \code{mbst_data} object
+#' @param x A MOBSTER \code{mbst_data} object.
 #' @param ids The IDs of the mutations to extract, all by default.
 #' @param samples The samples for which we extract the data, all by default.
 #'
@@ -110,17 +120,15 @@ Annotations = function(x,
              id %in% ids)
 }
 
-####################### Getters for the tibble, which we trasnform to a table with the stored data
-
 #' Tabular VAF values.
 #' 
 #' @description 
 #' 
 #' Similarly to \code{VAF}, this function however returns a spread-like table 
 #' with one column per VAF value. As \code{VAF} the entries can be subset as
-#' required, and the columns named with a particular format.
+#' required, and the columns named appending a custom suffix to sample names.
 #'
-#' @param x A \code{mbst_data} object
+#' @param x A MOBSTER \code{mbst_data} object.
 #' @param ids The IDs of the mutations to extract, all by default.
 #' @param samples The samples for which we extract the data, all by default.
 #' @param suffix Every column will be called as \code{sample_name.VAF} when \code{suffix = '.VAF'}
@@ -138,8 +146,6 @@ VAF_table = function(x,
   
   for(s in samples) {
     entry = VAF(x, ids = ids, samples = s) %>% spread(variable, value) %>% select(id, VAF) 
-    # %>% rename(!!s := VAF)
-
     output = full_join(output, entry, by = 'id')  
   }
   
@@ -154,7 +160,7 @@ VAF_table = function(x,
 #' 
 #' Similarly to \code{NV}, this function however returns a spread-like table 
 #' with one column per VAF value. As \code{NV} the entries can be subset as
-#' required, and the columns named with a particular format.
+#' required, and the columns named appending a custom suffix to sample names.
 #'
 #' @param x A \code{mbst_data} object
 #' @param ids The IDs of the mutations to extract, all by default.
@@ -174,8 +180,7 @@ NV_table = function(x,
   
   for(s in samples) {
     entry = NV(x, ids = ids, samples = s) %>% spread(variable, value) %>% select(id, NV) 
-    # %>% rename(!!s := NV)
-    
+
     output = full_join(output, entry, by = 'id')  
   }
   
@@ -191,7 +196,7 @@ NV_table = function(x,
 #' 
 #' Similarly to \code{DP}, this function however returns a spread-like table 
 #' with one column per VAF value. As \code{DP} the entries can be subset as
-#' required, and the columns named with a particular format.
+#' required, and the columns named appending a custom suffix to sample names.
 #'
 #' @param x A \code{mbst_data} object
 #' @param ids The IDs of the mutations to extract, all by default.
@@ -211,8 +216,7 @@ DP_table = function(x,
   
   for(s in samples) {
     entry = DP(x, ids = ids, samples = s) %>% spread(variable, value) %>% select(id, DP) 
-    # %>% rename(!!s := NV)
-    
+
     output = full_join(output, entry, by = 'id')  
   }
   
@@ -222,16 +226,18 @@ DP_table = function(x,
 }
 
 
-#' Tabular VAF, DP and NV values.
+#' Tabular VAF, DP and NV values, with annotations.
 #' 
 #' @description 
 #' 
 #' This is just a wrapper to a combined call of function \code{VAF_table}, \code{DP_table} and 
 #' \code{NV_table}. The resulting outputs are bound by column; ususal subset options are available.
+#' The output can be augmented with annotations from each available mutation.
 #'
 #' @param x A \code{mbst_data} object
 #' @param ids The IDs of the mutations to extract, all by default.
 #' @param samples The samples for which we extract the data, all by default.
+#' @param annotations False by default; if true annotations are also returned.
 #'
 #' @return A spread tibble of the required entries.
 #' @export
@@ -239,9 +245,11 @@ DP_table = function(x,
 #' @examples
 Data_table = function(x,
                     ids = keys(x),
-                    samples = x$samples)
+                    samples = x$samples,
+                    annotations = FALSE)
 {
-  full_join(
+  # Joined data tables
+  dt = full_join(
     full_join(
       VAF_table(x, ids, samples),
       DP_table(x, ids, samples),
@@ -249,10 +257,13 @@ Data_table = function(x,
     NV_table(x, ids, samples),
     by = 'id'
   )
+  
+  # All variables
+  an = Annotations(x, ids)
+  
+  full_join(dt, an, by = 'id')
 }
 
-
-####################### Getters for the cohort size, etc.
 
 #' Return the number of mutations in the dataset.
 #'
@@ -439,260 +450,9 @@ BClusters <- function(x, annotations = FALSE) {
   clusters
 }
 
-#
-# MOBSTER_clusters$anyTail =
-#   apply(MOBSTER_clusters, 1, function(w) any(w == 'Tail', na.rm = TRUE) )
-#
 
 
 
 
 
-####################### Private getters
-keys = function(x) {
-  unique(x$data$id)
-}
-
-
-split_segments_around_centromers = function()
-{
-  data("cytoband_hg19")
-  
-  new.segments = NULL
-  
-  for(i in 1:nrow(x$segments)) {
-    
-    seg = x$segments[i, ]
-    
-    SEG.cytoband = cytoband[cytoband$chr == seg$chr, ]
-    SEG.cytoband = SEG.cytoband[SEG.cytoband$region == 'acen', ]
-    
-    ends_before = seg$to < SEG.cytoband$from[1]
-    starts_after = seg$from > SEG.cytoband$to[2]
-    
-    # 
-    if(ends_before | starts_after) new.segments = rbind(new.segments, seg)
-    else {
-      
-      
-    }
-    
-    
-  }
-  
-  
-}
-
-byLoc = function(x, loc.id, offset_around_centromers) {
-  muts_CN = x$locations %>%
-    spread(variable, value)
-  
-  thisSeg = x$segments %>%
-    filter(id == loc.id)
-  
-  # Enforce the correct types!
-  muts_CN$chr = as.character(muts_CN$chr)
-  muts_CN$from = as.numeric(muts_CN$from)
-  muts_CN$to = as.numeric(muts_CN$to)
-  
-  thisSeg$chr = as.character(thisSeg$chr)
-  thisSeg$from = as.numeric(thisSeg$from)
-  thisSeg$to = as.numeric(thisSeg$to)
-  
-  # Within segment
-  which_muts = muts_CN %>%
-    filter(chr == thisSeg$chr[1] &
-             from >= thisSeg$from[1] &
-             to <= thisSeg$to[1])
-  
-  ws = nrow(which_muts)
-
-  # thisSeg
-  pio::pioStr("Chromosome", thisSeg$chr[1], suffix = '')
-  pio::pioStr(" from", thisSeg$from[1], suffix = '')
-  pio::pioStr(" to", thisSeg$to[1], suffix = '')
-  pio::pioStr(" : n =", ws, suffix = '')
-  
-  # load centromers data -- these are in absolute location format, so we update the from/ to locations
-  if(offset_around_centromers > 0) {
-    
-    # data("cytoband_hg19")
-    # 
-    # SEG.cytoband = cytoband[cytoband$chr == thisSeg$chr[1], ]
-    # SEG.cytoband = SEG.cytoband[SEG.cytoband$region == 'acen', ]
-    # 
-    # which_muts = which_muts %>%
-    #   filter(from < SEG.cytoband$from[1] |
-    #            to > SEG.cytoband$to[2])
-   
-    # Get coordinates and offset the centromers by "offset"
-    data('chr_coordinate_hg19', package = 'mobster')
-    
-    chr_coordinate_hg19 = chr_coordinate_hg19 %>% 
-      mutate(
-        centromerStart = centromerStart - offset_around_centromers,
-        centromerEnd = centromerEnd + offset_around_centromers
-        ) %>% 
-      filter(chr == thisSeg$chr[1])
-    
-    which_muts = which_muts %>%
-      filter(to < chr_coordinate_hg19$centromerStart[1] |
-               from > chr_coordinate_hg19$centromerEnd[1])
-    
-    ws_nc = nrow(which_muts)
-    pio::pioStr("off centromer", ws_nc, suffix = '\n')
-  }
-  
-  which_muts
-}
-
-minor = function(x, seg_id, samples = x$samples)
-{
-  as.numeric(
-    x$segments %>% filter(id == seg_id &
-                          sample %in% samples &
-                          variable == 'minor') %>% pull(value)
-    )
-}
-
-Major = function(x, seg_id, samples = x$samples)
-{
-  as.numeric(
-    x$segments %>% filter(id == seg_id &
-                          sample %in% samples &
-                          variable == 'Major') %>% pull(value)
-  )
-}
-
-# Converter for sciCLone inputs
-convert_sciClone_input = function(x)
-{
-  seg_ids = unique(x$segments$id)
-  
-  # CNA
-  CN = NULL
-  for (s in x$samples)
-  {
-    CN.copies = mobster:::minor(x, seg_id = seg_ids, samples = s) +
-      mobster:::Major(x, seg_id = seg_ids, samples = s)
-    
-    CN.segment = x$segments %>%
-      select(chr, from, to) %>%
-      distinct()
-    colnames(CN.segment) = c("chr", 'start', 'stop')
-    
-    CN.segment$chr = as.numeric(sapply(CN.segment$chr, function(w)
-      substr(w, 4, nchar(w))))
-    
-    CN.segment$segment_mean = CN.copies
-    
-    CN = append(CN, list(as.data.frame(CN.segment)))
-  }
-  
-  names(CN) = x$samples
-  
-  # MUTAITONS
-  locs = x$locations %>% spread(variable, value)
-  
-  MUTS = NULL
-  
-  for (s in x$samples)
-  {
-    sample.data = bind_rows(VAF(x, samples = s),
-                            DP(x, samples = s),
-                            NV(x, samples = s))
-    
-    sample.data = sample.data %>% spread(variable, value)
-    sample.data = sample.data[complete.cases(sample.data),]
-    
-    sample.data = sample.data %>% select(id, DP, NV, VAF)
-    sample.data = sample.data %>%
-      mutate(refCount = DP - NV,
-             varCount = NV,
-             vaf = VAF * 100) %>%
-      select(id, refCount, varCount, vaf)
-    
-    sample.locs = locs %>%
-      filter(id %in% sample.data$id) %>%
-      mutate(start = from) %>%
-      select(id, chr, start)
-    sample.locs$start = as.numeric(sample.locs$start)
-    
-    df = full_join(sample.data, sample.locs, by = 'id')
-    df = df %>% select(chr, start, refCount, varCount, vaf, id)
-    
-    df$chr = as.numeric(sapply(df$chr, function(w)
-      substr(w, 4, nchar(w))))
-    
-    MUTS = append(MUTS,
-                  list(as.data.frame(df)))
-  }
-  
-  list(CN = CN, MUTS = MUTS)
-}
-
-
-# # Phylogenetic tree REVOLVER
-# as_revolver_dataset = function(x, 
-#                                clonal,
-#                                drivers,
-#                                patientID = "MyPatient",
-#                                variantID = 'id',
-#                                remove_clusters = NULL
-# ) {
-#   
-#   # # VAF  + Annotations 
-#   # vaf = VAF_table(x)
-#   # 
-#   # matched = full_join(vaf, annotations, by = 'id')  
-#   # 
-#   
-#   # Clusters
-#   matched = BClusters(x) %>% select(id, cluster.Binomial)
-#   matched = matched %>% rename(cluster = cluster.Binomial)
-#   if(!is.null(remove_clusters)) matched = matched %>% filter(!(cluster %in% remove_clusters))
-#   
-#   
-#   matched$Misc = ""
-#   
-#   # patientID
-#   matched$patientID = patientID
-#   
-#   # drivers and clonal
-#   annotations = Annotations(x) %>% spread(variable, value) %>% 
-#     filter(gene %in% drivers) %>% filter(type == 'exonic') %>% pull(id)
-#   
-#   matched = matched %>% mutate(is.clonal = cluster == clonal)
-#   matched = matched %>% mutate(is.driver = id %in% annotations)
-#   
-#   # CCF
-#   vaf = VAF(x) %>% mutate(entry = paste0(sample, ':', value))
-#   vaf = vaf %>% group_by(id) %>% summarize(CCF = paste(entry, collapse = ';'))
-#   
-#   matched = matched %>% left_join(vaf, by = 'id')  
-#   
-#   # variant key
-#   matched = matched %>% rename(variantID = !!variantID)
-#   
-#   matched
-# }
-# 
-# fitgp_dataset = as_revolver_dataset(fitgp, clonal = 'C1', drivers, patientID = "AfterMOB_all")
-# fitgp_prv_dataset = as_revolver_dataset(fitgp, clonal = 'C1', drivers, patientID = "PRV_AfterMOB_all", remove_clusters = prioritize_Clusters(fitgp))
-# 
-# fit_dataset = as_revolver_dataset(fit, clonal = 'C2', drivers, patientID = "NoMOB_all")
-# fit_prv_dataset = as_revolver_dataset(fit, clonal = 'C2', drivers, patientID = "PRV_NoMOB_all", remove_clusters = prioritize_Clusters(fit))
-# 
-# all_datasets = bind_rows(fitgp_dataset, fitgp_prv_dataset, fit_dataset, fit_prv_dataset)
-# 
-# library(revolver)
-# cohort = revolver_cohort(as.data.frame(all_datasets))
-# 
-# cohort = revolver_compute_phylogenies(cohort, 'AfterMOB_all')
-# cohort = revolver_compute_phylogenies(cohort, 'NoMOB_all')
-# cohort = revolver_compute_phylogenies(cohort, 'PRV_AfterMOB_all')
-# cohort = revolver_compute_phylogenies(cohort, 'PRV_NoMOB_all')
-# 
-# 
-# revolver_report_patient(cohort, 'MyPatient')
 
