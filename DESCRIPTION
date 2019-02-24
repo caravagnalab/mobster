@@ -5,12 +5,15 @@ Version: 0.1.0
 Author: Giulio Caravagna
 Maintainer: Giulio Caravagna <gcaravagn@gmail.com>
 Authors@R: person("Giulio", "Caravagna", role = c("aut", "cre"), email = "gcaravagn@gmail.com")
-Description: This package implmenets a finite Dirichlet mixture model with k Beta and 1 Pareto component; Beta components should map to actual alleles under positive selection, and the Pareto tail models alleles resulting from neutral evolutionary dynamics.
-The package provides also the implementation of a variational inference method to fit semi-parametric Dirichlet mixture model with Binomial components, and a set of functions that help processing cancer genome sequencing data.
+Description: MOBSTER is a package that implements a statistical model for tumour subclonal deconvolution
+  which combines Dirichlet mixtures with distributions predicted by theoretical population genetics. The
+  model implemented is a parametric (finite) mixture with multiple Beta components, and one Pareto power 
+  law tail. Beta components capture mutations that rise up in frequency by positive selection, and the 
+  Pareto tail models alleles resulting from neutral, intra-clone, evolutionary dynamics. 
 License: GPL
 Encoding: UTF-8
 LazyData: true
-Imports: sads, crayon, MCMCpack, ggplot2, ggthemes, stats4, R.utils, RColorBrewer, doParallel, grid, parallel, DPpackage, sciClone, tidyr, dplyr, magrittr, plotly, pio, ggpubr
+Imports: sads, crayon, ggplot2, ggthemes, tidyverse, plotly, pio, ggpubr
 RoxygenNote: 6.1.0
 Suggests: knitr,
     rmarkdown
