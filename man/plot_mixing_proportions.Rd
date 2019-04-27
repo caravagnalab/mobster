@@ -4,14 +4,15 @@
 \alias{plot_mixing_proportions}
 \title{Plot the mixing proportions of the mixture.}
 \usage{
-plot_mixing_proportions(x, cex = 1)
+plot_mixing_proportions(x, cex = 1, colors = NA)
 }
 \arguments{
 \item{x}{An object of class 'dbpmm'.}
 
 \item{cex}{Cex of the plot.}
 
-\item{colors}{Optional vector of colors, default (\code{NA}) are \code{ggplot} colors.}
+\item{colors}{If provided, these colours will be used for each cluster.
+If not all clusters have available colours, errors are thrown.}
 }
 \value{
 A plot of the mixing proportions of the mixture.
@@ -20,5 +21,6 @@ A plot of the mixing proportions of the mixture.
 Plot the mixing proportions of the mixture.
 }
 \examples{
-TODO
+data(fit_example)
+plot_mixing_proportions(fit_example$best)
 }

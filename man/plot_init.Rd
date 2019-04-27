@@ -4,12 +4,15 @@
 \alias{plot_init}
 \title{Plot the initial density of a fit.}
 \usage{
-plot_init(x, cex = 1)
+plot_init(x, cex = 1, colors = NA)
 }
 \arguments{
 \item{x}{An object of class \code{"dbpmm"}.}
 
 \item{cex}{Cex of the plot}
+
+\item{colors}{If provided, these colours will be used for each cluster.
+If not all clusters have available colours, errors are thrown.}
 }
 \value{
 A ggplot object for the plot.

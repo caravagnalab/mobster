@@ -4,7 +4,7 @@
 \alias{plot.dbpmm}
 \title{Plot a MOBSTER fit.}
 \usage{
-plot.dbpmm(x, alpha = 0.8, cex = 1, ...)
+plot.dbpmm(x, alpha = 0.8, cex = 1, colors = NA, ...)
 }
 \arguments{
 \item{x}{An object of class \code{"dbpmm"}.}
@@ -12,6 +12,9 @@ plot.dbpmm(x, alpha = 0.8, cex = 1, ...)
 \item{alpha}{Alpha value for the colors of the histogram}
 
 \item{cex}{Cex of the plot}
+
+\item{colors}{If provided, these colours will be used for each cluster.
+If not all clusters have available colours, errors are thrown.}
 
 \item{...}{}
 }
