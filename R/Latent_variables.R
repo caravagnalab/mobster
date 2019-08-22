@@ -61,13 +61,22 @@ latent_vars_scores = function(lv, K, tail, cluster)
   # Scores for model selection   #
   ##==============================
   
+  # K = Kbeta + 1
+  pi_components = (K - 1) + as.numeric(tail)
+  Beta_components = (K-1) * 2
+  Pareto_components = 2 * as.numeric(tail)
+  
+  numParams = pi_components + Beta_components + Pareto_components
+  
+  # Kbeta = K + as.numeric(tail)
   Kbeta = K + as.numeric(tail)
+  
   N = nrow(lv$z_nk)
   
-  if (tail)
-    numParams = K + 2 * Kbeta + 1          # Total number of parameters i.e. pi (Beta + Pareto) + 2 * Kbeta (Beta) + 1 (Pareto)
-  else
-    numParams = (K - 1) + 2 * Kbeta         # Total number of parameters i.e. pi (Beta) + 2 * Kbeta (Beta)
+  # if (tail)
+  #   numParams = K + 2 * Kbeta + 1          # Total number of parameters i.e. pi (Beta + Pareto) + 2 * Kbeta (Beta) + 1 (Pareto)
+  # else
+  #   numParams = (K - 1) + 2 * Kbeta         # Total number of parameters i.e. pi (Beta) + 2 * Kbeta (Beta)
   
   BIC <-
     2 * lv$NLL + numParams * log(N)     # BIC = -2*ln(L) + params*ln(N)
@@ -111,3 +120,4 @@ latent_vars_scores = function(lv, K, tail, cluster)
   
   scores
 }
+

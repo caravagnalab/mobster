@@ -4,7 +4,8 @@
 #' @param alpha Alpha value for the colors of the histogram
 #' @param cex Cex of the plot
 #' @param colors If provided, these colours will be used for each cluster.
-#' If not all clusters have available colours, errors are thrown.
+#' If a subset of colours is provided, palette Set1 from \code{RColorBrewer} is used.
+#' By default the tail colour is provided as 'gainsboro'.
 #' @param ... 
 #'
 #' @return A ggplot object for the plot.
@@ -17,7 +18,7 @@
 plot.dbpmm = function(x,
                       alpha = .8,
                       cex = 1,
-                      colors = NA,
+                      colors = c(`Tail` = 'gainsboro'),
                       ...
                       )
 {
@@ -217,39 +218,55 @@ plot.dbpmm = function(x,
 }
 
 
-add_color_pl = function(x, pl, colors)
+smart_colors = function(x, pl, colors)
 {
-  if(!is.vector(colors) | any(is.na(colors))) return(pl)
-  
   # clusters in x
   wh_col = unique(x$data$cluster)
-  stopifnot(all(wh_col %in% names(colors)))
   
-  pl + scale_color_manual(values = colors)
+  # Missing colors
+  wh_col_missing = !(wh_col %in% names(colors))
+  wh_col = wh_col[wh_col_missing]
+  
+  # Complement colors
+  mycolors = colors
+  new_col = NULL
+  if(length(wh_col) < 9) 
+    new_col = suppressWarnings(RColorBrewer::brewer.pal(length(wh_col), 'Set1'))
+  else
+    new_col = rainbow(length(wh_col))
+  
+  names(new_col) = wh_col
+  
+  return(c(mycolors, new_col))
+}
+
+add_color_pl = function(x, pl, colors)
+{
+  pl + scale_color_manual(values = smart_colors(x, pl, colors))
 }
 
 add_fill_pl = function(x, pl, colors)
 {
-  if(!is.vector(colors) | any(is.na(colors))) return(pl)
+  # if(!is.vector(colors) | any(is.na(colors))) return(pl)
+  # 
+  # # clusters in x
+  # wh_col = unique(x$data$cluster)
+  # stopifnot(all(wh_col %in% names(colors)))
   
-  # clusters in x
-  wh_col = unique(x$data$cluster)
-  stopifnot(all(wh_col %in% names(colors)))
-  
-  pl + scale_color_manual(values = colors)
+  pl + scale_color_manual(values = smart_colors(x, pl, colors))
 }
 
 add_fill_color_pl = function(x, pl, colors)
 {
-  if(!is.vector(colors) | any(is.na(colors))) return(pl)
-  
-  # clusters in x
-  wh_col = unique(x$data$cluster)
-  stopifnot(all(wh_col %in% names(colors)))
+  # if(!is.vector(colors) | any(is.na(colors))) return(pl)
+  # 
+  # # clusters in x
+  # wh_col = unique(x$data$cluster)
+  # stopifnot(all(wh_col %in% names(colors)))
   
   pl + 
-    scale_color_manual(values = colors) +
-    scale_fill_manual(values = colors)
+    scale_color_manual(values = smart_colors(x, pl, colors)) +
+    scale_fill_manual(values = smart_colors(x, pl, colors))
 }
 
 

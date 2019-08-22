@@ -86,43 +86,49 @@ mobster_fit = function(x,
   ntests = nrow(tests)
 
   ###################### Print headers
-  pio::pioHdr("MOBSTER fit")
+  pio::pioHdr(paste0("MOBSTER fit ~ N = ", nrow(x)))
 
   cat(
-    cyan('\n\t-'),
-    'N =',
-    nrow(x),
-    cyan('samples with'),
-    'K =',
-    K,
-    cyan('Beta; Pareto Type-I power-law tail:'),
-    ifelse(tail, green('YES'), red('NO'))
+    paste0(
+      cyan('\n\t- Beta(s) '), 'K = ', paste(K, collapse = ','), cyan(' ~'),
+      cyan(' Pareto tail : '), paste0(ifelse(tail, green('ON'), red('OFF')), collapse = '/'), cyan(';')
+    )
   )
+   
   cat(
-    cyan('\n\t- Fit   : '),
-    yellow(fit.type),
-    cyan('for'),
-    maxIter,
-    cyan('max. steps with'),
-    ifelse(all(is.character(init)), init, 'custom'),
-    cyan('initialization;'),
-    yellow('\u03B5 ='),
-    epsilon,
-    cyan('. Model selection: '),
-    yellow(model.selection)
-  )
+    paste0(
+      cyan('\n\t- Fit by '), ifelse(fit.type == 'MM', "Moments-matching", "Maximum-Likelihood"), 
+      cyan(' ('), 's = ', maxIter, ', i = ', ifelse(all(is.character(init)), init, 'custom'), ',  \u03B5 = ', epsilon,
+      cyan(') scoring with '), yellow(model.selection), '\n'
+    )
+  ) 
+  
   cat(
-    cyan('\n\t- Runs  : '),
+    paste0(
+      cyan('\t- Runs '),
     samples,
     ' x ',
     length(K),
     ' x ',
     length(tail),
-    '=',
+    ' = ',
     yellow(ntests),
-    '\n'
+    ' ', ifelse(parallel, green("with parallel"), red("without parallel")),
+    '\n')
+  )
+  
+  cat(
+    cyan('\t- Clusters filter : '),
+    yellow('\u03c0 >'),
+    pi_cutoff,
+    cyan(' and '),
+    yellow('N >'),
+    N_cutoff,
+    '\n\n'
   )
 
+  
+  
   # Input Checks
   # if (any(x$VAF == 0)) {
   #   cat(crayon::red('\n[VAFs = 0] setting them to 1e-9 to avoid numerical errors'))
@@ -153,6 +159,10 @@ mobster_fit = function(x,
                     N_cutoff = N_cutoff
                     ))
   
+  # ncores = 
+  #   
+  #   nrow(tests)
+  
   # Fits are obtained using the easypar package
   # which allows easy parallelization of R functions
   #
@@ -161,7 +171,7 @@ mobster_fit = function(x,
   runs = easypar::run(
     FUN = .dbpmm.EM,
     PARAMS = inputs,
-    packages = c("crayon", "pio", "tidyverse"),
+    # packages = c("crayon", "pio", "tidyverse"),
     export = ls(globalenv(), all.names = TRUE),
     cores.ratio = .8,
     parallel = parallel,
@@ -181,7 +191,7 @@ mobster_fit = function(x,
   
   # timing
   TIME = difftime(as.POSIXct(Sys.time(), format = "%H:%M:%S"), TIME, units = "mins")
-  cat(bold("\n\nCOMPLETED."), round(TIME, 2), cyan('mins'), '\n')
+  cat(bold("\n\nMOBSTER fit completed in"), round(TIME, 2), cyan('mins'), '\n')
 
   # Get all scores
   tests = cbind(tests, 

@@ -12,6 +12,7 @@
 #' @param x A MOBSTER fit object.
 #' @param pi_cutoff The cutoff on the mixing proportions, default is 2%.
 #' @param N_cutoff  The cutoff on the number of mutations assigned to a cluster, default is 10.
+#' @param verbose If outputs should be reported to screen or not, default is no.
 #'
 #' @return A MOBSTER fit object where clusters are larger than \code{pi_cutoff} and contain
 #' at least \code{N_cutoff}. If no such cluster exists an error is generated.
@@ -22,13 +23,17 @@
 #' TODO
 choose_clusters = function(x, 
                            pi_cutoff = 0.02,
-                           N_cutoff = 10)
+                           N_cutoff = 10,
+                           verbose = FALSE)
 {
   stopifnot(inherits(x, "dbpmm"))
   
-  pio::pioTit(paste0("Selecting MOBSTER clusters (F1,2-heuristic)."))
-  pio::pioStr("\nF1.       Cluster size (proportion) > ", pi_cutoff)
-  pio::pioStr("\nF2.        Cluster size (mutations) > ", N_cutoff, '\n\n')
+  if(verbose)
+  {
+    pio::pioTit(paste0("Selecting MOBSTER clusters (F1,2-heuristic)."))
+    pio::pioStr("\nF1.       Cluster size (proportion) > ", pi_cutoff)
+    pio::pioStr("\nF2.        Cluster size (mutations) > ", N_cutoff, '\n\n')
+  }
 
   # Cluster size - remove clusters smaller than pi_cutoff, or less than N_cutoff mutations
   pass_clusters_picutoff = x$pi > pi_cutoff
@@ -44,7 +49,7 @@ choose_clusters = function(x,
   # Report to screen
   tab_clusters$remove = clusters_to_cancel
   
-  print(tab_clusters %>% arrange(desc(remove)))
+  if(verbose) print(tab_clusters %>% arrange(desc(remove)))
   
   # Report easy cases
   if(sum(tab_clusters$remove) == nrow(tab_clusters)) stop("All clusters filtered out, this seems an error.")
@@ -119,8 +124,11 @@ choose_clusters = function(x,
     y$fit.tail,
     y$data$cluster)
   
-  pio::pioTit("Selected clusters")
-  print(y)
+  if(verbose)
+  {
+    pio::pioTit("Selected clusters")
+    print(y)
+  }
   
   y
 }
