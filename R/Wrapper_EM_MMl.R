@@ -4,7 +4,10 @@
 #' Type-I tail (optional). The function performs model selection for different mixtures, which
 #' the user specify with the input parmeters. The function return a list of all fits computed
 #' (objects of class \code{dbpmm}), the best fit, a table with the results of the fits and a
-#' variable that specify which score has been used for model selection. 
+#' variable that specify which score has been used for model selection. The fitting of each model
+#' also runs the function \code{choose_clusters} which implements a simple heuristic to filter
+#' out small clusters from the fit output.
+#' 
 #'
 #' @param x Input tibble (or data.frame) which is required to have a VAF column which reports the 
 #' frequency of the mutant allele (this should be computed adjusting the raw VAF for tumour purity 
@@ -22,7 +25,6 @@
 #' @param epsilon Tolerance for convergency estimation. For MLE fit this is compared to the differential of the 
 #' negative log-likelihood (NLL); for MM fit the largest differential among the mixing proportions (pi) is used.
 #' @param maxIter Maximum number of steps for a fit. If convergency is not achieved before these steps, the fit is interrupted.
-#' @param is_verbose Verbose output. This also shows a sort of progress bar for the fitting.
 #' @param fit.type A string that determines the type of fit. \code{"MLE"} is for the Maximum Likelihood Estimate 
 #' of the Beta paraneters, \code{"MM"} is for the Momemnt Matching; MLE is numerical, and thus slower. In both cases
 #' the estimator of the tail shape - if required - is its MLE and its analytical.
@@ -31,9 +33,14 @@
 #' \code{'BIC'}, \code{'AIC'} or \code{'NLL'}. We advise to use only reICL and ICL
 #' @param trace If \code{TRUE}, a trace of the model fit is returned that can be used to animate the model run.
 #' @param parallel Optional parameter to run the fits in parallel (default), or not.
+#' @param pi_cutoff Parameter passed to function \code{choose_clusters}, which determines the minimum mixing proportion of a 
+#' cluster to be returned as output.
+#' @param N_cutoff Parameter passed to function \code{choose_clusters}, which determines the minimum number of mutations
+#' assigned to a cluster to be returned as output.
 #'
 #' @return A list of all fits computed (objects of class \code{dbpmm}), the best fit, a table with the results of the fits and a
 #' variable that specify which score has been used for model selection.
+#' 
 #' @export
 #'
 #' @import crayon
@@ -55,7 +62,10 @@ mobster_fit = function(x,
                        seed = 12345,
                        model.selection = 'reICL',
                        trace = FALSE,
-                       parallel = TRUE)
+                       parallel = TRUE,
+                       pi_cutoff = 0.02,
+                       N_cutoff = 10
+                       )
 {
   # Check for basic input requirements
   check_input(x, K, samples, init, tail, epsilon, maxIter, fit.type, seed, model.selection, trace)
@@ -138,7 +148,9 @@ mobster_fit = function(x,
                     epsilon = epsilon,
                     maxIter = maxIter,
                     fit.type = fit.type,
-                    trace = trace
+                    trace = trace,
+                    pi_cutoff = pi_cutoff,
+                    N_cutoff = N_cutoff
                     ))
   
   # Fits are obtained using the easypar package

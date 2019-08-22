@@ -125,7 +125,7 @@ choose_clusters = function(x,
   y
 }
 
-rename_Beta_cluster = function(x)
+rename_Beta_clusters = function(x)
 {
   params = x$Clusters %>%
     filter(type == 'Mean', cluster != 'Tail') %>%

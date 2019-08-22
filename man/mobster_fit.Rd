@@ -7,7 +7,7 @@
 mobster_fit(x, K = 1:3, samples = 5, init = "peaks", tail = c(TRUE,
   FALSE), epsilon = 1e-10, maxIter = 2000, fit.type = "MM",
   seed = 12345, model.selection = "reICL", trace = FALSE,
-  parallel = TRUE)
+  parallel = TRUE, pi_cutoff = 0.02, N_cutoff = 10)
 }
 \arguments{
 \item{x}{Input tibble (or data.frame) which is required to have a VAF column which reports the 
@@ -46,7 +46,11 @@ the estimator of the tail shape - if required - is its MLE and its analytical.}
 
 \item{parallel}{Optional parameter to run the fits in parallel (default), or not.}
 
-\item{is_verbose}{Verbose output. This also shows a sort of progress bar for the fitting.}
+\item{pi_cutoff}{Parameter passed to function \code{choose_clusters}, which determines the minimum mixing proportion of a 
+cluster to be returned as output.}
+
+\item{N_cutoff}{Parameter passed to function \code{choose_clusters}, which determines the minimum number of mutations
+assigned to a cluster to be returned as output.}
 }
 \value{
 A list of all fits computed (objects of class \code{dbpmm}), the best fit, a table with the results of the fits and a
@@ -57,7 +61,9 @@ This function fits the mixure of Beta distributions with a power-law Pareto
 Type-I tail (optional). The function performs model selection for different mixtures, which
 the user specify with the input parmeters. The function return a list of all fits computed
 (objects of class \code{dbpmm}), the best fit, a table with the results of the fits and a
-variable that specify which score has been used for model selection.
+variable that specify which score has been used for model selection. The fitting of each model
+also runs the function \code{choose_clusters} which implements a simple heuristic to filter
+out small clusters from the fit output.
 }
 \examples{
 TODO

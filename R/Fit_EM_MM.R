@@ -8,7 +8,9 @@
            maxIter = 1000,
            is_verbose = FALSE,
            fit.type = 'MM',
-           trace = FALSE)
+           trace = FALSE,
+           pi_cutoff = 0.02,
+           N_cutoff = 10)
   {
     stopifnot(fit.type %in% c('MLE', 'MM'))
     stopifnot(tail | K > 0)
@@ -235,7 +237,13 @@
       print.dbpmm(fit)
       cat('\n')
     }
-
+    
+    # Now apply the cluster-selection heuristic in function choose_clusters
+    fit = choose_clusters(fit,  pi_cutoff = pi_cutoff, N_cutoff = N_cutoff)
+    
+    # ... and re-order the Beta cluster ID by mean ...
+    fit = rename_Beta_clusters(fit)
+    
     return(fit)
   }
 
