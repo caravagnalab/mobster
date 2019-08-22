@@ -68,7 +68,7 @@ print.dbpmm = function(x, ...)
   cat(crayon::black(crayon::bgYellow("\n  Components (fit)  \n")))
   
   if (!x$fit.tail)
-    cat('Tail', crayon::red('OFF\n'))
+    cat(sprintf('%9s', 'Tail'), crayon::red('OFF\n'))
   else
     cat(paste0(
       sprintf('%9s', 'Tail'),

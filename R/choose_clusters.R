@@ -124,3 +124,42 @@ choose_clusters = function(x,
   
   y
 }
+
+rename_Beta_cluster = function(x)
+{
+  params = x$Clusters %>%
+    filter(type == 'Mean', cluster != 'Tail') %>%
+    arrange(desc(fit.value)) %>%
+    mutate(new.name = paste0('C', row_number())) 
+  
+  mapping = params$new.name
+  names(mapping) = params$cluster
+  
+  mapping['Tail'] = 'Tail'
+  mapping = mapping[c('Tail', params$cluster)]
+  
+  # Copy of x
+  y = x
+
+  # clusters
+  y$data$cluster = mapping[y$data$cluster]
+  
+  # numbers from clustering
+  names(y$N.k) = mapping[names(y$N.k)]
+  
+  # LV - forced assumed the order has been mantained
+  colnames(y$z_nk) =  colnames(y$pdf.w) = mapping 
+  
+  # mixing
+  names(y$pi) = mapping[names(y$pi)]
+  y$pi = mobster:::.params_Pi(y)
+
+  # Clusters table
+  y$Clusters$cluster = mapping[y$Clusters$cluster]
+  
+  # Beta parmeters
+  names(y$a) = mapping[names(y$a)]
+  names(y$b) = mapping[names(y$b)]
+  
+  y
+}

@@ -171,11 +171,11 @@ plot.dbpmm = function(x,
   # Annotate mixting proportions
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
   pi = sort(pi)
-  pi = paste0(names(pi), ' ', round(pi, 2), '%', collapse = ', ')
+  pi = paste0(names(pi), ' ', round(pi * 100, 2), '%', collapse = ', ')
   
   hist_pl = hist_pl +
     labs(
-      subtitle = paste0("N = ", x$N, "; Mixing proportions: ", pi)
+      subtitle = paste0("N = ", x$N, "; Proportions: ", pi)
     )
   
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

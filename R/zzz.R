@@ -1,8 +1,8 @@
-.onLoad <- function(libname, pkgname) 
+.onLoad <- function(libname, pkgname)
 {
   requirements = c('tidyverse', 'pio', 'crayon')
   
-  sapply(requirements, function(x) { suppressMessages(require(x)) })
+  suppressMessages(sapply(requirements, require, character.only = TRUE))
   
   invisible()
 }
