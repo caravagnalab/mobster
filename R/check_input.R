@@ -6,6 +6,10 @@ check_input = function(x, K, samples, init, tail, epsilon, maxIter, fit.type, se
   stopifnot(ncol(x) > 0)
   stopifnot('VAF' %in% colnames(x) | all(is.numeric(x$VAF)))
   
+  # numerical errors
+  stopifnot(all(x$VAF > 0)) 
+  stopifnot(all(x$VAF < 1)) 
+
   # other params
   stopifnot(all(sapply(K, function(k) k >= 1 & k <= nrow(x))))
   stopifnot(samples >= 1)

@@ -83,6 +83,7 @@ ddbpmm = function(x,
       logLik = rep(-Inf, length(data)) # Otherwise -Inf is the min achievable
   }
   
+  # Beta components
   log_pi = log_pi[2:x$K]
   
   for (k in 1:length(log_pi))

@@ -70,9 +70,7 @@ mobster_fit = function(x,
   best = obj = runs = NULL
 
   # Configurations that will be used for model selection
-  tests = expand.grid(K, 1:samples, tail, stringsAsFactors = FALSE)
-
-  colnames(tests) = c('K', 'Run', 'tail')
+  tests = expand.grid(K = K, Run = 1:samples, tail = tail, stringsAsFactors = FALSE)
   tests = tests[order(tests$tail, tests$K), ]
 
   ntests = nrow(tests)
@@ -116,20 +114,20 @@ mobster_fit = function(x,
   )
 
   # Input Checks
-  if (any(x$VAF == 0)) {
-    cat(crayon::red('\n[VAFs = 0] setting them to 1e-9 to avoid numerical errors'))
-
-    X$VAF[X$VAF == 0] = 1e-9
-  }
-
-  if (any(X$VAF == 1)) {
-    cat(crayon::red('\n[VAFs = 1] setting them to 1-1e-9 to avoid numerical errors'))
-    X$VAF[X$VAF == 1] = 1 - 1e-9
-  }
+  # if (any(x$VAF == 0)) {
+  #   cat(crayon::red('\n[VAFs = 0] setting them to 1e-9 to avoid numerical errors'))
+  # 
+  #   X$VAF[X$VAF == 0] = 1e-9
+  # }
+  # 
+  # if (any(X$VAF == 1)) {
+  #   cat(crayon::red('\n[VAFs = 1] setting them to 1-1e-9 to avoid numerical errors'))
+  #   X$VAF[X$VAF == 1] = 1 - 1e-9
+  # }
   # END: Input Checks
 
   
-  # Single run fit
+  # Inputs in the easypar format - list of lists
   inputs = lapply(1:nrow(tests), 
                   function(r)
                   list(
@@ -143,7 +141,6 @@ mobster_fit = function(x,
                     trace = trace
                     ))
   
-
   # Fits are obtained using the easypar package
   # which allows easy parallelization of R functions
   #
@@ -152,7 +149,7 @@ mobster_fit = function(x,
   runs = easypar::run(
     FUN = .dbpmm.EM,
     PARAMS = inputs,
-    packages = c("crayon", "pio", "mobster", "tidyverse"),
+    packages = c("crayon", "pio", "tidyverse"),
     export = ls(globalenv(), all.names = TRUE),
     cores.ratio = .8,
     parallel = parallel,
@@ -165,7 +162,7 @@ mobster_fit = function(x,
     
     lapply(runs, function(w) print(w$message))
     
-    stop("All task returned errors, no fit available.")
+    stop("All task returned errors, no fit available, raising error.")
   }
   
   runs = easypar::filterErrors(runs)

@@ -12,6 +12,12 @@
   {
     stopifnot(fit.type %in% c('MLE', 'MM'))
     stopifnot(tail | K > 0)
+    
+    .onLoad(NULL, NULL)
+    
+    # suppressMessages(require(tidyverse))
+    # suppressMessages(require(pio))
+    # suppressMessages(require(crayon))
 
     ##=============================##
     # Create a BetaParetoMM object  #
@@ -187,7 +193,7 @@
 
     } #End of Expectation Maximization loop.
 
-    if(is_verbose) cat("EM!")
+    if(is_verbose) cat("EM completed!")
 
     # Status of convergence: TRUE/ FALSE
     fit$status = (i < maxIter)
