@@ -1,3 +1,4 @@
+# Return latent variables (re-computed), plus other variables.
 latent_vars = function(x, clusters_tibble = NULL) {
 
   if(all(!is.null(clusters_tibble)))
@@ -46,6 +47,7 @@ latent_vars = function(x, clusters_tibble = NULL) {
   return(list(NLL = NLL, z_nk = z_nk, pdf.w = pdf.w, a = a, b = b, pi = pi, shape = shape, scale = scale))
 }
 
+# Compute hard clustering assignments
 latent_vars_hard_assignments = function(lv) {
   # Cluster labels of each data point. Each data point is assigned to the cluster
   # with the highest posterior responsibility. Hard assignment.
@@ -55,6 +57,7 @@ latent_vars_hard_assignments = function(lv) {
                }))
 }
 
+# Compute scores for model selection 
 latent_vars_scores = function(lv, K, tail, cluster)
 {
   ##==============================

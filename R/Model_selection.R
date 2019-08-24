@@ -1,4 +1,3 @@
-
 model_selection = function(x, scores.suitable = c('ICL', 'BIC', 'AIC', 'NLL', 'reICL'), silent = TRUE)
 {
   results = x

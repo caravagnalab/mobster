@@ -15,7 +15,11 @@
 #' @export
 #'
 #' @examples
-#' TODO
+#' data('fit_example', package = 'mobster')
+#' Clusters(fit_example)
+#' 
+#' # Add some cutoff to filter assignments
+#' Clusters(fit_example, cutoff_assignment = .8)
 Clusters = function(x, cutoff_assignment = 0)
 {
   stopifnot(inherits(x, "dbpmm"))

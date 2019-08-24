@@ -158,12 +158,11 @@ selection2clonenested <- function(time1,
   return(c(s1, s2))
 }
 
-#' Extract evolutionary parameters using MOBSTER fit
-#'
-#' Mutation rate, time of emergence and selection coefficient of subclones are calculated.
-#'
+#' Extract evolutionary parameters from a MOBSTER fit
+#' 
+#' @description  Mutation rate, time of emergence and selection coefficient of subclones are calculated.
 #' These values are calculated based on a population genetics model of tumour evolution
-#' see Williams et al. 2016 and 2018 for more details.
+#' see Williams et al. 2016 and 2018 for more details (Nature Genetics).
 #'
 #' The mutation rate scaled by the probability of lineage survival \eqn{\beta}, \eqn{\mu/\beta} is given by:
 #' \deqn{\mu/\beta = M / (1/fmin - 1/fmax)}
@@ -174,19 +173,19 @@ selection2clonenested <- function(time1,
 #' populations (\eqn{\lambda h}) vs subclone (\eqn{\lambda s}):
 #' \deqn{1+s=\lambda h / \lambda s}
 #'
-#' @param x An object fit by MOBSTER
+#' @param x An object fit by MOBSTER.
 #' @param Nmax Time when tumour is sampled (in tumour doublings)
 #' @param lq lower quantile of VAF (0.05)
 #' @param uq upper quantile of VAF (0.95)
 #' @param ploidy of mutations (2)
 #' @param ncells Number of cells that accumulate mutations at each division 1 or 2, default is 1
 #' @return Mutation rate, time of emergence and selection coefficient of subclones.
-#' @examples
-#'
-#' mobsterfit = mobster_fit(subclonedynamics, K = 1:2, tail = c(T, F))
-#' evolutionary_parameters(mobsterfit, Nmax = 10^6)
 #'
 #' @export
+#' 
+#' @examples
+#' data('fit_example', package = 'mobster')
+#' evolutionary_parameters(fit_example)
 evolutionary_parameters <-
   function(x,
            Nmax = 10^10,

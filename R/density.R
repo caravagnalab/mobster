@@ -33,7 +33,14 @@
 #' @import sads
 #'
 #' @examples 
-#' TODO
+#' data('fit_example', package = 'mobster')
+#' 
+#' # Use the full mixture, and its internal data
+#' ddbpmm(fit_example$best)
+#' 
+#' # Use only some of the mixture components, and pass some data
+#' ddbpmm(x, data = .4, components = 1)
+#' ddbpmm(x, data = .4, components = 2)
 ddbpmm = function(x,
                   data = NULL,
                   components = 1:x$K,

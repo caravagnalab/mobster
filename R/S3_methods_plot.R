@@ -151,7 +151,7 @@ plot.dbpmm = function(x,
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
   # Dashed SSE behing the overall density
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-  error = .compute_fit_sqerr(x, binning = binwidth)
+  error = suppressWarnings(mobster:::.compute_fit_sqerr(x, binning = binwidth))
 
   # scale to percentage for plotting
   me = max(error$cum.y)
@@ -218,65 +218,3 @@ plot.dbpmm = function(x,
   return(add_fill_color_pl(x, hist_pl, colors))
 }
 
-
-smart_colors = function(x, pl, colors)
-{
-  # clusters in x
-  wh_col = unique(x$data$cluster)
-  
-  # Missing colors
-  wh_col_missing = !(wh_col %in% names(colors))
-  wh_col = wh_col[wh_col_missing]
-  
-  # Complement colors
-  mycolors = colors
-  new_col = NULL
-  if(length(wh_col) < 9) 
-    new_col = suppressWarnings(RColorBrewer::brewer.pal(length(wh_col), 'Set1'))
-  else
-    new_col = rainbow(length(wh_col))
-  
-  names(new_col) = wh_col
-  
-  return(c(mycolors, new_col))
-}
-
-add_color_pl = function(x, pl, colors)
-{
-  pl + scale_color_manual(values = smart_colors(x, pl, colors))
-}
-
-add_fill_pl = function(x, pl, colors)
-{
-  # if(!is.vector(colors) | any(is.na(colors))) return(pl)
-  # 
-  # # clusters in x
-  # wh_col = unique(x$data$cluster)
-  # stopifnot(all(wh_col %in% names(colors)))
-  
-  pl + scale_color_manual(values = smart_colors(x, pl, colors))
-}
-
-add_fill_color_pl = function(x, pl, colors)
-{
-  # if(!is.vector(colors) | any(is.na(colors))) return(pl)
-  # 
-  # # clusters in x
-  # wh_col = unique(x$data$cluster)
-  # stopifnot(all(wh_col %in% names(colors)))
-  
-  pl + 
-    scale_color_manual(values = smart_colors(x, pl, colors)) +
-    scale_fill_manual(values = smart_colors(x, pl, colors))
-}
-
-
-my_ggplot_theme = function(cex = 1) 
-{
-  theme_light(base_size = 10 * cex) +
-    theme(
-      legend.position = "bottom",
-      legend.key.size = unit(.3 * cex, "cm"),
-      panel.background = element_rect(fill = 'white')
-    )
-}

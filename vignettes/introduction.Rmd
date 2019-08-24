@@ -23,10 +23,14 @@ knitr::opts_chunk$set(echo = TRUE)
 require(mobster)
 ```
 
+This vignette describes the basic usage of the MOBSTER R package for sunclonal deconvolution in cancer. The package is available at [Github](https://github.com/caravagn/MOBSTER). 
+
 
 ## Generating and analysing a random MOBSTER dataset
 
-To sample a random dataset one can use the `random_dataset` which has different parameters to customize the data creation. You can set 
+The input data must be formatted as a data.frame/ tibble with at lease one columun named `VAF`. Example datasets and fits are released as `data` inside the package. In this vignette we sample a random dataset using the `random_dataset` function, which has different parameters to customize the data creation. 
+
+You can set 
 
 * the number of samples (mutations) and Beta components (subclones) to generate;
 * constraint on the size of the components, the position and spread of the Beta means, and the variance of the Beta components.
@@ -40,20 +44,20 @@ dataset = random_dataset(seed = 123, Beta_variance_scaling = 100)
 
 A list with 3 components is returned, which you can access to see the actual data, the sampled parameters of the generative model, and a plot of the data. Notice that this function is a wrapper to the actual `rdbpmm` function, the implementation of the sampler from the density function of the Dirchlet Beta Pareto Mixture Model object that is implemented in MOBSTER -- see `?rdbpmm` and `?ddbpmm`.
 ```{r, fig.width=4, fig.height=3}
-# Data
+# Data, in the MOBSTER input format with a "VAF" column.
 print(dataset$data)
 
-# Model
+# The generated model contains the parameters of the Beta components (a and b), the shape and scale of the tail, and the mixing proportion. 
 print(dataset$model)
 
-# Plot object (ggplot)
+# A plot object (ggplot) is available where each data-point is coloured by its generative mixture component. The vertical lines annontate the means of the sampled Beta distributions.
 print(dataset$plot)
 ```
 
-Compute the fit, then plot the best fit which is returned into a named list under the name `best`.
+Compute the fit, then plot the best fit which is returned into a named list under the name `best`. The fit is computed exploiting the [easypar](https://github.com/caravagn/easypar) package in order to run in parallel the computations.
 ```{r, fig.width=4, fig.height=3}
 # Fit by MOBSTER
-fit = mobster_fit(dataset$data, samples = 1, epsilon = 1e-4, parallel = FALSE)
+fit = mobster_fit(dataset$data, samples = 1, epsilon = 1e-4, parallel = TRUE)
 
 # Plot the best model
 plot(fit$best)
@@ -65,20 +69,27 @@ print(fit$best)
 ```
 Hard clustering assignments are computed and can be accessed with function `Clusters`, the function also allows imposing a minimum cutoff to the reponsibilities of the mutations (if a mutation's maximum responsibility is below the cutoff, its assignment will be `NA`). Note that the return tibble is a copy of the input, with the new  `cluster` column, plus a set of columns for the latent variables in MOBSTER (the clustering reponsibilities).
 ```{r}
-# Assign mutations with at least 95% of probability mass to their maximum responsibility
-clusters = Clusters(fit$best, cutoff_assignment = .95)
+# Assign mutations with at least 80% of probability mass to their maximum responsibility
+clusters = Clusters(fit$best, cutoff_assignment = .8)
 print(clusters)
 ```
 
-A set of plots is available to inspect further details of a fit. For example, the latent variables can also be visualized as heatmap, the mixing proportions as barplot, and the initial condition of the fit can be plot as density.
+A set of plots is available to inspect further details of a fit. For example,
+* the latent variables can also be visualized as heatmap;
+* the mixing proportions as barplot;
+* the trace of the negative log-likelihood can be inspected;
+* and the initial condition of the fit can be plot as density.
 ```{r, fig.width=4, fig.height=5}
-# Assign mutations with at least 95% of probability mass to their maximum responsibility
-plot_latent_variables(fit$best, cutoff_assignment = .95)
+# Assign mutations with at least 80% of probability mass to their maximum responsibility
+plot_latent_variables(fit$best, cutoff_assignment = .8)
 ```
 
 ```{r, fig.width=4, fig.height=3}
 # Mixing proportions
 plot_mixing_proportions(fit$best)
+
+# MNLL trace
+plot_NLL(fit$best)
 
 # Plot the initial condition of the fit
 plot_init(fit$best)

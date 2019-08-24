@@ -1,5 +1,3 @@
-
-
 #' Filter MOBSTER output clusters.
 #' 
 #' @description This function can filter out the clusters computed by MOBSTER
@@ -20,7 +18,13 @@
 #' @export
 #'
 #' @examples
-#' TODO
+#' data(fit_example)
+#'
+#' # Does not change anything (no filter triggered)
+#' choose_clusters(fit_example$best)
+#' 
+#' # Remove one Beta component because it has less than 100 points (renders the fit very poor)
+#' choose_clusters(fit_example$best, N_cutoff = 100)
 choose_clusters = function(x, 
                            pi_cutoff = 0.02,
                            N_cutoff = 10,
@@ -133,6 +137,7 @@ choose_clusters = function(x,
   y
 }
 
+# Rename Beta clusters so that C1 is the one with highest mean etc.
 rename_Beta_clusters = function(x)
 {
   params = x$Clusters %>%

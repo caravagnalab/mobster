@@ -1,17 +1,18 @@
-#' Example fit
+#' Example MOBSTER fit.
 #'
-#' @description Data from a multivariate dimensional Binomial mixture
-#' with unknown ground truth.
+#' @description Data from an example MOBSTER fit. This is a list returned by the fitting
+#' algorithm, which contains the best fit, the top runs and a table summarising the fit scores.
 #'
 #' @docType data
 #'
 #' @usage data(fit_example)
 #'
-#' @format Data from a multivariate Binomial mixture
+#' @format Data from an example MOBSTER fit.
 #'
 #' @keywords datasets
 #'
 #' @examples
 #' data(fit_example)
-#' head(fit_example)
+#' print(fit_example$best)
+#' plot(fit_example$best)
 "fit_example"

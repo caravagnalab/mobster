@@ -13,14 +13,12 @@
 #' @param Beta_bounds Range of values to sample the Beta means.
 #' @param seed The seed to fix the process, default is 123.
 #'
-#' @return A list with the dataset in a tibble, a plot the model's parameters.
+#' @return A list with the dataset in a tibble, the model parameters and a plot the data.
 #' 
 #' @export
 #'
 #' @examples
 #' x = random_dataset()
-#' 
-#'
 #' print(x)
 random_dataset = function(N = 5000, 
                           K_betas = 2, 
