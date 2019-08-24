@@ -71,25 +71,17 @@ print(clusters)
 ```
 
 A set of plots is available to inspect further details of a fit. For example, the latent variables can also be visualized as heatmap, the mixing proportions as barplot, and the initial condition of the fit can be plot as density.
-```{r, fig.width=4, fig.height=3}
+```{r, fig.width=4, fig.height=5}
 # Assign mutations with at least 95% of probability mass to their maximum responsibility
 plot_latent_variables(fit$best, cutoff_assignment = .95)
+```
 
+```{r, fig.width=4, fig.height=3}
 # Mixing proportions
 plot_mixing_proportions(fit$best)
 
 # Plot the initial condition of the fit
 plot_init(fit$best)
-```
-
-### Plots for model selection
-
-A set of plots is available to inspect model selection for this fits.
-
-### Extra plotting functions
-```{r, fig.width=5, fig.height=4}
-plot_gofit(fit)
-plot_fit_scores(fit)
 ```
 
 
@@ -106,20 +98,20 @@ print(fit$fits.table)
 ```
 
 
+A set of plots is available to inspect model selection for a fit. A plot of the sum of squared error (SSE) between the fit density and the data (binned with bins of size 0.01) is available.
 
-These 
-```{r, fig.width=8, fig.height=9}
-# Fit by MOBSTER
-# Plot the best model
-plot_model_selection(fit, TOP = 5)
+```{r, fig.width=3, fig.height=6}
+# Goodness of fit (SSE)
+plot_gofit(fit)
 ```
 
-Other plots are 
+A plot of all the computed scoring functions (BIC, AIC, ICL and reICL) is shown, which helps understanding if the best model with the default score (reICL) is the best also according to the other scores (the red dot represents the best model according to each score).
+```{r, fig.width=4, fig.height=3}
+plot_fit_scores(fit)
+```
 
 
-
-```{r, fig.width=8, fig.height=9}
-# Fit by MOBSTER
-# Plot the best model
+These functions can be all wrapped by a call to `plot_model_selection` which plots the above summary statistics and the fits for each one of a set of top models (change the parameter `TOP` to select how many plots should be computed).
+```{r, fig.width=9, fig.height=9, message=FALSE, warning=FALSE}
 plot_model_selection(fit, TOP = 5)
 ```

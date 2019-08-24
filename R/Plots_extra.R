@@ -34,7 +34,7 @@ plot_init = function(x,
                                        reduce = TRUE)
   
   den_init_pl = ggplot() +
-    labs(title = bquote(bold("Initialization")),
+    labs(title = bquote("Initialization"),
          x = "Observed Frequency",
          y = "Density") +
     guides(fill = FALSE) +
