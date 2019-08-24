@@ -1,0 +1,125 @@
+---
+title: "Vignette for mobster"
+author: "Giulio Caravagna"
+date: "September 2019"
+institute: "Institute for Cancer Research"
+email: "giulio.caravagna@icr.ac.uk"
+output:
+  html_document:
+    theme: cosmo
+    highlight: tango
+    output:
+vignette: >
+  %\VignetteEngine{knitr::knitr}
+  %\VignetteIndexEntry{Vignette for mobster}
+  %\usepackage[UTF-8]{inputenc}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message=FALSE, warning=F}
+require(mobster)
+```
+
+
+## Generating and analysing a random MOBSTER dataset
+
+To sample a random dataset one can use the `random_dataset` which has different parameters to customize the data creation. You can set 
+
+* the number of samples (mutations) and Beta components (subclones) to generate;
+* constraint on the size of the components, the position and spread of the Beta means, and the variance of the Beta components.
+* set the seed to fix the process.
+
+In this example we fix the seed and the parameter `Beta_variance_scaling`, which  affects the variance of the Beta(s). Because that is generated as `U[0,1]` and scaled by this value, values on the order of 1000 give low variance, 100 represents a dataset with quite some dispersion (compared to a putative Binomial generative model).
+
+```{r, message=FALSE, warning=F}
+dataset = random_dataset(seed = 123, Beta_variance_scaling = 100)
+```
+
+A list with 3 components is returned, which you can access to see the actual data, the sampled parameters of the generative model, and a plot of the data. Notice that this function is a wrapper to the actual `rdbpmm` function, the implementation of the sampler from the density function of the Dirchlet Beta Pareto Mixture Model object that is implemented in MOBSTER -- see `?rdbpmm` and `?ddbpmm`.
+```{r, fig.width=4, fig.height=3}
+# Data
+print(dataset$data)
+
+# Model
+print(dataset$model)
+
+# Plot object (ggplot)
+print(dataset$plot)
+```
+
+Compute the fit, then plot the best fit which is returned into a named list under the name `best`.
+```{r, fig.width=4, fig.height=3}
+# Fit by MOBSTER
+fit = mobster_fit(dataset$data, samples = 1, epsilon = 1e-4, parallel = FALSE)
+
+# Plot the best model
+plot(fit$best)
+```
+
+A comparative plot can be assembled with `ggpubr` function `ggarrange(dataset$plot, plot(fit$best), ncol = 2)`. The fit is an object of class `dbpmm`, which has an S3 method to print to screen
+```{r}
+print(fit$best)
+```
+Hard clustering assignments are computed and can be accessed with function `Clusters`, the function also allows imposing a minimum cutoff to the reponsibilities of the mutations (if a mutation's maximum responsibility is below the cutoff, its assignment will be `NA`). Note that the return tibble is a copy of the input, with the new  `cluster` column, plus a set of columns for the latent variables in MOBSTER (the clustering reponsibilities).
+```{r}
+# Assign mutations with at least 95% of probability mass to their maximum responsibility
+clusters = Clusters(fit$best, cutoff_assignment = .95)
+print(clusters)
+```
+
+A set of plots is available to inspect further details of a fit. For example, the latent variables can also be visualized as heatmap, the mixing proportions as barplot, and the initial condition of the fit can be plot as density.
+```{r, fig.width=4, fig.height=3}
+# Assign mutations with at least 95% of probability mass to their maximum responsibility
+plot_latent_variables(fit$best, cutoff_assignment = .95)
+
+# Mixing proportions
+plot_mixing_proportions(fit$best)
+
+# Plot the initial condition of the fit
+plot_init(fit$best)
+```
+
+### Plots for model selection
+
+A set of plots is available to inspect model selection for this fits.
+
+### Extra plotting functions
+```{r, fig.width=5, fig.height=4}
+plot_gofit(fit)
+plot_fit_scores(fit)
+```
+
+
+## Selecting alternative best models
+
+The function `mobster_fit` returns a list of 3 components: the best fit (named `best`), a `runs` list of top fits ranked by score, and a `fits.table` that summarises the scores for each one of the runs.
+
+```{r, fig.width=5, fig.height=4}
+# The second top run is avaiable as well
+print(fit$runs[[2]])
+
+# A general table for all scores is also available
+print(fit$fits.table)
+```
+
+
+
+These 
+```{r, fig.width=8, fig.height=9}
+# Fit by MOBSTER
+# Plot the best model
+plot_model_selection(fit, TOP = 5)
+```
+
+Other plots are 
+
+
+
+```{r, fig.width=8, fig.height=9}
+# Fit by MOBSTER
+# Plot the best model
+plot_model_selection(fit, TOP = 5)
+```

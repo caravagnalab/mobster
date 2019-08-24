@@ -4,15 +4,14 @@
 \alias{plot_mixing_proportions}
 \title{Plot the mixing proportions of the mixture.}
 \usage{
-plot_mixing_proportions(x, cex = 1, colors = NA)
+plot_mixing_proportions(x, colors = c(Tail = "gainsboro"))
 }
 \arguments{
 \item{x}{An object of class 'dbpmm'.}
 
-\item{cex}{Cex of the plot.}
-
 \item{colors}{If provided, these colours will be used for each cluster.
-If not all clusters have available colours, errors are thrown.}
+If a subset of colours is provided, palette Set1 from \code{RColorBrewer} is used.
+By default the tail colour is provided as 'gainsboro'.}
 }
 \value{
 A plot of the mixing proportions of the mixture.

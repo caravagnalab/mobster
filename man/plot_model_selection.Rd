@@ -4,14 +4,12 @@
 \alias{plot_model_selection}
 \title{Plot summary for model selection.}
 \usage{
-plot_model_selection(x, TOP = 5, cex = 1, ...)
+plot_model_selection(x, TOP = 5, ...)
 }
 \arguments{
 \item{x}{A list of fits computed via \code{mobster_fit}.}
 
 \item{TOP}{The top set of fits to use.}
-
-\item{cex}{Cex of the plot.}
 }
 \value{
 A complex figure with all plots arranged.

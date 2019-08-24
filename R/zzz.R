@@ -16,7 +16,7 @@
   # Header
   # =-=-=-=-=-=-
   
-  mobster_welcome_message =  getOption('mobster_welcome_message', default = FALSE)
+  mobster_welcome_message =  getOption('mobster_welcome_message', default = TRUE)
   
   if(mobster_welcome_message)
   {

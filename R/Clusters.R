@@ -20,17 +20,17 @@ Clusters = function(x, cutoff_assignment = 0)
 {
   stopifnot(inherits(x, "dbpmm"))
   
+  lv = mobster:::latent_vars(x)
+
   # Maximum density form LV
-  maxima = apply(x$z_nk, 1, max)
+  maxima = apply(lv$z_nk, 1, max)
   
   # LV and posterior hard clusters
-  assignments = mobster:::latent_vars_hard_assignments(
-    mobster:::latent_vars(x)
-    )
+  assignments = mobster:::latent_vars_hard_assignments(lv)
   
   assignments[maxima < cutoff_assignment] = NA
   
-  x$data$label = assignments
+  x$data$cluster = assignments
   
-  x$data
+  bind_cols(x$data, lv$z_nk %>% as_tibble())
 }

@@ -1,16 +1,19 @@
 #' Plot the initial density of a fit.
 #'
 #' @param x An object of class \code{"dbpmm"}.
-#' @param cex Cex of the plot
 #' @param colors If provided, these colours will be used for each cluster.
-#' If not all clusters have available colours, errors are thrown.
+#' If a subset of colours is provided, palette Set1 from \code{RColorBrewer} is used.
+#' By default the tail colour is provided as 'gainsboro'.
 #'
 #' @return A ggplot object for the plot.
 #' @export
 #'
 #' @examples
-#' TODO
-plot_init = function(x, cex = 1, colors = NA)
+#' data(fit_example)
+#' plot_init(fit_example$best)
+plot_init = function(x,
+                     colors = c(`Tail` = 'gainsboro')
+                     )
 {
   stopifnot(inherits(x, "dbpmm"))
   
@@ -32,11 +35,11 @@ plot_init = function(x, cex = 1, colors = NA)
   
   den_init_pl = ggplot() +
     labs(title = bquote(bold("Initialization")),
-         x = "Adjusted VAF",
+         x = "Observed Frequency",
          y = "Density") +
     guides(fill = FALSE) +
     ylim(0, max(initial.densities$y)) +
-    theme_light(base_size = 8 * cex) +
+    my_ggplot_theme() +
     geom_line(data = initial.densities, aes(y = y, x = x, color = cluster)) +
     guides(color = FALSE)
   
@@ -48,9 +51,9 @@ plot_init = function(x, cex = 1, colors = NA)
 #' Plot the mixing proportions of the mixture.
 #'
 #' @param x An object of class 'dbpmm'.
-#' @param cex Cex of the plot.
 #' @param colors If provided, these colours will be used for each cluster.
-#' If not all clusters have available colours, errors are thrown.
+#' If a subset of colours is provided, palette Set1 from \code{RColorBrewer} is used.
+#' By default the tail colour is provided as 'gainsboro'.
 #'
 #' @return A plot of the mixing proportions of the mixture.
 #' @export
@@ -58,7 +61,9 @@ plot_init = function(x, cex = 1, colors = NA)
 #' @examples
 #' data(fit_example)
 #' plot_mixing_proportions(fit_example$best)
-plot_mixing_proportions = function(x, cex = 1, colors = NA)
+plot_mixing_proportions = function(x,                       
+                                   colors = c(`Tail` = 'gainsboro')
+                                   )
 {
   stopifnot(inherits(x, "dbpmm"))
   
@@ -71,7 +76,7 @@ plot_mixing_proportions = function(x, cex = 1, colors = NA)
     Proportions = Proportions %>% filter(cluster != 'Tail')
   
   pl = ggplot(data = Proportions, aes(x = cluster, y = fit.value, fill = cluster)) +
-    geom_bar(stat = "identity", width = 0.3 * cex) +
+    geom_bar(stat = "identity", width = 0.3) +
     geom_hline(
       aes(yintercept = 0.02),
       colour = 'red',
@@ -84,18 +89,17 @@ plot_mixing_proportions = function(x, cex = 1, colors = NA)
       inherit.aes = FALSE,
       hjust = 0,
       colour = 'red',
-      size = 2.5 * cex
+      size = 2.5
     ) +
-    labs(title  = bquote(bold('Mixing Proportions'))) +
+    labs(title  = bquote('Mixing Proportions')) +
     xlab("") +
-    ylab("") +
+    ylab(bquote('Proportions (' * pi * ')')) +
     guides(fill = FALSE) +
-    theme_light(base_size = 8 * cex) +
+    my_ggplot_theme() +
     ylim(c(0, 1))
   
   add_fill_pl(x, pl, colors)
 }
-
 
 #' Plot the scores for model selection.
 #' 
@@ -105,14 +109,14 @@ plot_mixing_proportions = function(x, cex = 1, colors = NA)
 #' better for all scores.
 #'
 #' @param x A list of fits computed via \code{mobster_fit}.
-#' @param cex Cex of the plot
 #'
 #' @return A ggplot figure with the scores for model selection.
 #' @export
 #'
 #' @examples
-#' TODO
-plot_fit_scores = function(x, cex = 1)
+#' data('fit_example', package = 'mobster')
+#' plot_fit_scores(fit_example)
+plot_fit_scores = function(x)
 {
   stopifnot(is_list_mobster_fits(x))
   
@@ -142,9 +146,8 @@ plot_fit_scores = function(x, cex = 1)
   
   ggplot(data = mscores,
          aes(x = rank,
-             y = value,
-             color = variable)) +
-    geom_line() +
+             y = value)) +
+    geom_line(show.legend = FALSE, size = .3) +
     geom_point(aes(
       x = rank,
       y = value,
@@ -164,14 +167,13 @@ plot_fit_scores = function(x, cex = 1)
       show.legend = FALSE,
       color = 'red'
     )  +
-    scale_size(range = c(min(K_vals), max(K_vals)) * 0.7 * cex,
+    scale_size(range = c(min(K_vals), max(K_vals)) * 0.7,
                breaks = min(K_vals):max(K_vals)) +
-    facet_wrap( ~ variable) +
-    theme_light(base_size =  8 * cex) +
+    facet_wrap( ~ variable, ncol = 2) +
     labs(
-      title  = bquote(bold('Model selection:') ~ .(model.selection)),
-      subtitle = bquote(.(nrow(scores)) ~ ' runs'),
-      x = 'Models rank',
+      title  = bquote('Scores for model selection'),
+      subtitle = bquote(.(nrow(scores)) ~ 'runs, '~ .(model.selection) ~ "used"),
+      x = 'Model rank',
       y = 'Score'
     ) +
     guides(
@@ -179,7 +181,7 @@ plot_fit_scores = function(x, cex = 1)
       shape = guide_legend(title = 'Tail'),
       colour = guide_legend(title = 'Score')
     ) +
-    theme(legend.position = 'bottom')
+    my_ggplot_theme()
   
 }
 
@@ -193,7 +195,6 @@ plot_fit_scores = function(x, cex = 1)
 #'
 #' @param x A list of fits computed via \code{mobster_fit}.
 #' @param TOP The top set of fits to use.
-#' @param cex Cex of the plot.
 #'
 #' @return A complex figure with all plots arranged.
 #'
@@ -205,7 +206,6 @@ plot_fit_scores = function(x, cex = 1)
 #' TODO
 plot_model_selection = function(x,
                                 TOP = 5,
-                                cex = 1,
                                 ...)
 {
   stopifnot(is_list_mobster_fits(x))
@@ -213,20 +213,19 @@ plot_model_selection = function(x,
   # =-=-=-=-=-=-=-=-
   # Best model fit
   # =-=-=-=-=-=-=-=-
-  best = plot.dbpmm(x$best,
-                    cex = cex)
+  best = plot.dbpmm(x$best)
   
   # =-=-=-=-=-=-=-=-
   # Scores rank best
   # =-=-=-=-=-=-=-=-
-  rank = plot_fit_scores(x, cex)
+  rank = plot_fit_scores(x)
   
   # =-=-=-=-=-=-=-=-
   # Goodness of fit
   # =-=-=-=-=-=-=-=-
   
   # SSE plot
-  GOFP = plot_gofit(x, TOP = TOP, cex = cex)
+  GOFP = plot_gofit(x, TOP = TOP)
   
   # =-=-=-=-=-=-=-=-=-=-
   # Low-rank solutions
@@ -240,9 +239,10 @@ plot_model_selection = function(x,
   if (TOP > 1)
     other.best = lapply(2:TOP,
                         function(w)
-                          plot.dbpmm(x$runs[[w]],
-                                     cex = .6 * cex) +
-                          labs(title = paste("Solution rank:", w)))
+                          plot.dbpmm(x$runs[[w]]) +
+                          labs(title = paste("Solution rank:", w)) +
+                          my_ggplot_theme(cex = .6)
+                        )
   
   
   # =-=-=-=-=-=-=-=-
@@ -275,7 +275,7 @@ plot_model_selection = function(x,
                              "MOBSTER model selection",
                              color = "black",
                              face = "bold",
-                             size = 18 * cex
+                             size = 18
                            ))
   
   return(figure)
@@ -285,25 +285,36 @@ plot_model_selection = function(x,
 #' Plot the goodness of fit.
 #'
 #' @description Plot the SSE (sum of squared error) as a proxy for the
-#' goodness of fit. For the \code{TOP} solutions the SSE trace is shown.
+#' goodness of fit. For the \code{TOP} available solutions the SSE trace is shown.
 #'
 #' @param x A list of fits computed via \code{mobster_fit}.
-#' @param TOP The top set of fits to use.
-#' @param cex Cex of the plot.
+#' @param TOP The top set of fits to use, if more than the one available
+#' only the ones in \code{x} are used.
 #'
-#' @return A plot of the  goodness of fit.
+#' @return A plot of the goodness of fit.
 #' @export
 #'
 #' @examples
-#' TODO
-plot_gofit = function(x, TOP = 5, cex = 1)
+#' data('fit_example', package = 'mobster')
+#' plot_gofit(fit_example),
+#' 
+#' # This will subset the call to the one available
+#' plot_gofit(fit_example, TOP = 100)
+plot_gofit = function(x, TOP = 5)
 {
   stopifnot(is_list_mobster_fits(x))
   
   binning = 1e-2
   
+  nsol = length(x$runs)
+  
+  if(nsol < TOP) message("Required TOP-", TOP, " solutions, but only ", nsol, " are available.")
+  TOP = min(TOP, nsol)
+  
+  # Compute the SSE
   points = lapply(x$runs, function(w)
-    .compute_fit_sqerr(w, binning = binning))
+    suppressWarnings(mobster:::.compute_fit_sqerr(w, binning = binning)))
+  
   points = lapply(seq_along(points), function(w) {
     points[[w]]$K = x$fits.table$K[w]
     points[[w]]$tail = x$fits.table$tail[w]
@@ -316,69 +327,101 @@ plot_gofit = function(x, TOP = 5, cex = 1)
   points = points[1:TOP]
   points = Reduce(bind_rows, points)
   
-  
+  points$run = paste0('Solution #', points$run)
   ggplot(points, aes(
     x = x,
-    y = cum.y,
-    fill = factor(run),
-    color = factor(run)
+    y = y,
+    fill = factor(run)
+    # color = factor(run)
   )) +
-    geom_line(show.legend = TRUE) +
-    theme_light(base_size =  8 * cex) +
+    geom_line(show.legend = TRUE, size = .3) +
+    my_ggplot_theme() +
     # guides(colour = FALSE) +
-    xlab('VAF') +
     ylab("SSE") +
-    labs(title = bquote(bold('Goodness of fit (SSE)')),
-         subtitle = paste0('Binwidth = ', binning)) +
-    guides(fill = FALSE, color = guide_legend(title = "Solution")) +
-    theme(
-      legend.position = "bottom",
-      legend.key.size = unit(.3 * cex, "cm"),
-      panel.background = element_rect(fill = 'white')
-    )
+    labs(title = bquote('Goodness of fit'),
+         x = "Observed Frequency",
+         subtitle = paste0('TOP-', TOP, ' solutions')) +
+    guides(fill = FALSE, color = FALSE) +
+    facet_wrap(~run, ncol = 1)
 }
 
 #' Plot the latent variables of the mixture.
+#' 
+#' @description It renders a heatmap where the latent variables
+#' (reponsibilities) are shown and colured according to their value.
+#' This function also calls function \code{Clusters}, using a parameter
+#' that determines if a point is not to be assigned its best cluster
+#' based on a cutoff.
+#' 
 #'
-#' @param x An object of class 'dbpmm'.
-#' @param cex Cex of the plot.
+#' @param x A MOBSTER fit.
+#' @param cutoff_assignment The parameter used to call function
+#' \code{Clusters}, which does not assign a point to its best cluster
+#' if the value of the corresponding latent variable is not above the cutoff.
 #'
 #' @return A plot of the latent variables of the mixture.
+#' 
 #' @export
 #'
 #' @examples
-#' TODO
-plot_latent_variables = function(x, cex = 1)
+#' data('fit_example', package = 'mobster')
+#' plot_latent_variables(fit_example)
+#' plot_latent_variables(fit_example, cutoff_assignment = .9)
+plot_latent_variables = function(x, cutoff_assignment = 0)
 {
   stopifnot(inherits(x, "dbpmm"))
   
+  # assignments
+  assignments = Clusters(x, cutoff_assignment) %>%
+    dplyr::select(VAF, cluster) %>%
+    data.frame(stringsAsFactors = FALSE)
+  
+  not_assign = is.na(assignments$cluster)
+  n = sum(not_assign)
+  p = (n/nrow(assignments)) * 100 
+  ordering = order(assignments$cluster, na.last = TRUE)
+  
   # Reshape and cut
-  lv = reshape2::melt(x$z_nk[order(x$data$cluster),])
+  lv = reshape2::melt(x$z_nk[ordering, , drop = FALSE])
   
-  lv$value = cut(lv$value,
-                 breaks = c(-Inf, seq(0, 1, 0.05), Inf))
-  
+  # lv$value = cut(lv$value,
+  #                breaks = c(-Inf, seq(0, 1, 0.05), Inf))
+  # 
   colnames(lv) = c('Point', "Cluster", "Value")
   
-  colors = colorRampPalette(RColorBrewer::brewer.pal(8, 'YlGnBu'))(20)
+  # 
+  # colors = colorRampPalette(RColorBrewer::brewer.pal(8, 'YlGnBu'))(20)
+  cuts_below = cuts_below = c()
+  
+  if(cutoff_assignment - 0.05 > 0) cuts_below  = seq(0, cutoff_assignment - 0.05, 0.05)
+  if(cutoff_assignment - 0.05 < 1) cuts_above  = seq(cutoff_assignment, 1, 0.05)
+  
+  lv$Value = cut(lv$Value, breaks = c(-Inf, cuts_below, cuts_above, Inf))
+  
+  lblues = RColorBrewer::brewer.pal(5, 'Blues')
+  lreds = RColorBrewer::brewer.pal(5, 'Reds')
+  lreds = c('darkorange2', 'darkred')
+  
+  colors_below = colorRampPalette(lblues[1:3])(length(cuts_below))
+  colors_above = colorRampPalette(lreds)(length(cuts_above))
   
   ggplot(lv, aes(x = Cluster, y = Point, fill = Value)) +
     geom_raster() +
-    scale_fill_manual(values = colors) +
-    theme_light(base_size = 8 * cex) +
+    scale_fill_manual(values = c(colors_below, colors_above)) +
+    my_ggplot_theme() +
     theme(
-      legend.position = "bottom",
-      legend.key.size = unit(.3 * cex, "cm"),
-      legend.text = element_text(size = 8 * cex),
+      legend.text = element_text(size = 8),
       axis.text.y = element_blank(),
       axis.ticks.y = element_blank()
     ) +
-    labs(title = bquote(bold("Latent variables")))
+    guides(fill = guide_legend('')) +
+    labs(
+      title = bquote("Latent variables"),
+      subtitle = bquote(
+        .(n) ~" non assignable ("* .(p) *'%) with cutoff ' * z['nk']  ~' > ' * .(cutoff_assignment) ),
+      y = paste0("Points (n =", x$N, ')')
+      )
 }
-
-
-
-
 
 is_list_mobster_fits = function(x)
 {

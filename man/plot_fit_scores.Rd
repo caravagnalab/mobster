@@ -4,12 +4,10 @@
 \alias{plot_fit_scores}
 \title{Plot the scores for model selection.}
 \usage{
-plot_fit_scores(x, cex = 1)
+plot_fit_scores(x)
 }
 \arguments{
 \item{x}{A list of fits computed via \code{mobster_fit}.}
-
-\item{cex}{Cex of the plot}
 }
 \value{
 A ggplot figure with the scores for model selection.
@@ -21,5 +19,6 @@ easily see if the model selected as best is consistently
 better for all scores.
 }
 \examples{
-TODO
+data('fit_example', package = 'mobster')
+plot_fit_scores(fit_example)
 }

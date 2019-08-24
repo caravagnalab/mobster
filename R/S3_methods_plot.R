@@ -2,10 +2,12 @@
 #'
 #' @param x An object of class \code{"dbpmm"}.
 #' @param alpha Alpha value for the colors of the histogram
-#' @param cex Cex of the plot
 #' @param colors If provided, these colours will be used for each cluster.
 #' If a subset of colours is provided, palette Set1 from \code{RColorBrewer} is used.
 #' By default the tail colour is provided as 'gainsboro'.
+#' @param cutoff_assignment Parameters passed to run function \code{Clusters} which
+#' returns the hard clustering assignments for the histogram plot if one wants to plot
+#' only mutations with responsibility above this parameter.
 #' @param ... 
 #'
 #' @return A ggplot object for the plot.
@@ -17,8 +19,8 @@
 #' @examples something..
 plot.dbpmm = function(x,
                       alpha = .8,
-                      cex = 1,
                       colors = c(`Tail` = 'gainsboro'),
+                      cutoff_assignment = 0,
                       ...
                       )
 {
@@ -36,7 +38,8 @@ plot.dbpmm = function(x,
   pi = mobster:::.params_Pi(x)
 
   # Main plotting data
-  clusters = sort(unique(x$data$cluster))
+  plot_data = Clusters(x, cutoff_assignment)
+  clusters = sort(unique(plot_data$cluster), na.last = TRUE)
   
   # Text for the plot -- convergence
   conv.steps = length(x$all.NLL)
@@ -45,13 +48,13 @@ plot.dbpmm = function(x,
     conv.epsilon = abs(rev(x$all.NLL)[1] - rev(x$all.NLL)[2])
   conv.epsilon = formatC(conv.epsilon, format = "e", digits = 0)
 
-  sse = max(.compute_fit_sqerr(x, binning = binwidth)$cum.y)
+  sse = max(mobster:::.compute_fit_sqerr(x, binning = binwidth)$cum.y)
   sse = formatC(sse, format = "e", digits = 3)
 
   label.fit = bquote(
     .(x$fit.type) *
-      " (" * omega * " = " * .(conv.steps) ~ 'steps; ' * epsilon ~ '=' ~ .(conv.epsilon) *
-      "; SSE" ~ .(sse) * ')'
+      " (" * omega * " = " * .(conv.steps) ~ '; ' * epsilon ~ '=' ~ .(conv.epsilon) *
+      "; SSE" ~ .(sse) * ') LV > ' * .(cutoff_assignment)
   )
 
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -59,30 +62,28 @@ plot.dbpmm = function(x,
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
   
   hist_pl = ggplot(
-    x$data, 
+    Clusters(x, cutoff_assignment), 
     aes(VAF, 
         fill = factor(cluster, levels = clusters), 
         y = ..count.. /sum(..count..))) +
     geom_histogram(alpha = alpha,
                    position = 'identity',
                    binwidth = binwidth) +
-    guides(fill = guide_legend(title = "Cluster")) +
-    labs(
-      title = bquote(bold(.(histogram.main))),
-      # subtitle = annotation,
-      caption = label.fit,
-      x = "Observed Frequency",
-      y = "Density"
-    ) +
-    theme_classic(base_size = 8 * cex) +
     geom_vline(
       xintercept = min(x$data$VAF),
       colour = 'black',
       linetype = "longdash"
     ) +
+    guides(fill = guide_legend(title = "Cluster")) +
+    labs(
+      title = bquote(.(histogram.main)),
+      # subtitle = annotation,
+      caption = label.fit,
+      x = "Observed Frequency",
+      y = "Density"
+    ) +
+    my_ggplot_theme() +
     theme(
-      legend.position = "bottom",
-      legend.key.size = unit(.3 * cex, "cm"),
       panel.background = element_rect(fill = 'white'),
       plot.caption = element_text(color = ifelse(x$status, "darkgreen",  "red"))
     )
@@ -107,7 +108,7 @@ plot.dbpmm = function(x,
                 x = x,
                 color = factor(cluster, levels = clusters)
               ),
-              size = 1 * cex) +
+              size = 1) +
     # scale_color_manual(values = colors, labels = names(colors)) +
     guides(color = FALSE)
   
@@ -142,7 +143,7 @@ plot.dbpmm = function(x,
       aes(y = y, x = x),
       color = 'black',
       alpha = .8,
-      size = .5 * cex,
+      size = .5,
       linetype = 'dashed',
       inherit.aes = FALSE
     )
@@ -162,7 +163,7 @@ plot.dbpmm = function(x,
       aes(y = cum.y, x = x),
       color = 'darkgray',
       alpha = 1,
-      size = .2 * cex,
+      size = .2,
       linetype = 'dashed',
       inherit.aes = FALSE
     ) +
@@ -176,7 +177,7 @@ plot.dbpmm = function(x,
   
   hist_pl = hist_pl +
     labs(
-      subtitle = paste0("N = ", x$N, "; Proportions: ", pi)
+      subtitle = paste0("N = ", x$N, "; ", pi)
     )
   
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -270,3 +271,12 @@ add_fill_color_pl = function(x, pl, colors)
 }
 
 
+my_ggplot_theme = function(cex = 1) 
+{
+  theme_light(base_size = 10 * cex) +
+    theme(
+      legend.position = "bottom",
+      legend.key.size = unit(.3 * cex, "cm"),
+      panel.background = element_rect(fill = 'white')
+    )
+}

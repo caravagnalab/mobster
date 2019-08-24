@@ -4,17 +4,21 @@
 \alias{plot.dbpmm}
 \title{Plot a MOBSTER fit.}
 \usage{
-plot.dbpmm(x, alpha = 0.8, cex = 1, colors = NA, ...)
+plot.dbpmm(x, alpha = 0.8, colors = c(Tail = "gainsboro"),
+  cutoff_assignment = 0, ...)
 }
 \arguments{
 \item{x}{An object of class \code{"dbpmm"}.}
 
 \item{alpha}{Alpha value for the colors of the histogram}
 
-\item{cex}{Cex of the plot}
-
 \item{colors}{If provided, these colours will be used for each cluster.
-If not all clusters have available colours, errors are thrown.}
+If a subset of colours is provided, palette Set1 from \code{RColorBrewer} is used.
+By default the tail colour is provided as 'gainsboro'.}
+
+\item{cutoff_assignment}{Parameters passed to run function \code{Clusters} which
+returns the hard clustering assignments for the histogram plot if one wants to plot
+only mutations with responsibility above this parameter.}
 
 \item{...}{}
 }

@@ -4,7 +4,7 @@
 \alias{choose_clusters}
 \title{Filter MOBSTER output clusters.}
 \usage{
-choose_clusters(x, pi_cutoff = 0.02, N_cutoff = 10)
+choose_clusters(x, pi_cutoff = 0.02, N_cutoff = 10, verbose = FALSE)
 }
 \arguments{
 \item{x}{A MOBSTER fit object.}
@@ -12,6 +12,8 @@ choose_clusters(x, pi_cutoff = 0.02, N_cutoff = 10)
 \item{pi_cutoff}{The cutoff on the mixing proportions, default is 2%.}
 
 \item{N_cutoff}{The cutoff on the number of mutations assigned to a cluster, default is 10.}
+
+\item{verbose}{If outputs should be reported to screen or not, default is no.}
 }
 \value{
 A MOBSTER fit object where clusters are larger than \code{pi_cutoff} and contain

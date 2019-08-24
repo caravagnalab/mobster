@@ -4,22 +4,25 @@
 \alias{plot_gofit}
 \title{Plot the goodness of fit.}
 \usage{
-plot_gofit(x, TOP = 5, cex = 1)
+plot_gofit(x, TOP = 5)
 }
 \arguments{
 \item{x}{A list of fits computed via \code{mobster_fit}.}
 
-\item{TOP}{The top set of fits to use.}
-
-\item{cex}{Cex of the plot.}
+\item{TOP}{The top set of fits to use, if more than the one available
+only the ones in \code{x} are used.}
 }
 \value{
-A plot of the  goodness of fit.
+A plot of the goodness of fit.
 }
 \description{
 Plot the SSE (sum of squared error) as a proxy for the
-goodness of fit. For the \code{TOP} solutions the SSE trace is shown.
+goodness of fit. For the \code{TOP} available solutions the SSE trace is shown.
 }
 \examples{
-TODO
+data('fit_example', package = 'mobster')
+plot_gofit(fit_example),
+
+# This will subset the call to the one available
+plot_gofit(fit_example, TOP = 100)
 }

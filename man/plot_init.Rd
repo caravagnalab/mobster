@@ -4,15 +4,14 @@
 \alias{plot_init}
 \title{Plot the initial density of a fit.}
 \usage{
-plot_init(x, cex = 1, colors = NA)
+plot_init(x, colors = c(Tail = "gainsboro"))
 }
 \arguments{
 \item{x}{An object of class \code{"dbpmm"}.}
 
-\item{cex}{Cex of the plot}
-
 \item{colors}{If provided, these colours will be used for each cluster.
-If not all clusters have available colours, errors are thrown.}
+If a subset of colours is provided, palette Set1 from \code{RColorBrewer} is used.
+By default the tail colour is provided as 'gainsboro'.}
 }
 \value{
 A ggplot object for the plot.
@@ -21,5 +20,6 @@ A ggplot object for the plot.
 Plot the initial density of a fit.
 }
 \examples{
-TODO
+data(fit_example)
+plot_init(fit_example$best)
 }
