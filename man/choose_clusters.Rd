@@ -28,5 +28,11 @@ the latent variables are re-computed, as well as the clustering assignments and 
 mixing proportions (all mutations will be still assigned after clusters' removal).
 }
 \examples{
-TODO
+data(fit_example)
+
+# Does not change anything (no filter triggered)
+choose_clusters(fit_example$best)
+
+# Remove one Beta component because it has less than 100 points (renders the fit very poor)
+choose_clusters(fit_example$best, N_cutoff = 100)
 }

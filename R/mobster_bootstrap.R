@@ -1,39 +1,7 @@
-# Compute parametric bootstrap replicate
-.parametric_bootstrap_resamples = function(x, n = 100)
-{
-  stopifnot(n >= 1)
-
-  data.size = nrow(x$data)
-
-  lapply(1:n,
-         function(w) {
-           resample = rdbpmm(x, n = data.size)
-           data.frame(id = 1:data.size, VAF = resample)
-         })
-}
-
-# Compute nonparametric bootstrap replicate
-.nonparametric_bootstrap_resamples = function(x, n = 100)
-{
-  stopifnot(n >= 1)
-
-  data.size = nrow(x$data)
-
-  lapply(1:n,
-         function(w) {
-           ids = sample(1:data.size, data.size, replace = TRUE)
-           data.frame(
-             id = 1:data.size,
-             VAF = x$data$VAF[ids],
-             original.id = ids
-           )
-         })
-}
-
 
 #' Bootstrap a MOBSTER fit.
 #' 
-#' @description Parmaetric and nonparametric implementation of
+#' @description Parametric and non-parametric implementation of
 #' bootstrap estimates for MOBSTER fits. This computation is parallel
 #' and uses  \code{?easypar}.
 #' 
@@ -51,44 +19,58 @@
 #' @export
 #'
 #' @examples
-#' TODO
+#' data('fit_example', package = 'mobster')
+#' 
+#' # Just 5 resamples of a nonparametric bootstrap run
+#' mb = mobster_bootstrap(fit_example$best, n.resamples = 5)
+#' 
+#' # The resample data is wrapped as lists of lists
+#' lapply(mb$resamples, function(x) x[[1]] %>% as_tibble)
+#' 
+#' # The best fits are returned
+#' mb$fits
 mobster_bootstrap = function(x,
                              n.resamples = 100,
-                             bootstrap = 'parametric',
+                             bootstrap = 'nonparametric',
                              cores.ratio = 0.8,
                              cache = paste0(bootstrap, '_cache.rds'),
+                             save_data = NULL,
                              ...)
 {
   pio::pioHdr(
-    "MOBSTER bootstrap",
-    toPrint = c(`Resamples` = paste(n.resamples),
-                `Type of bootstrap` = bootstrap),
-    prefix = '\t-'
+    paste0("MOBSTER bootstrap ~ ", n.resamples, ' resamples from ',
+           bootstrap, ' bootstrap')
   )
-
+  
   stopifnot(inherits(x, "dbpmm"))
   stopifnot(bootstrap %in% c('parametric', 'nonparametric'))
-
+  
   pio::pioTit(paste0("Bootstrapping for this MOBSTER model"))
   print(x)
-
+  
   pio::pioTit(paste0("Creating ", bootstrap, " bootstrap resamples"))
-
+  
   resamples = NULL
-
+  
   # Get resamples -- n datasets with same size of x
   if (bootstrap == 'parametric')
-    resamples = .parametric_bootstrap_resamples(x, n.resamples)
-
+    resamples = mobster:::.parametric_bootstrap_resamples(x, n.resamples)
+  
   if (bootstrap == 'nonparametric')
-    resamples = .nonparametric_bootstrap_resamples(x, n.resamples)
-
+    resamples = mobster:::.nonparametric_bootstrap_resamples(x, n.resamples)
+  
   resamples = lapply(resamples, list)
-
-  save(resamples, file = 'resamples.RData')
-
+  
+  # Save data if required
+  if(!is.null(save_data) & is.character(save_data))
+  {
+    pio::pioStr("Resamples saved to file ", paste0(save_data, '.RData'), suffix = '\n')
+    
+    save(resamples, file = paste0(save_data, '.RData'))
+  }
+  
   pio::pioTit("Running fits (might take some time)")
-
+  
   # easypar
   fits = easypar::run(
     FUN = function(w) {
@@ -104,9 +86,7 @@ mobster_bootstrap = function(x,
     parallel = TRUE,
     cache = cache
   )
-
   
-  return(list(resamples = resamples, fits = fits))
+  
+  return(list(resamples = resamples, fits = fits, bootstrap = bootstrap))
 }
-
-

@@ -28,14 +28,12 @@ compared to a putative Binomial generative model).}
 \item{seed}{The seed to fix the process, default is 123.}
 }
 \value{
-A list with the dataset in a tibble, a plot the model's parameters.
+A list with the dataset in a tibble, the model parameters and a plot the data.
 }
 \description{
 Generate a random MOBSTER model, its data and creates a plot for it.
 }
 \examples{
 x = random_dataset()
-
-
 print(x)
 }

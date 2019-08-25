@@ -2,13 +2,13 @@
 % Please edit documentation in R/evodynamics.R
 \name{evolutionary_parameters}
 \alias{evolutionary_parameters}
-\title{Extract evolutionary parameters using MOBSTER fit}
+\title{Extract evolutionary parameters from a MOBSTER fit}
 \usage{
 evolutionary_parameters(x, Nmax = 10^10, lq = 0.1, uq = 0.9,
   ploidy = 2, ncells = 2)
 }
 \arguments{
-\item{x}{An object fit by MOBSTER}
+\item{x}{An object fit by MOBSTER.}
 
 \item{Nmax}{Time when tumour is sampled (in tumour doublings)}
 
@@ -25,10 +25,8 @@ Mutation rate, time of emergence and selection coefficient of subclones.
 }
 \description{
 Mutation rate, time of emergence and selection coefficient of subclones are calculated.
-}
-\details{
 These values are calculated based on a population genetics model of tumour evolution
-see Williams et al. 2016 and 2018 for more details.
+see Williams et al. 2016 and 2018 for more details (Nature Genetics).
 
 The mutation rate scaled by the probability of lineage survival \eqn{\beta}, \eqn{\mu/\beta} is given by:
 \deqn{\mu/\beta = M / (1/fmin - 1/fmax)}
@@ -40,8 +38,6 @@ populations (\eqn{\lambda h}) vs subclone (\eqn{\lambda s}):
 \deqn{1+s=\lambda h / \lambda s}
 }
 \examples{
-
-mobsterfit = mobster_fit(subclonedynamics, K = 1:2, tail = c(T, F))
-evolutionary_parameters(mobsterfit, Nmax = 10^6)
-
+data('fit_example', package = 'mobster')
+evolutionary_parameters(fit_example)
 }

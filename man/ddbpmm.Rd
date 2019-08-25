@@ -47,5 +47,12 @@ function can also compute the density only for a subset of components
 of the mixture.
 }
 \examples{
-TODO
+data('fit_example', package = 'mobster')
+
+# Use the full mixture, and its internal data
+ddbpmm(fit_example$best)
+
+# Use only some of the mixture components, and pass some data
+ddbpmm(x, data = .4, components = 1)
+ddbpmm(x, data = .4, components = 2)
 }
