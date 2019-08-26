@@ -67,5 +67,28 @@ lapply(boot$fits, plot)
 dev.off()
 
 
+# 10 resamples
+x = random_dataset(seed = 123, Beta_variance_scaling = 100, N = 500)
+x = mobster_fit(x$data, epsilon = 1e-5)
+plot(x$best)
+bootstrap_results = mobster_bootstrap(x$best, n.resamples = 15, epsilon = 1e-5)
 
+bootstrap_results$fits = bootstrap_results$fits[!sapply(bootstrap_results$fits, function(e) inherits(e, 'error'))]
+
+# Statistics ...
+bootstrap_statistics = bootstrapped_statistics(x$best, bootstrap_results = bootstrap_results)
+
+boot_results$bootstrap_model
+boot_results$bootstrap_statistics
+boot_results$bootstrap_co_clustering
+
+plot_bootstrap_model_frequency(bootstrap_results = bootstrap_results, bootstrap_statistics = bootstrap_statistics)  
+plot_bootstrap_mixing_proportions(x$best, bootstrap_results = bootstrap_results, bootstrap_statistics = bootstrap_statistics)  
+plot_bootstrap_Beta(x$best, bootstrap_results = bootstrap_results, bootstrap_statistics = bootstrap_statistics)  
+
+
+pdf("Bootstraps.pdf", width = 3, height = 2.5)
+plot(x$best)
+lapply(bootstrap_results$fits, plot)
+dev.off()
 

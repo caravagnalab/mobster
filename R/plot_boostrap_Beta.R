@@ -59,7 +59,7 @@ plot_bootstrap_Beta = function(x,
     bt
   }
   
-  mp = suppressWarnings(plt('Mean') + xlim(0, 1))
+  mp = suppressMessages(plt('Mean') + xlim(0, 1))
   vp = plt('Variance') + labs(title = bquote(" "), subtitle = ' ')
   ggpubr::ggarrange(mp, vp, ncol = 2)
 }
