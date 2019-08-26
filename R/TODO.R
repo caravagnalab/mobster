@@ -284,54 +284,54 @@ mobster_plt_bootstrap = function(resamples, fits,
   
   res = NULL
   
-  ########################## Analyze outputs
-  # -- model matching
-  tab = lapply(seq(fits),
-               function(w)
-                 data.frame(
-                   `resample` = w,
-                   `tail` = fits[[w]]$fit.tail,
-                   `K` =  fits[[w]]$Kbeta,
-                   `Model` = paste0(
-                     'K = ',
-                     fits[[w]]$Kbeta,
-                     ifelse(fits[[w]]$fit.tail,
-                            " with tail",
-                            " without tail")
-                   ),
-                   stringsAsFactors = FALSE
-                 ))
-  
-  tab = Reduce(rbind, tab)
-  
-  # Extract model frequency
-  tab.counts = as.data.frame(table(tab$Model))
-  colnames(tab.counts) = c("Model", "Freq")
-  tab.counts$Freq = tab.counts$Freq / n
-  
-  tab = tab[, c('tail', 'K', 'Model')]
-  tab = tab[!duplicated(tab),]
-  tab = merge(tab, tab.counts, by = 'Model')
-  
-  tab$tail = ifelse(tab$tail, 'With tail', 'Without tail')
-  
-  pio::pioTit("Model frequency")
-  pio::pioDisp(tab)
-  res = append(res, list(tab))
-  
-  # plot it
-  pl_modelFreq = ggplot(data = tab, aes(x = factor(K), y = Freq, fill = Model)) +
-    geom_bar(stat = "identity", position = 'dodge') +
-    ylim(0, 1) +
-    theme_light(base_size = 8) +
-    facet_grid(K ~ tail) +
-    labs(
-      title = bquote(bold("Model frequency")),
-      subtitle = paste0("Bootstrap resamples (n = ", n, ")"),
-      x = 'Number of Beta components',
-      y = 'Frequency'
-    ) +
-    guides(fill = FALSE)
+  # ########################## Analyze outputs
+  # # -- model matching
+  # tab = lapply(seq(fits),
+  #              function(w)
+  #                data.frame(
+  #                  `resample` = w,
+  #                  `tail` = fits[[w]]$fit.tail,
+  #                  `K` =  fits[[w]]$Kbeta,
+  #                  `Model` = paste0(
+  #                    'K = ',
+  #                    fits[[w]]$Kbeta,
+  #                    ifelse(fits[[w]]$fit.tail,
+  #                           " with tail",
+  #                           " without tail")
+  #                  ),
+  #                  stringsAsFactors = FALSE
+  #                ))
+  # 
+  # tab = Reduce(rbind, tab)
+  # 
+  # # Extract model frequency
+  # tab.counts = as.data.frame(table(tab$Model))
+  # colnames(tab.counts) = c("Model", "Freq")
+  # tab.counts$Freq = tab.counts$Freq / n
+  # 
+  # tab = tab[, c('tail', 'K', 'Model')]
+  # tab = tab[!duplicated(tab),]
+  # tab = merge(tab, tab.counts, by = 'Model')
+  # 
+  # tab$tail = ifelse(tab$tail, 'With tail', 'Without tail')
+  # 
+  # pio::pioTit("Model frequency")
+  # pio::pioDisp(tab)
+  # res = append(res, list(tab))
+  # 
+  # # plot it
+  # pl_modelFreq = ggplot(data = tab, aes(x = factor(K), y = Freq, fill = Model)) +
+  #   geom_bar(stat = "identity", position = 'dodge') +
+  #   ylim(0, 1) +
+  #   theme_light(base_size = 8) +
+  #   facet_grid(K ~ tail) +
+  #   labs(
+  #     title = bquote(bold("Model frequency")),
+  #     subtitle = paste0("Bootstrap resamples (n = ", n, ")"),
+  #     x = 'Number of Beta components',
+  #     y = 'Frequency'
+  #   ) +
+  #   guides(fill = FALSE)
   
   ########################## Analyze outputs
   # -- tail statistics

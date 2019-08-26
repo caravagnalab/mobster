@@ -16,7 +16,7 @@ smart_colors = function(x, pl, colors)
   else
     new_col = rainbow(length(wh_col))
   
-  names(new_col) = wh_col
+  names(new_col) = sort(wh_col)
   
   return(c(mycolors, new_col))
 }

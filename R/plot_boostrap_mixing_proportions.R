@@ -32,12 +32,19 @@ plot_bootstrap_mixing_proportions = function(x,
   mixing = bootstrap_statistics$bootstrap_values %>%
     filter(statistics == 'Mixing proportion')
   
+  fit = data.frame(fit = mobster:::.params_Pi(x)) %>% as_tibble()
+  fit$cluster = names(mobster:::.params_Pi(x))
+  
   bplot = ggplot(
     mixing,
     aes(x = cluster, y = fit.value, fill = cluster)
   ) +
     geom_violin(color = NA, alpha = .8) +
+    geom_boxplot(alpha = 1, width = 0.05) +
     geom_jitter(alpha = 1, size = .5, height = 0, show.legend = F) +
+    # geom_count() +
+    # ggbeeswarm::geom_quasirandom(size = .5, show.legend = F) +
+    geom_point(data = fit, inherit.aes = F, aes(x = cluster, y = fit), shape = 2, size =3) +
     ylim(0, 1) +
     # scale_fill_manual(values = c(`TRUE` = 'forestgreen', `FALSE` = 'darkred')) +
     mobster:::my_ggplot_theme() + 
@@ -47,7 +54,8 @@ plot_bootstrap_mixing_proportions = function(x,
       y = 'Fit value',
       subtitle = paste0('n = ', n, ' ', type, ' bootstraps.')
     ) +
-    guides(fill = guide_legend('Cluster'))
+    guides(fill = guide_legend('Cluster')) +
+    guides(color = guide_legend('Fit'))
   
   mobster:::add_fill_color_pl(x, bplot, colors)
 }
