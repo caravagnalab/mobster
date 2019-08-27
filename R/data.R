@@ -16,3 +16,21 @@
 #' print(fit_example$best)
 #' plot(fit_example$best)
 "fit_example"
+
+
+#' List of cancer genes to compute dnds values.
+#'
+#' @description List of gene ids (HuGO format) developed from Martincorena et al. to compute dnds values.
+#'
+#' @docType data
+#'
+#' @usage data(cancer_genes_dnds)
+#'
+#' @format List of cancer genes to compute dnds values.
+#'
+#' @keywords datasets
+#'
+#' @examples
+#' data(cancer_genes_dnds)
+#' print(cancer_genes_dnds$best)
+"cancer_genes_dnds"

@@ -2,6 +2,7 @@
 
 S3method(print,dbpmm)
 export(Clusters)
+export(Clusters_denovo)
 export(bootstrapped_statistics)
 export(choose_clusters)
 export(ddbpmm)
