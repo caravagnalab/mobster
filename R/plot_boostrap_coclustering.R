@@ -65,17 +65,16 @@ plot_bootstrap_coclustering = function(x,
     geom_segment(data = splits %>% mutate(x = sum, y = 0, xend = sum, yend = sum),
                  inherit.aes = FALSE,
                  aes(x = x, y = y, xend = xend, yend = yend, color = cluster),
-                 size = 1.5) +
+                 size = 1) +
     geom_segment(data = splits %>% mutate(x = sum - n, y = sum - n, xend = sum, yend = sum),
                  inherit.aes = FALSE,
                  aes(x = x, y = y, xend = xend, yend = yend, color = cluster),
-                 size = 1.5) +
+                 size = 1) +
     geom_segment(data = splits %>% mutate(x = sum(n), y = sum, xend = sum, yend = sum),
                  inherit.aes = FALSE,
                  aes(x = x, y = y, xend = xend, yend = yend, color = cluster),
                  size = .5, linetype = 'dashed')+
-    guides(color = guide_legend(''))
-
+    guides(color = FALSE) 
   
   bt = mobster:::add_color_pl(x, bt, colors)
   
@@ -95,7 +94,8 @@ plot_bootstrap_coclustering = function(x,
       axis.text.x=element_blank(),
       axis.ticks.x=element_blank()
       ) +
-    guides(fill = guide_legend(''))
+    guides(fill = guide_legend(''))+
+    scale_y_continuous(position = "right")
   
   label = mobster:::add_fill_color_pl(x, label, colors)
   

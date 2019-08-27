@@ -44,9 +44,6 @@ compute_co_clustering = function(x, resamples, fits)
       # where we resample the same samples twice
       cl.assignments = unique(names(l[l == cl]))
       if(is.null(cl.assignments) | length(cl.assignments) == 1) next;
-
-      cl.assignments = names(l[l == cl])
-      if(is.null(cl.assignments) | length(cl.assignments) == 1) next;
       
       pairs = combn(cl.assignments, 2, simplify = F)
 
@@ -89,7 +86,7 @@ compute_co_clustering = function(x, resamples, fits)
   {    
     setTxtProgressBar(pb, w)
     
-    cluster.results = fits[[w]]$data
+    cluster.results = Clusters(fits[[w]], cutoff_assignment = 0)
     
     cluster.labels = cluster.results$cluster
     names(cluster.labels) = cluster.results$original.id

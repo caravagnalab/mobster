@@ -78,17 +78,21 @@ bootstrap_results$fits = bootstrap_results$fits[!sapply(bootstrap_results$fits, 
 # Statistics ...
 bootstrap_statistics = bootstrapped_statistics(x$best, bootstrap_results = bootstrap_results)
 
-boot_results$bootstrap_model
-boot_results$bootstrap_statistics
-boot_results$bootstrap_co_clustering
+bootstrap_statistics$bootstrap_model
+bootstrap_statistics$bootstrap_statistics
+bootstrap_statistics$bootstrap_co_clustering
 
 plot_bootstrap_model_frequency(bootstrap_results = bootstrap_results, bootstrap_statistics = bootstrap_statistics)  
 plot_bootstrap_mixing_proportions(x$best, bootstrap_results = bootstrap_results, bootstrap_statistics = bootstrap_statistics)  
 plot_bootstrap_Beta(x$best, bootstrap_results = bootstrap_results, bootstrap_statistics = bootstrap_statistics)  
+plot_bootstrap_coclustering(x$best, bootstrap_results = bootstrap_results, bootstrap_statistics = bootstrap_statistics)  
 
 
 pdf("Bootstraps.pdf", width = 3, height = 2.5)
 plot(x$best)
 lapply(bootstrap_results$fits, plot)
 dev.off()
+
+
+
 
