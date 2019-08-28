@@ -191,11 +191,11 @@
 <a class="sourceLine" id="cb4-14" data-line-number="14"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb4-15" data-line-number="15"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb4-16" data-line-number="16"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb4-17" data-line-number="17"><span class="co">#&gt; MOBSTER fit completed in 0.25 mins </span></a>
+<a class="sourceLine" id="cb4-17" data-line-number="17"><span class="co">#&gt; MOBSTER fit completed in 0.14 mins </span></a>
 <a class="sourceLine" id="cb4-18" data-line-number="18"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb4-19" data-line-number="19"><span class="co">#&gt;  BEST FIT: reICL </span></a>
 <a class="sourceLine" id="cb4-20" data-line-number="20"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb4-21" data-line-number="21"><span class="co">#&gt; [ MOBSTER ] N = 5000 points with K = 2 Beta clusters, fit by MM in 41 steps [CONVERGED] </span></a>
+<a class="sourceLine" id="cb4-21" data-line-number="21"><span class="co">#&gt; [ MOBSTER ] N = 5000 points with K = 2 Beta clusters, fit by MM in 52 steps [CONVERGED] </span></a>
 <a class="sourceLine" id="cb4-22" data-line-number="22"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb4-23" data-line-number="23"><span class="co">#&gt;   Components (fit)  </span></a>
 <a class="sourceLine" id="cb4-24" data-line-number="24"><span class="co">#&gt;      Tail    n = 1442 (0.29)      Shape = 3.2 </span></a>
@@ -204,9 +204,9 @@
 <a class="sourceLine" id="cb4-27" data-line-number="27"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb4-28" data-line-number="28"><span class="co">#&gt;   Scores (model selection)  </span></a>
 <a class="sourceLine" id="cb4-29" data-line-number="29"><span class="co">#&gt;        NLL       BIC       AIC  entropy       ICL reduced.entropy</span></a>
-<a class="sourceLine" id="cb4-30" data-line-number="30"><span class="co">#&gt;  -2848.602 -5620.549 -5679.204 274.7051 -5345.844        214.1577</span></a>
+<a class="sourceLine" id="cb4-30" data-line-number="30"><span class="co">#&gt;  -2848.601 -5620.548 -5679.203 274.7425 -5345.805        214.1942</span></a>
 <a class="sourceLine" id="cb4-31" data-line-number="31"><span class="co">#&gt;      reICL size</span></a>
-<a class="sourceLine" id="cb4-32" data-line-number="32"><span class="co">#&gt;  -5406.391    9</span></a></code></pre></div>
+<a class="sourceLine" id="cb4-32" data-line-number="32"><span class="co">#&gt;  -5406.354    9</span></a></code></pre></div>
 <p>As a result, a call of <code>mobster_fit</code> will return a list with:</p>
 <ul>
 <li>the best fit, accessible as named object <code>fit$best</code>;</li>
@@ -216,7 +216,7 @@
 <p>The <code>fits.table</code> reports also other scores for the model fits, which include AIC, BIC, ICL the entropy and the likelihood of the model. Each fit object (<code>best</code> or any object stored in <code>runs</code>) is from class <code>dbpmm</code>. This class provides S3 objects for print and plot of a MOBSTER model</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># Print the best model, as well as the first 3 models in the runs list</span></a>
 <a class="sourceLine" id="cb5-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(fit<span class="op">$</span>best)</a>
-<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="co">#&gt; [ MOBSTER ] N = 5000 points with K = 2 Beta clusters, fit by MM in 41 steps [CONVERGED] </span></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="co">#&gt; [ MOBSTER ] N = 5000 points with K = 2 Beta clusters, fit by MM in 52 steps [CONVERGED] </span></a>
 <a class="sourceLine" id="cb5-4" data-line-number="4"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt;   Components (fit)  </span></a>
 <a class="sourceLine" id="cb5-6" data-line-number="6"><span class="co">#&gt;      Tail    n = 1442 (0.29)      Shape = 3.2 </span></a>
@@ -225,12 +225,12 @@
 <a class="sourceLine" id="cb5-9" data-line-number="9"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb5-10" data-line-number="10"><span class="co">#&gt;   Scores (model selection)  </span></a>
 <a class="sourceLine" id="cb5-11" data-line-number="11"><span class="co">#&gt;        NLL       BIC       AIC  entropy       ICL reduced.entropy</span></a>
-<a class="sourceLine" id="cb5-12" data-line-number="12"><span class="co">#&gt;  -2848.602 -5620.549 -5679.204 274.7051 -5345.844        214.1577</span></a>
+<a class="sourceLine" id="cb5-12" data-line-number="12"><span class="co">#&gt;  -2848.601 -5620.548 -5679.203 274.7425 -5345.805        214.1942</span></a>
 <a class="sourceLine" id="cb5-13" data-line-number="13"><span class="co">#&gt;      reICL size</span></a>
-<a class="sourceLine" id="cb5-14" data-line-number="14"><span class="co">#&gt;  -5406.391    9</span></a>
+<a class="sourceLine" id="cb5-14" data-line-number="14"><span class="co">#&gt;  -5406.354    9</span></a>
 <a class="sourceLine" id="cb5-15" data-line-number="15"></a>
 <a class="sourceLine" id="cb5-16" data-line-number="16"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(fit<span class="op">$</span>runs[[<span class="dv">1</span>]]) <span class="co"># same as best</span></a>
-<a class="sourceLine" id="cb5-17" data-line-number="17"><span class="co">#&gt; [ MOBSTER ] N = 5000 points with K = 2 Beta clusters, fit by MM in 41 steps [CONVERGED] </span></a>
+<a class="sourceLine" id="cb5-17" data-line-number="17"><span class="co">#&gt; [ MOBSTER ] N = 5000 points with K = 2 Beta clusters, fit by MM in 52 steps [CONVERGED] </span></a>
 <a class="sourceLine" id="cb5-18" data-line-number="18"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb5-19" data-line-number="19"><span class="co">#&gt;   Components (fit)  </span></a>
 <a class="sourceLine" id="cb5-20" data-line-number="20"><span class="co">#&gt;      Tail    n = 1442 (0.29)      Shape = 3.2 </span></a>
@@ -239,34 +239,35 @@
 <a class="sourceLine" id="cb5-23" data-line-number="23"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb5-24" data-line-number="24"><span class="co">#&gt;   Scores (model selection)  </span></a>
 <a class="sourceLine" id="cb5-25" data-line-number="25"><span class="co">#&gt;        NLL       BIC       AIC  entropy       ICL reduced.entropy</span></a>
-<a class="sourceLine" id="cb5-26" data-line-number="26"><span class="co">#&gt;  -2848.602 -5620.549 -5679.204 274.7051 -5345.844        214.1577</span></a>
+<a class="sourceLine" id="cb5-26" data-line-number="26"><span class="co">#&gt;  -2848.601 -5620.548 -5679.203 274.7425 -5345.805        214.1942</span></a>
 <a class="sourceLine" id="cb5-27" data-line-number="27"><span class="co">#&gt;      reICL size</span></a>
-<a class="sourceLine" id="cb5-28" data-line-number="28"><span class="co">#&gt;  -5406.391    9</span></a>
+<a class="sourceLine" id="cb5-28" data-line-number="28"><span class="co">#&gt;  -5406.354    9</span></a>
 <a class="sourceLine" id="cb5-29" data-line-number="29"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(fit<span class="op">$</span>runs[[<span class="dv">2</span>]])</a>
-<a class="sourceLine" id="cb5-30" data-line-number="30"><span class="co">#&gt; [ MOBSTER ] N = 5000 points with K = 2 Beta clusters, fit by MM in 357 steps [CONVERGED] </span></a>
+<a class="sourceLine" id="cb5-30" data-line-number="30"><span class="co">#&gt; [ MOBSTER ] N = 5000 points with K = 3 Beta clusters, fit by MM in 51 steps [CONVERGED] </span></a>
 <a class="sourceLine" id="cb5-31" data-line-number="31"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb5-32" data-line-number="32"><span class="co">#&gt;   Components (fit)  </span></a>
-<a class="sourceLine" id="cb5-33" data-line-number="33"><span class="co">#&gt;      Tail    n = 1442 (0.29)      Shape = 3.2 </span></a>
-<a class="sourceLine" id="cb5-34" data-line-number="34"><span class="co">#&gt;   Beta C1    n = 1550 (0.32)      Mean = 0.79</span></a>
-<a class="sourceLine" id="cb5-35" data-line-number="35"><span class="co">#&gt;   Beta C2    n = 2008 (0.39)      Mean = 0.43</span></a>
-<a class="sourceLine" id="cb5-36" data-line-number="36"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb5-37" data-line-number="37"><span class="co">#&gt;   Scores (model selection)  </span></a>
-<a class="sourceLine" id="cb5-38" data-line-number="38"><span class="co">#&gt;        NLL       BIC       AIC  entropy       ICL reduced.entropy    reICL</span></a>
-<a class="sourceLine" id="cb5-39" data-line-number="39"><span class="co">#&gt;  -2843.261 -5609.868 -5668.523 287.7545 -5322.113        226.7083 -5383.16</span></a>
-<a class="sourceLine" id="cb5-40" data-line-number="40"><span class="co">#&gt;  size</span></a>
-<a class="sourceLine" id="cb5-41" data-line-number="41"><span class="co">#&gt;     9</span></a>
-<a class="sourceLine" id="cb5-42" data-line-number="42"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(fit<span class="op">$</span>runs[[<span class="dv">3</span>]])</a>
-<a class="sourceLine" id="cb5-43" data-line-number="43"><span class="co">#&gt; [ MOBSTER ] N = 5000 points with K = 1 Beta clusters, fit by MM in 16 steps [CONVERGED] </span></a>
-<a class="sourceLine" id="cb5-44" data-line-number="44"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb5-45" data-line-number="45"><span class="co">#&gt;   Components (fit)  </span></a>
-<a class="sourceLine" id="cb5-46" data-line-number="46"><span class="co">#&gt;      Tail    n = 1385 (0.27)      Shape = 3.7 </span></a>
-<a class="sourceLine" id="cb5-47" data-line-number="47"><span class="co">#&gt;   Beta C1    n = 3615 (0.73)      Mean = 0.58</span></a>
-<a class="sourceLine" id="cb5-48" data-line-number="48"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb5-49" data-line-number="49"><span class="co">#&gt;   Scores (model selection)  </span></a>
-<a class="sourceLine" id="cb5-50" data-line-number="50"><span class="co">#&gt;        NLL       BIC       AIC  entropy       ICL reduced.entropy</span></a>
-<a class="sourceLine" id="cb5-51" data-line-number="51"><span class="co">#&gt;  -2200.404 -4349.705 -4388.808 189.1157 -4160.589               0</span></a>
-<a class="sourceLine" id="cb5-52" data-line-number="52"><span class="co">#&gt;      reICL size</span></a>
-<a class="sourceLine" id="cb5-53" data-line-number="53"><span class="co">#&gt;  -4349.705    6</span></a></code></pre></div>
+<a class="sourceLine" id="cb5-33" data-line-number="33"><span class="co">#&gt;      Tail    n = 1444 (0.29)      Shape = 3.1 </span></a>
+<a class="sourceLine" id="cb5-34" data-line-number="34"><span class="co">#&gt;   Beta C1    n = 1545 (0.31)      Mean = 0.79</span></a>
+<a class="sourceLine" id="cb5-35" data-line-number="35"><span class="co">#&gt;   Beta C2    n = 471 (0.11)   Mean = 0.51</span></a>
+<a class="sourceLine" id="cb5-36" data-line-number="36"><span class="co">#&gt;   Beta C3    n = 1540 (0.29)      Mean = 0.41</span></a>
+<a class="sourceLine" id="cb5-37" data-line-number="37"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-38" data-line-number="38"><span class="co">#&gt;   Scores (model selection)  </span></a>
+<a class="sourceLine" id="cb5-39" data-line-number="39"><span class="co">#&gt;       NLL       BIC       AIC  entropy       ICL reduced.entropy     reICL</span></a>
+<a class="sourceLine" id="cb5-40" data-line-number="40"><span class="co">#&gt;  -2849.32 -5596.433 -5674.639 1067.022 -4529.411        1007.374 -4589.058</span></a>
+<a class="sourceLine" id="cb5-41" data-line-number="41"><span class="co">#&gt;  size</span></a>
+<a class="sourceLine" id="cb5-42" data-line-number="42"><span class="co">#&gt;    12</span></a>
+<a class="sourceLine" id="cb5-43" data-line-number="43"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(fit<span class="op">$</span>runs[[<span class="dv">3</span>]])</a>
+<a class="sourceLine" id="cb5-44" data-line-number="44"><span class="co">#&gt; [ MOBSTER ] N = 5000 points with K = 1 Beta clusters, fit by MM in 10 steps [CONVERGED] </span></a>
+<a class="sourceLine" id="cb5-45" data-line-number="45"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-46" data-line-number="46"><span class="co">#&gt;   Components (fit)  </span></a>
+<a class="sourceLine" id="cb5-47" data-line-number="47"><span class="co">#&gt;      Tail    n = 1385 (0.27)      Shape = 3.7 </span></a>
+<a class="sourceLine" id="cb5-48" data-line-number="48"><span class="co">#&gt;   Beta C1    n = 3615 (0.73)      Mean = 0.58</span></a>
+<a class="sourceLine" id="cb5-49" data-line-number="49"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-50" data-line-number="50"><span class="co">#&gt;   Scores (model selection)  </span></a>
+<a class="sourceLine" id="cb5-51" data-line-number="51"><span class="co">#&gt;       NLL       BIC      AIC  entropy       ICL reduced.entropy     reICL</span></a>
+<a class="sourceLine" id="cb5-52" data-line-number="52"><span class="co">#&gt;  -2200.42 -4349.737 -4388.84 189.0609 -4160.676               0 -4349.737</span></a>
+<a class="sourceLine" id="cb5-53" data-line-number="53"><span class="co">#&gt;  size</span></a>
+<a class="sourceLine" id="cb5-54" data-line-number="54"><span class="co">#&gt;     6</span></a></code></pre></div>
 <p>The simplest visualization for MOBSTER’s fits is a coloured histogram, where colours represent clustering assignments, overlaid to the model density. By default MOBSTER names Beta clusters according to the decreasing order of their mean; so <code>C1</code> is always the label of the cluster with highest mean, etc. The basic plot shows, mirrored on the y-axis, the percentage of sum-of-squared-error (SSE) as a function of the input VAF (which is termed <code>Observed Frequency</code> in the x-axis). The plot caption annotates some information about the fitting.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="co"># Plot the best model</span></a>
 <a class="sourceLine" id="cb6-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(fit<span class="op">$</span>best)</a></code></pre></div>
@@ -294,8 +295,8 @@
 <a class="sourceLine" id="cb8-14" data-line-number="14"><span class="co">#&gt;  4 0.784 C1      0.000146 1.000 4.45e- 5</span></a>
 <a class="sourceLine" id="cb8-15" data-line-number="15"><span class="co">#&gt;  5 0.768 C1      0.000173 1.000 1.47e- 4</span></a>
 <a class="sourceLine" id="cb8-16" data-line-number="16"><span class="co">#&gt;  6 0.634 &lt;NA&gt;    0.00124  0.721 2.78e- 1</span></a>
-<a class="sourceLine" id="cb8-17" data-line-number="17"><span class="co">#&gt;  7 0.663 C1      0.000851 0.914 8.55e- 2</span></a>
-<a class="sourceLine" id="cb8-18" data-line-number="18"><span class="co">#&gt;  8 0.919 C1      0.000161 1.000 2.06e-12</span></a>
+<a class="sourceLine" id="cb8-17" data-line-number="17"><span class="co">#&gt;  7 0.663 C1      0.000851 0.914 8.54e- 2</span></a>
+<a class="sourceLine" id="cb8-18" data-line-number="18"><span class="co">#&gt;  8 0.919 C1      0.000161 1.000 2.05e-12</span></a>
 <a class="sourceLine" id="cb8-19" data-line-number="19"><span class="co">#&gt;  9 0.657 C1      0.000924 0.890 1.09e- 1</span></a>
 <a class="sourceLine" id="cb8-20" data-line-number="20"><span class="co">#&gt; 10 0.639 &lt;NA&gt;    0.00117  0.770 2.29e- 1</span></a>
 <a class="sourceLine" id="cb8-21" data-line-number="21"><span class="co">#&gt; # … with 4,990 more rows</span></a></code></pre></div>
@@ -339,19 +340,19 @@
 <p><img src="introduction_files/figure-html/unnamed-chunk-12-1.png" width="1440"> The table reportin the scores can be visualised, and everal plots are available to inspect model selection.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(fit<span class="op">$</span>fits.table)</a>
 <a class="sourceLine" id="cb14-2" data-line-number="2"><span class="co">#&gt;          NLL        BIC        AIC   entropy        ICL reduced.entropy</span></a>
-<a class="sourceLine" id="cb14-3" data-line-number="3"><span class="co">#&gt; 5 -2848.6018 -5620.5488 -5679.2036  274.7051 -5345.8438        214.1577</span></a>
-<a class="sourceLine" id="cb14-4" data-line-number="4"><span class="co">#&gt; 6 -2843.2613 -5609.8679 -5668.5227  287.7545 -5322.1134        226.7083</span></a>
-<a class="sourceLine" id="cb14-5" data-line-number="5"><span class="co">#&gt; 4 -2200.4041 -4349.7050 -4388.8082  189.1157 -4160.5894          0.0000</span></a>
-<a class="sourceLine" id="cb14-6" data-line-number="6"><span class="co">#&gt; 1  -124.2584  -222.9652  -242.5168    0.0000  -222.9652          0.0000</span></a>
-<a class="sourceLine" id="cb14-7" data-line-number="7"><span class="co">#&gt; 2  -222.7543  -394.4055  -433.5087 1209.1006   814.6950       1209.1006</span></a>
-<a class="sourceLine" id="cb14-8" data-line-number="8"><span class="co">#&gt; 3  -174.7716  -298.4400  -337.5431 1177.8863   879.4463       1177.8863</span></a>
+<a class="sourceLine" id="cb14-3" data-line-number="3"><span class="co">#&gt; 5 -2848.6013 -5620.5480 -5679.2027  274.7425 -5345.8055        214.1942</span></a>
+<a class="sourceLine" id="cb14-4" data-line-number="4"><span class="co">#&gt; 6 -2849.3195 -5596.4328 -5674.6391 1067.0218 -4529.4110       1007.3743</span></a>
+<a class="sourceLine" id="cb14-5" data-line-number="5"><span class="co">#&gt; 4 -2200.4202 -4349.7373 -4388.8405  189.0609 -4160.6764          0.0000</span></a>
+<a class="sourceLine" id="cb14-6" data-line-number="6"><span class="co">#&gt; 3 -2232.2945 -4387.9342 -4446.5890  226.7322 -4161.2020        226.7322</span></a>
+<a class="sourceLine" id="cb14-7" data-line-number="7"><span class="co">#&gt; 1  -124.2584  -222.9652  -242.5168    0.0000  -222.9652          0.0000</span></a>
+<a class="sourceLine" id="cb14-8" data-line-number="8"><span class="co">#&gt; 2  -222.7145  -394.3258  -433.4289 1209.1477   814.8219       1209.1477</span></a>
 <a class="sourceLine" id="cb14-9" data-line-number="9"><span class="co">#&gt;        reICL size K  tail</span></a>
-<a class="sourceLine" id="cb14-10" data-line-number="10"><span class="co">#&gt; 5 -5406.3911    9 2  TRUE</span></a>
-<a class="sourceLine" id="cb14-11" data-line-number="11"><span class="co">#&gt; 6 -5383.1596    9 2  TRUE</span></a>
-<a class="sourceLine" id="cb14-12" data-line-number="12"><span class="co">#&gt; 4 -4349.7050    6 1  TRUE</span></a>
-<a class="sourceLine" id="cb14-13" data-line-number="13"><span class="co">#&gt; 1  -222.9652    3 1 FALSE</span></a>
-<a class="sourceLine" id="cb14-14" data-line-number="14"><span class="co">#&gt; 2   814.6950    6 2 FALSE</span></a>
-<a class="sourceLine" id="cb14-15" data-line-number="15"><span class="co">#&gt; 3   879.4463    6 2 FALSE</span></a></code></pre></div>
+<a class="sourceLine" id="cb14-10" data-line-number="10"><span class="co">#&gt; 5 -5406.3538    9 2  TRUE</span></a>
+<a class="sourceLine" id="cb14-11" data-line-number="11"><span class="co">#&gt; 6 -4589.0585   12 3  TRUE</span></a>
+<a class="sourceLine" id="cb14-12" data-line-number="12"><span class="co">#&gt; 4 -4349.7373    6 1  TRUE</span></a>
+<a class="sourceLine" id="cb14-13" data-line-number="13"><span class="co">#&gt; 3 -4161.2020    9 3 FALSE</span></a>
+<a class="sourceLine" id="cb14-14" data-line-number="14"><span class="co">#&gt; 1  -222.9652    3 1 FALSE</span></a>
+<a class="sourceLine" id="cb14-15" data-line-number="15"><span class="co">#&gt; 2   814.8219    6 2 FALSE</span></a></code></pre></div>
 <p>One can plot of the sum of squared error (SSE) between the fit density and the data (binned with bins of size 0.01), for several solutions at once. This measure can represent a sort of goodness of fit statistics.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="co"># Goodness of fit (SSE), for the top 3 fits.</span></a>
 <a class="sourceLine" id="cb15-2" data-line-number="2"><span class="kw"><a href="../reference/plot_gofit.html">plot_gofit</a></span>(fit, <span class="dt">TOP =</span> <span class="dv">3</span>)</a></code></pre></div>
@@ -387,11 +388,11 @@
 <a class="sourceLine" id="cb18-15" data-line-number="15"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb18-16" data-line-number="16"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb18-17" data-line-number="17"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb18-18" data-line-number="18"><span class="co">#&gt; MOBSTER fit completed in 0.26 mins </span></a>
+<a class="sourceLine" id="cb18-18" data-line-number="18"><span class="co">#&gt; MOBSTER fit completed in 2.43 mins </span></a>
 <a class="sourceLine" id="cb18-19" data-line-number="19"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb18-20" data-line-number="20"><span class="co">#&gt;  BEST FIT: reICL </span></a>
 <a class="sourceLine" id="cb18-21" data-line-number="21"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb18-22" data-line-number="22"><span class="co">#&gt; [ MOBSTER ] N = 300 points with K = 2 Beta clusters, fit by MM in 17 steps [CONVERGED] </span></a>
+<a class="sourceLine" id="cb18-22" data-line-number="22"><span class="co">#&gt; [ MOBSTER ] N = 300 points with K = 2 Beta clusters, fit by MM in 15 steps [CONVERGED] </span></a>
 <a class="sourceLine" id="cb18-23" data-line-number="23"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb18-24" data-line-number="24"><span class="co">#&gt;   Components (fit)  </span></a>
 <a class="sourceLine" id="cb18-25" data-line-number="25"><span class="co">#&gt;      Tail    n = 71 (0.24)    Shape = 3.7 </span></a>
@@ -428,7 +429,7 @@
 <a class="sourceLine" id="cb19-13" data-line-number="13"><span class="co">#&gt; =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span></a>
 <a class="sourceLine" id="cb19-14" data-line-number="14"><span class="co">#&gt;  Bootstrapping for this MOBSTER model</span></a>
 <a class="sourceLine" id="cb19-15" data-line-number="15"><span class="co">#&gt; =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span></a>
-<a class="sourceLine" id="cb19-16" data-line-number="16"><span class="co">#&gt; [ MOBSTER ] N = 300 points with K = 2 Beta clusters, fit by MM in 17 steps [CONVERGED] </span></a>
+<a class="sourceLine" id="cb19-16" data-line-number="16"><span class="co">#&gt; [ MOBSTER ] N = 300 points with K = 2 Beta clusters, fit by MM in 15 steps [CONVERGED] </span></a>
 <a class="sourceLine" id="cb19-17" data-line-number="17"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb19-18" data-line-number="18"><span class="co">#&gt;   Components (fit)  </span></a>
 <a class="sourceLine" id="cb19-19" data-line-number="19"><span class="co">#&gt;      Tail    n = 71 (0.24)    Shape = 3.7 </span></a>
@@ -477,8 +478,8 @@
 <a class="sourceLine" id="cb19-62" data-line-number="62"><span class="co">#&gt;  # A tibble: 3 x 8</span></a>
 <a class="sourceLine" id="cb19-63" data-line-number="63"><span class="co">#&gt;   cluster statistics   min lower_quantile higher_quantile   max fit.value</span></a>
 <a class="sourceLine" id="cb19-64" data-line-number="64"><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb19-65" data-line-number="65"><span class="co">#&gt; 1 C1      Mixing pr… 0.340          0.340           0.363 0.363     0.376</span></a>
-<a class="sourceLine" id="cb19-66" data-line-number="66"><span class="co">#&gt; 2 C2      Mixing pr… 0.413          0.413           0.432 0.433     0.387</span></a>
+<a class="sourceLine" id="cb19-65" data-line-number="65"><span class="co">#&gt; 1 C1      Mixing pr… 0.340          0.341           0.375 0.376     0.376</span></a>
+<a class="sourceLine" id="cb19-66" data-line-number="66"><span class="co">#&gt; 2 C2      Mixing pr… 0.390          0.392           0.432 0.433     0.387</span></a>
 <a class="sourceLine" id="cb19-67" data-line-number="67"><span class="co">#&gt; 3 Tail    Mixing pr… 0.204          0.205           0.246 0.247     0.237</span></a>
 <a class="sourceLine" id="cb19-68" data-line-number="68"><span class="co">#&gt; # … with 1 more variable: init.value &lt;dbl&gt;</span></a>
 <a class="sourceLine" id="cb19-69" data-line-number="69"><span class="co">#&gt; </span></a>
@@ -487,17 +488,17 @@
 <a class="sourceLine" id="cb19-72" data-line-number="72"><span class="co">#&gt;   cluster statistics    min lower_quantile higher_quantile    max fit.value</span></a>
 <a class="sourceLine" id="cb19-73" data-line-number="73"><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;</span></a>
 <a class="sourceLine" id="cb19-74" data-line-number="74"><span class="co">#&gt; 1 Tail    Scale      0.0509         0.0509          0.0516 0.0516    0.0509</span></a>
-<a class="sourceLine" id="cb19-75" data-line-number="75"><span class="co">#&gt; 2 Tail    Shape      3.36           3.38            4.89   4.98      3.74  </span></a>
+<a class="sourceLine" id="cb19-75" data-line-number="75"><span class="co">#&gt; 2 Tail    Shape      3.32           3.34            4.89   4.98      3.74  </span></a>
 <a class="sourceLine" id="cb19-76" data-line-number="76"><span class="co">#&gt; # … with 1 more variable: init.value &lt;dbl&gt;</span></a>
 <a class="sourceLine" id="cb19-77" data-line-number="77"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb19-78" data-line-number="78"><span class="co">#&gt; Beta peaks </span></a>
 <a class="sourceLine" id="cb19-79" data-line-number="79"><span class="co">#&gt;  # A tibble: 4 x 8</span></a>
 <a class="sourceLine" id="cb19-80" data-line-number="80"><span class="co">#&gt;   cluster statistics     min lower_quantile higher_quantile     max</span></a>
 <a class="sourceLine" id="cb19-81" data-line-number="81"><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;        &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;   &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb19-82" data-line-number="82"><span class="co">#&gt; 1 C1      Mean       3.86e-1      0.386           0.389     3.89e-1</span></a>
-<a class="sourceLine" id="cb19-83" data-line-number="83"><span class="co">#&gt; 2 C1      Variance   3.47e-4      0.000350        0.000504  5.04e-4</span></a>
+<a class="sourceLine" id="cb19-82" data-line-number="82"><span class="co">#&gt; 1 C1      Mean       3.86e-1      0.386           0.388     3.88e-1</span></a>
+<a class="sourceLine" id="cb19-83" data-line-number="83"><span class="co">#&gt; 2 C1      Variance   3.44e-4      0.000344        0.000495  5.04e-4</span></a>
 <a class="sourceLine" id="cb19-84" data-line-number="84"><span class="co">#&gt; 3 C2      Mean       2.67e-1      0.267           0.268     2.68e-1</span></a>
-<a class="sourceLine" id="cb19-85" data-line-number="85"><span class="co">#&gt; 4 C2      Variance   1.03e-5      0.0000105       0.0000132 1.32e-5</span></a>
+<a class="sourceLine" id="cb19-85" data-line-number="85"><span class="co">#&gt; 4 C2      Variance   1.03e-5      0.0000103       0.0000132 1.32e-5</span></a>
 <a class="sourceLine" id="cb19-86" data-line-number="86"><span class="co">#&gt; # … with 2 more variables: fit.value &lt;dbl&gt;, init.value &lt;dbl&gt;</span></a>
 <a class="sourceLine" id="cb19-87" data-line-number="87"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb19-88" data-line-number="88"><span class="co">#&gt; =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span></a>
@@ -534,21 +535,21 @@
 <a class="sourceLine" id="cb21-3" data-line-number="3"><span class="co">#&gt; # A tibble: 15 x 8</span></a>
 <a class="sourceLine" id="cb21-4" data-line-number="4"><span class="co">#&gt;    cluster statistics     min lower_quantile higher_quantile     max</span></a>
 <a class="sourceLine" id="cb21-5" data-line-number="5"><span class="co">#&gt;    &lt;chr&gt;   &lt;chr&gt;        &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;   &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb21-6" data-line-number="6"><span class="co">#&gt;  1 C1      a          1.82e+2    183.            262.        2.63e+2</span></a>
-<a class="sourceLine" id="cb21-7" data-line-number="7"><span class="co">#&gt;  2 C1      b          2.88e+2    288.            416.        4.18e+2</span></a>
-<a class="sourceLine" id="cb21-8" data-line-number="8"><span class="co">#&gt;  3 C1      Mean       3.86e-1      0.386           0.389     3.89e-1</span></a>
-<a class="sourceLine" id="cb21-9" data-line-number="9"><span class="co">#&gt;  4 C1      Mixing pr… 3.40e-1      0.340           0.363     3.63e-1</span></a>
-<a class="sourceLine" id="cb21-10" data-line-number="10"><span class="co">#&gt;  5 C1      Variance   3.47e-4      0.000350        0.000504  5.04e-4</span></a>
-<a class="sourceLine" id="cb21-11" data-line-number="11"><span class="co">#&gt;  6 C2      a          3.95e+3   3969.           5030.        5.10e+3</span></a>
-<a class="sourceLine" id="cb21-12" data-line-number="12"><span class="co">#&gt;  7 C2      b          1.08e+4  10884.          13739.        1.39e+4</span></a>
+<a class="sourceLine" id="cb21-6" data-line-number="6"><span class="co">#&gt;  1 C1      a          1.82e+2    187.            266.        2.66e+2</span></a>
+<a class="sourceLine" id="cb21-7" data-line-number="7"><span class="co">#&gt;  2 C1      b          2.88e+2    295.            422.        4.22e+2</span></a>
+<a class="sourceLine" id="cb21-8" data-line-number="8"><span class="co">#&gt;  3 C1      Mean       3.86e-1      0.386           0.388     3.88e-1</span></a>
+<a class="sourceLine" id="cb21-9" data-line-number="9"><span class="co">#&gt;  4 C1      Mixing pr… 3.40e-1      0.341           0.375     3.76e-1</span></a>
+<a class="sourceLine" id="cb21-10" data-line-number="10"><span class="co">#&gt;  5 C1      Variance   3.44e-4      0.000344        0.000495  5.04e-4</span></a>
+<a class="sourceLine" id="cb21-11" data-line-number="11"><span class="co">#&gt;  6 C2      a          3.95e+3   3971.           5090.        5.10e+3</span></a>
+<a class="sourceLine" id="cb21-12" data-line-number="12"><span class="co">#&gt;  7 C2      b          1.08e+4  10888.          13905.        1.39e+4</span></a>
 <a class="sourceLine" id="cb21-13" data-line-number="13"><span class="co">#&gt;  8 C2      Mean       2.67e-1      0.267           0.268     2.68e-1</span></a>
-<a class="sourceLine" id="cb21-14" data-line-number="14"><span class="co">#&gt;  9 C2      Mixing pr… 4.13e-1      0.413           0.432     4.33e-1</span></a>
-<a class="sourceLine" id="cb21-15" data-line-number="15"><span class="co">#&gt; 10 C2      Variance   1.03e-5      0.0000105       0.0000132 1.32e-5</span></a>
-<a class="sourceLine" id="cb21-16" data-line-number="16"><span class="co">#&gt; 11 Tail    Mean       6.46e-2      0.0650          0.0724    7.25e-2</span></a>
+<a class="sourceLine" id="cb21-14" data-line-number="14"><span class="co">#&gt;  9 C2      Mixing pr… 3.90e-1      0.392           0.432     4.33e-1</span></a>
+<a class="sourceLine" id="cb21-15" data-line-number="15"><span class="co">#&gt; 10 C2      Variance   1.03e-5      0.0000103       0.0000132 1.32e-5</span></a>
+<a class="sourceLine" id="cb21-16" data-line-number="16"><span class="co">#&gt; 11 Tail    Mean       6.46e-2      0.0650          0.0731    7.33e-2</span></a>
 <a class="sourceLine" id="cb21-17" data-line-number="17"><span class="co">#&gt; 12 Tail    Mixing pr… 2.04e-1      0.205           0.246     2.47e-1</span></a>
 <a class="sourceLine" id="cb21-18" data-line-number="18"><span class="co">#&gt; 13 Tail    Scale      5.09e-2      0.0509          0.0516    5.16e-2</span></a>
-<a class="sourceLine" id="cb21-19" data-line-number="19"><span class="co">#&gt; 14 Tail    Shape      3.36e+0      3.38            4.89      4.98e+0</span></a>
-<a class="sourceLine" id="cb21-20" data-line-number="20"><span class="co">#&gt; 15 Tail    Variance   2.81e-4      0.000319        0.00113   1.15e-3</span></a>
+<a class="sourceLine" id="cb21-19" data-line-number="19"><span class="co">#&gt; 14 Tail    Shape      3.32e+0      3.34            4.89      4.98e+0</span></a>
+<a class="sourceLine" id="cb21-20" data-line-number="20"><span class="co">#&gt; 15 Tail    Variance   2.81e-4      0.000319        0.00120   1.22e-3</span></a>
 <a class="sourceLine" id="cb21-21" data-line-number="21"><span class="co">#&gt; # … with 2 more variables: fit.value &lt;dbl&gt;, init.value &lt;dbl&gt;</span></a>
 <a class="sourceLine" id="cb21-22" data-line-number="22"></a>
 <a class="sourceLine" id="cb21-23" data-line-number="23"><span class="co"># Plot the mixing proportions</span></a>
