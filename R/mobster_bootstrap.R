@@ -33,7 +33,7 @@ mobster_bootstrap = function(x,
                              n.resamples = 100,
                              bootstrap = 'nonparametric',
                              cores.ratio = 0.8,
-                             cache = paste0(bootstrap, '_cache.rds'),
+                             cache = NULL,
                              save_data = NULL,
                              ...)
 {

@@ -49,7 +49,10 @@ In this vignette we sample a random dataset using the `random_dataset` function,
 In this example we fix the seed and the parameter `Beta_variance_scaling`, which  affects the variance of the Beta(s). Because the variance is sampled as `U[0,1]` and scaled by this value, values on the order of `1000` give low variance, while `100` represents a dataset with quite some dispersion (compared to a putative Binomial generative model).
 
 ```{r, message=FALSE, warning=F}
-dataset = random_dataset(seed = 123, Beta_variance_scaling = 100)
+dataset = random_dataset(
+  seed = 123, 
+  Beta_variance_scaling = 100    # variance ~ U[0, 1]/Beta_variance_scaling
+  )
 ```
 
 A list with 3 components is returned, which you can access to see the actual data, the sampled parameters of the generative model, and a plot of the data. 
@@ -79,8 +82,13 @@ Function `mobster_fit` is the main function to fit a MOBSTER model. This functio
 This function has several parameters that allow one customizing the type of fit, the optimization task etc. Here we sample 1 fit per configuration of parameters, and set the optimization to stop when the variation between the mixing proportions and the likelihood is below `epsilon = 1e-4` (usually, one would use `epsilon = 1e-10` but with this value the compilation of this vignette is faster).
 
 ```{r, fig.width=4, fig.height=3}
-# Fit by MOBSTER
-fit = mobster_fit(dataset$data, samples = 1, epsilon = 1e-4, parallel = TRUE)
+# Fit by MOBSTER (default K = 1, ..., 3, and tail TRUE/ FALSE)
+fit = mobster_fit(
+  dataset$data,    
+  samples = 1,      # Number of runs per parameters configuration
+  epsilon = 1e-4,   # Optimisation (delta across rus to determine stop)
+  parallel = TRUE   # Parallel (multi-core) run
+  )
 ```
 As a result, a call of `mobster_fit` will return a list with:
 
@@ -106,13 +114,20 @@ plot(fit$best)
 A comparative plot between the fit and the simulated data can be assembled with `ggpubr` function, which can take two `ggplot` objects and assemble them (an alternative function is `plot_grid` from the `cowplot` package).
 ```{r, eval=FALSE}
 # Not run
-figure = ggarrange(dataset$plot, plot(fit$best), ncol = 2)
+figure = ggarrange(
+  dataset$plot, 
+  plot(fit$best), ncol = 2)
+
 print(figure)
 ```
 Hard clustering assignments are computed and can be accessed with function `Clusters`, the function also allows imposing a minimum cutoff to the reponsibilities of the mutations (if a mutation's maximum responsibility is below the cutoff, its assignment will be `NA`). Note that the return tibble is a copy of the input, with the new  `cluster` column, plus a set of columns for the latent variables in MOBSTER (the clustering reponsibilities).
 ```{r}
 # Assign mutations with at least 80% of probability mass to their maximum responsibility
-clusters = Clusters(fit$best, cutoff_assignment = .8)
+clusters = Clusters(
+  fit$best, 
+  cutoff_assignment = .8
+  )
+
 print(clusters)
 ```
 
@@ -184,29 +199,45 @@ plot_model_selection(fit, TOP = 5)
 
 There are two types of bootstrap functions available in MOBSTER: parametric and nonparametric. The former samples data from the model, and re-runs the fits; the latter re-samples the data (with repetitions), and re-runs the fits. In both cases a distribution of the parameter fits can be approximated, and in the case of nonparametric bootstrap also probability of clustering together two mutations can be computed.
 
-To show this, we sample and fit smaller dataset
+To show this, we sample and fit a smaller dataset
 ```{r eval=T, fig.height=4, fig.width=8, message=FALSE, warning=FALSE}
-dataset = random_dataset(N = 250, seed = 1)
+# Small dataset
+dataset = random_dataset(
+  N = 300, 
+  seed = 1
+  )
+
+# Fit model
 fit = mobster_fit(dataset$data)
 
 # Composition with cowplot
-figure = cowplot::plot_grid(dataset$plot, plot(fit$best), ncol = 2, align = 'h')
+figure = cowplot::plot_grid(
+  dataset$plot, 
+  plot(fit$best), 
+  ncol = 2, 
+  align = 'h')
+
 print(figure)
 ```
 
 
 ```{r, fig.width=9, fig.height=9, message=FALSE, warning=FALSE, eval=T}
-# Run 10 nonparametric bootstraps, and compute the bootstrapped statistics.
+# Run "n.resamples" nonparametric bootstraps, and compute the bootstrapped statistics.
 # The returned object contains also the list of bootstrap resamples, and the fits.
-bootstrap_results = mobster_bootstrap(fit$best,
-                                      bootstrap = 'nonparametric',
-                                      n.resamples = 10,
-                                      epsilon = 1e-4,   # forwarded to mobster_fit
-                                      K = c(1, 2)       # forwarded to mobster_fit, test only models with 1 or 2 Betas
-                                      )
+bootstrap_results = mobster_bootstrap(
+  fit$best,
+  bootstrap = 'nonparametric',
+  n.resamples = 5,
+  epsilon = 1e-4,   # forwarded to mobster_fit, optimization epsilon
+  K = c(1, 2),      # forwarded to mobster_fit, test only models with 1 or 2 Betas
+  cache = NULL      # forwarded to mobster_fit, no cache
+  )
 
 # Statistics can be computed with a MOBSTER function.
-bootstrap_statistics = bootstrapped_statistics(fit$best, bootstrap_results = bootstrap_results)
+bootstrap_statistics = bootstrapped_statistics(
+  fit$best, 
+  bootstrap_results = bootstrap_results
+  )
 ```
 
 
@@ -214,7 +245,12 @@ Bootstrapping, one can compute the model probability across re-samples
 ```{r, fig.width=2, fig.height=3}
 # Show the table and plot it at barplot
 print(bootstrap_statistics$bootstrap_model)
-plot_bootstrap_model_frequency(bootstrap_results, bootstrap_statistics)
+
+# ... and plot it at barplot
+plot_bootstrap_model_frequency(
+  bootstrap_results, 
+  bootstrap_statistics
+  )
 ```
 
 
@@ -227,24 +263,41 @@ print(bootstrap_statistics$bootstrap_statistics)
 mplot = plot_bootstrap_mixing_proportions(
   fit$best, 
   bootstrap_results = bootstrap_results, 
-  bootstrap_statistics = bootstrap_statistics)
+  bootstrap_statistics = bootstrap_statistics
+  )
 
 # Plot the tail parameters
-tplot = plot_bootstrap_tail(fit$best, bootstrap_results = bootstrap_results, bootstrap_statistics = bootstrap_statistics)
+tplot = plot_bootstrap_tail(
+  fit$best, 
+  bootstrap_results = bootstrap_results, 
+  bootstrap_statistics = bootstrap_statistics
+  )
 
 # Plot the Beta parameters
-bplot = plot_bootstrap_Beta(fit$best, bootstrap_results = bootstrap_results, bootstrap_statistics = bootstrap_statistics)
+bplot = plot_bootstrap_Beta(
+  fit$best, 
+  bootstrap_results = bootstrap_results, 
+  bootstrap_statistics = bootstrap_statistics
+  )
 
-ggarrange(
+# Figure
+figure = ggarrange(
   mplot,
   tplot,
   bplot,
   ncol = 3, nrow = 1,
   widths = c(.7, 1, 1)
 )
+
+print(figure)
 ```
 
 In the end, because this is a nonparametric bootstrap run, the co-clustering probability can be plot as well
 ```{r, fig.width=5.6, fig.height=5}
-plot_bootstrap_coclustering(fit$best, bootstrap_results = bootstrap_results, bootstrap_statistics = bootstrap_statistics)
+
+plot_bootstrap_coclustering(
+  fit$best, 
+  bootstrap_results = bootstrap_results, 
+  bootstrap_statistics = bootstrap_statistics
+  )
 ```
