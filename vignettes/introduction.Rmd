@@ -18,16 +18,14 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Table of contents
+
+This vignette describes the basic usage of the open source MOBSTER R package for subclonal deconvolution in cancer. 
+
 1. [Generating a random MOBSTER dataset](#generation)
 2. [Fitting a dataset](#fitting)
 3. [Selecting alternative best models](#alternative)
-4. [Another paragraph](#paragraph2)
 
-This vignette describes the basic usage of the MOBSTER R package for subclonal deconvolution in cancer. 
-
-The package is available at [Github](https://github.com/caravagn/MOBSTER). 
-
+The MOBSTER package is available at [Github](https://github.com/caravagn/MOBSTER). 
 
 ```{r, message=FALSE, warning=F}
 library(mobster)
@@ -37,16 +35,15 @@ library(mobster)
 
 The input data must be formatted as an object of class `data.frame` (or, `tibble`) with at least one columun named `VAF` whose values are numerical, and no `NA` values are present. If a dataset has at least this column, then it can be processed with MOBSTER; the output object will contain a copy of the input data. 
 
-> Example datasets and fits are released as `data` inside the package, and are accessible as usual via `data("xxx", package = 'mobster')` where `xxx` is the name of the dataset to load. See the package manual for a list of available data.
-
+> Data released with the package is accessible as usual via `data("xxx", package = 'mobster')` where `xxx` is the name of the dataset to load. See the package manual for a list of available data.
 
 In this vignette we sample a random dataset using the `random_dataset` function, which has different parameters to customize the data creation. Shortly, you can set 
 
-* the number of samples (mutations) and Beta components (subclones) to generate;
-* constraint on the size of the components, the position and spread of the Beta means, and the variance of the Beta components.
-* set the seed to fix the process.
+* the number of samples (`n`, mutations) and Beta components (`k`, subclones) to generate;
+* ranges and constraints on the size of the components;
+* ranges for the mean and variance of the Beta components.
 
-In this example we fix the seed and the parameter `Beta_variance_scaling`, which  affects the variance of the Beta(s). Because the variance is sampled as `U[0,1]` and scaled by this value, values on the order of `1000` give low variance, while `100` represents a dataset with quite some dispersion (compared to a putative Binomial generative model).
+In this example we fix the seed and the parameter `B = Beta_variance_scaling`, which  affects the variance of the Beta(s). Because the variance is sampled as `u/B ~ U[0,1]` (scaled by this value), values on the order of `1000` give low variance, representative of high-coverage sequencing, while `100` represents a dataset with quite some dispersion. This is because the underlyin allele-frequency data is generated from a putative Beta-Binomial generative model.
 
 ```{r, message=FALSE, warning=F}
 dataset = random_dataset(
@@ -75,7 +72,9 @@ print(dataset$plot)
 
 ## Fitting a dataset<a name="fitting"></a>
 
-Function `mobster_fit` is the main function to fit a MOBSTER model. This function implements a model selection routine that, by default, scores the models with the *reduced Incomplete Classification Likelihood* (reICL). reICL is a variant to the popular BIC score which uses the entropy of the latent variables of the model; the reICL formulation uses a particular version of this score, as discussed in the main MOBSTER paper. 
+Function `mobster_fit` is the main function to fit a MOBSTER model. 
+
+This function implements a model selection routine that, by default, scores the models with the *reduced Incomplete Classification Likelihood* (reICL). reICL is a variant to the popular BIC score which uses the entropy of the latent variables of the model; the reICL formulation uses a particular version of this score, as discussed in the main MOBSTER paper. 
 
 >The fits are computed  computed exploiting the [easypar](https://github.com/caravagn/easypar) package, which allows easy parallel run of R functions.
 
@@ -194,110 +193,4 @@ These functions can be all wrapped by a call to `plot_model_selection` which plo
 ```{r, fig.width=9, fig.height=9, message=FALSE, warning=FALSE, eval=FALSE}
 # Not run
 plot_model_selection(fit, TOP = 5)
-```
-## Bootstrapping a model<a name="bootstrap"></a>
-
-There are two types of bootstrap functions available in MOBSTER: parametric and nonparametric. The former samples data from the model, and re-runs the fits; the latter re-samples the data (with repetitions), and re-runs the fits. In both cases a distribution of the parameter fits can be approximated, and in the case of nonparametric bootstrap also probability of clustering together two mutations can be computed.
-
-To show this, we sample and fit a smaller dataset
-```{r eval=T, fig.height=4, fig.width=8, message=FALSE, warning=FALSE}
-# Small dataset
-dataset = random_dataset(
-  N = 300, 
-  seed = 1
-  )
-
-# Fit model
-fit = mobster_fit(dataset$data)
-
-# Composition with cowplot
-figure = cowplot::plot_grid(
-  dataset$plot, 
-  plot(fit$best), 
-  ncol = 2, 
-  align = 'h')
-
-print(figure)
-```
-
-
-```{r, fig.width=9, fig.height=9, message=FALSE, warning=FALSE, eval=T}
-# Run "n.resamples" nonparametric bootstraps, and compute the bootstrapped statistics.
-# The returned object contains also the list of bootstrap resamples, and the fits.
-bootstrap_results = mobster_bootstrap(
-  fit$best,
-  bootstrap = 'nonparametric',
-  n.resamples = 5,
-  epsilon = 1e-4,   # forwarded to mobster_fit, optimization epsilon
-  K = c(1, 2),      # forwarded to mobster_fit, test only models with 1 or 2 Betas
-  cache = NULL      # forwarded to mobster_fit, no cache
-  )
-
-# Statistics can be computed with a MOBSTER function.
-bootstrap_statistics = bootstrapped_statistics(
-  fit$best, 
-  bootstrap_results = bootstrap_results
-  )
-```
-
-
-Bootstrapping, one can compute the model probability across re-samples
-```{r, fig.width=2, fig.height=3}
-# Show the table and plot it at barplot
-print(bootstrap_statistics$bootstrap_model)
-
-# ... and plot it at barplot
-plot_bootstrap_model_frequency(
-  bootstrap_results, 
-  bootstrap_statistics
-  )
-```
-
-
-Similarly, one can compute the parameter probabilitiesacross re-samples
-```{r, fig.width=12, fig.height=3}
-# Show the table
-print(bootstrap_statistics$bootstrap_statistics)
-
-# Plot the mixing proportions
-mplot = plot_bootstrap_mixing_proportions(
-  fit$best, 
-  bootstrap_results = bootstrap_results, 
-  bootstrap_statistics = bootstrap_statistics
-  )
-
-# Plot the tail parameters
-tplot = plot_bootstrap_tail(
-  fit$best, 
-  bootstrap_results = bootstrap_results, 
-  bootstrap_statistics = bootstrap_statistics
-  )
-
-# Plot the Beta parameters
-bplot = plot_bootstrap_Beta(
-  fit$best, 
-  bootstrap_results = bootstrap_results, 
-  bootstrap_statistics = bootstrap_statistics
-  )
-
-# Figure
-figure = ggarrange(
-  mplot,
-  tplot,
-  bplot,
-  ncol = 3, nrow = 1,
-  widths = c(.7, 1, 1)
-)
-
-print(figure)
-```
-
-In the end, because this is a nonparametric bootstrap run, the co-clustering probability can be plot as well
-```{r, fig.width=5.6, fig.height=5}
-
-plot_bootstrap_coclustering(
-  fit$best, 
-  bootstrap_results = bootstrap_results, 
-  bootstrap_statistics = bootstrap_statistics
-  )
 ```
