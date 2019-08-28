@@ -9,7 +9,7 @@ choose_clusters(x, pi_cutoff = 0.02, N_cutoff = 10, verbose = FALSE)
 \arguments{
 \item{x}{A MOBSTER fit object.}
 
-\item{pi_cutoff}{The cutoff on the mixing proportions, default is 2%.}
+\item{pi_cutoff}{The cutoff on the mixing proportions, default is 0.02.}
 
 \item{N_cutoff}{The cutoff on the number of mutations assigned to a cluster, default is 10.}
 
