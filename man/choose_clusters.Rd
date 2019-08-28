@@ -28,7 +28,7 @@ the latent variables are re-computed, as well as the clustering assignments and 
 mixing proportions (all mutations will be still assigned after clusters' removal).
 }
 \examples{
-data(fit_example)
+data('fit_example', package = 'mobster')
 
 # Does not change anything (no filter triggered)
 choose_clusters(fit_example$best)

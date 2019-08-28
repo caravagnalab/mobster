@@ -4,19 +4,18 @@ author: "Giulio Caravagna"
 date: "September 2019"
 institute: "Institute for Cancer Research"
 email: "giulio.caravagna@icr.ac.uk"
-output:
-  html_document:
-    theme: cosmo
-    highlight: tango
-    output:
+output: rmarkdown::github_document
 vignette: >
-  %\VignetteEngine{knitr::knitr}
-  %\VignetteIndexEntry{Vignette for mobster}
-  %\usepackage[UTF-8]{inputenc}
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
 ```
 
 # Table of contents
@@ -26,11 +25,12 @@ knitr::opts_chunk$set(echo = TRUE)
 4. [Another paragraph](#paragraph2)
 
 This vignette describes the basic usage of the MOBSTER R package for subclonal deconvolution in cancer. 
+
 The package is available at [Github](https://github.com/caravagn/MOBSTER). 
 
 
 ```{r, message=FALSE, warning=F}
-require(mobster)
+library(mobster)
 ```
 
 ## Generating a MOBSTER dataset <a name="generation"></a>
@@ -88,25 +88,24 @@ As a result, a call of `mobster_fit` will return a list with:
 * a `fit$runs` list that contains the top fits (ranked by score), the object available as `best` will match the head of this list, `fit$runs`;
 * and a `fit$fits.table` that summarises the scores for each one of the runs.
 
-The `fits.table` reports also other scores for the model fits, which include AIC, BIC, ICL the entropy and the likelihood of the model. Each fit object (`best` or any object stored in `runs`) is from class `dbpmm`. This class provides S3 objects for print and plot of a MOBSTER model 
+The `fits.table` reports also other scores for the model fits, which include AIC, BIC, ICL the entropy and the likelihood of the model. Each fit object (`best` or any object stored in `runs`) is from class `dbpmm`. This class provides S3 objects for print and plot of a MOBSTER model
 ```{r, fig.width=4, fig.height=3}
 # Print the best model, as well as the first 3 models in the runs list
 print(fit$best)
 
 print(fit$runs[[1]]) # same as best
-print(fit$runs[[2]]) 
-print(fit$runs[[3]]) 
+print(fit$runs[[2]])
+print(fit$runs[[3]])
 ```
-
 The simplest visualization for MOBSTER's fits is a coloured histogram, where colours represent clustering assignments, overlaid to the model density. By default MOBSTER names Beta clusters according to the decreasing order of their mean; so `C1` is always the label of the cluster with highest mean, etc. The basic plot shows, mirrored on the y-axis, the percentage of sum-of-squared-error (SSE) as a function of the input VAF (which is termed `Observed Frequency` in the x-axis). The plot caption annotates some information about the fitting.
 
-```{r, fig.width=4, fig.height=4}
+```{r, fig.width=5, fig.height=4}
 # Plot the best model
 plot(fit$best)
 ```
 A comparative plot between the fit and the simulated data can be assembled with `ggpubr` function, which can take two `ggplot` objects and assemble them (an alternative function is `plot_grid` from the `cowplot` package).
 ```{r, eval=FALSE}
-# Not run 
+# Not run
 figure = ggarrange(dataset$plot, plot(fit$best), ncol = 2)
 print(figure)
 ```
@@ -123,12 +122,12 @@ A set of plots is available to inspect further details of a fit. For example,
 * the mixing proportions as barplot;
 * the trace of the negative log-likelihood (NLL) can be inspected;
 * and the initial condition of the fit can be plot as density.
-```{r, fig.width=4, fig.height=5}
+```{r, fig.width=2.5, fig.height=5}
 # Assign mutations with at least 80% of probability mass to their maximum responsibility
 plot_latent_variables(fit$best, cutoff_assignment = .8)
 ```
 
-```{r, fig.width=4, fig.height=3}
+```{r, fig.width=3, fig.height=3}
 # Mixing proportions
 plot_mixing_proportions(fit$best)
 
@@ -158,20 +157,20 @@ figure = ggarrange(
 
 print(figure)
 ```
-The table reportin the scores can be visualised, and everal plots are available to inspect model selection. 
+The table reportin the scores can be visualised, and everal plots are available to inspect model selection.
 ```{r, fig.width=15, fig.height=4, message=FALSE, warning=FALSE}
-print(fit$fit.table)
+print(fit$fits.table)
 ```
 
 One can plot of the sum of squared error (SSE) between the fit density and the data (binned with bins of size 0.01), for several solutions at once. This measure can represent a sort of goodness of fit statistics.
 
 ```{r, fig.width=3, fig.height=6}
-# Goodness of fit (SSE)
-plot_gofit(fit)
+# Goodness of fit (SSE), for the top 3 fits.
+plot_gofit(fit, TOP = 3)
 ```
 
 The scores can also be compared graphically. Running `plot_fit_scores` all the computed scoring functions (BIC, AIC, ICL and reICL) are shown, which helps understanding if the best model with the default score (reICL) is the best also according to the other scores. In this graphics the red dot represents the best model according to each score.
-```{r, fig.width=4, fig.height=3}
+```{r, fig.width=4, fig.height=4}
 plot_fit_scores(fit)
 ```
 
@@ -185,36 +184,50 @@ plot_model_selection(fit, TOP = 5)
 
 There are two types of bootstrap functions available in MOBSTER: parametric and nonparametric. The former samples data from the model, and re-runs the fits; the latter re-samples the data (with repetitions), and re-runs the fits. In both cases a distribution of the parameter fits can be approximated, and in the case of nonparametric bootstrap also probability of clustering together two mutations can be computed.
 
+To show this, we sample and fit smaller dataset
+```{r eval=T, fig.height=4, fig.width=8, message=FALSE, warning=FALSE}
+dataset = random_dataset(N = 250, seed = 1)
+fit = mobster_fit(dataset$data)
+
+# Composition with cowplot
+figure = cowplot::plot_grid(dataset$plot, plot(fit$best), ncol = 2, align = 'h')
+print(figure)
+```
+
+
 ```{r, fig.width=9, fig.height=9, message=FALSE, warning=FALSE, eval=T}
-# Run 15 nonparametric bootstraps, and compute the bootstrapped statistics. 
+# Run 10 nonparametric bootstraps, and compute the bootstrapped statistics.
 # The returned object contains also the list of bootstrap resamples, and the fits.
-bootstrap_results = mobster_bootstrap(fit$best, 
+bootstrap_results = mobster_bootstrap(fit$best,
                                       bootstrap = 'nonparametric',
-                                      n.resamples = 15, 
+                                      n.resamples = 10,
                                       epsilon = 1e-4,   # forwarded to mobster_fit
                                       K = c(1, 2)       # forwarded to mobster_fit, test only models with 1 or 2 Betas
                                       )
 
-# Statistics can be computed with a MOBSTER function. 
+# Statistics can be computed with a MOBSTER function.
 bootstrap_statistics = bootstrapped_statistics(fit$best, bootstrap_results = bootstrap_results)
 ```
 
 
 Bootstrapping, one can compute the model probability across re-samples
-```{r, fig.width=4, fig.height=3}
+```{r, fig.width=2, fig.height=3}
 # Show the table and plot it at barplot
 print(bootstrap_statistics$bootstrap_model)
-plot_bootstrap_model_frequency(fit)
+plot_bootstrap_model_frequency(bootstrap_results, bootstrap_statistics)
 ```
 
 
 Similarly, one can compute the parameter probabilitiesacross re-samples
-```{r, fig.width=4, fig.height=3}
-# Show the table 
+```{r, fig.width=12, fig.height=3}
+# Show the table
 print(bootstrap_statistics$bootstrap_statistics)
 
 # Plot the mixing proportions
-mplot = plot_bootstrap_mixing_proportions(fit$best, bootstrap_results = bootstrap_results, bootstrap_statistics = bootstrap_statistics)  
+mplot = plot_bootstrap_mixing_proportions(
+  fit$best, 
+  bootstrap_results = bootstrap_results, 
+  bootstrap_statistics = bootstrap_statistics)
 
 # Plot the tail parameters
 tplot = plot_bootstrap_tail(fit$best, bootstrap_results = bootstrap_results, bootstrap_statistics = bootstrap_statistics)
@@ -232,6 +245,6 @@ ggarrange(
 ```
 
 In the end, because this is a nonparametric bootstrap run, the co-clustering probability can be plot as well
-```{r, fig.width=9, fig.height=5}
-plot_bootstrap_coclustering(fit$best, bootstrap_results = bootstrap_results, bootstrap_statistics = bootstrap_statistics)  
+```{r, fig.width=5.6, fig.height=5}
+plot_bootstrap_coclustering(fit$best, bootstrap_results = bootstrap_results, bootstrap_statistics = bootstrap_statistics)
 ```

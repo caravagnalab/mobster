@@ -10,10 +10,10 @@
 #'
 #' @examples
 #' data('fit_example', package = 'mobster')
-#' plot_NLL(fit_example)
+#' plot_NLL(fit_example$best)
 plot_NLL = function(x)
 {
-  stopifnot(inherits(x, "dbpmm"))
+  is_mobster_fit(x)
   
   NLL = data.frame(
     x = 1:length(x$all.NLL), 

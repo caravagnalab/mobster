@@ -18,13 +18,13 @@ bootstrapped_statistics(x, bootstrap_results,
 }
 \value{
 A list with the bootstrapped values, the model frequency, the bootstraped statistics and
-the co-clustering probability (only for nonparametric boostraps).
+the co-clustering probability - non-null only for nonparametric boostrap.
 }
 \description{
 From a bootstrap run several statistics are computed.
-These include the model frequency, the statistics of each fit parameter
+These are the model frequency, the bootstrap statistics of each parameter
 and, if the bootstrap is nonparametric, also the co-clustering probability
 of the input points. All the bootstrapped values are also returned. For the
-bootstrapped statistics the confidence intervals are returned given a 
-required input alpha value (default 0.025).
+bootstrapped statistics the confidence intervals are returned for a 
+required  alpha value.
 }

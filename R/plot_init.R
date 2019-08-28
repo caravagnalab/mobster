@@ -15,7 +15,7 @@ plot_init = function(x,
                      colors = c(`Tail` = 'gainsboro')
 )
 {
-  stopifnot(inherits(x, "dbpmm"))
+  is_mobster_fit(x)
   
   # Simple plot.
   #

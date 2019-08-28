@@ -18,5 +18,6 @@ See \code{\link{print}}.
 Summary for an object of class \code{'dbpmm'} is a print.
 }
 \examples{
-TODO
+data(fit_example)
+summary(fit_example$best)
 }

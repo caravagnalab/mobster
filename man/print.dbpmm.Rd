@@ -18,5 +18,6 @@ nothing.
 Summaries for an object of class \code{'dbpmm'} is like a print.
 }
 \examples{
-TODO
+data(fit_example)
+print(fit_example$best)
 }

@@ -18,8 +18,8 @@
 #'
 #' @examples
 #' data('fit_example', package = 'mobster')
-#' plot_latent_variables(fit_example)
-#' plot_latent_variables(fit_example, cutoff_assignment = .9)
+#' plot_latent_variables(fit_example$best)
+#' plot_latent_variables(fit_example$best, cutoff_assignment = .9)
 plot_latent_variables = function(x, cutoff_assignment = 0)
 {
   stopifnot(inherits(x, "dbpmm"))

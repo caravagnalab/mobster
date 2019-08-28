@@ -21,8 +21,5 @@ goodness of fit. For the \code{TOP} available solutions the SSE trace is shown.
 }
 \examples{
 data('fit_example', package = 'mobster')
-plot_gofit(fit_example)
-
-# This will subset the call to the one available
-plot_gofit(fit_example, TOP = 100)
+plot_gofit(fit_example, TOP = 3)
 }

@@ -66,5 +66,16 @@ also runs the function \code{choose_clusters} which implements a simple heuristi
 out small clusters from the fit output.
 }
 \examples{
-TODO
+# Generate a random dataset 
+x = random_dataset(seed = 123, Beta_variance_scaling = 100, N = 200)
+print(x) # Contains a ggplot object
+
+# Fit, default models, changed epsilon for convergence
+x = mobster_fit(x$data, epsilon = 1e-5)
+
+plot(x$best)
+print(x$best)
+
+lapply(x$runs[1:3], plot)
+
 }

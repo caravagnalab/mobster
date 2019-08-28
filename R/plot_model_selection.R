@@ -21,7 +21,7 @@ plot_model_selection = function(x,
                                 TOP = 5,
                                 ...)
 {
-  stopifnot(is_list_mobster_fits(x))
+  is_list_mobster_fits(x)
   
   # =-=-=-=-=-=-=-=-
   # Best model fit

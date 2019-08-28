@@ -54,10 +54,21 @@ is_mobster_input_dataset = function(x)
 
 is_list_mobster_fits = function(x)
 {
-  nOK = all(c('fits.table', 'runs', 'best', 'model.selection') %in% names(x))
-  lOK = is.list(x)
-  mF = all(sapply(x$runs, class) == 'dbpmm')
-  mbF = (class(x$best) == 'dbpmm')
+  merr = function(s) {
+    cat(
+      crayon::red(
+        "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n",
+        "The input object is not a MOBSTER valid list of fit returned from \"mobster_fit\".\n",
+        s, '\n',
+        "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
+      )
+    )
+    
+    stop("Bad MOBSTER input (list of fits).")
+  }
   
-  all(nOK, lOK, mF, mbF)
+  if(!is.list(x)) merr("Input isn ot a list.")
+  if(!all(c('fits.table', 'runs', 'best', 'model.selection') %in% names(x))) merr("Missing names, there should be 'fits.table', 'runs', 'best', 'model.selection' at least.")
+  if(!all(sapply(x$runs, class) == 'dbpmm')) merr("Runs objects are not MOBSTER fits.")
+  if(class(x$best) != 'dbpmm') merr("Best is not MOBSTER a fits.")
 }

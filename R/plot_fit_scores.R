@@ -15,7 +15,7 @@
 #' plot_fit_scores(fit_example)
 plot_fit_scores = function(x)
 {
-  stopifnot(is_list_mobster_fits(x))
+  is_list_mobster_fits(x)
   
   model.selection = 'ICL'
   if (!is.null(x$model.selection))

@@ -53,6 +53,9 @@ data('fit_example', package = 'mobster')
 ddbpmm(fit_example$best)
 
 # Use only some of the mixture components, and pass some data
-ddbpmm(x, data = .4, components = 1)
-ddbpmm(x, data = .4, components = 2)
+ddbpmm(fit_example$best, data = .4, components = 1)
+
+# An internal function to get f(x) with x the [0,1] range.
+ggplot(mobster:::template_density(fit_example$best, reduce = TRUE),
+       aes(x = x, y = y, color = cluster)) + geom_line()
 }

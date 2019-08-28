@@ -9,7 +9,7 @@
 #'
 #' @param x A MOBSTER fit object.
 #' @param pi_cutoff The cutoff on the mixing proportions, default is 2%.
-#' @param N_cutoff  The cutoff on the number of mutations assigned to a cluster, default is 10.
+#' @param N_cutoff The cutoff on the number of mutations assigned to a cluster, default is 10.
 #' @param verbose If outputs should be reported to screen or not, default is no.
 #'
 #' @return A MOBSTER fit object where clusters are larger than \code{pi_cutoff} and contain
@@ -18,7 +18,7 @@
 #' @export
 #'
 #' @examples
-#' data(fit_example)
+#' data('fit_example', package = 'mobster')
 #'
 #' # Does not change anything (no filter triggered)
 #' choose_clusters(fit_example$best)
@@ -30,7 +30,7 @@ choose_clusters = function(x,
                            N_cutoff = 10,
                            verbose = FALSE)
 {
-  stopifnot(inherits(x, "dbpmm"))
+  mobster:::is_mobster_fit(x)
   
   if(verbose)
   {

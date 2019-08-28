@@ -32,5 +32,5 @@
 #'
 #' @examples
 #' data(cancer_genes_dnds)
-#' print(cancer_genes_dnds$best)
+#' print(cancer_genes_dnds)
 "cancer_genes_dnds"

@@ -47,7 +47,7 @@ compute_co_clustering = function(x, resamples, fits)
       
       pairs = combn(cl.assignments, 2, simplify = F)
 
-      for (p in 1:length(pairs)) 
+      for (p in 1:length(pairs))  
       {
         M[pairs[[p]][1], pairs[[p]][2]] = M[pairs[[p]][1], 
                                             pairs[[p]][2]] + 1

@@ -17,5 +17,5 @@ It plots the Negative log-Likelihood (NLL) trace of a fit.
 }
 \examples{
 data('fit_example', package = 'mobster')
-plot_NLL(fit_example)
+plot_NLL(fit_example$best)
 }

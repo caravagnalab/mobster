@@ -16,7 +16,11 @@
 #' @import sads
 #' @import ggplot2
 #'
-#' @examples something..
+#' @examples 
+#' data(fit_example)
+#' plot(fit_example$best)
+#' plot(fit_example$best, alpha = 1, cutoff_assignment = .7)
+#' plot(fit_example$best, colors =  c(`Tail` = 'gainsboro', `C1` = 'darkorange'))
 plot.dbpmm = function(x,
                       alpha = .8,
                       colors = c(`Tail` = 'gainsboro'),
@@ -24,8 +28,8 @@ plot.dbpmm = function(x,
                       ...
                       )
 {
-  stopifnot(inherits(x, "dbpmm"))
-
+  is_mobster_fit(x)
+  
   binwidth = 0.01
   histogram.main = 'MOBSTER fit'
   

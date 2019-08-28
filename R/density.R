@@ -39,8 +39,11 @@
 #' ddbpmm(fit_example$best)
 #' 
 #' # Use only some of the mixture components, and pass some data
-#' ddbpmm(x, data = .4, components = 1)
-#' ddbpmm(x, data = .4, components = 2)
+#' ddbpmm(fit_example$best, data = .4, components = 1)
+#' 
+#' # An internal function to get f(x) with x the [0,1] range.
+#' ggplot(mobster:::template_density(fit_example$best, reduce = TRUE),
+#'        aes(x = x, y = y, color = cluster)) + geom_line()
 ddbpmm = function(x,
                   data = NULL,
                   components = 1:x$K,
@@ -51,7 +54,7 @@ ddbpmm = function(x,
                   shape = NULL,
                   log = TRUE) 
 {
-  stopifnot(inherits(x, "dbpmm"))
+  is_mobster_fit(x)
   stopifnot(length(components) > 0)
   
   # Get parameters and data if these are not passed explicitly
@@ -192,13 +195,30 @@ template_density = function(x,
 #' @export
 #'
 #' @examples
+#' # 1 Beta component at 0.5 mean (symmetrical Beta)
 #' a = b = 50
 #' names(a) = names(b) = "C1"
 #'
+#' # 60% tail mutations
 #' pi = c('Tail' = .6, 'C1' = .4)
 #'
-#' v = rdbpmm(x = NULL, n = 1000, a = a, b = b, pi = pi, shape = 2, scale = 0.05)
-#' hist(v, breaks = seq(0, 1, 0.01))
+#' # Sample
+#' v = data.frame(x = rdbpmm(
+#'    x = NULL,
+#'    n = 1000,
+#'    a = a,
+#'    b = b,
+#'    pi = pi,
+#'    shape = 2,
+#'    scale = 0.05
+#'  ))
+#' ggplot(v, aes(x)) + geom_histogram(binwidth = 0.01)
+#' 
+#' # Or use the parameters of a model available
+#' data('fit_example', package = 'mobster')
+#' 
+#' v = data.frame(x = rdbpmm(x = fit_example$best, n = 1000))
+#' ggplot(v, aes(x)) + geom_histogram(binwidth = 0.01)
 rdbpmm = function(x,
                   a = NULL,
                   b = NULL,
@@ -208,6 +228,7 @@ rdbpmm = function(x,
                   n = 1,
                   tail.cutoff = 1)
 {
+  
   # Get parameters if these are not passed explicitly
   if (all(is.null(scale)) | all(is.null(shape)))
   {

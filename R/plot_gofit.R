@@ -12,13 +12,10 @@
 #'
 #' @examples
 #' data('fit_example', package = 'mobster')
-#' plot_gofit(fit_example)
-#' 
-#' # This will subset the call to the one available
-#' plot_gofit(fit_example, TOP = 100)
+#' plot_gofit(fit_example, TOP = 3)
 plot_gofit = function(x, TOP = 5)
 {
-  stopifnot(is_list_mobster_fits(x))
+  is_list_mobster_fits(x)
   
   binning = 1e-2
   

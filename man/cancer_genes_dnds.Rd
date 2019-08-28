@@ -13,6 +13,6 @@ List of gene ids (HuGO format) developed from Martincorena et al. to compute dnd
 }
 \examples{
 data(cancer_genes_dnds)
-print(cancer_genes_dnds$best)
+print(cancer_genes_dnds)
 }
 \keyword{datasets}

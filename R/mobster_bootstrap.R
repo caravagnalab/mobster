@@ -42,7 +42,7 @@ mobster_bootstrap = function(x,
            bootstrap, ' bootstrap')
   )
   
-  stopifnot(inherits(x, "dbpmm"))
+  is_mobster_fit(x)
   stopifnot(bootstrap %in% c('parametric', 'nonparametric'))
   
   pio::pioTit(paste0("Bootstrapping for this MOBSTER model"))
@@ -87,6 +87,27 @@ mobster_bootstrap = function(x,
     cache = cache
   )
   
+  # Check for errors
+  # Polish errors if any
+  nerrs = easypar::numErrors(fits)
   
-  return(list(resamples = resamples, fits = fits, bootstrap = bootstrap))
+  if(nerrs == n.resamples) {
+    
+    lapply(fits, function(w) print(w$message))
+    
+    stop("All task returned errors, no fit available, raising error.")
+  }
+  
+  errors = NULL
+  if(nerrs > 0) {
+    cat(crayon::red(nerrs, "tasks raised an error, filtering them out.\n"))
+    cat(crayon::red(n.resamples - nerrs, "bootstrap(s) available.\n"))
+    
+    errs = sapply(fits, function(w) inherits(w, 'simpleError') | inherits(w, 'try-error'))
+    errors = fits[errs]
+  }
+  
+  fits = easypar::filterErrors(fits)
+  
+  return(list(resamples = resamples, fits = fits, bootstrap = bootstrap, errors = errors))
 }

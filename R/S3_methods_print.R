@@ -7,7 +7,8 @@
 #' @export
 #'
 #' @examples
-#' TODO
+#' data(fit_example)
+#' summary(fit_example$best)
 summary.dbpmm = function(x, ...) {
   print.dbpmm(x, ...)
 }
@@ -22,7 +23,8 @@ summary.dbpmm = function(x, ...) {
 #' @import crayon
 #'
 #' @examples
-#' TODO
+#' data(fit_example)
+#' print(fit_example$best)
 print.dbpmm = function(x, ...)
 {
   stopifnot(inherits(x, "dbpmm"))

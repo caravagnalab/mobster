@@ -29,5 +29,8 @@ A ggplot object for the plot.
 Plot a MOBSTER fit.
 }
 \examples{
-something..
+data(fit_example)
+plot(fit_example$best)
+plot(fit_example$best, alpha = 1, cutoff_assignment = .7)
+plot(fit_example$best, colors =  c(`Tail` = 'gainsboro', `C1` = 'darkorange'))
 }

@@ -40,11 +40,28 @@ model, or from a custom mixture. The principle is the same of function
 \code{\link{ddbpmm}}.
 }
 \examples{
+# 1 Beta component at 0.5 mean (symmetrical Beta)
 a = b = 50
 names(a) = names(b) = "C1"
 
+# 60\% tail mutations
 pi = c('Tail' = .6, 'C1' = .4)
 
-v = rdbpmm(x = NULL, n = 1000, a = a, b = b, pi = pi, shape = 2, scale = 0.05)
-hist(v, breaks = seq(0, 1, 0.01))
+# Sample
+v = data.frame(x = rdbpmm(
+   x = NULL,
+   n = 1000,
+   a = a,
+   b = b,
+   pi = pi,
+   shape = 2,
+   scale = 0.05
+ ))
+ggplot(v, aes(x)) + geom_histogram(binwidth = 0.01)
+
+# Or use the parameters of a model available
+data('fit_example', package = 'mobster')
+
+v = data.frame(x = rdbpmm(x = fit_example$best, n = 1000))
+ggplot(v, aes(x)) + geom_histogram(binwidth = 0.01)
 }

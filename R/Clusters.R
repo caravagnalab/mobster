@@ -16,13 +16,13 @@
 #'
 #' @examples
 #' data('fit_example', package = 'mobster')
-#' Clusters(fit_example)
+#' Clusters(fit_example$best)
 #' 
 #' # Add some cutoff to filter assignments
-#' Clusters(fit_example, cutoff_assignment = .8)
+#' Clusters(fit_example$best, cutoff_assignment = .8)
 Clusters = function(x, cutoff_assignment = 0)
 {
-  stopifnot(inherits(x, "dbpmm"))
+  is_mobster_fit(x)
   
   lv = mobster:::latent_vars(x)
 
