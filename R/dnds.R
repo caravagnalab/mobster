@@ -41,9 +41,8 @@ dnds <- function(fit, gene_list = NULL, refdb = "hg19"){
   }
   
   globaldndsplot <- globaldndstable %>%
-    filter(name == "wall") %>%
+    dplyr::filter(name == "wall") %>%
     ggplot2::ggplot(ggplot2::aes(x = cluster, y = mle, ymin = cilow, ymax = cihigh)) +
-    #ggplot2::geom_point() +
     ggplot2::geom_pointrange() +
     ggplot2::theme_classic() +
     ggplot2::xlab("") +
