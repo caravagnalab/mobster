@@ -6,15 +6,14 @@
 #' will contain only the clusters that pass both filters. If any cluster is dropped
 #' the latent variables are re-computed, as well as the clustering assignments and the
 #' mixing proportions (all mutations will be still assigned after clusters' removal).
-#'
+#' 
 #' @param x A MOBSTER fit object.
-#' @param pi_cutoff The cutoff on the mixing proportions, default is 2%.
-#' @param N_cutoff The cutoff on the number of mutations assigned to a cluster, default is 10.
+#' @param pi_cutoff The cutoff on the mixing proportions, default is 0.02.
+#' @param N_cutoff The cutoff on the number of mutations assigned to a cluster, default is 10.  
 #' @param verbose If outputs should be reported to screen or not, default is no.
 #'
 #' @return A MOBSTER fit object where clusters are larger than \code{pi_cutoff} and contain
 #' at least \code{N_cutoff}. If no such cluster exists an error is generated.
-#' 
 #' @export
 #'
 #' @examples
