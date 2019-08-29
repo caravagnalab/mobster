@@ -15,7 +15,7 @@ plot_mixing_proportions = function(x,
                                    colors = c(`Tail` = 'gainsboro')
 )
 {
-  stopifnot(inherits(x, "dbpmm"))
+  is_mobster_fit(x)  
   
   Proportions = x$Clusters %>%
     dplyr::filter(type == 'Mixing proportion')
@@ -41,12 +41,12 @@ plot_mixing_proportions = function(x,
       colour = 'red',
       size = 2.5
     ) +
-    labs(title  = bquote('Mixing Proportions')) +
+    labs(title  = bquote('Mixing proportions')) +
     xlab("") +
     ylab(bquote('Proportions (' * pi * ')')) +
     guides(fill = FALSE) +
-    my_ggplot_theme() +
+    mobster:::my_ggplot_theme() +
     ylim(c(0, 1))
   
-  add_fill_pl(x, pl, colors)
+  mobster:::add_fill_color_pl(x, pl, colors)
 }

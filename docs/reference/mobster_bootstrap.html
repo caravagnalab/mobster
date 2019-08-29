@@ -88,7 +88,13 @@ and uses  ?easypar." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/bootstrap.html">Bootstrap routines for model</a>
+    </li>
+    <li>
       <a href="../articles/introduction.html">Vignette for mobster</a>
+    </li>
+    <li>
+      <a href="../articles/plotting.html">Plotting mobster fits</a>
     </li>
   </ul>
 </li>
@@ -268,7 +274,7 @@ and uses  <code>?easypar</code>.</p>
 #&gt; </div><div class='input'>
 <span class='co'># The best fits are returned</span>
 <span class='no'>mb</span>$<span class='no'>fits</span></div><div class='output co'>#&gt; $`1`
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 426 </span><span style='color: #00BBBB;'>points with</span><span> K = 2 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 140 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
+#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 426 </span><span style='color: #00BBBB;'>points with</span><span> K = 2 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 134 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
 #&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt;   Components (fit)  
 #&gt; </span><span>     Tail	n = 254 (0.63) 	 Shape = 1.8 
@@ -282,7 +288,7 @@ and uses  <code>?easypar</code>.</p>
 #&gt;     9
 #&gt; 
 #&gt; $`2`
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 426 </span><span style='color: #00BBBB;'>points with</span><span> K = 3 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 487 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
+#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 426 </span><span style='color: #00BBBB;'>points with</span><span> K = 3 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 531 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
 #&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt;   Components (fit)  
 #&gt; </span><span>     Tail	n = 230 (0.54) 	 Shape = 2.1 
@@ -295,20 +301,22 @@ and uses  <code>?easypar</code>.</p>
 #&gt;  -544.266 -1015.879 -1064.532 139.062 -876.8167        4.863643 -1011.015   12
 #&gt; 
 #&gt; $`3`
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 426 </span><span style='color: #00BBBB;'>points with</span><span> K = 1 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 22 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
+#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 426 </span><span style='color: #00BBBB;'>points with</span><span> K = 3 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 265 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
 #&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt;   Components (fit)  
-#&gt; </span><span>     Tail	n = 314 (0.76) 	 Shape = 1.4 
-#&gt;   Beta C1 	n = 112 (0.24) 	 Mean = 0.49
+#&gt; </span><span>     Tail	n = 248 (0.56) 	 Shape = 1.9 
+#&gt;   Beta C1 	n = 113 (0.26) 	 Mean = 0.49
+#&gt;   Beta C2 	n = 17 (0.03) 	 Mean = 0.3
+#&gt;   Beta C3 	n = 48 (0.15) 	 Mean = 0.16
 #&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt;   Scores (model selection)  
 #&gt; </span><span>       NLL       BIC       AIC  entropy       ICL reduced.entropy     reICL
-#&gt;  -477.4943 -918.6619 -942.9885 29.94818 -888.7137               0 -918.6619
+#&gt;  -499.7742 -926.8952 -975.5484 138.4307 -788.4644         7.40982 -919.4853
 #&gt;  size
-#&gt;     6
+#&gt;    12
 #&gt; 
 #&gt; $`4`
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 426 </span><span style='color: #00BBBB;'>points with</span><span> K = 2 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 206 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
+#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 426 </span><span style='color: #00BBBB;'>points with</span><span> K = 2 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 228 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
 #&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt;   Components (fit)  
 #&gt; </span><span>     Tail	n = 232 (0.54) 	 Shape = 1.9 
@@ -322,7 +330,7 @@ and uses  <code>?easypar</code>.</p>
 #&gt;     9
 #&gt; 
 #&gt; $`5`
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 426 </span><span style='color: #00BBBB;'>points with</span><span> K = 2 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 323 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
+#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 426 </span><span style='color: #00BBBB;'>points with</span><span> K = 2 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 306 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
 #&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt;   Components (fit)  
 #&gt; </span><span>     Tail	n = 237 (0.55) 	 Shape = 1.8 

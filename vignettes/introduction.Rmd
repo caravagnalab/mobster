@@ -1,5 +1,5 @@
 ---
-title: "Vignette for mobster"
+title: "A.Basic mobster usage"
 author: "Giulio Caravagna"
 date: "September 2019"
 institute: "Institute for Cancer Research"
@@ -18,12 +18,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-
 This vignette describes the basic usage of the open source MOBSTER R package for subclonal deconvolution in cancer. 
-
-1. [Generating a random MOBSTER dataset](#generation)
-2. [Fitting a dataset](#fitting)
-3. [Selecting alternative best models](#alternative)
 
 The MOBSTER package is available at [Github](https://github.com/caravagn/MOBSTER). 
 
@@ -31,7 +26,7 @@ The MOBSTER package is available at [Github](https://github.com/caravagn/MOBSTER
 library(mobster)
 ```
 
-## Generating a MOBSTER dataset <a name="generation"></a>
+## Generating a MOBSTER dataset
 
 The input data must be formatted as an object of class `data.frame` (or, `tibble`) with at least one columun named `VAF` whose values are numerical, and no `NA` values are present. If a dataset has at least this column, then it can be processed with MOBSTER; the output object will contain a copy of the input data. 
 
@@ -54,7 +49,8 @@ dataset = random_dataset(
 
 A list with 3 components is returned, which you can access to see the actual data, the sampled parameters of the generative model, and a plot of the data. 
 
-> This function uses function `rdbpmm` , a the sampler from the density function of the Dirchlet Beta Pareto Mixture Model (DBPMM) object that is implemented in MOBSTER -- see `?rdbpmm` and `?ddbpmm`.
+> MOBSTER's statistical model, a Dirichlet Beta Pareto Mixture Model (DBPMM), provides an implementation for its density function (`ddbpmm`), and a sampler (`rdbpmm`) which is used internally by `random_dataset`.
+
 
 ```{r, fig.width=4, fig.height=3}
 # Data, in the MOBSTER input format with a "VAF" column.
@@ -76,7 +72,7 @@ Function `mobster_fit` is the main function to fit a MOBSTER model.
 
 This function implements a model selection routine that, by default, scores the models with the *reduced Incomplete Classification Likelihood* (reICL). reICL is a variant to the popular BIC score which uses the entropy of the latent variables of the model; the reICL formulation uses a particular version of this score, as discussed in the main MOBSTER paper. 
 
->The fits are computed  computed exploiting the [easypar](https://github.com/caravagn/easypar) package, which allows easy parallel run of R functions.
+>MOBSTER uses the [easypar](https://github.com/caravagn/easypar) package to implement parallel computations easily.
 
 This function has several parameters that allow one customizing the type of fit, the optimization task etc. Here we sample 1 fit per configuration of parameters, and set the optimization to stop when the variation between the mixing proportions and the likelihood is below `epsilon = 1e-4` (usually, one would use `epsilon = 1e-10` but with this value the compilation of this vignette is faster).
 
@@ -89,6 +85,7 @@ fit = mobster_fit(
   parallel = TRUE   # Parallel (multi-core) run
   )
 ```
+
 As a result, a call of `mobster_fit` will return a list with:
 
 * the best fit, accessible as named object `fit$best`;
@@ -104,21 +101,25 @@ print(fit$runs[[1]]) # same as best
 print(fit$runs[[2]])
 print(fit$runs[[3]])
 ```
+
 The simplest visualization for MOBSTER's fits is a coloured histogram, where colours represent clustering assignments, overlaid to the model density. By default MOBSTER names Beta clusters according to the decreasing order of their mean; so `C1` is always the label of the cluster with highest mean, etc. The basic plot shows, mirrored on the y-axis, the percentage of sum-of-squared-error (SSE) as a function of the input VAF (which is termed `Observed Frequency` in the x-axis). The plot caption annotates some information about the fitting.
 
 ```{r, fig.width=5, fig.height=4}
 # Plot the best model
 plot(fit$best)
 ```
-A comparative plot between the fit and the simulated data can be assembled with `ggpubr` function, which can take two `ggplot` objects and assemble them (an alternative function is `plot_grid` from the `cowplot` package).
-```{r, eval=FALSE}
-# Not run
-figure = ggarrange(
+
+A comparative plot between the fit and the simulated data can be assembled with `ggpubr` function, which can take two `ggplot` objects and assemble them, or with  `plot_grid` from the `cowplot` package (which provides better figure alignments).
+```{r, fig.width=10, fig.height=4}
+figure = cowplot::plot_grid(
   dataset$plot, 
-  plot(fit$best), ncol = 2)
+  plot(fit$best), 
+  ncol = 2,
+  align = 'h')
 
 print(figure)
 ```
+
 Hard clustering assignments are computed and can be accessed with function `Clusters`, the function also allows imposing a minimum cutoff to the reponsibilities of the mutations (if a mutation's maximum responsibility is below the cutoff, its assignment will be `NA`). Note that the return tibble is a copy of the input, with the new  `cluster` column, plus a set of columns for the latent variables in MOBSTER (the clustering reponsibilities).
 ```{r}
 # Assign mutations with at least 80% of probability mass to their maximum responsibility
@@ -128,69 +129,4 @@ clusters = Clusters(
   )
 
 print(clusters)
-```
-
-A set of plots is available to inspect further details of a fit. For example,
-
-* the latent variables can also be visualized as heatmap;
-* the mixing proportions as barplot;
-* the trace of the negative log-likelihood (NLL) can be inspected;
-* and the initial condition of the fit can be plot as density.
-```{r, fig.width=2.5, fig.height=5}
-# Assign mutations with at least 80% of probability mass to their maximum responsibility
-plot_latent_variables(fit$best, cutoff_assignment = .8)
-```
-
-```{r, fig.width=3, fig.height=3}
-# Mixing proportions
-plot_mixing_proportions(fit$best)
-
-# NLL trace
-plot_NLL(fit$best)
-
-# Plot the initial condition of the fit
-plot_init(fit$best)
-```
-
-
-### Selecting alternative best models<a name="alternative"></a>
-
-Alternative models are returned function `mobster_fit`, and can be easly visualized.
-
-
-```{r, fig.width=15, fig.height=4, message=FALSE, warning=FALSE}
-require(ggpubr)
-
-# Figure assembly
-figure = ggarrange(
-  plot(fit$runs[[1]]),
-  plot(fit$runs[[2]]),
-  plot(fit$runs[[3]]),
-  ncol = 3, nrow = 1
-)
-
-print(figure)
-```
-The table reportin the scores can be visualised, and everal plots are available to inspect model selection.
-```{r, fig.width=15, fig.height=4, message=FALSE, warning=FALSE}
-print(fit$fits.table)
-```
-
-One can plot of the sum of squared error (SSE) between the fit density and the data (binned with bins of size 0.01), for several solutions at once. This measure can represent a sort of goodness of fit statistics.
-
-```{r, fig.width=3, fig.height=6}
-# Goodness of fit (SSE), for the top 3 fits.
-plot_gofit(fit, TOP = 3)
-```
-
-The scores can also be compared graphically. Running `plot_fit_scores` all the computed scoring functions (BIC, AIC, ICL and reICL) are shown, which helps understanding if the best model with the default score (reICL) is the best also according to the other scores. In this graphics the red dot represents the best model according to each score.
-```{r, fig.width=4, fig.height=4}
-plot_fit_scores(fit)
-```
-
-
-These functions can be all wrapped by a call to `plot_model_selection` which plots the above summary statistics and the fits for each one of a set of top models (change the parameter `TOP` to select how many plots should be computed).
-```{r, fig.width=9, fig.height=9, message=FALSE, warning=FALSE, eval=FALSE}
-# Not run
-plot_model_selection(fit, TOP = 5)
 ```
