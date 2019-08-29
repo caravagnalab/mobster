@@ -71,6 +71,7 @@ plot.dbpmm = function(x,
         fill = factor(cluster, levels = clusters), 
         y = ..count.. /sum(..count..))) +
     geom_histogram(alpha = alpha,
+                   color = NA,
                    position = 'identity',
                    binwidth = binwidth) +
     geom_vline(
