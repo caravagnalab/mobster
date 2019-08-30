@@ -363,4 +363,8 @@
   error
 }
 
+.get_clusters_labels = function(x)
+{
+  unique(x$data$cluster)
+}
 

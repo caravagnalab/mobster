@@ -8,11 +8,13 @@
 
 <title>Bootstrap a MOBSTER fit. — mobster_bootstrap • mobster</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -30,12 +32,13 @@
 
 
 
-<meta property="og:title" content="Bootstrap a MOBSTER fit. — mobster_bootstrap" />
 
+<meta property="og:title" content="Bootstrap a MOBSTER fit. — mobster_bootstrap" />
 <meta property="og:description" content="Parametric and non-parametric implementation of
 bootstrap estimates for MOBSTER fits. This computation is parallel
 and uses  ?easypar." />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -88,18 +91,17 @@ and uses  ?easypar." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/bootstrap.html">Bootstrap routines for model</a>
+      <a href="../articles/bootstrap.html">C.Bootstrapping with mobster</a>
     </li>
     <li>
-      <a href="../articles/introduction.html">Vignette for mobster</a>
+      <a href="../articles/introduction.html">A.Basic mobster usage</a>
     </li>
     <li>
-      <a href="../articles/plotting.html">Plotting mobster fits</a>
+      <a href="../articles/plotting.html">B.Plotting mobster fits</a>
     </li>
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -120,16 +122,14 @@ and uses  ?easypar." />
     </div>
 
     <div class="ref-description">
-    
     <p>Parametric and non-parametric implementation of
 bootstrap estimates for MOBSTER fits. This computation is parallel
 and uses  <code>?easypar</code>.</p>
-    
     </div>
 
     <pre class="usage"><span class='fu'>mobster_bootstrap</span>(<span class='no'>x</span>, <span class='kw'>n.resamples</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>bootstrap</span> <span class='kw'>=</span> <span class='st'>"nonparametric"</span>,
   <span class='kw'>cores.ratio</span> <span class='kw'>=</span> <span class='fl'>0.8</span>, <span class='kw'>cache</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>save_data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -158,11 +158,10 @@ and uses  <code>?easypar</code>.</p>
       <td><p>fit parameters for <code>mobster_fit</code></p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Data from the fits, resamples and a plottable figure.</p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='st'>'fit_example'</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'mobster'</span>)
@@ -274,7 +273,7 @@ and uses  <code>?easypar</code>.</p>
 #&gt; </div><div class='input'>
 <span class='co'># The best fits are returned</span>
 <span class='no'>mb</span>$<span class='no'>fits</span></div><div class='output co'>#&gt; $`1`
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 426 </span><span style='color: #00BBBB;'>points with</span><span> K = 2 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 134 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
+#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 426 </span><span style='color: #00BBBB;'>points with</span><span> K = 2 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 139 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
 #&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt;   Components (fit)  
 #&gt; </span><span>     Tail	n = 254 (0.63) 	 Shape = 1.8 
@@ -288,7 +287,7 @@ and uses  <code>?easypar</code>.</p>
 #&gt;     9
 #&gt; 
 #&gt; $`2`
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 426 </span><span style='color: #00BBBB;'>points with</span><span> K = 3 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 531 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
+#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 426 </span><span style='color: #00BBBB;'>points with</span><span> K = 3 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 465 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
 #&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt;   Components (fit)  
 #&gt; </span><span>     Tail	n = 230 (0.54) 	 Shape = 2.1 
@@ -301,22 +300,21 @@ and uses  <code>?easypar</code>.</p>
 #&gt;  -544.266 -1015.879 -1064.532 139.062 -876.8167        4.863643 -1011.015   12
 #&gt; 
 #&gt; $`3`
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 426 </span><span style='color: #00BBBB;'>points with</span><span> K = 3 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 265 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
+#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 426 </span><span style='color: #00BBBB;'>points with</span><span> K = 2 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 181 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
 #&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt;   Components (fit)  
-#&gt; </span><span>     Tail	n = 248 (0.56) 	 Shape = 1.9 
-#&gt;   Beta C1 	n = 113 (0.26) 	 Mean = 0.49
-#&gt;   Beta C2 	n = 17 (0.03) 	 Mean = 0.3
-#&gt;   Beta C3 	n = 48 (0.15) 	 Mean = 0.16
+#&gt; </span><span>     Tail	n = 279 (0.68) 	 Shape = 1.6 
+#&gt;   Beta C1 	n = 112 (0.25) 	 Mean = 0.49
+#&gt;   Beta C2 	n = 35 (0.07) 	 Mean = 0.27
 #&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt;   Scores (model selection)  
 #&gt; </span><span>       NLL       BIC       AIC  entropy       ICL reduced.entropy     reICL
-#&gt;  -499.7742 -926.8952 -975.5484 138.4307 -788.4644         7.40982 -919.4853
+#&gt;  -487.0769 -919.6639 -956.1539 57.83922 -861.8247       0.6626803 -919.0013
 #&gt;  size
-#&gt;    12
+#&gt;     9
 #&gt; 
 #&gt; $`4`
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 426 </span><span style='color: #00BBBB;'>points with</span><span> K = 2 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 228 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
+#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 426 </span><span style='color: #00BBBB;'>points with</span><span> K = 2 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 243 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
 #&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt;   Components (fit)  
 #&gt; </span><span>     Tail	n = 232 (0.54) 	 Shape = 1.9 
@@ -330,7 +328,7 @@ and uses  <code>?easypar</code>.</p>
 #&gt;     9
 #&gt; 
 #&gt; $`5`
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 426 </span><span style='color: #00BBBB;'>points with</span><span> K = 2 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 306 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
+#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 426 </span><span style='color: #00BBBB;'>points with</span><span> K = 2 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 335 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
 #&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt;   Components (fit)  
 #&gt; </span><span>     Tail	n = 237 (0.55) 	 Shape = 1.8 
@@ -348,9 +346,7 @@ and uses  <code>?easypar</code>.</p>
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

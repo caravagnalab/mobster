@@ -8,11 +8,13 @@
 
 <title>Generate a random MOBSTER model and data. — random_dataset • mobster</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -30,10 +32,11 @@
 
 
 
-<meta property="og:title" content="Generate a random MOBSTER model and data. — random_dataset" />
 
+<meta property="og:title" content="Generate a random MOBSTER model and data. — random_dataset" />
 <meta property="og:description" content="Generate a random MOBSTER model, its data and creates a plot for it." />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -86,18 +89,17 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/bootstrap.html">Bootstrap routines for model</a>
+      <a href="../articles/bootstrap.html">C.Bootstrapping with mobster</a>
     </li>
     <li>
-      <a href="../articles/introduction.html">Vignette for mobster</a>
+      <a href="../articles/introduction.html">A.Basic mobster usage</a>
     </li>
     <li>
-      <a href="../articles/plotting.html">Plotting mobster fits</a>
+      <a href="../articles/plotting.html">B.Plotting mobster fits</a>
     </li>
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -118,15 +120,13 @@
     </div>
 
     <div class="ref-description">
-    
     <p>Generate a random MOBSTER model, its data and creates a plot for it.</p>
-    
     </div>
 
     <pre class="usage"><span class='fu'>random_dataset</span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>5000</span>, <span class='kw'>K_betas</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>pi_tail_bounds</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>0.2</span>, <span class='fl'>0.4</span>),
   <span class='kw'>pi_min</span> <span class='kw'>=</span> <span class='fl'>0.1</span>, <span class='kw'>Betas_separation</span> <span class='kw'>=</span> <span class='fl'>0.1</span>, <span class='kw'>Beta_variance_scaling</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
   <span class='kw'>Beta_bounds</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>0.1</span>, <span class='fl'>0.9</span>), <span class='kw'>seed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -165,11 +165,10 @@ compared to a putative Binomial generative model).</p></td>
       <td><p>The seed to fix the process, default is 123.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A list with the dataset in a tibble, the model parameters and a plot the data.</p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>x</span> <span class='kw'>=</span> <span class='fu'>random_dataset</span>()
@@ -177,36 +176,36 @@ compared to a putative Binomial generative model).</p></td>
 #&gt; <span style='color: #555555;'># A tibble: 5,000 x 2</span><span>
 #&gt;      VAF cluster
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  
-#&gt; </span><span style='color: #555555;'> 1</span><span> 0.543 C1     
-#&gt; </span><span style='color: #555555;'> 2</span><span> 0.529 C1     
-#&gt; </span><span style='color: #555555;'> 3</span><span> 0.553 C1     
-#&gt; </span><span style='color: #555555;'> 4</span><span> 0.531 C1     
-#&gt; </span><span style='color: #555555;'> 5</span><span> 0.519 C1     
-#&gt; </span><span style='color: #555555;'> 6</span><span> 0.505 C1     
-#&gt; </span><span style='color: #555555;'> 7</span><span> 0.522 C1     
-#&gt; </span><span style='color: #555555;'> 8</span><span> 0.521 C1     
-#&gt; </span><span style='color: #555555;'> 9</span><span> 0.547 C1     
-#&gt; </span><span style='color: #555555;'>10</span><span> 0.510 C1     
+#&gt; </span><span style='color: #555555;'> 1</span><span> 0.584 C1     
+#&gt; </span><span style='color: #555555;'> 2</span><span> 0.588 C1     
+#&gt; </span><span style='color: #555555;'> 3</span><span> 0.578 C1     
+#&gt; </span><span style='color: #555555;'> 4</span><span> 0.573 C1     
+#&gt; </span><span style='color: #555555;'> 5</span><span> 0.581 C1     
+#&gt; </span><span style='color: #555555;'> 6</span><span> 0.571 C1     
+#&gt; </span><span style='color: #555555;'> 7</span><span> 0.573 C1     
+#&gt; </span><span style='color: #555555;'> 8</span><span> 0.586 C1     
+#&gt; </span><span style='color: #555555;'> 9</span><span> 0.586 C1     
+#&gt; </span><span style='color: #555555;'>10</span><span> 0.596 C1     
 #&gt; </span><span style='color: #555555;'># … with 4,990 more rows</span><span>
 #&gt; 
 #&gt; $model
 #&gt; $model$a
-#&gt;       C1       C2 
-#&gt; 464.7811 263.4570 
+#&gt;        C1        C2 
+#&gt; 1070.1640  100.6267 
 #&gt; 
 #&gt; $model$b
 #&gt;       C1       C2 
-#&gt; 422.7148 411.3772 
+#&gt; 773.9088 194.5366 
 #&gt; 
 #&gt; $model$shape
-#&gt; [1] 2.614728
+#&gt; [1] 1.003898
 #&gt; 
 #&gt; $model$scale
 #&gt; [1] 0.05
 #&gt; 
 #&gt; $model$pi
 #&gt;      Tail        C1        C2 
-#&gt; 0.2310566 0.5382266 0.2307168 
+#&gt; 0.3428457 0.2969081 0.3602462 
 #&gt; 
 #&gt; 
 #&gt; $plot</div><div class='img'><img src='random_dataset-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; </div></span></pre>
@@ -215,9 +214,7 @@ compared to a putative Binomial generative model).</p></td>
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

@@ -8,11 +8,13 @@
 
 <title>Fit a model with MOBSTER. — mobster_fit • mobster</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -30,8 +32,8 @@
 
 
 
-<meta property="og:title" content="Fit a model with MOBSTER. — mobster_fit" />
 
+<meta property="og:title" content="Fit a model with MOBSTER. — mobster_fit" />
 <meta property="og:description" content="This function fits the mixure of Beta distributions with a power-law Pareto
 Type-I tail (optional). The function performs model selection for different mixtures, which
 the user specify with the input parmeters. The function return a list of all fits computed
@@ -40,6 +42,7 @@ variable that specify which score has been used for model selection. The fitting
 also runs the function choose_clusters which implements a simple heuristic to filter
 out small clusters from the fit output." />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -92,18 +95,17 @@ out small clusters from the fit output." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/bootstrap.html">Bootstrap routines for model</a>
+      <a href="../articles/bootstrap.html">C.Bootstrapping with mobster</a>
     </li>
     <li>
-      <a href="../articles/introduction.html">Vignette for mobster</a>
+      <a href="../articles/introduction.html">A.Basic mobster usage</a>
     </li>
     <li>
-      <a href="../articles/plotting.html">Plotting mobster fits</a>
+      <a href="../articles/plotting.html">B.Plotting mobster fits</a>
     </li>
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -124,7 +126,6 @@ out small clusters from the fit output." />
     </div>
 
     <div class="ref-description">
-    
     <p>This function fits the mixure of Beta distributions with a power-law Pareto
 Type-I tail (optional). The function performs model selection for different mixtures, which
 the user specify with the input parmeters. The function return a list of all fits computed
@@ -132,14 +133,13 @@ the user specify with the input parmeters. The function return a list of all fit
 variable that specify which score has been used for model selection. The fitting of each model
 also runs the function <code>choose_clusters</code> which implements a simple heuristic to filter
 out small clusters from the fit output.</p>
-    
     </div>
 
     <pre class="usage"><span class='fu'>mobster_fit</span>(<span class='no'>x</span>, <span class='kw'>K</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>3</span>, <span class='kw'>samples</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>init</span> <span class='kw'>=</span> <span class='st'>"peaks"</span>, <span class='kw'>tail</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>TRUE</span>,
   <span class='fl'>FALSE</span>), <span class='kw'>epsilon</span> <span class='kw'>=</span> <span class='fl'>1e-10</span>, <span class='kw'>maxIter</span> <span class='kw'>=</span> <span class='fl'>2000</span>, <span class='kw'>fit.type</span> <span class='kw'>=</span> <span class='st'>"MM"</span>,
   <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>12345</span>, <span class='kw'>model.selection</span> <span class='kw'>=</span> <span class='st'>"reICL"</span>, <span class='kw'>trace</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>pi_cutoff</span> <span class='kw'>=</span> <span class='fl'>0.02</span>, <span class='kw'>N_cutoff</span> <span class='kw'>=</span> <span class='fl'>10</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -214,12 +214,11 @@ cluster to be returned as output.</p></td>
 assigned to a cluster to be returned as output.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A list of all fits computed (objects of class <code>dbpmm</code>), the best fit, a table with the results of the fits and a
 variable that specify which score has been used for model selection.</p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># Generate a random dataset </span>
@@ -276,7 +275,7 @@ variable that specify which score has been used for model selection.</p>
 #&gt; 
 #&gt; </span><span style='font-weight: bold;'>
 #&gt; 
-#&gt; MOBSTER fit completed in</span><span> 0.19 </span><span style='color: #00BBBB;'>mins</span><span> 
+#&gt; MOBSTER fit completed in</span><span> 0.15 </span><span style='color: #00BBBB;'>mins</span><span> 
 #&gt; 
 #&gt;  </span><span style='font-weight: bold;'>BEST FIT: reICL 
 #&gt; 
@@ -288,8 +287,8 @@ variable that specify which score has been used for model selection.</p>
 #&gt;   Beta C2 	n = 82 (0.41) 	 Mean = 0.44
 #&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt;   Scores (model selection)  
-#&gt; </span><span>       NLL       BIC       AIC  entropy      ICL reduced.entropy     reICL size
-#&gt;  -103.9009 -160.1169 -189.8018 9.933922 -150.183        7.955238 -152.1617    9</div><div class='input'>
+#&gt; </span><span>       NLL      BIC       AIC  entropy       ICL reduced.entropy     reICL size
+#&gt;  -103.9009 -160.117 -189.8018 9.934059 -150.1829        7.955367 -152.1616    9</div><div class='input'>
 <span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>x</span>$<span class='no'>best</span>)</div><div class='img'><img src='mobster_fit-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/print'>print</a></span>(<span class='no'>x</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 200 </span><span style='color: #00BBBB;'>points with</span><span> K = 2 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 57 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
 #&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt;   Components (fit)  
@@ -298,8 +297,8 @@ variable that specify which score has been used for model selection.</p>
 #&gt;   Beta C2 	n = 82 (0.41) 	 Mean = 0.44
 #&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt;   Scores (model selection)  
-#&gt; </span><span>       NLL       BIC       AIC  entropy      ICL reduced.entropy     reICL size
-#&gt;  -103.9009 -160.1169 -189.8018 9.933922 -150.183        7.955238 -152.1617    9</div><div class='input'>
+#&gt; </span><span>       NLL      BIC       AIC  entropy       ICL reduced.entropy     reICL size
+#&gt;  -103.9009 -160.117 -189.8018 9.934059 -150.1829        7.955367 -152.1616    9</div><div class='input'>
 <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/lapply'>lapply</a></span>(<span class='no'>x</span>$<span class='no'>runs</span>[<span class='fl'>1</span>:<span class='fl'>3</span>], <span class='no'>plot</span>)</div><div class='output co'>#&gt; $`21`</div><div class='img'><img src='mobster_fit-3.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; 
 #&gt; $`16`</div><div class='img'><img src='mobster_fit-4.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; 
 #&gt; $`26`</div><div class='img'><img src='mobster_fit-5.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; </div><div class='input'>
@@ -309,9 +308,7 @@ variable that specify which score has been used for model selection.</p>
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

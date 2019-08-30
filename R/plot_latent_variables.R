@@ -68,7 +68,7 @@ plot_latent_variables = function(x, cutoff_assignment = 0)
     #   axis.text.y = element_blank(),
     #   axis.ticks.y = element_blank()
     # ) +
-    guides(fill = guide_colorbar('', barwidth = unit(3, 'cm'))) +
+    guides(fill = guide_colorbar(bquote(z['nk'] ~ ' '), barwidth = unit(3, 'cm'))) +
     labs(
       title = bquote("Latent variables"),
       subtitle = bquote(

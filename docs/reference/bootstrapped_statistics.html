@@ -8,11 +8,13 @@
 
 <title>Compute boostrap statistics from a bootstrap run. — bootstrapped_statistics • mobster</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -30,8 +32,8 @@
 
 
 
-<meta property="og:title" content="Compute boostrap statistics from a bootstrap run. — bootstrapped_statistics" />
 
+<meta property="og:title" content="Compute boostrap statistics from a bootstrap run. — bootstrapped_statistics" />
 <meta property="og:description" content="From a bootstrap run several statistics are computed.
 These are the model frequency, the bootstrap statistics of each parameter
 and, if the bootstrap is nonparametric, also the co-clustering probability
@@ -39,6 +41,7 @@ of the input points. All the bootstrapped values are also returned. For the
 bootstrapped statistics the confidence intervals are returned for a 
 required  alpha value." />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -91,18 +94,17 @@ required  alpha value." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/bootstrap.html">Bootstrap routines for model</a>
+      <a href="../articles/bootstrap.html">C.Bootstrapping with mobster</a>
     </li>
     <li>
-      <a href="../articles/introduction.html">Vignette for mobster</a>
+      <a href="../articles/introduction.html">A.Basic mobster usage</a>
     </li>
     <li>
-      <a href="../articles/plotting.html">Plotting mobster fits</a>
+      <a href="../articles/plotting.html">B.Plotting mobster fits</a>
     </li>
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -123,19 +125,17 @@ required  alpha value." />
     </div>
 
     <div class="ref-description">
-    
     <p>From a bootstrap run several statistics are computed.
 These are the model frequency, the bootstrap statistics of each parameter
 and, if the bootstrap is nonparametric, also the co-clustering probability
 of the input points. All the bootstrapped values are also returned. For the
 bootstrapped statistics the confidence intervals are returned for a 
 required  alpha value.</p>
-    
     </div>
 
     <pre class="usage"><span class='fu'>bootstrapped_statistics</span>(<span class='no'>x</span>, <span class='no'>bootstrap_results</span>,
   <span class='kw'>bootstrap</span> <span class='kw'>=</span> <span class='st'>"nonparametric"</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.025</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -156,21 +156,19 @@ required  alpha value.</p>
       <td><p>Alpha-level empirical CIs for the bootstrap distribution.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A list with the bootstrapped values, the model frequency, the bootstraped statistics and
 the co-clustering probability - non-null only for nonparametric boostrap.</p>
-    
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-          </ul>
+    </ul>
 
   </div>
 </div>
