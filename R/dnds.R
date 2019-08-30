@@ -86,5 +86,40 @@ dnds_multifits <- function(x,
   
   stop("TODO  - implement this")
   
+  
+  # Check(s): dndscv installationand mobster fit
+  check_dnds_package()
+  lapply(x, mobster:::is_mobster_fit)
+  
+  # Getter -- checks for the mapping correctness and apply it
+  dnds_input = get_dnds_input(x, mapping, refdb)
+  cl = dnds_input$clusters
+  clusters = dnds_input$clusters_labels
+  
+  pio::pioTit("Running dndscv")
+  
+  labels_outputs = unique(mapping)
+  
+  result_fit = wrapper_dndsfit(clusters = cl,
+                               groups = labels_outputs,
+                               gene_list,
+                               mode = 'Mapping')
+  
+  pio::pioStr("Generating ouptut plot", '\n')
+  
+  plot_results = wrapper_plot(
+    result_fit,
+    mode = result_fit$dndstable$run[1],
+    gene_list,
+    dndscv_plot,
+    mask_colors = TRUE
+  )
+  
+  results <- list(
+    dnds_summary = result_fit$dndstable %>% as_tibble(),
+    dndscv_table = result_fit$dndscvtable  %>% as_tibble(),
+    plot = plot_results
+  )
+  
   return()
 }
