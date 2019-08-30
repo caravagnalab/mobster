@@ -31,7 +31,7 @@ get_dnds_input = function(x, mapping, refdb)
     )
   
   # Clustering assignments are used to find coding mutations
-  cl <- Clusters(x) %>%
+  cl <- mobster::Clusters(x) %>%
     dplyr::mutate(dummysample = "sample") %>%
     dplyr::select(dummysample, chr, from, ref, alt, everything())
   
@@ -63,7 +63,7 @@ get_dnds_input = function(x, mapping, refdb)
   
   cl$dnds_group = mapping[cl$cluster]
   
-  return(list(clusters = cl, clusters_labels = clusters))
+  return(cl)
 }
 
 # Fits via dndscv
@@ -72,12 +72,12 @@ wrapper_dndsfit = function(clusters, groups, gene_list, mode)
   globaldndstable = dndscvtable = NULL
   for (i in groups)
   {
-    pio::pioStr("\ndndscv @ ", i, '\n')
+    pio::pioStr("\ndndscv @ dnds_group ", i, '\n')
     
     dndsout = NULL
     tryCatch({
       dndsout <- clusters %>%
-        dplyr::filter(cluster == i) %>%
+        dplyr::filter(dnds_group == i) %>%
         dndscv::dndscv(., gene_list = gene_list)
     },
     error = function(e)
@@ -88,19 +88,22 @@ wrapper_dndsfit = function(clusters, groups, gene_list, mode)
       
       dndsout = NULL
     })
+  
     
-    
-    globaldndstable <- dplyr::bind_rows(globaldndstable, dndsout$globaldnds %>%
-                                          mutate(group = i, run = mode))
+    if(!is.null(dndsout))
+    {
+      globaldndstable <- dplyr::bind_rows(globaldndstable, dndsout$globaldnds %>%
+                                          mutate(dnds_group = i))
     dndscvtable <- dplyr::bind_rows(dndscvtable, dndsout$sel_cv %>%
-                                      mutate(group = i, run = mode))
+                                      mutate(dnds_group = i))
+    }
   }
   
   return(list(dndstable = globaldndstable, dndscvtable = dndscvtable))
 }
 
 # Plotting function for dndscv results
-wrapper_plot = function(results, mode, gene_list, dndscv_plot, mask_colors = FALSE)
+wrapper_plot = function(results, mode, gene_list, dndscv_plot, colors, mask_colors = FALSE)
 {
   # Plotting
   gene_list_label = ifelse(
@@ -112,7 +115,7 @@ wrapper_plot = function(results, mode, gene_list, dndscv_plot, mask_colors = FAL
   dndsplot <- 
     results$dndstable %>% 
     dplyr::filter(name %in% dndscv_plot) %>% 
-    ggplot2::ggplot(ggplot2::aes(x = group, y = mle, ymin = cilow, ymax = cihigh)) +
+    ggplot2::ggplot(ggplot2::aes(x = dnds_group, y = mle, ymin = cilow, ymax = cihigh)) +
     mobster:::my_ggplot_theme() +
     facet_wrap(~ name, ncol = 1, scales = 'free_y') +
     ggplot2::xlab("") +
@@ -128,7 +131,7 @@ wrapper_plot = function(results, mode, gene_list, dndscv_plot, mask_colors = FAL
   # Add or not the colours...
   if (mask_colors) 
   {
-    dndsplot = dndsplot + geom_pointrange(aes(color = group))
+    dndsplot = dndsplot + geom_pointrange(aes(color = dnds_group))
     dndsplot = suppressMessages(mobster:::add_color_pl(x, dndsplot, colors))
   }
   else
@@ -138,4 +141,12 @@ wrapper_plot = function(results, mode, gene_list, dndscv_plot, mask_colors = FAL
   
   
   dndsplot
+}
+
+tail_non_tail_mapping = function(n=10)
+{
+  c(
+    `Tail` = "Tail",
+    pio:::nmfy(paste0("C", 1:n), rep("Non-tail", n))
+  )
 }

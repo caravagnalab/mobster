@@ -40,7 +40,7 @@ dnds <- function(x,
   # Getter -- checks for the mapping correctness and apply it
   dnds_input = get_dnds_input(x, mapping, refdb)
   cl = dnds_input$clusters
-  clusters = dnds_input$clusters_labels
+  clusters = unique(cl$dnds_group)
   
   pio::pioTit("Running dndscv")
   
@@ -51,6 +51,9 @@ dnds <- function(x,
                                gene_list,
                                mode = 'Mapping')
   
+  pio::pioStr("Results", '\n')
+  pio::pioDisp(result_fit$dndstable %>% filter(name %in% dndscv_plot))
+  
   pio::pioStr("Generating ouptut plot", '\n')
   
   plot_results = wrapper_plot(
@@ -58,6 +61,7 @@ dnds <- function(x,
     mode = result_fit$dndstable$run[1],
     gene_list,
     dndscv_plot,
+    colors,
     mask_colors = TRUE
   )
   
@@ -73,37 +77,48 @@ dnds <- function(x,
 
 
 dnds_multifits <- function(x,
+                           mapping = mobster:::tail_non_tail_mapping(),
+                           unique_locations = TRUE,
                            gene_list = NULL,
                            colors = c(`Tail` = 'gray'),
                            refdb = "hg19",
-                           dndscv_plot = 'wall',
-                           mapping = pio:::nmfy(
-                             mobster:::.get_clusters_labels(x),
-                             mobster:::.get_clusters_labels(x)
-                             )
+                           dndscv_plot = 'wall'
                            )
 {
   
-  stop("TODO  - implement this")
-  
-  
-  # Check(s): dndscv installationand mobster fit
+  # Check(s): dndscv installation and mobster fits
   check_dnds_package()
   lapply(x, mobster:::is_mobster_fit)
   
   # Getter -- checks for the mapping correctness and apply it
-  dnds_input = get_dnds_input(x, mapping, refdb)
-  cl = dnds_input$clusters
-  clusters = dnds_input$clusters_labels
+  pio::pioTit("Pooling all data alltogether")
+  dnds_inputs_clusters = Reduce(bind_rows, lapply(x, get_dnds_input, mapping = mapping, refdb = 'hg19'))
+  
+  pio::pioStr("Pooled data", '\n')
+  pio::pioDisp(dnds_inputs_clusters)  
+  
+  if(unique_locations)
+  {
+    n = nrow(dnds_inputs_clusters)
+    
+    dnds_inputs_clusters = dnds_inputs_clusters %>% 
+      mutate(dnds_loc_id = paste(dummysample, chr, from, ref, alt, sep = ':')) %>%
+      distinct(dnds_loc_id, .keep_all = TRUE) %>%
+      select(-dnds_loc_id)
+    
+    pio::pioStr("[unique_locations = TRUE]", 'Removed non-unique locations, leaving', (n - nrow(dnds_inputs_clusters)), 'entries \n')
+  }
   
   pio::pioTit("Running dndscv")
   
-  labels_outputs = unique(mapping)
-  
-  result_fit = wrapper_dndsfit(clusters = cl,
-                               groups = labels_outputs,
+  result_fit = wrapper_dndsfit(clusters = dnds_inputs_clusters,
+                               groups =  unique(dnds_inputs_clusters$dnds_group),
                                gene_list,
                                mode = 'Mapping')
+  
+  
+  pio::pioStr("Results", '\n')
+  pio::pioDisp(result_fit$dndstable %>% filter(name %in% dndscv_plot))
   
   pio::pioStr("Generating ouptut plot", '\n')
   
@@ -112,7 +127,8 @@ dnds_multifits <- function(x,
     mode = result_fit$dndstable$run[1],
     gene_list,
     dndscv_plot,
-    mask_colors = TRUE
+    colors,
+    mask_colors = FALSE
   )
   
   results <- list(
@@ -121,5 +137,5 @@ dnds_multifits <- function(x,
     plot = plot_results
   )
   
-  return()
+  return(results)
 }
