@@ -45,7 +45,7 @@
 #'
 #' @usage data(PD4120a_breast_sample)
 #'
-#' @format Data from an example MOBSTER fit.
+#' @format Data from a MOBSTER fit.
 #'
 #' @keywords datasets
 #'
@@ -54,4 +54,45 @@
 #' print(PD4120a_breast_sample$best)
 #' plot(PD4120a_breast_sample$best)
 "PD4120a_breast_sample"
+
+#' MOBSTER fit for the PD4120a breast sample.
+#'
+#' @description MOBSTER fit for the LUFF76 lung sample; this object is the
+#' result of running `mobster_fit` function on the input data described in the 
+#' main MOBSTER paper.
+#'
+#' @docType data
+#'
+#' @usage data(LUFF76_lung_sample)
+#'
+#' @format Data from a MOBSTER fit.
+#'
+#' @keywords datasets
+#'
+#' @examples
+#' data(LUFF76_lung_sample, package = 'mobster')
+#' print(LUFF76_lung_sample$best)
+#' plot(LUFF76_lung_sample$best)
+"LUFF76_lung_sample"
+
+
+#' MOBSTER fit for the LU4 lung sample.
+#'
+#' @description MOBSTER fit for the LU4 lung sample; this object is the
+#' result of running `mobster_fit` function on the input data described in the 
+#' main MOBSTER paper.
+#'
+#' @docType data
+#'
+#' @usage data(LU4_lung_sample)
+#'
+#' @format Data from a MOBSTER fit.
+#'
+#' @keywords datasets
+#'
+#' @examples
+#' data(LU4_lung_sample, package = 'mobster')
+#' print(LU4_lung_sample$best)
+#' plot(LU4_lung_sample$best)
+"LU4_lung_sample"
 

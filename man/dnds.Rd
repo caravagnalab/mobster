@@ -4,16 +4,20 @@
 \alias{dnds}
 \title{Run a dN/dS analysis on Mobster clusters}
 \usage{
-dnds(x, gene_list = NULL, colors = c(Tail = "gray"), refdb = "hg19",
-  dndscv_plot = "wall",
-  mapping = pio:::nmfy(mobster:::.get_clusters_labels(x),
-  mobster:::.get_clusters_labels(x)))
+dnds(x, mapping = NULL, gene_list = NULL, colors = c(Tail = "gray"),
+  refdb = "hg19", dndscv_plot = "wall", ...)
 }
 \arguments{
-\item{x}{A MOBSTER fit object}
+\item{x}{A MOBSTER fit object.}
+
+\item{mapping}{The groups used to compute this statistics are defined by this variable. If
+`mapping  = c(`A` = 'G1', `B` = 'G1', `C` = 'G2')`, then mutations from clusters `A` and 
+`B` will be pooled into one group (`G1`), while mutations from cluster `C` will constitute
+a group themselves. By default, with `mapping = NULL`, each cluster is a group.}
 
 \item{gene_list}{An optional vector of gene names to infer dN/dS values,
-default is to use the whole exome}
+default (`NULL`) is to use \code{dndscv} default (whole-exome. This package provides lists
+genes that can be used for this value (essential genes, cancer genes, etc.); see package data.}
 
 \item{colors}{If provided, these colours will be used for each cluster.
 If a subset of colours is provided, palette Set1 from \code{RColorBrewer} is used.
@@ -25,14 +29,11 @@ https://github.com/im3sanger/dndscv_data}
 \item{dndscv_plot}{What of the dndscv scores should be visualized in a plot, by default (`wall`) is
 only the global dnds value.}
 
-\item{mapping}{The groups used to compute this statistics are defined by this variable. If
-`mapping  = c(`A` = 'G1', `B` = 'G1', `C` = 'G2')`, then mutations from clusters `A` and 
-`B` will be pooled into one group (`G1`), while mutations from cluster `C` will constitute
-a group themselves. By default, each cluster in the fit is a own group.}
+\item{...}{Extra parameters forwarded to a call to \code{Clusters}.}
 }
 \value{
 The fit object is a list with the summary table and the observation counts reported
-by package \code{dndscv}, together with a \code{ggplot} plot.
+by package \code{dndscv}, together with a \code{ggplot} plot for the results.
 }
 \description{
 This function takes a MOBSTER fit and runs dndscv (https://github.com/im3sanger/dndscv) to calculate dN/dS

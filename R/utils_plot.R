@@ -1,8 +1,12 @@
 # Return smar colours
 smart_colors = function(x, pl, colors)
 {
-  # clusters in x
-  wh_col = unique(x$data$cluster)
+  if(all(class(x) == 'dbpmm'))
+  {
+    # clusters in x
+    wh_col = unique(x$data$cluster)
+  }
+  else wh_col = x
   
   # Missing colors
   wh_col_missing = !(wh_col %in% names(colors))

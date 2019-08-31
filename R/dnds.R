@@ -4,9 +4,14 @@
 #' values per cluster. It computes global dN/dS and per gene dN/dS values and makes a plot. dN/dS values are computed with
 #' the best fitting MOBSTER model.
 #'
-#' @param x A MOBSTER fit object
+#' @param x A MOBSTER fit object.
+#' @param mapping The groups used to compute this statistics are defined by this variable. If
+#' `mapping  = c(`A` = 'G1', `B` = 'G1', `C` = 'G2')`, then mutations from clusters `A` and 
+#' `B` will be pooled into one group (`G1`), while mutations from cluster `C` will constitute
+#' a group themselves. By default, with `mapping = NULL`, each cluster is a group. 
 #' @param gene_list An optional vector of gene names to infer dN/dS values,
-#' default is to use the whole exome
+#' default (`NULL`) is to use \code{dndscv} default (whole-exome. This package provides lists
+#' genes that can be used for this value (essential genes, cancer genes, etc.); see package data. 
 #' @param colors If provided, these colours will be used for each cluster.
 #' If a subset of colours is provided, palette Set1 from \code{RColorBrewer} is used.
 #' By default the tail colour is provided as 'gainsboro'.
@@ -14,44 +19,43 @@
 #' https://github.com/im3sanger/dndscv_data
 #' @param dndscv_plot What of the dndscv scores should be visualized in a plot, by default (`wall`) is
 #' only the global dnds value.
-#' @param mapping The groups used to compute this statistics are defined by this variable. If
-#' `mapping  = c(`A` = 'G1', `B` = 'G1', `C` = 'G2')`, then mutations from clusters `A` and 
-#' `B` will be pooled into one group (`G1`), while mutations from cluster `C` will constitute
-#' a group themselves. By default, each cluster in the fit is a own group. 
+#' @param ... Extra parameters forwarded to a call to \code{Clusters}.
 #'
 #' @return The fit object is a list with the summary table and the observation counts reported
-#' by package \code{dndscv}, together with a \code{ggplot} plot.
+#' by package \code{dndscv}, together with a \code{ggplot} plot for the results.
 #'
 #' @export
 #'
 dnds <- function(x,
+                 mapping = NULL,
                  gene_list = NULL,
                  colors = c(`Tail` = 'gray'),
                  refdb = "hg19",
                  dndscv_plot = 'wall',
-                 mapping = pio:::nmfy(mobster:::.get_clusters_labels(x),
-                                      mobster:::.get_clusters_labels(x))
-                 )
+                 ...
+)
 {
   # Check(s): dndscv installationand mobster fit
   check_dnds_package()
-  mobster:::is_mobster_fit(x)
+  
+  if(!is.data.frame(x))
+  {
+    mobster:::is_mobster_fit(x)
+    x = Clusters(x, ...)
+  }
   
   # Getter -- checks for the mapping correctness and apply it
-  dnds_input = get_dnds_input(x, mapping, refdb)
-  cl = dnds_input$clusters
-  clusters = unique(cl$dnds_group)
+  dnds_input = get_dnds_input(x, mapping, refdb, gene_list)
+  clusters = unique(dnds_input$dnds_group)
   
   pio::pioTit("Running dndscv")
   
-  labels_outputs = unique(mapping)
-  
-  result_fit = wrapper_dndsfit(clusters = cl,
-                               groups = labels_outputs,
+  result_fit = wrapper_dndsfit(clusters = dnds_input,
+                               groups = clusters,
                                gene_list,
                                mode = 'Mapping')
   
-  pio::pioStr("Results", '\n')
+  pio::pioStr("Results:", paste0(dndscv_plot, collapse = ', '), '\n')
   pio::pioDisp(result_fit$dndstable %>% filter(name %in% dndscv_plot))
   
   pio::pioStr("Generating ouptut plot", '\n')
@@ -70,72 +74,10 @@ dnds <- function(x,
     dndscv_table = result_fit$dndscvtable  %>% as_tibble(),
     plot = plot_results
   )
- 
-  return(results)
-}
-
-
-
-dnds_multifits <- function(x,
-                           mapping = mobster:::tail_non_tail_mapping(),
-                           unique_locations = TRUE,
-                           gene_list = NULL,
-                           colors = c(`Tail` = 'gray'),
-                           refdb = "hg19",
-                           dndscv_plot = 'wall'
-                           )
-{
-  
-  # Check(s): dndscv installation and mobster fits
-  check_dnds_package()
-  lapply(x, mobster:::is_mobster_fit)
-  
-  # Getter -- checks for the mapping correctness and apply it
-  pio::pioTit("Pooling all data alltogether")
-  dnds_inputs_clusters = Reduce(bind_rows, lapply(x, get_dnds_input, mapping = mapping, refdb = 'hg19'))
-  
-  pio::pioStr("Pooled data", '\n')
-  pio::pioDisp(dnds_inputs_clusters)  
-  
-  if(unique_locations)
-  {
-    n = nrow(dnds_inputs_clusters)
-    
-    dnds_inputs_clusters = dnds_inputs_clusters %>% 
-      mutate(dnds_loc_id = paste(dummysample, chr, from, ref, alt, sep = ':')) %>%
-      distinct(dnds_loc_id, .keep_all = TRUE) %>%
-      select(-dnds_loc_id)
-    
-    pio::pioStr("[unique_locations = TRUE]", 'Removed non-unique locations, leaving', (n - nrow(dnds_inputs_clusters)), 'entries \n')
-  }
-  
-  pio::pioTit("Running dndscv")
-  
-  result_fit = wrapper_dndsfit(clusters = dnds_inputs_clusters,
-                               groups =  unique(dnds_inputs_clusters$dnds_group),
-                               gene_list,
-                               mode = 'Mapping')
-  
-  
-  pio::pioStr("Results", '\n')
-  pio::pioDisp(result_fit$dndstable %>% filter(name %in% dndscv_plot))
-  
-  pio::pioStr("Generating ouptut plot", '\n')
-  
-  plot_results = wrapper_plot(
-    result_fit,
-    mode = result_fit$dndstable$run[1],
-    gene_list,
-    dndscv_plot,
-    colors,
-    mask_colors = FALSE
-  )
-  
-  results <- list(
-    dnds_summary = result_fit$dndstable %>% as_tibble(),
-    dndscv_table = result_fit$dndscvtable  %>% as_tibble(),
-    plot = plot_results
-  )
   
   return(results)
 }
+
+
+
+

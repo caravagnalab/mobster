@@ -12,39 +12,65 @@ check_dnds_package = function()
     )
   }
   else{
-    pio::pioTit("Running dndscv wrapper from MOBSTER")
-    pio::pioStr("dndscv version", package$Version, '\n')
+    pio::pioTit("MOBSTER wrapper for dndscv version", package$Version)
   }
 }
 
 # Return the input for dndscv, checking that parameters make sense
-get_dnds_input = function(x, mapping, refdb)
+get_dnds_input = function(x, mapping, refdb, gene_list)
 {
   # Check input: required columns
   required_columns = c('chr', 'from', 'ref', 'alt')
-  if (!all(required_columns %in% names(x$data)))
+  if (!all(required_columns %in% names(x)))
     stop(
       "Required columns are missing: ",
       paste(required_columns, collapse = ', '),
-      "\nYour columns are: ", paste(colnames(x$data), collapse = ', '),
+      "\nYour columns are: ", paste(colnames(x), collapse = ', '),
       '\nCannot compute dnds if your data does not have the required columns...'
     )
   
   # Clustering assignments are used to find coding mutations
-  cl <- mobster::Clusters(x) %>%
-    dplyr::mutate(dummysample = "sample") %>%
-    dplyr::select(dummysample, chr, from, ref, alt, everything())
+  if(!('sample' %in% colnames(x)))
+ {   
+    message("Missing sample column.\n" ,
+            "> Assuming these are mutations from a single patient, adding dummy sample id.\n",
+            "> If this is not the case, label each mutation with a sample id.")
+    
+    x <- x %>%
+      dplyr::mutate(dummysample = "sample") %>%
+      dplyr::select(dummysample, chr, from, ref, alt, everything())
+  }
+  else
+    x <- x %>%
+      dplyr::select(sample, chr, from, ref, alt, everything())
   
-  pio::pioStr("Using these data", '\n')
-  pio::pioDisp(cl)
+  
+  pio::pioStr("\n  Mutations ", nrow(x))
+  pio::pioStr("\n      Genes ", length(gene_list))
+  pio::pioStr("\n   Clusters ", length(unique(x$clusters)))
+  pio::pioStr("\nDnds groups ", length(unique(mapping)))
+  
+  # pio::pioDisp(x)
   
   # Checkings for the reference
-  if (refdb == "hg19" & stringr::str_detect(cl$chr[1], "chr")) {
-    message("Removing chr from chromosome names for hg19 reference compatability")
-    cl$chr <- stringr::str_sub(cl$chr, 4)
+  if (refdb == "hg19") {
+    message("[refdb = hg19] \n" ,
+            "> Removing chr from chromosome names for hg19 reference compatability\n")
+    
+    x$chr <- gsub(pattern = 'chr', replacement = '', x$chr)
   }
   
-  clusters = unique(cl$cluster)
+  clusters = unique(x$cluster)
+  
+  pio::pioStr("Mapping clusters to dnds_groups\n")
+  
+  # Special mapping: identity
+  if(all(is.null(mapping))) 
+  {
+    message("[mapping = NULL]\n", "> Creating mapping by cluster.")
+    
+    mapping = pio:::nmfy(clusters, clusters)
+  }
   
   # Check on the mapping
   # m: Clusters -> Groups
@@ -57,13 +83,11 @@ get_dnds_input = function(x, mapping, refdb)
     )
   }
 
-  # Apply mapping
-  pio::pioStr("Using the following mapping", '\n')
-  print(mapping)
+  x$dnds_group = mapping[x$cluster]
   
-  cl$dnds_group = mapping[cl$cluster]
+  print(table(x$dnds_group))
   
-  return(cl)
+  return(x)
 }
 
 # Fits via dndscv
@@ -83,8 +107,9 @@ wrapper_dndsfit = function(clusters, groups, gene_list, mode)
     error = function(e)
     {
       # Intercepted error
-      message('Intercepted error from dndscv')
+      cat(crayon::red('BEGIN Intercepted error from dndscv\n'))
       message(e)
+      cat(crayon::red('\n'))
       
       dndsout = NULL
     })
@@ -132,7 +157,7 @@ wrapper_plot = function(results, mode, gene_list, dndscv_plot, colors, mask_colo
   if (mask_colors) 
   {
     dndsplot = dndsplot + geom_pointrange(aes(color = dnds_group))
-    dndsplot = suppressMessages(mobster:::add_color_pl(x, dndsplot, colors))
+    dndsplot = suppressMessages(mobster:::add_color_pl(unique(results$dndstable$dnds_group), dndsplot, colors))
   }
   else
   {
