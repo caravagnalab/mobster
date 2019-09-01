@@ -1,5 +1,5 @@
 ---
-title: "C.Bootstrapping with mobster"
+title: "Confidence estimation via the bootstrap"
 author: "Giulio Caravagna"
 date: "September 2019"
 institute: "Institute for Cancer Research"

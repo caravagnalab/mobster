@@ -1,5 +1,5 @@
 ---
-title: "B.Plotting mobster fits"
+title: "Plotting mobster fits"
 author: "Giulio Caravagna"
 date: "September 2019"
 institute: "Institute for Cancer Research"

@@ -17,8 +17,8 @@
 #' By default the tail colour is provided as 'gainsboro'.
 #' @param refdb The genome referene to use, default is to use hg19. Other references are available from
 #' https://github.com/im3sanger/dndscv_data
-#' @param dndscv_plot What of the dndscv scores should be visualized in a plot, by default (`wall`) is
-#' only the global dnds value.
+#' @param dndscv_plot What of the dndscv scores should be visualized in a plot, by default all the statistcs
+#' are reported. Very often, one can use `dndscv_plot = wall` to get only the global dnds value.
 #' @param ... Extra parameters forwarded to a call to \code{Clusters}.
 #'
 #' @return The fit object is a list with the summary table and the observation counts reported

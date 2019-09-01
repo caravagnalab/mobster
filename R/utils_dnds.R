@@ -48,7 +48,7 @@ get_dnds_input = function(x, mapping, refdb, gene_list)
   pio::pioStr("\n  Mutations ", nrow(x))
   pio::pioStr("\n      Genes ", length(gene_list))
   pio::pioStr("\n   Clusters ", length(unique(x$clusters)))
-  pio::pioStr("\nDnds groups ", length(unique(mapping)))
+  pio::pioStr("\nDnds groups ", length(unique(mapping)), '\n')
   
   # pio::pioDisp(x)
   

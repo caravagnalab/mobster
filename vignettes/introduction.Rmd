@@ -1,5 +1,5 @@
 ---
-title: "A.Basic mobster usage"
+title: "Basic mobster usage: generating and fitting data"
 author: "Giulio Caravagna"
 date: "September 2019"
 institute: "Institute for Cancer Research"
