@@ -1,5 +1,5 @@
 ---
-title: "Evolutionary analyses of mobster fits: dnds and ..."
+title: "Evolutionary analyses of mobster fits"
 author: "Giulio Caravagna"
 date: "September 2019"
 institute: "Institute for Cancer Research"
@@ -27,7 +27,7 @@ This vignette describes the evolutionary analyses that are available in [MOBSTER
 library(mobster)
 ```
 
-# Computing dnds values
+## Computing dnds values
 
 Dn/Ds values are computed wrapping a call to the [dndscv](https://github.com/im3sanger/dndscv/) R package, developed by Martincorena at Sanger.
 
@@ -82,7 +82,7 @@ dnds_stats = dnds(
 ```
 
 The returned outputs are the tables returned by `dndscv`, as well as a `ggplot` plot for the object. The column `dnds_group` labels the group used to compute the statistics.
-```{r, fig.width=3, fig.height=3, warning=FALSE}
+```{r, fig.width=3, fig.height=9, warning=FALSE}
 # Summary statistics
 print(dnds_stats$dnds_summary)
 
@@ -96,7 +96,7 @@ print(dnds_stats$plot)
 By default, the plot contains all the results from the substitution models availavle in `dndscv`. If one wants to
 visualize only the global dnds score parameter `dndscv_plot` should be set to `wall` in the call to `dnds()`.
 
-## Using custom genes lists
+### Using custom genes lists
 
 A custom list of genes can be supplied in the call to `dnds()` as the variable `genes_list`.
 
@@ -130,7 +130,7 @@ dnds_stats = dnds(
 )
 ```
 
-## Pooling data from multiple patients
+### Pooling data from multiple patients
 
 The input format of the `dnds` function allows to pool data from several MOBSTER fits.
 
@@ -144,7 +144,7 @@ data('PD4120a_breast_sample', package = 'mobster')
 
 We pool the data before the call to `dnds`, subsetting the columns to the ones required for this computation.
 
-```{r, warning=F}
+```{r, fig.width=3, fig.height=9, warning=FALSE}
 dnds_multi = dnds(
   rbind(
     Clusters(LU4_lung_sample$best) %>% select(chr, from, ref, alt, cluster) %>% mutate(sample = 'LU4'),

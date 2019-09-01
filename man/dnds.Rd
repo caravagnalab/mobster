@@ -5,7 +5,8 @@
 \title{Run a dN/dS analysis on Mobster clusters}
 \usage{
 dnds(x, mapping = NULL, gene_list = NULL, colors = c(Tail = "gray"),
-  refdb = "hg19", dndscv_plot = "wall", ...)
+  refdb = "hg19", dndscv_plot = c("wall", "wmis", "wnon", "wspl",
+  "wtru"), ...)
 }
 \arguments{
 \item{x}{A MOBSTER fit object.}
@@ -26,8 +27,8 @@ By default the tail colour is provided as 'gainsboro'.}
 \item{refdb}{The genome referene to use, default is to use hg19. Other references are available from
 https://github.com/im3sanger/dndscv_data}
 
-\item{dndscv_plot}{What of the dndscv scores should be visualized in a plot, by default (`wall`) is
-only the global dnds value.}
+\item{dndscv_plot}{What of the dndscv scores should be visualized in a plot, by default all the statistcs
+are reported. One can use `dndscv_plot = wall` to get only the global dnds value.}
 
 \item{...}{Extra parameters forwarded to a call to \code{Clusters}.}
 }
