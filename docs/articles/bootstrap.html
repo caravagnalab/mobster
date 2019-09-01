@@ -5,11 +5,11 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C.Bootstrapping with mobster • mobster</title>
+<title>Confidence estimation via the bootstrap • mobster</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="C.Bootstrapping with mobster">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Confidence estimation via the bootstrap">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -53,13 +53,16 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/bootstrap.html">C.Bootstrapping with mobster</a>
+      <a href="../articles/bootstrap.html">Confidence estimation via the bootstrap</a>
     </li>
     <li>
-      <a href="../articles/introduction.html">A.Basic mobster usage</a>
+      <a href="../articles/evolutionary_analysis.html">Evolutionary analyses of mobster fits</a>
     </li>
     <li>
-      <a href="../articles/plotting.html">B.Plotting mobster fits</a>
+      <a href="../articles/introduction.html">Basic mobster usage: generating and fitting data</a>
+    </li>
+    <li>
+      <a href="../articles/plotting.html">Plotting mobster fits</a>
     </li>
   </ul>
 </li>
@@ -76,7 +79,7 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>C.Bootstrapping with mobster</h1>
+      <h1>Confidence estimation via the bootstrap</h1>
                         <h4 class="author">Giulio Caravagna</h4>
             
             <h4 class="date">September 2019</h4>
@@ -124,11 +127,11 @@
 <a class="sourceLine" id="cb2-16" data-line-number="16"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb2-17" data-line-number="17"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb2-18" data-line-number="18"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb2-19" data-line-number="19"><span class="co">#&gt; MOBSTER fit completed in 0.21 mins </span></a>
+<a class="sourceLine" id="cb2-19" data-line-number="19"><span class="co">#&gt; MOBSTER fit completed in 0.24 mins </span></a>
 <a class="sourceLine" id="cb2-20" data-line-number="20"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb2-21" data-line-number="21"><span class="co">#&gt;  BEST FIT: reICL </span></a>
 <a class="sourceLine" id="cb2-22" data-line-number="22"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb2-23" data-line-number="23"><span class="co">#&gt; [ MOBSTER ] N = 400 points with K = 2 Beta clusters, fit by MM in 123 steps [CONVERGED] </span></a>
+<a class="sourceLine" id="cb2-23" data-line-number="23"><span class="co">#&gt; [ MOBSTER ] N = 400 points with K = 2 Beta clusters, fit by MM in 132 steps [CONVERGED] </span></a>
 <a class="sourceLine" id="cb2-24" data-line-number="24"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb2-25" data-line-number="25"><span class="co">#&gt;   Components (fit)  </span></a>
 <a class="sourceLine" id="cb2-26" data-line-number="26"><span class="co">#&gt;      Tail    n = 107 (0.27)   Shape =   3 </span></a>
@@ -155,17 +158,17 @@
 <a class="sourceLine" id="cb3-2" data-line-number="2">bootstrap_results =<span class="st"> </span><span class="kw"><a href="../reference/mobster_bootstrap.html">mobster_bootstrap</a></span>(</a>
 <a class="sourceLine" id="cb3-3" data-line-number="3">  fit<span class="op">$</span>best,</a>
 <a class="sourceLine" id="cb3-4" data-line-number="4">  <span class="dt">bootstrap =</span> <span class="st">'nonparametric'</span>,</a>
-<a class="sourceLine" id="cb3-5" data-line-number="5">  <span class="dt">n.resamples =</span> <span class="dv">5</span>,</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5">  <span class="dt">n.resamples =</span> <span class="dv">50</span>,</a>
 <a class="sourceLine" id="cb3-6" data-line-number="6">  <span class="dt">epsilon =</span> <span class="fl">1e-4</span>,   <span class="co"># forwarded to mobster_fit, optimization epsilon</span></a>
 <a class="sourceLine" id="cb3-7" data-line-number="7">  <span class="dt">K =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>, <span class="dv">2</span>),      <span class="co"># forwarded to mobster_fit, test only models with 1 or 2 Betas</span></a>
 <a class="sourceLine" id="cb3-8" data-line-number="8">  <span class="dt">cache =</span> <span class="ot">NULL</span>      <span class="co"># forwarded to mobster_fit, no cache</span></a>
 <a class="sourceLine" id="cb3-9" data-line-number="9">  )</a>
-<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt;  [ MOBSTER bootstrap ~ 5 resamples from nonparametric bootstrap ] </span></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt;  [ MOBSTER bootstrap ~ 50 resamples from nonparametric bootstrap ] </span></a>
 <a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt; =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span></a>
 <a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co">#&gt;  Bootstrapping for this MOBSTER model</span></a>
 <a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt; =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span></a>
-<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co">#&gt; [ MOBSTER ] N = 400 points with K = 2 Beta clusters, fit by MM in 123 steps [CONVERGED] </span></a>
+<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co">#&gt; [ MOBSTER ] N = 400 points with K = 2 Beta clusters, fit by MM in 132 steps [CONVERGED] </span></a>
 <a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb3-17" data-line-number="17"><span class="co">#&gt;   Components (fit)  </span></a>
 <a class="sourceLine" id="cb3-18" data-line-number="18"><span class="co">#&gt;      Tail    n = 107 (0.27)   Shape =   3 </span></a>
@@ -207,7 +210,7 @@
 <a class="sourceLine" id="cb4-19" data-line-number="19"></a>
 <a class="sourceLine" id="cb4-20" data-line-number="20"><span class="co"># Fits are available inside the $fits list</span></a>
 <a class="sourceLine" id="cb4-21" data-line-number="21"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(bootstrap_results<span class="op">$</span>fits[[<span class="dv">1</span>]])</a>
-<a class="sourceLine" id="cb4-22" data-line-number="22"><span class="co">#&gt; [ MOBSTER ] N = 400 points with K = 2 Beta clusters, fit by MM in 47 steps [CONVERGED] </span></a>
+<a class="sourceLine" id="cb4-22" data-line-number="22"><span class="co">#&gt; [ MOBSTER ] N = 400 points with K = 2 Beta clusters, fit by MM in 41 steps [CONVERGED] </span></a>
 <a class="sourceLine" id="cb4-23" data-line-number="23"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb4-24" data-line-number="24"><span class="co">#&gt;   Components (fit)  </span></a>
 <a class="sourceLine" id="cb4-25" data-line-number="25"><span class="co">#&gt;      Tail    n = 103 (0.26)   Shape = 2.7 </span></a>
@@ -216,9 +219,9 @@
 <a class="sourceLine" id="cb4-28" data-line-number="28"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb4-29" data-line-number="29"><span class="co">#&gt;   Scores (model selection)  </span></a>
 <a class="sourceLine" id="cb4-30" data-line-number="30"><span class="co">#&gt;        NLL       BIC       AIC  entropy       ICL reduced.entropy</span></a>
-<a class="sourceLine" id="cb4-31" data-line-number="31"><span class="co">#&gt;  -198.7219 -343.5205 -379.4437 24.20665 -319.3139        17.26776</span></a>
+<a class="sourceLine" id="cb4-31" data-line-number="31"><span class="co">#&gt;  -198.7224 -343.5217 -379.4449 24.20926 -319.3124        17.27039</span></a>
 <a class="sourceLine" id="cb4-32" data-line-number="32"><span class="co">#&gt;      reICL size</span></a>
-<a class="sourceLine" id="cb4-33" data-line-number="33"><span class="co">#&gt;  -326.2528    9</span></a>
+<a class="sourceLine" id="cb4-33" data-line-number="33"><span class="co">#&gt;  -326.2513    9</span></a>
 <a class="sourceLine" id="cb4-34" data-line-number="34"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(bootstrap_results<span class="op">$</span>fits[[<span class="dv">1</span>]])</a></code></pre></div>
 <p><img src="bootstrap_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"></a>
@@ -241,9 +244,9 @@
 <a class="sourceLine" id="cb6-4" data-line-number="4">  <span class="dt">bootstrap_results =</span> bootstrap_results</a>
 <a class="sourceLine" id="cb6-5" data-line-number="5">  )</a>
 <a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#&gt; =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span></a>
-<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt;  Bootstrap observations n = 5</span></a>
-<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co">#&gt; =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span></a>
+<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#&gt; =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span></a>
+<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt;  Bootstrap observations n = 50</span></a>
+<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co">#&gt; =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span></a>
 <a class="sourceLine" id="cb6-10" data-line-number="10"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb6-11" data-line-number="11"><span class="co">#&gt; =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span></a>
 <a class="sourceLine" id="cb6-12" data-line-number="12"><span class="co">#&gt;  Bootstrapped model frequency</span></a>
@@ -261,9 +264,9 @@
 <a class="sourceLine" id="cb6-24" data-line-number="24"><span class="co">#&gt;  # A tibble: 3 x 8</span></a>
 <a class="sourceLine" id="cb6-25" data-line-number="25"><span class="co">#&gt;   cluster statistics   min lower_quantile higher_quantile   max fit.value</span></a>
 <a class="sourceLine" id="cb6-26" data-line-number="26"><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb6-27" data-line-number="27"><span class="co">#&gt; 1 C1      Mixing pr… 0.310          0.310           0.350 0.353     0.294</span></a>
-<a class="sourceLine" id="cb6-28" data-line-number="28"><span class="co">#&gt; 2 C2      Mixing pr… 0.403          0.404           0.453 0.456     0.436</span></a>
-<a class="sourceLine" id="cb6-29" data-line-number="29"><span class="co">#&gt; 3 Tail    Mixing pr… 0.218          0.220           0.276 0.276     0.270</span></a>
+<a class="sourceLine" id="cb6-27" data-line-number="27"><span class="co">#&gt; 1 C1      Mixing pr… 0.245          0.257           0.335 0.353     0.294</span></a>
+<a class="sourceLine" id="cb6-28" data-line-number="28"><span class="co">#&gt; 2 C2      Mixing pr… 0.383          0.388           0.474 0.475     0.436</span></a>
+<a class="sourceLine" id="cb6-29" data-line-number="29"><span class="co">#&gt; 3 Tail    Mixing pr… 0.218          0.222           0.315 0.336     0.270</span></a>
 <a class="sourceLine" id="cb6-30" data-line-number="30"><span class="co">#&gt; # … with 1 more variable: init.value &lt;dbl&gt;</span></a>
 <a class="sourceLine" id="cb6-31" data-line-number="31"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb6-32" data-line-number="32"><span class="co">#&gt; Tail shape/ scale </span></a>
@@ -271,17 +274,17 @@
 <a class="sourceLine" id="cb6-34" data-line-number="34"><span class="co">#&gt;   cluster statistics    min lower_quantile higher_quantile    max fit.value</span></a>
 <a class="sourceLine" id="cb6-35" data-line-number="35"><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;</span></a>
 <a class="sourceLine" id="cb6-36" data-line-number="36"><span class="co">#&gt; 1 Tail    Scale      0.0500         0.0500          0.0504 0.0504    0.0500</span></a>
-<a class="sourceLine" id="cb6-37" data-line-number="37"><span class="co">#&gt; 2 Tail    Shape      2.70           2.70            3.32   3.33      2.99  </span></a>
+<a class="sourceLine" id="cb6-37" data-line-number="37"><span class="co">#&gt; 2 Tail    Shape      2.40           2.47            3.67   3.94      2.99  </span></a>
 <a class="sourceLine" id="cb6-38" data-line-number="38"><span class="co">#&gt; # … with 1 more variable: init.value &lt;dbl&gt;</span></a>
 <a class="sourceLine" id="cb6-39" data-line-number="39"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb6-40" data-line-number="40"><span class="co">#&gt; Beta peaks </span></a>
 <a class="sourceLine" id="cb6-41" data-line-number="41"><span class="co">#&gt;  # A tibble: 4 x 8</span></a>
 <a class="sourceLine" id="cb6-42" data-line-number="42"><span class="co">#&gt;   cluster statistics     min lower_quantile higher_quantile     max</span></a>
 <a class="sourceLine" id="cb6-43" data-line-number="43"><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;        &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;   &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb6-44" data-line-number="44"><span class="co">#&gt; 1 C1      Mean       0.782          0.783           0.808   0.809  </span></a>
-<a class="sourceLine" id="cb6-45" data-line-number="45"><span class="co">#&gt; 2 C1      Variance   0.00634        0.00635         0.00873 0.00893</span></a>
-<a class="sourceLine" id="cb6-46" data-line-number="46"><span class="co">#&gt; 3 C2      Mean       0.443          0.443           0.453   0.453  </span></a>
-<a class="sourceLine" id="cb6-47" data-line-number="47"><span class="co">#&gt; 4 C2      Variance   0.00516        0.00521         0.00673 0.00676</span></a>
+<a class="sourceLine" id="cb6-44" data-line-number="44"><span class="co">#&gt; 1 C1      Mean       0.774          0.776           0.808   0.815  </span></a>
+<a class="sourceLine" id="cb6-45" data-line-number="45"><span class="co">#&gt; 2 C1      Variance   0.00446        0.00476         0.0111  0.0120 </span></a>
+<a class="sourceLine" id="cb6-46" data-line-number="46"><span class="co">#&gt; 3 C2      Mean       0.430          0.436           0.461   0.467  </span></a>
+<a class="sourceLine" id="cb6-47" data-line-number="47"><span class="co">#&gt; 4 C2      Variance   0.00512        0.00518         0.00735 0.00753</span></a>
 <a class="sourceLine" id="cb6-48" data-line-number="48"><span class="co">#&gt; # … with 2 more variables: fit.value &lt;dbl&gt;, init.value &lt;dbl&gt;</span></a>
 <a class="sourceLine" id="cb6-49" data-line-number="49"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb6-50" data-line-number="50"><span class="co">#&gt; =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span></a>
@@ -291,32 +294,122 @@
 <a class="sourceLine" id="cb6-54" data-line-number="54">  <span class="op">|</span><span class="st">                                                                       </span></a>
 <a class="sourceLine" id="cb6-55" data-line-number="55"><span class="st">  </span><span class="er">|</span><span class="st">                                                                 </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</a>
 <a class="sourceLine" id="cb6-56" data-line-number="56">  <span class="op">|</span><span class="st">                                                                       </span></a>
-<a class="sourceLine" id="cb6-57" data-line-number="57"><span class="st">  </span><span class="er">|=============</span><span class="st">                                                    </span><span class="er">|</span><span class="st">  </span><span class="dv">20</span>%</a>
+<a class="sourceLine" id="cb6-57" data-line-number="57"><span class="st">  </span><span class="er">|=</span><span class="st">                                                                </span><span class="er">|</span><span class="st">   </span><span class="dv">2</span>%</a>
 <a class="sourceLine" id="cb6-58" data-line-number="58">  <span class="op">|</span><span class="st">                                                                       </span></a>
-<a class="sourceLine" id="cb6-59" data-line-number="59"><span class="st">  </span><span class="er">|==========================</span><span class="st">                                       </span><span class="er">|</span><span class="st">  </span><span class="dv">40</span>%</a>
+<a class="sourceLine" id="cb6-59" data-line-number="59"><span class="st">  </span><span class="er">|===</span><span class="st">                                                              </span><span class="er">|</span><span class="st">   </span><span class="dv">4</span>%</a>
 <a class="sourceLine" id="cb6-60" data-line-number="60">  <span class="op">|</span><span class="st">                                                                       </span></a>
-<a class="sourceLine" id="cb6-61" data-line-number="61"><span class="st">  </span><span class="er">|=======================================</span><span class="st">                          </span><span class="er">|</span><span class="st">  </span><span class="dv">60</span>%</a>
+<a class="sourceLine" id="cb6-61" data-line-number="61"><span class="st">  </span><span class="er">|====</span><span class="st">                                                             </span><span class="er">|</span><span class="st">   </span><span class="dv">6</span>%</a>
 <a class="sourceLine" id="cb6-62" data-line-number="62">  <span class="op">|</span><span class="st">                                                                       </span></a>
-<a class="sourceLine" id="cb6-63" data-line-number="63"><span class="st">  </span><span class="er">|====================================================</span><span class="st">             </span><span class="er">|</span><span class="st">  </span><span class="dv">80</span>%</a>
+<a class="sourceLine" id="cb6-63" data-line-number="63"><span class="st">  </span><span class="er">|=====</span><span class="st">                                                            </span><span class="er">|</span><span class="st">   </span><span class="dv">8</span>%</a>
 <a class="sourceLine" id="cb6-64" data-line-number="64">  <span class="op">|</span><span class="st">                                                                       </span></a>
-<a class="sourceLine" id="cb6-65" data-line-number="65"><span class="st">  </span><span class="er">|=================================================================|</span><span class="st"> </span><span class="dv">100</span>%</a></code></pre></div>
+<a class="sourceLine" id="cb6-65" data-line-number="65"><span class="st">  </span><span class="er">|======</span><span class="st">                                                           </span><span class="er">|</span><span class="st">  </span><span class="dv">10</span>%</a>
+<a class="sourceLine" id="cb6-66" data-line-number="66">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-67" data-line-number="67"><span class="st">  </span><span class="er">|========</span><span class="st">                                                         </span><span class="er">|</span><span class="st">  </span><span class="dv">12</span>%</a>
+<a class="sourceLine" id="cb6-68" data-line-number="68">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-69" data-line-number="69"><span class="st">  </span><span class="er">|=========</span><span class="st">                                                        </span><span class="er">|</span><span class="st">  </span><span class="dv">14</span>%</a>
+<a class="sourceLine" id="cb6-70" data-line-number="70">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-71" data-line-number="71"><span class="st">  </span><span class="er">|==========</span><span class="st">                                                       </span><span class="er">|</span><span class="st">  </span><span class="dv">16</span>%</a>
+<a class="sourceLine" id="cb6-72" data-line-number="72">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-73" data-line-number="73"><span class="st">  </span><span class="er">|============</span><span class="st">                                                     </span><span class="er">|</span><span class="st">  </span><span class="dv">18</span>%</a>
+<a class="sourceLine" id="cb6-74" data-line-number="74">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-75" data-line-number="75"><span class="st">  </span><span class="er">|=============</span><span class="st">                                                    </span><span class="er">|</span><span class="st">  </span><span class="dv">20</span>%</a>
+<a class="sourceLine" id="cb6-76" data-line-number="76">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-77" data-line-number="77"><span class="st">  </span><span class="er">|==============</span><span class="st">                                                   </span><span class="er">|</span><span class="st">  </span><span class="dv">22</span>%</a>
+<a class="sourceLine" id="cb6-78" data-line-number="78">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-79" data-line-number="79"><span class="st">  </span><span class="er">|================</span><span class="st">                                                 </span><span class="er">|</span><span class="st">  </span><span class="dv">24</span>%</a>
+<a class="sourceLine" id="cb6-80" data-line-number="80">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-81" data-line-number="81"><span class="st">  </span><span class="er">|=================</span><span class="st">                                                </span><span class="er">|</span><span class="st">  </span><span class="dv">26</span>%</a>
+<a class="sourceLine" id="cb6-82" data-line-number="82">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-83" data-line-number="83"><span class="st">  </span><span class="er">|==================</span><span class="st">                                               </span><span class="er">|</span><span class="st">  </span><span class="dv">28</span>%</a>
+<a class="sourceLine" id="cb6-84" data-line-number="84">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-85" data-line-number="85"><span class="st">  </span><span class="er">|====================</span><span class="st">                                             </span><span class="er">|</span><span class="st">  </span><span class="dv">30</span>%</a>
+<a class="sourceLine" id="cb6-86" data-line-number="86">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-87" data-line-number="87"><span class="st">  </span><span class="er">|=====================</span><span class="st">                                            </span><span class="er">|</span><span class="st">  </span><span class="dv">32</span>%</a>
+<a class="sourceLine" id="cb6-88" data-line-number="88">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-89" data-line-number="89"><span class="st">  </span><span class="er">|======================</span><span class="st">                                           </span><span class="er">|</span><span class="st">  </span><span class="dv">34</span>%</a>
+<a class="sourceLine" id="cb6-90" data-line-number="90">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-91" data-line-number="91"><span class="st">  </span><span class="er">|=======================</span><span class="st">                                          </span><span class="er">|</span><span class="st">  </span><span class="dv">36</span>%</a>
+<a class="sourceLine" id="cb6-92" data-line-number="92">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-93" data-line-number="93"><span class="st">  </span><span class="er">|=========================</span><span class="st">                                        </span><span class="er">|</span><span class="st">  </span><span class="dv">38</span>%</a>
+<a class="sourceLine" id="cb6-94" data-line-number="94">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-95" data-line-number="95"><span class="st">  </span><span class="er">|==========================</span><span class="st">                                       </span><span class="er">|</span><span class="st">  </span><span class="dv">40</span>%</a>
+<a class="sourceLine" id="cb6-96" data-line-number="96">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-97" data-line-number="97"><span class="st">  </span><span class="er">|===========================</span><span class="st">                                      </span><span class="er">|</span><span class="st">  </span><span class="dv">42</span>%</a>
+<a class="sourceLine" id="cb6-98" data-line-number="98">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-99" data-line-number="99"><span class="st">  </span><span class="er">|=============================</span><span class="st">                                    </span><span class="er">|</span><span class="st">  </span><span class="dv">44</span>%</a>
+<a class="sourceLine" id="cb6-100" data-line-number="100">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-101" data-line-number="101"><span class="st">  </span><span class="er">|==============================</span><span class="st">                                   </span><span class="er">|</span><span class="st">  </span><span class="dv">46</span>%</a>
+<a class="sourceLine" id="cb6-102" data-line-number="102">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-103" data-line-number="103"><span class="st">  </span><span class="er">|===============================</span><span class="st">                                  </span><span class="er">|</span><span class="st">  </span><span class="dv">48</span>%</a>
+<a class="sourceLine" id="cb6-104" data-line-number="104">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-105" data-line-number="105"><span class="st">  </span><span class="er">|================================</span><span class="st">                                 </span><span class="er">|</span><span class="st">  </span><span class="dv">50</span>%</a>
+<a class="sourceLine" id="cb6-106" data-line-number="106">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-107" data-line-number="107"><span class="st">  </span><span class="er">|==================================</span><span class="st">                               </span><span class="er">|</span><span class="st">  </span><span class="dv">52</span>%</a>
+<a class="sourceLine" id="cb6-108" data-line-number="108">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-109" data-line-number="109"><span class="st">  </span><span class="er">|===================================</span><span class="st">                              </span><span class="er">|</span><span class="st">  </span><span class="dv">54</span>%</a>
+<a class="sourceLine" id="cb6-110" data-line-number="110">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-111" data-line-number="111"><span class="st">  </span><span class="er">|====================================</span><span class="st">                             </span><span class="er">|</span><span class="st">  </span><span class="dv">56</span>%</a>
+<a class="sourceLine" id="cb6-112" data-line-number="112">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-113" data-line-number="113"><span class="st">  </span><span class="er">|======================================</span><span class="st">                           </span><span class="er">|</span><span class="st">  </span><span class="dv">58</span>%</a>
+<a class="sourceLine" id="cb6-114" data-line-number="114">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-115" data-line-number="115"><span class="st">  </span><span class="er">|=======================================</span><span class="st">                          </span><span class="er">|</span><span class="st">  </span><span class="dv">60</span>%</a>
+<a class="sourceLine" id="cb6-116" data-line-number="116">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-117" data-line-number="117"><span class="st">  </span><span class="er">|========================================</span><span class="st">                         </span><span class="er">|</span><span class="st">  </span><span class="dv">62</span>%</a>
+<a class="sourceLine" id="cb6-118" data-line-number="118">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-119" data-line-number="119"><span class="st">  </span><span class="er">|==========================================</span><span class="st">                       </span><span class="er">|</span><span class="st">  </span><span class="dv">64</span>%</a>
+<a class="sourceLine" id="cb6-120" data-line-number="120">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-121" data-line-number="121"><span class="st">  </span><span class="er">|===========================================</span><span class="st">                      </span><span class="er">|</span><span class="st">  </span><span class="dv">66</span>%</a>
+<a class="sourceLine" id="cb6-122" data-line-number="122">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-123" data-line-number="123"><span class="st">  </span><span class="er">|============================================</span><span class="st">                     </span><span class="er">|</span><span class="st">  </span><span class="dv">68</span>%</a>
+<a class="sourceLine" id="cb6-124" data-line-number="124">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-125" data-line-number="125"><span class="st">  </span><span class="er">|==============================================</span><span class="st">                   </span><span class="er">|</span><span class="st">  </span><span class="dv">70</span>%</a>
+<a class="sourceLine" id="cb6-126" data-line-number="126">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-127" data-line-number="127"><span class="st">  </span><span class="er">|===============================================</span><span class="st">                  </span><span class="er">|</span><span class="st">  </span><span class="dv">72</span>%</a>
+<a class="sourceLine" id="cb6-128" data-line-number="128">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-129" data-line-number="129"><span class="st">  </span><span class="er">|================================================</span><span class="st">                 </span><span class="er">|</span><span class="st">  </span><span class="dv">74</span>%</a>
+<a class="sourceLine" id="cb6-130" data-line-number="130">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-131" data-line-number="131"><span class="st">  </span><span class="er">|=================================================</span><span class="st">                </span><span class="er">|</span><span class="st">  </span><span class="dv">76</span>%</a>
+<a class="sourceLine" id="cb6-132" data-line-number="132">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-133" data-line-number="133"><span class="st">  </span><span class="er">|===================================================</span><span class="st">              </span><span class="er">|</span><span class="st">  </span><span class="dv">78</span>%</a>
+<a class="sourceLine" id="cb6-134" data-line-number="134">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-135" data-line-number="135"><span class="st">  </span><span class="er">|====================================================</span><span class="st">             </span><span class="er">|</span><span class="st">  </span><span class="dv">80</span>%</a>
+<a class="sourceLine" id="cb6-136" data-line-number="136">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-137" data-line-number="137"><span class="st">  </span><span class="er">|=====================================================</span><span class="st">            </span><span class="er">|</span><span class="st">  </span><span class="dv">82</span>%</a>
+<a class="sourceLine" id="cb6-138" data-line-number="138">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-139" data-line-number="139"><span class="st">  </span><span class="er">|=======================================================</span><span class="st">          </span><span class="er">|</span><span class="st">  </span><span class="dv">84</span>%</a>
+<a class="sourceLine" id="cb6-140" data-line-number="140">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-141" data-line-number="141"><span class="st">  </span><span class="er">|========================================================</span><span class="st">         </span><span class="er">|</span><span class="st">  </span><span class="dv">86</span>%</a>
+<a class="sourceLine" id="cb6-142" data-line-number="142">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-143" data-line-number="143"><span class="st">  </span><span class="er">|=========================================================</span><span class="st">        </span><span class="er">|</span><span class="st">  </span><span class="dv">88</span>%</a>
+<a class="sourceLine" id="cb6-144" data-line-number="144">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-145" data-line-number="145"><span class="st">  </span><span class="er">|==========================================================</span><span class="st">       </span><span class="er">|</span><span class="st">  </span><span class="dv">90</span>%</a>
+<a class="sourceLine" id="cb6-146" data-line-number="146">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-147" data-line-number="147"><span class="st">  </span><span class="er">|============================================================</span><span class="st">     </span><span class="er">|</span><span class="st">  </span><span class="dv">92</span>%</a>
+<a class="sourceLine" id="cb6-148" data-line-number="148">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-149" data-line-number="149"><span class="st">  </span><span class="er">|=============================================================</span><span class="st">    </span><span class="er">|</span><span class="st">  </span><span class="dv">94</span>%</a>
+<a class="sourceLine" id="cb6-150" data-line-number="150">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-151" data-line-number="151"><span class="st">  </span><span class="er">|==============================================================</span><span class="st">   </span><span class="er">|</span><span class="st">  </span><span class="dv">96</span>%</a>
+<a class="sourceLine" id="cb6-152" data-line-number="152">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-153" data-line-number="153"><span class="st">  </span><span class="er">|================================================================</span><span class="st"> </span><span class="er">|</span><span class="st">  </span><span class="dv">98</span>%</a>
+<a class="sourceLine" id="cb6-154" data-line-number="154">  <span class="op">|</span><span class="st">                                                                       </span></a>
+<a class="sourceLine" id="cb6-155" data-line-number="155"><span class="st">  </span><span class="er">|=================================================================|</span><span class="st"> </span><span class="dv">100</span>%</a></code></pre></div>
 <p>Object <code>bootstrap_statistics</code> contains several tibbles that aggregate the data, and for each one of them there is a MOBSTER function to plot the data.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co"># All bootstrapped values</span></a>
 <a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(bootstrap_statistics<span class="op">$</span>bootstrap_values)</a>
-<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">#&gt; # A tibble: 75 x 5</span></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">#&gt; # A tibble: 750 x 5</span></a>
 <a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co">#&gt;    cluster statistics fit.value init.value resample</span></a>
 <a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co">#&gt;    &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;      &lt;dbl&gt;    &lt;int&gt;</span></a>
-<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="co">#&gt;  1 Tail    Shape        2.70       2.73           1</span></a>
-<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">#&gt;  2 Tail    Scale        0.0504     0.0504         1</span></a>
-<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">#&gt;  3 Tail    Mean         0.0800     0.0796         1</span></a>
-<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">#&gt;  4 Tail    Variance     0.00338    0.00321        1</span></a>
-<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">#&gt;  5 C1      a           19.4        9.12           1</span></a>
-<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="co">#&gt;  6 C1      b            5.27       9.12           1</span></a>
-<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co">#&gt;  7 C1      Mean         0.787      0.302          1</span></a>
-<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="co">#&gt;  8 C1      Variance     0.00653    0.00674        1</span></a>
-<a class="sourceLine" id="cb7-14" data-line-number="14"><span class="co">#&gt;  9 C2      a           18.6       63.5            1</span></a>
-<a class="sourceLine" id="cb7-15" data-line-number="15"><span class="co">#&gt; 10 C2      b           22.6       63.5            1</span></a>
-<a class="sourceLine" id="cb7-16" data-line-number="16"><span class="co">#&gt; # … with 65 more rows</span></a>
+<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="co">#&gt;  1 Tail    Shape        2.70      4.50            1</span></a>
+<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">#&gt;  2 Tail    Scale        0.0504    0.0504          1</span></a>
+<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">#&gt;  3 Tail    Mean         0.0800    0.0648          1</span></a>
+<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">#&gt;  4 Tail    Variance     0.00338   0.000374        1</span></a>
+<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">#&gt;  5 C2      a           18.6      31.1             1</span></a>
+<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="co">#&gt;  6 C2      b           22.6      31.1             1</span></a>
+<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co">#&gt;  7 C2      Mean         0.451     0.302           1</span></a>
+<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="co">#&gt;  8 C2      Variance     0.00586   0.00202         1</span></a>
+<a class="sourceLine" id="cb7-14" data-line-number="14"><span class="co">#&gt;  9 C1      a           19.4      22.8             1</span></a>
+<a class="sourceLine" id="cb7-15" data-line-number="15"><span class="co">#&gt; 10 C1      b            5.27     22.8             1</span></a>
+<a class="sourceLine" id="cb7-16" data-line-number="16"><span class="co">#&gt; # … with 740 more rows</span></a>
 <a class="sourceLine" id="cb7-17" data-line-number="17"></a>
 <a class="sourceLine" id="cb7-18" data-line-number="18"><span class="co"># The model probability</span></a>
 <a class="sourceLine" id="cb7-19" data-line-number="19"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(bootstrap_statistics<span class="op">$</span>bootstrap_model)</a>
@@ -330,21 +423,21 @@
 <a class="sourceLine" id="cb7-27" data-line-number="27"><span class="co">#&gt; # A tibble: 15 x 8</span></a>
 <a class="sourceLine" id="cb7-28" data-line-number="28"><span class="co">#&gt;    cluster statistics     min lower_quantile higher_quantile     max</span></a>
 <a class="sourceLine" id="cb7-29" data-line-number="29"><span class="co">#&gt;    &lt;chr&gt;   &lt;chr&gt;        &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;   &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb7-30" data-line-number="30"><span class="co">#&gt;  1 C1      a          1.41e+1       14.5            19.8     1.99e+1</span></a>
-<a class="sourceLine" id="cb7-31" data-line-number="31"><span class="co">#&gt;  2 C1      b          3.94e+0        3.98            5.29    5.29e+0</span></a>
-<a class="sourceLine" id="cb7-32" data-line-number="32"><span class="co">#&gt;  3 C1      Mean       7.82e-1        0.783           0.808   8.09e-1</span></a>
-<a class="sourceLine" id="cb7-33" data-line-number="33"><span class="co">#&gt;  4 C1      Mixing pr… 3.10e-1        0.310           0.350   3.53e-1</span></a>
-<a class="sourceLine" id="cb7-34" data-line-number="34"><span class="co">#&gt;  5 C1      Variance   6.34e-3        0.00635         0.00873 8.93e-3</span></a>
-<a class="sourceLine" id="cb7-35" data-line-number="35"><span class="co">#&gt;  6 C2      a          1.57e+1       15.8            21.1     2.13e+1</span></a>
-<a class="sourceLine" id="cb7-36" data-line-number="36"><span class="co">#&gt;  7 C2      b          1.98e+1       19.9            25.5     2.57e+1</span></a>
-<a class="sourceLine" id="cb7-37" data-line-number="37"><span class="co">#&gt;  8 C2      Mean       4.43e-1        0.443           0.453   4.53e-1</span></a>
-<a class="sourceLine" id="cb7-38" data-line-number="38"><span class="co">#&gt;  9 C2      Mixing pr… 4.03e-1        0.404           0.453   4.56e-1</span></a>
-<a class="sourceLine" id="cb7-39" data-line-number="39"><span class="co">#&gt; 10 C2      Variance   5.16e-3        0.00521         0.00673 6.76e-3</span></a>
-<a class="sourceLine" id="cb7-40" data-line-number="40"><span class="co">#&gt; 11 Tail    Mean       7.18e-2        0.0719          0.0799  8.00e-2</span></a>
-<a class="sourceLine" id="cb7-41" data-line-number="41"><span class="co">#&gt; 12 Tail    Mixing pr… 2.18e-1        0.220           0.276   2.76e-1</span></a>
-<a class="sourceLine" id="cb7-42" data-line-number="42"><span class="co">#&gt; 13 Tail    Scale      5.00e-2        0.0500          0.0504  5.04e-2</span></a>
-<a class="sourceLine" id="cb7-43" data-line-number="43"><span class="co">#&gt; 14 Tail    Shape      2.70e+0        2.70            3.32    3.33e+0</span></a>
-<a class="sourceLine" id="cb7-44" data-line-number="44"><span class="co">#&gt; 15 Tail    Variance   1.16e-3        0.00118         0.00335 3.38e-3</span></a>
+<a class="sourceLine" id="cb7-30" data-line-number="30"><span class="co">#&gt;  1 C1      a          1.04e+1      11.3             25.7     2.86e+1</span></a>
+<a class="sourceLine" id="cb7-31" data-line-number="31"><span class="co">#&gt;  2 C1      b          2.93e+0       3.08             6.20    7.60e+0</span></a>
+<a class="sourceLine" id="cb7-32" data-line-number="32"><span class="co">#&gt;  3 C1      Mean       7.74e-1       0.776            0.808   8.15e-1</span></a>
+<a class="sourceLine" id="cb7-33" data-line-number="33"><span class="co">#&gt;  4 C1      Mixing pr… 2.45e-1       0.257            0.335   3.53e-1</span></a>
+<a class="sourceLine" id="cb7-34" data-line-number="34"><span class="co">#&gt;  5 C1      Variance   4.46e-3       0.00476          0.0111  1.20e-2</span></a>
+<a class="sourceLine" id="cb7-35" data-line-number="35"><span class="co">#&gt;  6 C2      a          1.45e+1      14.8             21.2     2.16e+1</span></a>
+<a class="sourceLine" id="cb7-36" data-line-number="36"><span class="co">#&gt;  7 C2      b          1.74e+1      17.9             25.7     2.58e+1</span></a>
+<a class="sourceLine" id="cb7-37" data-line-number="37"><span class="co">#&gt;  8 C2      Mean       4.30e-1       0.436            0.461   4.67e-1</span></a>
+<a class="sourceLine" id="cb7-38" data-line-number="38"><span class="co">#&gt;  9 C2      Mixing pr… 3.83e-1       0.388            0.474   4.75e-1</span></a>
+<a class="sourceLine" id="cb7-39" data-line-number="39"><span class="co">#&gt; 10 C2      Variance   5.12e-3       0.00518          0.00735 7.53e-3</span></a>
+<a class="sourceLine" id="cb7-40" data-line-number="40"><span class="co">#&gt; 11 Tail    Mean       6.74e-2       0.0690           0.0842  8.62e-2</span></a>
+<a class="sourceLine" id="cb7-41" data-line-number="41"><span class="co">#&gt; 12 Tail    Mixing pr… 2.18e-1       0.222            0.315   3.36e-1</span></a>
+<a class="sourceLine" id="cb7-42" data-line-number="42"><span class="co">#&gt; 13 Tail    Scale      5.00e-2       0.0500           0.0504  5.04e-2</span></a>
+<a class="sourceLine" id="cb7-43" data-line-number="43"><span class="co">#&gt; 14 Tail    Shape      2.40e+0       2.47             3.67    3.94e+0</span></a>
+<a class="sourceLine" id="cb7-44" data-line-number="44"><span class="co">#&gt; 15 Tail    Variance   5.95e-4       0.000780         0.00619 7.73e-3</span></a>
 <a class="sourceLine" id="cb7-45" data-line-number="45"><span class="co">#&gt; # … with 2 more variables: fit.value &lt;dbl&gt;, init.value &lt;dbl&gt;</span></a></code></pre></div>
 <p>Bootstrapping, one can plot the model probability across re-samples as a barplot</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="../reference/plot_bootstrap_model_frequency.html">plot_bootstrap_model_frequency</a></span>(</a>

@@ -34,7 +34,18 @@
 
 
 <meta property="og:title" content="List of cancer genes to compute dnds values. — cancer_genes_dnds" />
-<meta property="og:description" content="List of gene ids (HuGO format) developed from Martincorena et al. to compute dnds values." />
+<meta property="og:description" content="List of gene ids (HuGO format) to compute dnds values.
+There are 2 lists available of putative driver genes, and 2 lists of
+essential genes; these lists have been subset to include only
+genes in the RefCDS database.
+Drivers have been compiled in 
+`Martincorena, et al. Cell 171.5 (2017): 1029-1041`, and in 
+`Tarabichi, et al. Nature Genetics 50.12 (2018): 1630`.
+Essential genes have been compiled using two different cell lines in
+`Wang et al. Science 350.6264 (2015): 1096-1101.` and
+`Bloomen et al. Science 350.6264 (2015): 1092-1096`. All lists are 
+available and named accordingly; use `names(cancer_genes_dnds)` to
+see the available names." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -89,13 +100,16 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/bootstrap.html">C.Bootstrapping with mobster</a>
+      <a href="../articles/bootstrap.html">Confidence estimation via the bootstrap</a>
     </li>
     <li>
-      <a href="../articles/introduction.html">A.Basic mobster usage</a>
+      <a href="../articles/evolutionary_analysis.html">Evolutionary analyses of mobster fits</a>
     </li>
     <li>
-      <a href="../articles/plotting.html">B.Plotting mobster fits</a>
+      <a href="../articles/introduction.html">Basic mobster usage: generating and fitting data</a>
+    </li>
+    <li>
+      <a href="../articles/plotting.html">Plotting mobster fits</a>
     </li>
   </ul>
 </li>
@@ -120,7 +134,18 @@
     </div>
 
     <div class="ref-description">
-    <p>List of gene ids (HuGO format) developed from Martincorena et al. to compute dnds values.</p>
+    <p>List of gene ids (HuGO format) to compute dnds values.
+There are 2 lists available of putative driver genes, and 2 lists of
+essential genes; these lists have been subset to include only
+genes in the RefCDS database.</p>
+<p>Drivers have been compiled in 
+`Martincorena, et al. Cell 171.5 (2017): 1029-1041`, and in 
+`Tarabichi, et al. Nature Genetics 50.12 (2018): 1630`.
+Essential genes have been compiled using two different cell lines in
+`Wang et al. Science 350.6264 (2015): 1096-1101.` and
+`Bloomen et al. Science 350.6264 (2015): 1092-1096`. All lists are 
+available and named accordingly; use `names(cancer_genes_dnds)` to
+see the available names.</p>
     </div>
 
     <pre class="usage"><span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='no'>cancer_genes_dnds</span>)</pre>
@@ -132,68 +157,18 @@
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='no'>cancer_genes_dnds</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/print'>print</a></span>(<span class='no'>cancer_genes_dnds</span>)</div><div class='output co'>#&gt;   [1] "ABL1"      "ACO1"      "ACVR1"     "ACVR1B"    "ACVR2A"    "ACVR2B"   
-#&gt;   [7] "ADNP"      "AJUBA"     "AKT1"      "ALB"       "ALK"       "ALPK2"    
-#&gt;  [13] "AMER1"     "APC"       "APOL2"     "ARHGAP35"  "ARHGAP5"   "ARID1A"   
-#&gt;  [19] "ARID1B"    "ARID2"     "ARID5B"    "ASXL1"     "ATM"       "ATP1A1"   
-#&gt;  [25] "ATP1B1"    "ATP2B3"    "ATRX"      "AXIN1"     "AXIN2"     "AZGP1"    
-#&gt;  [31] "B2M"       "BAP1"      "BCLAF1"    "BCOR"      "BHMT2"     "BIRC3"    
-#&gt;  [37] "BMPR2"     "BRAF"      "BRCA1"     "BRCA2"     "BRD7"      "C3orf70"  
-#&gt;  [43] "CACNA1D"   "CALR"      "CARD11"    "CASP8"     "CBFB"      "CBL"      
-#&gt;  [49] "CBLB"      "CCDC120"   "CCDC6"     "CCND1"     "CD1D"      "CD58"     
-#&gt;  [55] "CD70"      "CD79A"     "CD79B"     "CDC27"     "CDC73"     "CDH1"     
-#&gt;  [61] "CDH10"     "CDK12"     "CDK4"      "CDKN1A"    "CDKN1B"    "CDKN2A"   
-#&gt;  [67] "CDKN2C"    "CEBPA"     "CHD4"      "CHD8"      "CIB3"      "CIC"      
-#&gt;  [73] "CMTR2"     "CNBD1"     "CNOT3"     "COL2A1"    "COL5A1"    "COL5A3"   
-#&gt;  [79] "CREBBP"    "CRLF2"     "CSDE1"     "CSF1R"     "CSF3R"     "CTCF"     
-#&gt;  [85] "CTNNA1"    "CTNNB1"    "CUL3"      "CUL4B"     "CUX1"      "CYLD"     
-#&gt;  [91] "DAXX"      "DDX3X"     "DDX5"      "DIAPH1"    "DICER1"    "DIS3"     
-#&gt;  [97] "DNM2"      "DNMT3A"    "EEF1A1"    "EGFR"      "EIF1AX"    "EIF2S2"   
-#&gt; [103] "ELF3"      "EML4"      "EP300"     "EPAS1"     "EPHA2"     "EPS8"     
-#&gt; [109] "ERBB2"     "ERBB3"     "ERCC2"     "ERG"       "ESR1"      "ETNK1"    
-#&gt; [115] "EZH2"      "FAM104A"   "FAM166A"   "FAM46C"    "FAT1"      "FBXO11"   
-#&gt; [121] "FBXW7"     "FGFR1"     "FGFR2"     "FGFR3"     "FLG"       "FLT3"     
-#&gt; [127] "FOSL2"     "FOXA1"     "FOXA2"     "FOXL2"     "FOXQ1"     "FRMD7"    
-#&gt; [133] "FUBP1"     "GAGE12J"   "GATA1"     "GATA2"     "GATA3"     "GNA11"    
-#&gt; [139] "GNA13"     "GNAQ"      "GNAS"      "GNB1"      "GNPTAB"    "GPS2"     
-#&gt; [145] "GTF2I"     "GUSB"      "H3F3A"     "H3F3B"     "HIST1H1C"  "HIST1H1E" 
-#&gt; [151] "HIST1H2BD" "HIST1H3B"  "HIST1H4E"  "HLA-A"     "HLA-B"     "HLA-C"    
-#&gt; [157] "HNF1A"     "HOXB3"     "HRAS"      "IDH1"      "IDH2"      "IKBKB"    
-#&gt; [163] "IKZF1"     "IL6ST"     "IL7R"      "ING1"      "INTS12"    "IPO7"     
-#&gt; [169] "IRF4"      "ITGB7"     "ITPKB"     "JAK1"      "JAK2"      "JAK3"     
-#&gt; [175] "KANSL1"    "KCNJ5"     "KDM5C"     "KDM6A"     "KDR"       "KEAP1"    
-#&gt; [181] "KEL"       "KIT"       "KLF4"      "KLF5"      "KLHL8"     "KMT2A"    
-#&gt; [187] "KMT2B"     "KMT2C"     "KMT2D"     "KRAS"      "KRT5"      "LATS2"    
-#&gt; [193] "LCTL"      "LZTR1"     "MAP2K1"    "MAP2K2"    "MAP2K4"    "MAP2K7"   
-#&gt; [199] "MAP3K1"    "MAX"       "MED12"     "MED23"     "MEN1"      "MET"      
-#&gt; [205] "MGA"       "MLH1"      "MPL"       "MPO"       "MSH2"      "MSH6"     
-#&gt; [211] "MTOR"      "MUC17"     "MUC6"      "MXRA5"     "MYD88"     "MYOCD"    
-#&gt; [217] "MYOD1"     "NBPF1"     "NCOR1"     "NF1"       "NF2"       "NFE2L2"   
-#&gt; [223] "NIPBL"     "NOTCH1"    "NOTCH2"    "NPM1"      "NRAS"      "NSD1"     
-#&gt; [229] "NT5C2"     "NTN4"      "NTRK3"     "NUP210L"   "OMA1"      "OR4A16"   
-#&gt; [235] "OR4N2"     "OR52N1"    "OTUD7A"    "PAPD5"     "PAX5"      "PBRM1"    
-#&gt; [241] "PCBP1"     "PDAP1"     "PDGFRA"    "PDSS2"     "PDYN"      "PHF6"     
-#&gt; [247] "PHOX2B"    "PIK3CA"    "PIK3R1"    "PLCG1"     "POLE"      "POT1"     
-#&gt; [253] "POU2AF1"   "POU2F2"    "PPM1D"     "PPP2R1A"   "PPP6C"     "PRDM1"    
-#&gt; [259] "PRKAR1A"   "PSG4"      "PSIP1"     "PTCH1"     "PTEN"      "PTPN11"   
-#&gt; [265] "PTPRB"     "QKI"       "RAC1"      "RACGAP1"   "RAD21"     "RASA1"    
-#&gt; [271] "RB1"       "RBM10"     "RET"       "RHEB"      "RHOA"      "RHOB"     
-#&gt; [277] "RIT1"      "RNF43"     "RPL10"     "RPL22"     "RPL5"      "RPS15"    
-#&gt; [283] "RPS2"      "RPS6KA3"   "RREB1"     "RUNX1"     "RXRA"      "SELP"     
-#&gt; [289] "SETBP1"    "SETD2"     "SF3B1"     "SGK1"      "SH2B3"     "SLC1A3"   
-#&gt; [295] "SLC26A3"   "SLC44A3"   "SLC4A5"    "SMAD2"     "SMAD4"     "SMARCA4"  
-#&gt; [301] "SMARCB1"   "SMC1A"     "SMC3"      "SMO"       "SMTNL2"    "SNX25"    
-#&gt; [307] "SOCS1"     "SOX17"     "SOX9"      "SPEN"      "SPOP"      "SPTAN1"   
-#&gt; [313] "SRC"       "SRSF2"     "STAG2"     "STAT3"     "STAT5B"    "STK11"    
-#&gt; [319] "STK19"     "STX2"      "SUFU"      "TBC1D12"   "TBL1XR1"   "TBX3"     
-#&gt; [325] "TCEB1"     "TCF12"     "TCF7L2"    "TCP11L2"   "TDRD10"    "TERT"     
-#&gt; [331] "TET2"      "TG"        "TGFBR2"    "TGIF1"     "TIMM17A"   "TNF"      
-#&gt; [337] "TNFAIP3"   "TNFRSF14"  "TOP2A"     "TP53"      "TRAF3"     "TRAF7"    
-#&gt; [343] "TRIM23"    "TSC1"      "TSC2"      "TSHR"      "TTLL9"     "TYRO3"    
-#&gt; [349] "U2AF1"     "UBR5"      "UPF3A"     "VHL"       "WASF3"     "WT1"      
-#&gt; [355] "XIRP2"     "XPO1"      "ZBTB20"    "ZBTB7B"    "ZFHX3"     "ZFP36L1"  
-#&gt; [361] "ZFP36L2"   "ZFX"       "ZMYM3"     "ZNF471"    "ZNF620"    "ZNF750"   
-#&gt; [367] "ZNF800"    "ZNRF3"     "ZRSR2"    </div></pre>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/print'>print</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/lapply'>lapply</a></span>(<span class='no'>cancer_genes_dnds</span>, <span class='no'>head</span>))</div><div class='output co'>#&gt; $Martincorena_drivers
+#&gt; [1] "CCDC6"     "EIF1AX"    "HIST1H2BD" "MED12"     "POLE"      "SMARCB1"  
+#&gt; 
+#&gt; $Tarabichi_drivers
+#&gt; [1] "ACVR1"  "ACVR1B" "AKT1"   "ALK"    "AMER1"  "APC"   
+#&gt; 
+#&gt; $Wang_essentials
+#&gt; [1] "ABL1"    "RPL23A"  "AARS2"   "TRMT112" "FARSA"   "ABCB7"  
+#&gt; 
+#&gt; $Bloomen_essentials
+#&gt; [1] "AARS"     "AASDHPPT" "AATF"     "ABCB7"    "ABCE1"    "ABCF1"   
+#&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

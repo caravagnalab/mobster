@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Summaries for an object of class <code>'dbpmm'</code> is like a print. — print.dbpmm • mobster</title>
+<title>MOBSTER fit for the PD4120a breast sample. — LUFF76_lung_sample • mobster</title>
 
 
 <!-- jquery -->
@@ -33,8 +33,10 @@
 
 
 
-<meta property="og:title" content="Summaries for an object of class <code>'dbpmm'</code> is like a print. — print.dbpmm" />
-<meta property="og:description" content="Summaries for an object of class 'dbpmm' is like a print." />
+<meta property="og:title" content="MOBSTER fit for the PD4120a breast sample. — LUFF76_lung_sample" />
+<meta property="og:description" content="MOBSTER fit for the LUFF76 lung sample; this object is the
+result of running `mobster_fit` function on the input data described in the 
+main MOBSTER paper." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -117,53 +119,42 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Summaries for an object of class <code>'dbpmm'</code> is like a print.</h1>
+    <h1>MOBSTER fit for the PD4120a breast sample.</h1>
     
-    <div class="hidden name"><code>print.dbpmm.Rd</code></div>
+    <div class="hidden name"><code>LUFF76_lung_sample.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Summaries for an object of class <code>'dbpmm'</code> is like a print.</p>
+    <p>MOBSTER fit for the LUFF76 lung sample; this object is the
+result of running `mobster_fit` function on the input data described in the 
+main MOBSTER paper.</p>
     </div>
 
-    <pre class="usage"><span class='co'># S3 method for dbpmm</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/print'>print</a></span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='no'>LUFF76_lung_sample</span>)</pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>x</th>
-      <td><p>An obj of class <code>'dbpmm'</code>.</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td></td>
-    </tr>
-    </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>nothing.</p>
+    <p>Data from a MOBSTER fit.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='no'>fit_example</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/print'>print</a></span>(<span class='no'>fit_example</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; <span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 426 </span><span style='color: #00BBBB;'>points with</span><span> K = 2 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 289 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='no'>LUFF76_lung_sample</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'mobster'</span>)
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/print'>print</a></span>(<span class='no'>LUFF76_lung_sample</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; <span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 2298 </span><span style='color: #00BBBB;'>points with</span><span> K = 1 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 51 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
 #&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt;   Components (fit)  
-#&gt; </span><span>     Tail	n = 259 (0.64) 	 Shape = 1.8 
-#&gt;   Beta C1 	n = 63 (0.13) 	 Mean = 0.23
-#&gt;   Beta C2 	n = 104 (0.24) 	 Mean = 0.5
+#&gt; </span><span>     Tail	n = 1076 (0.5) 	 Shape =   2 
+#&gt;   Beta C1 	n = 1222 (0.5) 	 Mean = 0.25
 #&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt;   Scores (model selection)  
-#&gt; </span><span>       NLL       BIC       AIC  entropy       ICL     reICL size
-#&gt;  -490.8661 -909.0789 -957.7322 80.79651 -828.2824 -908.2693   12</div></span></pre>
+#&gt; </span><span>       NLL       BIC       AIC  entropy       ICL reduced.entropy     reICL
+#&gt;  -3095.239 -6144.039 -6178.478 359.8237 -5784.216               0 -6144.039
+#&gt;  size
+#&gt;     6</div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>LUFF76_lung_sample</span>$<span class='no'>best</span>)</div><div class='img'><img src='LUFF76_lung_sample-1.png' alt='' width='700' height='433' /></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
+      <li><a href="#format">Format</a></li>
       <li><a href="#examples">Examples</a></li>
     </ul>
 

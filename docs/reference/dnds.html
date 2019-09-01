@@ -91,13 +91,16 @@ the best fitting MOBSTER model." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/bootstrap.html">C.Bootstrapping with mobster</a>
+      <a href="../articles/bootstrap.html">Confidence estimation via the bootstrap</a>
     </li>
     <li>
-      <a href="../articles/introduction.html">A.Basic mobster usage</a>
+      <a href="../articles/evolutionary_analysis.html">Evolutionary analyses of mobster fits</a>
     </li>
     <li>
-      <a href="../articles/plotting.html">B.Plotting mobster fits</a>
+      <a href="../articles/introduction.html">Basic mobster usage: generating and fitting data</a>
+    </li>
+    <li>
+      <a href="../articles/plotting.html">Plotting mobster fits</a>
     </li>
   </ul>
 </li>
@@ -127,22 +130,29 @@ values per cluster. It computes global dN/dS and per gene dN/dS values and makes
 the best fitting MOBSTER model.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>dnds</span>(<span class='no'>x</span>, <span class='kw'>gene_list</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>colors</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='kw'>Tail</span> <span class='kw'>=</span> <span class='st'>"gray"</span>), <span class='kw'>refdb</span> <span class='kw'>=</span> <span class='st'>"hg19"</span>,
-  <span class='kw'>dndscv_plot</span> <span class='kw'>=</span> <span class='st'>"wall"</span>,
-  <span class='kw'>mapping</span> <span class='kw'>=</span> <span class='kw pkg'>pio</span><span class='kw ns'>:::</span><span class='fu'>nmfy</span>(<span class='kw pkg'>mobster</span><span class='kw ns'>:::</span><span class='fu'>.get_clusters_labels</span>(<span class='no'>x</span>),
-  <span class='kw pkg'>mobster</span><span class='kw ns'>:::</span><span class='fu'>.get_clusters_labels</span>(<span class='no'>x</span>)))</pre>
+    <pre class="usage"><span class='fu'>dnds</span>(<span class='no'>x</span>, <span class='kw'>mapping</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>gene_list</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>colors</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='kw'>Tail</span> <span class='kw'>=</span> <span class='st'>"gray"</span>),
+  <span class='kw'>refdb</span> <span class='kw'>=</span> <span class='st'>"hg19"</span>, <span class='kw'>dndscv_plot</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"wall"</span>, <span class='st'>"wmis"</span>, <span class='st'>"wnon"</span>, <span class='st'>"wspl"</span>,
+  <span class='st'>"wtru"</span>), <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>A MOBSTER fit object</p></td>
+      <td><p>A MOBSTER fit object.</p></td>
+    </tr>
+    <tr>
+      <th>mapping</th>
+      <td><p>The groups used to compute this statistics are defined by this variable. If
+`mapping  = c(`A` = 'G1', `B` = 'G1', `C` = 'G2')`, then mutations from clusters `A` and 
+`B` will be pooled into one group (`G1`), while mutations from cluster `C` will constitute
+a group themselves. By default, with `mapping = NULL`, each cluster is a group.</p></td>
     </tr>
     <tr>
       <th>gene_list</th>
       <td><p>An optional vector of gene names to infer dN/dS values,
-default is to use the whole exome</p></td>
+default (`NULL`) is to use <code>dndscv</code> default (whole-exome. This package provides lists
+genes that can be used for this value (essential genes, cancer genes, etc.); see package data.</p></td>
     </tr>
     <tr>
       <th>colors</th>
@@ -157,22 +167,19 @@ https://github.com/im3sanger/dndscv_data</p></td>
     </tr>
     <tr>
       <th>dndscv_plot</th>
-      <td><p>What of the dndscv scores should be visualized in a plot, by default (`wall`) is
-only the global dnds value.</p></td>
+      <td><p>What of the dndscv scores should be visualized in a plot, by default all the statistcs
+are reported. One can use `dndscv_plot = wall` to get only the global dnds value.</p></td>
     </tr>
     <tr>
-      <th>mapping</th>
-      <td><p>The groups used to compute this statistics are defined by this variable. If
-`mapping  = c(`A` = 'G1', `B` = 'G1', `C` = 'G2')`, then mutations from clusters `A` and 
-`B` will be pooled into one group (`G1`), while mutations from cluster `C` will constitute
-a group themselves. By default, each cluster in the fit is a own group.</p></td>
+      <th>...</th>
+      <td><p>Extra parameters forwarded to a call to <code>Clusters</code>.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>The fit object is a list with the summary table and the observation counts reported
-by package <code>dndscv</code>, together with a <code>ggplot</code> plot.</p>
+by package <code>dndscv</code>, together with a <code>ggplot</code> plot for the results.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
