@@ -19,7 +19,7 @@
 #' https://github.com/im3sanger/dndscv_data
 #' @param dndscv_plot What of the dndscv scores should be visualized in a plot, by default all the statistcs
 #' are reported. One can use `dndscv_plot = wall` to get only the global dnds value.
-#' @param ... Extra parameters forwarded to a call to \code{Clusters}.
+#' @param ... Extra parameters forwarded to \code{dndscv}.
 #'
 #' @return The fit object is a list with the summary table and the observation counts reported
 #' by package \code{dndscv}, together with a \code{ggplot} plot for the results.
@@ -41,7 +41,7 @@ dnds <- function(x,
   if(!is.data.frame(x))
   {
     mobster:::is_mobster_fit(x)
-    x = Clusters(x, ...)
+    x = Clusters(x)
   }
   
   # Getter -- checks for the mapping correctness and apply it
@@ -53,7 +53,8 @@ dnds <- function(x,
   result_fit = wrapper_dndsfit(clusters = dnds_input,
                                groups = clusters,
                                gene_list,
-                               mode = 'Mapping')
+                               mode = 'Mapping',
+                               ...)
   
   pio::pioStr("Results:", paste0(dndscv_plot, collapse = ', '), '\n')
   pio::pioDisp(result_fit$dndstable %>% filter(name %in% dndscv_plot))

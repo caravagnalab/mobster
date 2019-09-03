@@ -91,7 +91,7 @@ get_dnds_input = function(x, mapping, refdb, gene_list)
 }
 
 # Fits via dndscv
-wrapper_dndsfit = function(clusters, groups, gene_list, mode)
+wrapper_dndsfit = function(clusters, groups, gene_list, mode, ...)
 {
   globaldndstable = dndscvtable = NULL
   for (i in groups)
@@ -102,7 +102,7 @@ wrapper_dndsfit = function(clusters, groups, gene_list, mode)
     tryCatch({
       dndsout <- clusters %>%
         dplyr::filter(dnds_group == i) %>%
-        dndscv::dndscv(., gene_list = gene_list)
+        dndscv::dndscv(., gene_list = gene_list,  ...)
     },
     error = function(e)
     {
@@ -130,6 +130,24 @@ wrapper_dndsfit = function(clusters, groups, gene_list, mode)
 # Plotting function for dndscv results
 wrapper_plot = function(results, mode, gene_list, dndscv_plot, colors, mask_colors = FALSE)
 {
+  counts = results$dndscvtable %>% 
+    group_by(dnds_group) %>%
+    summarise(wsyn = sum(n_syn), wmis = sum(n_mis), wnon = sum(n_non), wspl = sum(n_spl), wtru = sum(n_spl) + sum(n_non), wall = wtru + sum(n_syn) + sum(n_mis)) %>%
+    reshape2::melt(id = 'dnds_group') %>%
+    rename(name = variable, n = value) 
+  
+  syn_label = counts %>% filter(name == 'wsyn') %>%
+    mutate(label = paste0(dnds_group, ' (n = ', n, ')')) %>%
+    pull(label) %>%
+    paste(collapse =', ')
+  
+  counts =  counts %>% filter(name != 'wsyn') %>%
+    full_join(
+      results$dndstable %>% 
+        mutate(name = paste(name)) %>%
+        select(name, mle, dnds_group)
+      )
+  
   # Plotting
   gene_list_label = ifelse(
     is.null(gene_list),
@@ -142,12 +160,13 @@ wrapper_plot = function(results, mode, gene_list, dndscv_plot, colors, mask_colo
     dplyr::filter(name %in% dndscv_plot) %>% 
     ggplot2::ggplot(ggplot2::aes(x = dnds_group, y = mle, ymin = cilow, ymax = cihigh)) +
     mobster:::my_ggplot_theme() +
-    facet_wrap(~ name, ncol = 1, scales = 'free_y') +
+    facet_wrap(~ name, nrow = 1, scales = 'free_y') +
     ggplot2::xlab("") +
     ggplot2::ylab("dN/dS") +
     labs(
       title = paste0("dN/dS values via dndscv"),
-      subtitle = gene_list_label
+      subtitle = gene_list_label,
+      caption = paste('Synonimous mutations:', syn_label)
     ) +
     ggplot2::geom_hline(yintercept = 1.0, lty = 2, size = .3) +
     guides(color = F, fill = F)
@@ -164,8 +183,9 @@ wrapper_plot = function(results, mode, gene_list, dndscv_plot, colors, mask_colo
     dndsplot = dndsplot + geom_pointrange(color = 'black')
   }
   
-  
-  dndsplot
+  dndsplot +
+    ggrepel::geom_label_repel(data = counts %>% mutate(n = paste0('n = ', n)),
+                              inherit.aes = FALSE, aes(x = dnds_group, y = mle, label = n, color = dnds_group), size = 3)
 }
 
 tail_non_tail_mapping = function(n=10)
