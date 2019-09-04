@@ -45,12 +45,12 @@ dnds <- function(x,
   }
   
   # Getter -- checks for the mapping correctness and apply it
-  dnds_input = get_dnds_input(x, mapping, refdb, gene_list)
+  dnds_input = mobster:::get_dnds_input(x, mapping, refdb, gene_list)
   clusters = unique(dnds_input$dnds_group)
   
   pio::pioTit("Running dndscv")
   
-  result_fit = wrapper_dndsfit(clusters = dnds_input,
+  result_fit = mobster:::wrapper_dndsfit(clusters = dnds_input,
                                groups = clusters,
                                gene_list,
                                mode = 'Mapping',
@@ -61,7 +61,7 @@ dnds <- function(x,
   
   pio::pioStr("Generating ouptut plot", '\n')
   
-  plot_results = wrapper_plot(
+  plot_results = mobster:::wrapper_plot(
     result_fit,
     mode = result_fit$dndstable$run[1],
     gene_list,
