@@ -73,6 +73,7 @@ dnds <- function(x,
   results <- list(
     dnds_summary = result_fit$dndstable %>% as_tibble(),
     dndscv_table = result_fit$dndscvtable  %>% as_tibble(),
+    dndscv_output = result_fit$dndscvout,
     plot = plot_results
   )
   

@@ -104,6 +104,7 @@ get_dnds_input = function(x, mapping, refdb, gene_list)
 wrapper_dndsfit = function(clusters, groups, gene_list, mode, ...)
 {
   globaldndstable = dndscvtable = NULL
+  dndsoutputs = NULL
   for (i in groups)
   {
     pio::pioStr("\ndndscv @ dnds_group ", i, '\n')
@@ -137,9 +138,13 @@ wrapper_dndsfit = function(clusters, groups, gene_list, mode, ...)
         dplyr::bind_rows(dndscvtable, dndsout$sel_cv %>%
                            mutate(dnds_group = i))
     }
+    
+    dndsoutputs = append(dndsoutputs, list(dndsout))
   }
   
-  return(list(dndstable = globaldndstable, dndscvtable = dndscvtable))
+  names(dndsoutputs) = groups
+  
+  return(list(dndstable = globaldndstable, dndscvtable = dndscvtable, dndscvout = dndsoutputs))
 }
 
 # Plotting function for dndscv results
