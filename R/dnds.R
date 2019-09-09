@@ -25,6 +25,8 @@
 #' by package \code{dndscv}, together with a \code{ggplot} plot for the results.
 #'
 #' @export
+#' 
+#' @import dndscv
 #'
 dnds <- function(x,
                  mapping = NULL,
