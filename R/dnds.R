@@ -19,12 +19,14 @@
 #' https://github.com/im3sanger/dndscv_data
 #' @param dndscv_plot What of the dndscv scores should be visualized in a plot, by default all the statistcs
 #' are reported. One can use `dndscv_plot = wall` to get only the global dnds value.
-#' @param ... Extra parameters forwarded to a call to \code{Clusters}.
+#' @param ... Extra parameters forwarded to \code{dndscv}.
 #'
 #' @return The fit object is a list with the summary table and the observation counts reported
 #' by package \code{dndscv}, together with a \code{ggplot} plot for the results.
 #'
 #' @export
+#' 
+#' @import dndscv
 #'
 dnds <- function(x,
                  mapping = NULL,
@@ -41,26 +43,27 @@ dnds <- function(x,
   if(!is.data.frame(x))
   {
     mobster:::is_mobster_fit(x)
-    x = Clusters(x, ...)
+    x = Clusters(x)
   }
   
   # Getter -- checks for the mapping correctness and apply it
-  dnds_input = get_dnds_input(x, mapping, refdb, gene_list)
+  dnds_input = mobster:::get_dnds_input(x, mapping, refdb, gene_list)
   clusters = unique(dnds_input$dnds_group)
   
   pio::pioTit("Running dndscv")
   
-  result_fit = wrapper_dndsfit(clusters = dnds_input,
+  result_fit = mobster:::wrapper_dndsfit(clusters = dnds_input,
                                groups = clusters,
                                gene_list,
-                               mode = 'Mapping')
+                               mode = 'Mapping',
+                               ...)
   
   pio::pioStr("Results:", paste0(dndscv_plot, collapse = ', '), '\n')
   pio::pioDisp(result_fit$dndstable %>% filter(name %in% dndscv_plot))
   
   pio::pioStr("Generating ouptut plot", '\n')
   
-  plot_results = wrapper_plot(
+  plot_results = mobster:::wrapper_plot(
     result_fit,
     mode = result_fit$dndstable$run[1],
     gene_list,
@@ -72,6 +75,7 @@ dnds <- function(x,
   results <- list(
     dnds_summary = result_fit$dndstable %>% as_tibble(),
     dndscv_table = result_fit$dndscvtable  %>% as_tibble(),
+    dndscv_output = result_fit$dndscvout,
     plot = plot_results
   )
   
