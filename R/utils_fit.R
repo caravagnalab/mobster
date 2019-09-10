@@ -368,3 +368,35 @@
   unique(x$data$cluster)
 }
 
+
+to_string = function(x)
+{
+  is_mobster_fit(x)
+  
+  vcz = function(w){
+    pio:::nmfy(
+      paste0(w, '_', x$Clusters %>% filter(type == w) %>% pull(cluster)),
+      x$Clusters %>% filter(type == w) %>% pull(fit.value)
+    )
+  }
+  
+  values = data.frame(
+    tail = x$fit.tail,
+    K_beta = x$Kbeta,
+    N = x$N,
+    N = x$N.k %>% data.frame %>% t,
+    pi = x$pi %>% data.frame %>% t,
+    vcz('Mean') %>% data.frame %>% t,
+    vcz('Variance') %>% data.frame %>% t,
+    vcz('Scale') %>% data.frame %>% t,
+    vcz('Shape') %>% data.frame %>% t,
+    x$scores,
+    stringsAsFactors = FALSE
+  ) %>%
+    as_tibble()
+  
+  colnames(values) = gsub('\\.', '_',   colnames(values))
+  
+  values
+}
+
