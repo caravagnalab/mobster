@@ -6,7 +6,7 @@ institute: "Institute for Cancer Research"
 email: "giulio.caravagna@icr.ac.uk"
 output: rmarkdown::github_document
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Confidence estimation via the bootstrap}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -65,7 +65,7 @@ Now we are ready to compute `n.resamples` nonparametric bootstraps, and the boot
 bootstrap_results = mobster_bootstrap(
   fit$best,
   bootstrap = 'nonparametric',
-  n.resamples = 50,
+  n.resamples = 5,
   epsilon = 1e-4,   # forwarded to mobster_fit, optimization epsilon
   K = c(1, 2),      # forwarded to mobster_fit, test only models with 1 or 2 Betas
   cache = NULL      # forwarded to mobster_fit, no cache

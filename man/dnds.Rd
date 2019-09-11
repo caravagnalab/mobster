@@ -30,7 +30,7 @@ https://github.com/im3sanger/dndscv_data}
 \item{dndscv_plot}{What of the dndscv scores should be visualized in a plot, by default all the statistcs
 are reported. One can use `dndscv_plot = wall` to get only the global dnds value.}
 
-\item{...}{Extra parameters forwarded to a call to \code{Clusters}.}
+\item{...}{Extra parameters forwarded to \code{dndscv}.}
 }
 \value{
 The fit object is a list with the summary table and the observation counts reported
