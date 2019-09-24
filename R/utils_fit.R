@@ -373,25 +373,47 @@ to_string = function(x)
 {
   is_mobster_fit(x)
   
+  
   vcz = function(w){
-    pio:::nmfy(
-      paste0(w, '_', x$Clusters %>% filter(type == w) %>% pull(cluster)),
-      x$Clusters %>% filter(type == w) %>% pull(fit.value)
+    lblt = w
+    w = x$Clusters %>% filter(type == w)
+    if(nrow(w) == 0) return(NA)
+
+      pio:::nmfy(
+        paste0(lblt, '.', w  %>% pull(cluster)),
+        w %>% pull(fit.value)
     )
   }
-  
-  values = data.frame(
+
+  values_f = data.frame(
     tail = x$fit.tail,
     K_beta = x$Kbeta,
+    stringsAsFactors = FALSE
+  )
+  
+  values_p = data.frame(
     N = x$N,
     N = x$N.k %>% data.frame %>% t,
     pi = x$pi %>% data.frame %>% t,
-    vcz('Mean') %>% data.frame %>% t,
-    vcz('Variance') %>% data.frame %>% t,
-    vcz('Scale') %>% data.frame %>% t,
-    vcz('Shape') %>% data.frame %>% t,
-    x$scores,
     stringsAsFactors = FALSE
+  )
+    
+  values_m = vcz('Mean') %>% data.frame %>% t
+  values_v = vcz('Variance') %>% data.frame %>% t
+  
+  values_sc = data.frame(Scale.Tail = NA)
+  if(x$fit.tail) values_sc = vcz('Scale') %>% data.frame %>% t
+
+  values_sh = data.frame(Shape.Tail = NA)
+  if(x$fit.tail) values_sh = vcz('Shape') %>% data.frame %>% t
+  
+  values = cbind(
+    values_f,
+    values_p,
+    values_m,
+    values_v,
+    values_sc,
+    values_sh
   ) %>%
     as_tibble()
   
