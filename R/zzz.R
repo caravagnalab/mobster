@@ -26,11 +26,11 @@
     
     cat(
       "\n > ",
-      crayon::blue("[https://github.com/caravagn/mvMOBSTER]"), 
-      "See package",
-      crayon::green("\"mvmobster\""),
-      "for support with multi-region sequencing analyses.\n\n")
-   
+      crayon::blue("[https://https://caravagn.github.io/evoverse]"), 
+      "Use package",
+      crayon::green("\"evoverse\""),
+      "to implement cancer evolution analyses from multi-sample data, integrating MOBSTER, VIBER and CNAqc packages.\n\n")
+
     options(mobster_welcome_message = FALSE) 
   }
   
