@@ -1,6 +1,6 @@
-#' Run a dN/dS analysis on Mobster clusters
+#' Run a dN/dS analysis on MOBSTER clusters.
 #'
-#' @description This function takes a MOBSTER fit and runs dndscv (https://github.com/im3sanger/dndscv) to calculate dN/dS
+#' @description This function takes a MOBSTER fit and runs `dndscv` (https://github.com/im3sanger/dndscv) to calculate dN/dS
 #' values per cluster. It computes global dN/dS and per gene dN/dS values and makes a plot. dN/dS values are computed with
 #' the best fitting MOBSTER model.
 #'

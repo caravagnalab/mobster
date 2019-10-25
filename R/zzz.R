@@ -23,13 +23,14 @@
     pio::pioHdr('MOBSTER - Model-based clustering in cancer')
     pio::pioStr("Author : ", "Giulio Caravagna <gcaravagn@gmail.com>", suffix = '\n')
     pio::pioStr("GitHub : ", "caravagn/mobster", suffix = '\n')
+    pio::pioStr("   WWW : ", "https://caravagn.github.io/mobster/", suffix = '\n')
+    
     
     cat(
-      "\n > ",
-      crayon::blue("[https://https://caravagn.github.io/evoverse]"), 
-      "Use package",
-      crayon::green("\"evoverse\""),
-      "to implement cancer evolution analyses from multi-sample data, integrating MOBSTER, VIBER and CNAqc packages.\n\n")
+      "\n > MOBSTER is part of the", crayon::green("\"evoverse\""), 
+      crayon::blue("[https://bit.ly/2orn94e]"),
+      "- a collection of packages to implement Cancer Evolution analyses from cancer sequencing data.\n"
+      )
 
     options(mobster_welcome_message = FALSE) 
   }

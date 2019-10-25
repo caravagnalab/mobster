@@ -2,7 +2,7 @@
 % Please edit documentation in R/dnds.R
 \name{dnds}
 \alias{dnds}
-\title{Run a dN/dS analysis on Mobster clusters}
+\title{Run a dN/dS analysis on MOBSTER clusters.}
 \usage{
 dnds(x, mapping = NULL, gene_list = NULL, colors = c(Tail = "gray"),
   refdb = "hg19", dndscv_plot = c("wall", "wmis", "wnon", "wspl",
@@ -37,7 +37,7 @@ The fit object is a list with the summary table and the observation counts repor
 by package \code{dndscv}, together with a \code{ggplot} plot for the results.
 }
 \description{
-This function takes a MOBSTER fit and runs dndscv (https://github.com/im3sanger/dndscv) to calculate dN/dS
+This function takes a MOBSTER fit and runs `dndscv` (https://github.com/im3sanger/dndscv) to calculate dN/dS
 values per cluster. It computes global dN/dS and per gene dN/dS values and makes a plot. dN/dS values are computed with
 the best fitting MOBSTER model.
 }

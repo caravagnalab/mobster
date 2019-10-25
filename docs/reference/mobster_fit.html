@@ -86,7 +86,28 @@ out small clusters from the fit output." />
   </a>
 </li>
 <li>
+  <a href="../articles/mobster.html">Get started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/bootstrap.html">Confidence estimation via the bootstrap</a>
+    </li>
+    <li>
+      <a href="../articles/evolutionary_analysis.html">Evolutionary analyses of mobster fits</a>
+    </li>
+    <li>
+      <a href="../articles/plotting.html">Plotting mobster fits</a>
+    </li>
+  </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -258,11 +279,11 @@ variable that specify which score has been used for model selection.</p>
 #&gt; 
 #&gt; </span><span style='font-weight: bold;'>
 #&gt; 
-#&gt; MOBSTER fit completed in</span><span> 0.27 </span><span style='color: #00BBBB;'>mins</span><span> 
+#&gt; MOBSTER fit completed in</span><span> 0.26 </span><span style='color: #00BBBB;'>mins</span><span> 
 #&gt; 
 #&gt;  </span><span style='font-weight: bold;'>BEST FIT: reICL 
 #&gt; 
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 200 </span><span style='color: #00BBBB;'>points with</span><span> K = 2 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 58 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
+#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 200 </span><span style='color: #00BBBB;'>points with</span><span> K = 2 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 49 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
 #&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt;   Components (fit)  
 #&gt; </span><span>     Tail	n = 50 (0.25) 	 Shape = 3.6 
@@ -271,8 +292,8 @@ variable that specify which score has been used for model selection.</p>
 #&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt;   Scores (model selection)  
 #&gt; </span><span>       NLL       BIC       AIC entropy       ICL reduced.entropy     reICL size
-#&gt;  -103.9009 -160.1169 -189.8018 9.93381 -150.1831         7.95513 -152.1618    9</div><div class='input'>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>x</span>$<span class='no'>best</span>)</div><div class='img'><img src='mobster_fit-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/print'>print</a></span>(<span class='no'>x</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 200 </span><span style='color: #00BBBB;'>points with</span><span> K = 2 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 58 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
+#&gt;  -103.9009 -160.1169 -189.8018 9.93384 -150.1831        7.955159 -152.1618    9</div><div class='input'>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>x</span>$<span class='no'>best</span>)</div><div class='img'><img src='mobster_fit-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/print'>print</a></span>(<span class='no'>x</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 200 </span><span style='color: #00BBBB;'>points with</span><span> K = 2 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 49 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
 #&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt;   Components (fit)  
 #&gt; </span><span>     Tail	n = 50 (0.25) 	 Shape = 3.6 
@@ -281,10 +302,10 @@ variable that specify which score has been used for model selection.</p>
 #&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt;   Scores (model selection)  
 #&gt; </span><span>       NLL       BIC       AIC entropy       ICL reduced.entropy     reICL size
-#&gt;  -103.9009 -160.1169 -189.8018 9.93381 -150.1831         7.95513 -152.1618    9</div><div class='input'>
+#&gt;  -103.9009 -160.1169 -189.8018 9.93384 -150.1831        7.955159 -152.1618    9</div><div class='input'>
 <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/lapply'>lapply</a></span>(<span class='no'>x</span>$<span class='no'>runs</span>[<span class='fl'>1</span>:<span class='fl'>3</span>], <span class='no'>plot</span>)</div><div class='output co'>#&gt; $`21`</div><div class='img'><img src='mobster_fit-3.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; 
 #&gt; $`16`</div><div class='img'><img src='mobster_fit-4.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; 
-#&gt; $`29`</div><div class='img'><img src='mobster_fit-5.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; </div><div class='input'>
+#&gt; $`26`</div><div class='img'><img src='mobster_fit-5.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; </div><div class='input'>
 </div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

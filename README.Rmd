@@ -13,11 +13,13 @@ knitr::opts_chunk$set(
 
 # MOBSTER <img src='man/figures/logo.png' align="right" height="139" />
 
-`MOBSTER` is a package to provide a model-based clustering approach to subclonal deconvolution.
+`MOBSTER` is a package to provide a model-based clustering approach to subclonal deconvolution from cancer genome sequencing data.
 
 The package integrates evolutionary theory and Machine-Learning to analyze bulk sequencing data of a cancer biopsy - ideally, high-resolution whole-genome sequencing data (e.g., WGS >100x). 
 
-A dedicated package - `evoverse` - provides functions to analyse multi-sample data, integrating `MOBSTER` and other tools for subclonal deconvolution- `evoverse`: https://github.com/caravagn/evoverse
+`MOBSTER` is part of the `evoverse`, a package that gathers multiple R
+packages to implement Cancer Evolution analyses; see more [about
+evoverse](https://caravagn.github.io/evoverse).
 
 Statistical Model
 -----------------
