@@ -56,6 +56,7 @@ dnds <- function(x,
                                groups = clusters,
                                gene_list,
                                mode = 'Mapping',
+                               refdb = refdb,
                                ...)
   
   pio::pioStr("Results:", paste0(dndscv_plot, collapse = ', '), '\n')

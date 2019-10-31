@@ -101,7 +101,7 @@ get_dnds_input = function(x, mapping, refdb, gene_list)
 }
 
 # Fits via dndscv
-wrapper_dndsfit = function(clusters, groups, gene_list, mode, ...)
+wrapper_dndsfit = function(clusters, groups, gene_list, mode, refdb...)
 {
   globaldndstable = dndscvtable = NULL
   dndsoutputs = NULL
@@ -113,7 +113,7 @@ wrapper_dndsfit = function(clusters, groups, gene_list, mode, ...)
     tryCatch({
       dndsout <- clusters %>%
         dplyr::filter(dnds_group == i) %>%
-        dndscv::dndscv(., gene_list = gene_list,  ...)
+        dndscv::dndscv(., gene_list = gene_list, refdb = refdb, ...)
     },
     error = function(e)
     {
