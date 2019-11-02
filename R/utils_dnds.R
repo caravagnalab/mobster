@@ -101,7 +101,7 @@ get_dnds_input = function(x, mapping, refdb, gene_list)
 }
 
 # Fits via dndscv
-wrapper_dndsfit = function(clusters, groups, gene_list, mode, refdb...)
+wrapper_dndsfit = function(clusters, groups, gene_list, mode, refdb, ...)
 {
   globaldndstable = dndscvtable = NULL
   dndsoutputs = NULL
