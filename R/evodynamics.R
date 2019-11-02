@@ -195,7 +195,7 @@ evolutionary_parameters <-
            ncells = 2) 
   {
     
-    stopifnot(is_list_mobster_fits(x))
+    is_list_mobster_fits(x)
     fit = x
     
     if (fit$best$fit.tail == FALSE)

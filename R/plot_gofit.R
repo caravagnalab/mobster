@@ -6,14 +6,17 @@
 #' @param x A list of fits computed via \code{mobster_fit}.
 #' @param TOP The top set of fits to use, if more than the one available
 #' only the ones in \code{x} are used.
-#'
+#' @param nx Columns in the matrix layout.
+#' @param ny Rows in the matrix layout.
+#' @param TOP The top set of fits to use, if more than the one available
+#' only the ones in \code{x} are used.
 #' @return A plot of the goodness of fit.
 #' @export
 #'
 #' @examples
 #' data('fit_example', package = 'mobster')
 #' plot_gofit(fit_example, TOP = 3)
-plot_gofit = function(x, TOP = 5)
+plot_gofit = function(x, TOP = 6, nx = 3, ny = 2)
 {
   is_list_mobster_fits(x)
   
@@ -49,11 +52,10 @@ plot_gofit = function(x, TOP = 5)
   )) +
     geom_line(show.legend = TRUE, size = .3) +
     my_ggplot_theme() +
-    # guides(colour = FALSE) +
     ylab("SSE") +
     labs(title = bquote('Goodness of fit'),
          x = "Observed Frequency",
          subtitle = paste0('TOP-', TOP, ' solutions')) +
     guides(fill = FALSE, color = FALSE) +
-    facet_wrap(~run, ncol = 1)
+    facet_wrap(~run, ncol = nx, nrow = ny)
 }

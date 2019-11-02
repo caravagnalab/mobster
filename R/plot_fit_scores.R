@@ -75,7 +75,7 @@ plot_fit_scores = function(x)
     ) +
     guides(
       fill = FALSE,
-      shape = guide_legend(title = 'Tail'),
+      shape = guide_legend(title = ''),
       colour = guide_legend(title = 'Score')
     ) +
     my_ggplot_theme()

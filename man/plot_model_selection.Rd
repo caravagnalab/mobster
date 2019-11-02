@@ -4,7 +4,7 @@
 \alias{plot_model_selection}
 \title{Plot summary for model selection.}
 \usage{
-plot_model_selection(x, TOP = 5, ...)
+plot_model_selection(x, TOP = 6, nx = 3, ny = 2, ...)
 }
 \arguments{
 \item{x}{A list of fits computed via \code{mobster_fit}.}

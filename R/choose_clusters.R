@@ -165,6 +165,7 @@ rename_Beta_clusters = function(x)
   # mixing
   names(y$pi) = mapping[names(y$pi)]
   y$pi = mobster:::.params_Pi(y)
+ 
 
   # Clusters table
   y$Clusters$cluster = mapping[y$Clusters$cluster]

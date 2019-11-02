@@ -4,10 +4,17 @@
 \alias{plot_gofit}
 \title{Plot the goodness of fit.}
 \usage{
-plot_gofit(x, TOP = 5)
+plot_gofit(x, TOP = 6, nx = 3, ny = 2)
 }
 \arguments{
 \item{x}{A list of fits computed via \code{mobster_fit}.}
+
+\item{TOP}{The top set of fits to use, if more than the one available
+only the ones in \code{x} are used.}
+
+\item{nx}{Columns in the matrix layout.}
+
+\item{ny}{Rows in the matrix layout.}
 
 \item{TOP}{The top set of fits to use, if more than the one available
 only the ones in \code{x} are used.}

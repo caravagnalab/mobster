@@ -206,7 +206,7 @@ mobster_fit = function(x,
 
   # Get all scores
   tests = cbind(tests, 
-                Reduce(rbind, lapply(runs, function(w)
+                Reduce(bind_rows, lapply(runs, function(w)
     w$scores)))
 
   # clean up some repeated results -- show unique fits
