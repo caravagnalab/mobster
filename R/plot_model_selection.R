@@ -73,7 +73,7 @@ plot_grid = function(x,
     plot(x$runs[[y]]) +
       labs(title = NULL,
            subtitle = NULL,
-           caption = paste0(' ',cy, ' / ', N)) +
+           caption = paste0(' ', y, ' / ', N)) +
       guides(fill = FALSE) +
       theme(
         axis.title.x = element_blank(),

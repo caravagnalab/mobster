@@ -1,6 +1,7 @@
-is_reasonable_clonal_cluster = function(x, cluster) 
+is_reasonable_clonal_cluster = function(x, cluster, scale = 3) 
 {
   if(x$Kbeta == 1) return(TRUE)
+  if(cluster == 'Tail') return(FALSE)
   
   Clonal_peak = x$Clusters %>% filter(type == "Mean", cluster == !!cluster) %>% pull(fit.value)
   
@@ -15,7 +16,7 @@ is_reasonable_clonal_cluster = function(x, cluster)
   
   subclonal_size = x$Clusters %>% filter(type == "Mixing proportion", cluster %in% subclonal) %>% pull(fit.value)
   
-  if(any(Clonal_size < subclonal_size)) return(FALSE)
+  if(any(Clonal_size * scale< subclonal_size)) return(FALSE)
   
   return(TRUE)
 }

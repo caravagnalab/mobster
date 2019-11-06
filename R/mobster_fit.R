@@ -198,14 +198,18 @@ mobster_fit = function(x,
     stop("All task returned errors, no fit available, raising error.")
   }
   
+  if(nerrs > 0) message(nerrs, 'tasks returned error(s).\n')
+  
+  errs = sapply(runs, function(w) inherits(w, 'simpleError') | inherits(w, 'try-error'))
   runs = easypar::filterErrors(runs)
+  tests = tests[!errs, , drop = FALSE]
   
   # timing
   TIME = difftime(as.POSIXct(Sys.time(), format = "%H:%M:%S"), TIME, units = "mins")
   cat(bold("\n\nMOBSTER fit completed in"), round(TIME, 2), cyan('mins'), '\n')
 
   # Get all scores
-  tests = cbind(tests, 
+  tests = bind_cols(tests, 
                 Reduce(bind_rows, lapply(runs, function(w)
     w$scores)))
 
