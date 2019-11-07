@@ -373,7 +373,6 @@ to_string = function(x)
 {
   is_mobster_fit(x)
   
-  
   vcz = function(w){
     lblt = w
     w = x$Clusters %>% filter(type == w)
@@ -417,8 +416,26 @@ to_string = function(x)
   ) %>%
     as_tibble()
   
-  colnames(values) = gsub('\\.', '_',   colnames(values))
+  # Reasonable clonal cluster
+  rcc = sapply(x$pi %>% names,  mobster:::is_reasonable_clonal_cluster, x = x)
+  rcc = pio:::nmfy(x$pi %>% names, rcc)
   
-  values
+  data.frame(
+    rcc = rcc %>% data.frame %>% t,
+    stringsAsFactors = FALSE
+  )
+  
+  # Re-format and sort columns
+  colnames(values) = gsub('\\.', '_',   colnames(values))
+  values = values %>% dplyr::select(order(colnames(values)) %>% noquote)
+  
+# 
+#   # Data information
+#   data_info = data.frame(
+#     min_X = min(x$data$VAF)
+#     max_X = max(x$data$VAF)
+#   )
+  
+  return(values)
 }
 

@@ -20,3 +20,7 @@ is_reasonable_clonal_cluster = function(x, cluster, scale = 3)
   
   return(TRUE)
 }
+
+# med_variance = x$Clusters %>% filter(type == 'Variance') %>% pull(fit.value) %>% median(na.rm = TRUE)
+
+

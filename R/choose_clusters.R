@@ -154,25 +154,26 @@ rename_Beta_clusters = function(x)
   y = x
 
   # clusters
-  y$data$cluster = mapping[y$data$cluster]
+  y$data$cluster = mapping[y$data$cluster] %>% as.vector
   
   # numbers from clustering
-  names(y$N.k) = mapping[names(y$N.k)]
+  names(y$N.k) = mapping[names(y$N.k)] %>% as.vector
   
   # LV - forced assumed the order has been mantained
-  colnames(y$z_nk) =  colnames(y$pdf.w) = mapping 
+  colnames(y$z_nk) =  colnames(y$pdf.w) = mapping
+  names(colnames(y$z_nk)) = names(colnames(y$pdf.w)) = NULL 
   
-  # mixing
-  names(y$pi) = mapping[names(y$pi)]
-  y$pi = mobster:::.params_Pi(y)
- 
+ # Clusters table
+  y$Clusters$cluster = mapping[y$Clusters$cluster]  %>% as.vector
 
-  # Clusters table
-  y$Clusters$cluster = mapping[y$Clusters$cluster]
+  # mixing
+  names(y$pi) = mapping[names(y$pi)]  %>% as.vector
+  y$pi = mobster:::.params_Pi(y)
+  
   
   # Beta parmeters
-  names(y$a) = mapping[names(y$a)]
-  names(y$b) = mapping[names(y$b)]
+  names(y$a) = mapping[names(y$a)]  %>% as.vector
+  names(y$b) = mapping[names(y$b)]  %>% as.vector
   
   y
 }
