@@ -406,24 +406,24 @@ to_string = function(x)
   values_sh = data.frame(Shape.Tail = NA)
   if(x$fit.tail) values_sh = vcz('Shape') %>% data.frame %>% t
   
+  # Reasonable clonal cluster
+  rcc = sapply(x$pi %>% names,  mobster:::is_reasonable_clonal_cluster, x = x)
+  rcc = pio:::nmfy(x$pi %>% names, rcc)
+  rcc = data.frame(
+    rcc = rcc %>% data.frame %>% t,
+    stringsAsFactors = FALSE
+  )
+  
   values = cbind(
     values_f,
     values_p,
     values_m,
     values_v,
     values_sc,
-    values_sh
+    values_sh, 
+    rcc
   ) %>%
     as_tibble()
-  
-  # Reasonable clonal cluster
-  rcc = sapply(x$pi %>% names,  mobster:::is_reasonable_clonal_cluster, x = x)
-  rcc = pio:::nmfy(x$pi %>% names, rcc)
-  
-  data.frame(
-    rcc = rcc %>% data.frame %>% t,
-    stringsAsFactors = FALSE
-  )
   
   # Re-format and sort columns
   colnames(values) = gsub('\\.', '_',   colnames(values))
