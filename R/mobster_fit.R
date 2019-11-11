@@ -91,9 +91,7 @@ mobster_fit = function(x,
   best = obj = runs = NULL
 
   # Configurations that will be used for model selection
-  tests = expand.grid(K = K, Run = 1:samples, tail = tail, stringsAsFactors = FALSE)
-  tests = tests[order(tests$tail, tests$K), ]
-
+  tests = expand.grid(K = K,tail = tail,  Run = 1:samples, stringsAsFactors = FALSE)
   ntests = nrow(tests)
 
   ###################### Print headers
@@ -184,42 +182,47 @@ mobster_fit = function(x,
     export = ls(globalenv(), all.names = TRUE),
     cores.ratio = .8,
     parallel = parallel,
-    cache = NULL
+    cache = NULL, 
+    filter_errors = TRUE # Error moanagment is inside easypar
   )
   
-  # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-  # Actual fit completed. Error moanagment now.
-  # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+  # # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+  # # Actual fit completed. 
+  # # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+  # 
+  # # Polish errors if any
+  # nerrs = easypar::numErrors(runs)
+  # if(nerrs == samples) {
+  #   
+  #   lapply(runs, function(w) print(w$message))
+  #   
+  #   stop("All task returned errors, no fit available, raising error.")
+  # }
+  # 
+  # if(nerrs > 0) message(nerrs, 'tasks returned error(s).\n')
+  # 
+  # errs = sapply(runs, function(w) inherits(w, 'simpleError') | inherits(w, 'try-error'))
+  # runs = easypar::filterErrors(runs)
+  # tests = tests[!errs, , drop = FALSE]
   
-  # Polish errors if any
-  nerrs = easypar::numErrors(runs)
-  if(nerrs == samples) {
-    
-    lapply(runs, function(w) print(w$message))
-    
-    stop("All task returned errors, no fit available, raising error.")
-  }
+  if(length(runs) == 0) stop("All task returned errors, no fit available, raising this error to interrupt the computation....")
   
-  if(nerrs > 0) message(nerrs, 'tasks returned error(s).\n')
-  
-  errs = sapply(runs, function(w) inherits(w, 'simpleError') | inherits(w, 'try-error'))
-  runs = easypar::filterErrors(runs)
-  tests = tests[!errs, , drop = FALSE]
-  
-  # timing
+  # What is successfull (id of the task)
+  succesfull_tasks = names(runs) %>% as.numeric()
+  tests = tests[succesfull_tasks, , drop = FALSE]
+
+  # Report timing to screen
   TIME = difftime(as.POSIXct(Sys.time(), format = "%H:%M:%S"), TIME, units = "mins")
   cat(bold("\n\nMOBSTER fit completed in"), round(TIME, 2), cyan('mins'), '\n')
 
   # Get all scores
-  tests = bind_cols(tests, 
-                Reduce(bind_rows, lapply(runs, function(w)
-    w$scores)))
+  scores_succesfull_tasks = lapply(runs, function(w)w$scores)
+  tests = bind_cols(tests, Reduce(bind_rows, scores_succesfull_tasks))
 
   # clean up some repeated results -- show unique fits
   tests$Run = NULL
   scores.columns = colnames(runs[[1]]$scores)
   tests[, scores.columns] = apply(tests[, scores.columns], 2, round, digits = 2)
-
 
   runs = runs[!duplicated(tests)] # remove duplicated entries..
   tests = tests[!duplicated(tests), ] # remove duplicated entries..

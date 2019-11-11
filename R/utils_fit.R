@@ -58,16 +58,17 @@
 
     # Cluster their x-coordinates
     clus = cnt = NULL
-    if(length(x.peaks) >= K)
+    if(length(x.peaks) > K)
     {
       clus = kmeans(x.peaks, K, nstart = 100)
       cnt = as.vector(clus$centers)
     }
     else{
-      clus = kmeans(x.peaks, length(x.peaks), nstart = 100)
+      clus = kmeans(x.peaks, length(x.peaks) - 1, nstart = 100)
+      clus = as.vector(clus$centers)
       cnt = c(
-        as.vector(clus$centers),
-        runif(K - lenght(x.peaks))
+        clus,
+        runif(K - length(clus))
       )
     }
 

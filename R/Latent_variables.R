@@ -9,6 +9,15 @@ latent_vars = function(x, clusters_tibble = NULL) {
   a = B$a
   b = B$b
 
+  # print(B)
+  # print(a)
+  # print(b)
+  # print(x$Clusters)
+  
+  # if(is.null(a)) save(x, file = '~/G.RData')
+  if(is.null(a)) cat(" -> NULL ", x$K)
+    
+  
   names(a) = names(b) = B$cluster
 
   # Extract Tail values
@@ -99,13 +108,21 @@ latent_vars_scores = function(lv, K, tail, cluster)
   # to a Beta component (i.e. those with arg_max != Tail)
   cz_nk = lv$z_nk[cluster != 'Tail', 2:ncol(lv$z_nk), drop = FALSE]
   
+  # print("BEFORE")
+  # print(cz_nk %>% head)
+  
   # This is un-normalized -- we compute the empirical normalizing constant (C)
   C = rowSums(cz_nk)
-  for (i in 1:nrow(cz_nk))
-    cz_nk [i, ] = cz_nk [i, ] / C[i]
+  # for (i in 1:nrow(cz_nk))
+  #   cz_nk [i, ] = cz_nk [i,  ] / C[i]
+  # 
+  
+  cz_nk = cz_nk/C
+  # print("A1")
   
   # The reduced entropy is the entropy of this distribution
   rentropy = -sum(cz_nk  * log(cz_nk), na.rm = TRUE)
+  # print("A2")
   
   # Integrated Complete Likelihood criterion with reduced entropy
   reICL <- BIC + rentropy

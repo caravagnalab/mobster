@@ -167,8 +167,10 @@
           mean = as.numeric((fit$z_nk[, k] %*% X$VAF) / (fit$N * fit$pi[k]))
           var = as.numeric((fit$z_nk[, k] %*% ((X$VAF - mean) ** 2)) / (fit$N * fit$pi[k]))
 
-          if (is.na(mean) & is.na(var)) {
-            warning('Possible singularity in one Beta component a/b --> Inf.')
+          if (is.na(mean) | is.na(var)) {
+            {
+              warning('Possible singularity in one Beta component a/b --> Inf.')
+            }
           }
           else {
             par = .estBetaParams(mean, var)
@@ -238,8 +240,12 @@
       cat('\n')
     }
     
+    # print("APPLICO FILTRI")
+    
     # Now apply the cluster-selection heuristic in function choose_clusters
     fit = choose_clusters(fit,  pi_cutoff = pi_cutoff, N_cutoff = N_cutoff)
+
+    # print("RINOMINO")
     
     # ... and re-order the Beta cluster ID by mean ...
     fit = rename_Beta_clusters(fit)

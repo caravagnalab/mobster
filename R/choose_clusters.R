@@ -139,6 +139,10 @@ choose_clusters = function(x,
 # Rename Beta clusters so that C1 is the one with highest mean etc.
 rename_Beta_clusters = function(x)
 {
+  
+  # print('RENAME')
+  # print(x)
+  
   params = x$Clusters %>%
     filter(type == 'Mean', cluster != 'Tail') %>%
     arrange(desc(fit.value)) %>%
@@ -173,6 +177,14 @@ rename_Beta_clusters = function(x)
   # Beta parmeters
   names(y$a) = mapping[names(y$a)]  %>% as.vector
   names(y$b) = mapping[names(y$b)]  %>% as.vector
+  
+  # print('RENAME')
+  # print(y)
+  
+  if(y$K  == 0)
+    {
+    stop("No Beta clusters here, check your data ..")
+  }
   
   y
 }
