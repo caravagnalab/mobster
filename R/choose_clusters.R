@@ -37,12 +37,14 @@ choose_clusters = function(x,
     pio::pioStr("\nF1.       Cluster size (proportion) > ", pi_cutoff)
     pio::pioStr("\nF2.        Cluster size (mutations) > ", N_cutoff, '\n\n')
   }
-
+  
   # Cluster size - remove clusters smaller than pi_cutoff, or less than N_cutoff mutations
-  pass_clusters_picutoff = x$pi > pi_cutoff
+  pi = .params_Pi(x)
+  
+  pass_clusters_picutoff = pi > pi_cutoff
   pass_clusters_Ncutoff = x$N.k > N_cutoff
   
-  tab_clusters = tibble(cluster = names(x$pi), pi = x$pi, N = x$N.k)
+  tab_clusters = tibble(cluster = names(pi), pi = pi, N = x$N.k)
   tab_clusters$F1 = pass_clusters_picutoff
   tab_clusters$F2 = pass_clusters_Ncutoff
   
@@ -70,31 +72,36 @@ choose_clusters = function(x,
   y$Clusters = y$Clusters %>% filter(cluster %in% remaining_clusters)
   y$fit.tail = 'Tail' %in% remaining_clusters
   
-  if(!('Tail' %in% remaining_clusters)) 
+  if(!(y$fit.tail)) 
     y$Clusters = y$Clusters %>%
-        bind_rows(
-          tibble::tribble(
-            ~cluster, ~type, ~fit.value, ~init.value,
-            'Tail', "Mixing proportion", 0, NA
-          )
-        )
-    
+    bind_rows(
+      tibble::tribble(
+        ~cluster, ~type, ~fit.value, ~init.value,
+        'Tail', "Mixing proportion", 0, NA
+      )
+    )
+  
   # Update counts for Beta components
   y$Kbeta = length(remaining_beta_clusters)
   y$K = y$Kbeta + 1
   
   # Renormalize the mixing proportions -- adding 0% Tail if it's no longer fit
+  # and ensure that the ordering is 
   y$pi = x$pi[remaining_clusters]
   y$pi = y$pi/sum(y$pi)
-  if(!('Tail' %in% remaining_clusters)) y$pi['Tail'] = 0
-    
-  y = mobster:::.set_params_Pi(y, y$pi)
+  if(!(y$fit.tail)) 
+  {
+    y$pi['Tail'] = 0
+    y$pi = y$pi[c('Tail', remaining_clusters)]
+  }
+  
+  y = .set_params_Pi(y, y$pi)
   
   # If we need to cancel a tail
-  if(!('Tail' %in% remaining_clusters))
+  if(!(y$fit.tail)) 
   {
     y$scale = y$shape = NA
-    y = mobster:::.set_params_Pareto(y, y$scale, y$shape) # This should be useless
+    y = .set_params_Pareto(y, y$scale, y$shape) # This should be useless
   }
   
   # For the Beta that remains, we need to subset their parameters
@@ -139,10 +146,6 @@ choose_clusters = function(x,
 # Rename Beta clusters so that C1 is the one with highest mean etc.
 rename_Beta_clusters = function(x)
 {
-  
-  # print('RENAME')
-  # print(x)
-  
   params = x$Clusters %>%
     filter(type == 'Mean', cluster != 'Tail') %>%
     arrange(desc(fit.value)) %>%
@@ -156,7 +159,7 @@ rename_Beta_clusters = function(x)
   
   # Copy of x
   y = x
-
+  
   # clusters
   y$data$cluster = mapping[y$data$cluster] %>% as.vector
   
@@ -164,27 +167,20 @@ rename_Beta_clusters = function(x)
   names(y$N.k) = mapping[names(y$N.k)] %>% as.vector
   
   # LV - forced assumed the order has been mantained
-  colnames(y$z_nk) =  colnames(y$pdf.w) = mapping
+  colnames(y$z_nk) =  mapping[colnames(y$z_nk)]
+  colnames(y$pdf.w) = mapping[colnames(y$pdf.w)]
   names(colnames(y$z_nk)) = names(colnames(y$pdf.w)) = NULL 
   
- # Clusters table
+  # Clusters table
   y$Clusters$cluster = mapping[y$Clusters$cluster]  %>% as.vector
-
+  
   # mixing
   # names(y$pi) = mapping[names(y$pi)]  %>% as.vector
-  y$pi = mobster:::.params_Pi(y)
+  y$pi = .params_Pi(y)
   
   # Beta parmeters
   names(y$a) = mapping[names(y$a)]  %>% as.vector
   names(y$b) = mapping[names(y$b)]  %>% as.vector
-  
-  # print('RENAME')
-  # print(y)
-  
-  if(y$K  == 0)
-    {
-    stop("No Beta clusters here, check your data ..")
-  }
   
   y
 }
