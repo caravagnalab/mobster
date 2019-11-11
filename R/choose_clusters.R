@@ -167,9 +167,8 @@ rename_Beta_clusters = function(x)
   y$Clusters$cluster = mapping[y$Clusters$cluster]  %>% as.vector
 
   # mixing
-  names(y$pi) = mapping[names(y$pi)]  %>% as.vector
+  # names(y$pi) = mapping[names(y$pi)]  %>% as.vector
   y$pi = mobster:::.params_Pi(y)
-  
   
   # Beta parmeters
   names(y$a) = mapping[names(y$a)]  %>% as.vector

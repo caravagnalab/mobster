@@ -407,7 +407,7 @@ to_string = function(x)
   if(x$fit.tail) values_sh = vcz('Shape') %>% data.frame %>% t
   
   # Reasonable clonal cluster
-  rcc = sapply(x$pi %>% names,  mobster:::is_reasonable_clonal_cluster, x = x)
+  rcc = sapply(x$z_nk %>% colnames,  mobster:::is_reasonable_clonal_cluster, x = x)
   rcc = pio:::nmfy(x$pi %>% names, rcc)
   rcc = data.frame(
     rcc = rcc %>% data.frame %>% t,

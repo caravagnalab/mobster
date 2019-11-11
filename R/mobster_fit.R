@@ -154,7 +154,14 @@ mobster_fit = function(x,
   # END: Input Checks
 
   
+  # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+  # Fits are obtained using the easypar package
+  # which allows easy parallelization of R functions
+  #
+  # https://github.com/caravagn/easypar
+  #
   # Inputs in the easypar format - list of lists
+  # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
   inputs = lapply(1:nrow(tests), 
                   function(r)
                   list(
@@ -170,15 +177,6 @@ mobster_fit = function(x,
                     N_cutoff = N_cutoff
                     ))
   
-  # ncores = 
-  #   
-  #   nrow(tests)
-  
-  # Fits are obtained using the easypar package
-  # which allows easy parallelization of R functions
-  #
-  # https://github.com/caravagn/easypar
-  #
   runs = easypar::run(
     FUN = .dbpmm.EM,
     PARAMS = inputs,
@@ -188,6 +186,10 @@ mobster_fit = function(x,
     parallel = parallel,
     cache = NULL
   )
+  
+  # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+  # Actual fit completed. Error moanagment now.
+  # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
   
   # Polish errors if any
   nerrs = easypar::numErrors(runs)
