@@ -441,3 +441,36 @@ to_string = function(x)
   return(values)
 }
 
+# Very fast analysis, raw results but good to get a grasp of the data
+# - max 2 clones (1 subclone);
+# - random start
+# - 2 samples
+# - mild epsilon/ maxIter
+# - not parallel
+template_parameters_fast_setup = function()
+{
+  return(
+    list(
+      K = 1:2,
+      samples = 2,
+      init = 'random',
+      tail = c(TRUE, FALSE),
+      epsilon = 1e-6,
+      maxIter = 100,
+      fit.type = 'MM',
+      seed = 12345,
+      model.selection = 'reICL',
+      trace = FALSE,
+      parallel = FALSE,
+      pi_cutoff = 0.02,
+      N_cutoff = 10
+    )
+  )
+}
+
+auto_setup = function(x)
+{
+  if(x == "FAST")  return(template_parameters_fast_setup())
+  
+  stop("Auto setup unknown: use \"FAST\".")
+}

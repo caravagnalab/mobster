@@ -7,7 +7,8 @@
 mobster_fit(x, K = 1:3, samples = 5, init = "peaks", tail = c(TRUE,
   FALSE), epsilon = 1e-10, maxIter = 250, fit.type = "MM",
   seed = 12345, model.selection = "reICL", trace = FALSE,
-  parallel = TRUE, pi_cutoff = 0.02, N_cutoff = 10)
+  parallel = TRUE, pi_cutoff = 0.02, N_cutoff = 10,
+  auto_setup = NULL)
 }
 \arguments{
 \item{x}{Input tibble (or data.frame) which is required to have a VAF column which reports the 
@@ -51,6 +52,11 @@ cluster to be returned as output.}
 
 \item{N_cutoff}{Parameter passed to function \code{choose_clusters}, which determines the minimum number of mutations
 assigned to a cluster to be returned as output.}
+
+\item{auto_setup}{Overrides all the parameters with an predined set of values, in order to implement different analyses.
+Availables keys: `FAST`, uses 1) max 2 clones (1 subclone), 2) random initial conditions 3) 2 samples per parameter set
+4) mild `epsilon` and `maxIter`, sequential run. For reference, the default set of parameters represent a more exhaustive
+analysis.}
 }
 \value{
 A list of all fits computed (objects of class \code{dbpmm}), the best fit, a table with the results of the fits and a
@@ -64,6 +70,9 @@ the user specify with the input parmeters. The function return a list of all fit
 variable that specify which score has been used for model selection. The fitting of each model
 also runs the function \code{choose_clusters} which implements a simple heuristic to filter
 out small clusters from the fit output.
+
+Note: You can also use the "auto setup" functionality that, with one keyword, loads preset 
+parameter values in order to implement different analysis.
 }
 \examples{
 # Generate a random dataset 

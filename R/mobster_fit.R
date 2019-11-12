@@ -8,6 +8,9 @@
 #' also runs the function \code{choose_clusters} which implements a simple heuristic to filter
 #' out small clusters from the fit output.
 #' 
+#' Note: You can also use the "auto setup" functionality that, with one keyword, loads preset 
+#' parameter values in order to implement different analysis.
+#' 
 #'
 #' @param x Input tibble (or data.frame) which is required to have a VAF column which reports the 
 #' frequency of the mutant allele (this should be computed adjusting the raw VAF for tumour purity 
@@ -37,6 +40,10 @@
 #' cluster to be returned as output.
 #' @param N_cutoff Parameter passed to function \code{choose_clusters}, which determines the minimum number of mutations
 #' assigned to a cluster to be returned as output.
+#' @param auto_setup Overrides all the parameters with an predined set of values, in order to implement different analyses.
+#' Availables keys: `FAST`, uses 1) max 2 clones (1 subclone), 2) random initial conditions 3) 2 samples per parameter set
+#' 4) mild `epsilon` and `maxIter`, sequential run. For reference, the default set of parameters represent a more exhaustive
+#' analysis.
 #'
 #' @return A list of all fits computed (objects of class \code{dbpmm}), the best fit, a table with the results of the fits and a
 #' variable that specify which score has been used for model selection.
@@ -75,14 +82,36 @@ mobster_fit = function(x,
                        trace = FALSE,
                        parallel = TRUE,
                        pi_cutoff = 0.02,
-                       N_cutoff = 10
+                       N_cutoff = 10,
+                       auto_setup = NULL
                        )
 {
   # Check for basic input requirements
   check_input(x, K, samples, init, tail, epsilon, maxIter, fit.type, seed, model.selection, trace)
 
   X = tibble::as.tibble(x)
-
+  
+  ###################### Auto setup of parameters
+  if(!is.null(auto_setup)) 
+  {
+    # Get the parameters, checks they are known, throws errors.
+    template = auto_setup(auto_setup)
+    
+    K = template$K
+    samples = template$samples
+    init = template$init
+    tail = template$tail
+    epsilon = template$epsilon
+    maxIter = template$maxIter
+    fit.type = template$fit.type
+    seed = template$seed
+    model.selection = template$model.selection
+    trace = template$trace
+    parallel = template$parallel
+    pi_cutoff = template$pi_cutoff
+    N_cutoff = template$N_cutoff
+  }
+  
   ###################### Initializations
   set.seed(seed)
   TIME = as.POSIXct(Sys.time(), format = "%H:%M:%S")
@@ -95,7 +124,7 @@ mobster_fit = function(x,
   ntests = nrow(tests)
 
   ###################### Print headers
-  pio::pioHdr(paste0("MOBSTER fit ~ N = ", nrow(x)))
+  pio::pioHdr(paste0("MOBSTER fit ~ N = ", nrow(x), ' - random seed ', seed))
 
   cat(
     paste0(
@@ -106,7 +135,7 @@ mobster_fit = function(x,
    
   cat(
     paste0(
-      cyan('\n\t- Fit by '), ifelse(fit.type == 'MM', "Moments-matching", "Maximum-Likelihood"), 
+      cyan('\n\t- Fit by '), ifelse(fit.type == 'MM', "Moments-matching", "Maximum-Likelihood"),  
       cyan(' ('), 's = ', maxIter, ', i = ', ifelse(all(is.character(init)), init, 'custom'), ',  \u03B5 = ', epsilon,
       cyan(') scoring with '), yellow(model.selection), '\n'
     )
