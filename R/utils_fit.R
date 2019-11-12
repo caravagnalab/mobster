@@ -258,8 +258,13 @@
   pi = v$`Mixing proportion`
   names(pi) = v$cluster
   
+  
+  
   # ord.pi = c(pi['Tail'], pi[names(pi) != 'Tail'])
-  ord.pi = c(pi['Tail'], sort(pi[names(pi) != 'Tail'], decreasing = TRUE))
+  ord.pi = c(
+    pi['Tail'],
+    pi[sort(names(pi)[names(pi) != 'Tail'], decreasing = FALSE)]
+    )
   
   ord.pi
 }

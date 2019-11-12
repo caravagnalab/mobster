@@ -97,6 +97,8 @@ mobster_fit = function(x,
     # Get the parameters, checks they are known, throws errors.
     template = auto_setup(auto_setup)
     
+    cat("\n\n", '\t', crayon::bgWhite(crayon::black("[AUTOMATIC SETUP] ", auto_setup)), " - overrides any parameter you have set.\n\n")
+
     K = template$K
     samples = template$samples
     init = template$init

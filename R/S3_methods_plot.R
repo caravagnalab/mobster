@@ -36,13 +36,13 @@ plot.dbpmm = function(x,
   # Prepare variables
   domain = seq(0, 1, binwidth)
 
-  labels = names(mobster:::.params_Pi(x))
+  labels = names(.params_Pi(x))
   labels.betas = mobster:::.params_Beta(x)$cluster
 
   pi = mobster:::.params_Pi(x)
 
   # Main plotting data
-  plot_data = Clusters(x, cutoff_assignment)
+  plot_data = mobster:::Clusters(x, cutoff_assignment)
   clusters = sort(unique(plot_data$cluster), na.last = TRUE)
   
   # Text for the plot -- convergence
@@ -66,7 +66,7 @@ plot.dbpmm = function(x,
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
   
   hist_pl = ggplot(
-    Clusters(x, cutoff_assignment), 
+    plot_data, 
     aes(VAF, 
         fill = factor(cluster, levels = clusters), 
         y = ..count.. /sum(..count..))) +
@@ -77,7 +77,8 @@ plot.dbpmm = function(x,
     geom_vline(
       xintercept = min(x$data$VAF),
       colour = 'black',
-      linetype = "longdash"
+      linetype = "longdash",
+      size = .3
     ) +
     guides(fill = guide_legend(title = "Cluster")) +
     labs(
@@ -87,7 +88,7 @@ plot.dbpmm = function(x,
       x = "Observed Frequency",
       y = "Density"
     ) +
-    my_ggplot_theme() +
+    mobster:::my_ggplot_theme() +
     theme(
       panel.background = element_rect(fill = 'white'),
       plot.caption = element_text(color = ifelse(x$status, "darkgreen",  "red"))

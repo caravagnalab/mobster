@@ -15,7 +15,7 @@ latent_vars = function(x, clusters_tibble = NULL) {
   # print(x$Clusters)
   
   # if(is.null(a)) save(x, file = '~/G.RData')
-  if(is.null(a)) cat(" -> NULL ", x$K)
+  # if(is.null(a)) cat(" -> NULL ", x$K)
     
   
   names(a) = names(b) = B$cluster
