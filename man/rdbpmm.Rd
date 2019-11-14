@@ -4,8 +4,16 @@
 \alias{rdbpmm}
 \title{Generate a random sample from a MOBSTER model.}
 \usage{
-rdbpmm(x, a = NULL, b = NULL, pi = NULL, shape = NULL,
-  scale = NULL, n = 1, tail.cutoff = 1)
+rdbpmm(
+  x,
+  a = NULL,
+  b = NULL,
+  pi = NULL,
+  shape = NULL,
+  scale = NULL,
+  n = 1,
+  tail.cutoff = 1
+)
 }
 \arguments{
 \item{x}{An object of class \code{"dbpmm"}.}

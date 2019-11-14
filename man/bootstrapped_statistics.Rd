@@ -4,8 +4,12 @@
 \alias{bootstrapped_statistics}
 \title{Compute boostrap statistics from a bootstrap run.}
 \usage{
-bootstrapped_statistics(x, bootstrap_results,
-  bootstrap = "nonparametric", alpha = 0.025)
+bootstrapped_statistics(
+  x,
+  bootstrap_results,
+  bootstrap = "nonparametric",
+  alpha = 0.025
+)
 }
 \arguments{
 \item{x}{A MOBSTER fit.}
