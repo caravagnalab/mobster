@@ -36,7 +36,7 @@ plot.dbpmm = function(x,
   # Prepare variables
   domain = seq(0, 1, binwidth)
 
-  labels = names(.params_Pi(x))
+  labels = names(mobster:::.params_Pi(x))
   labels.betas = mobster:::.params_Beta(x)$cluster
 
   pi = mobster:::.params_Pi(x)

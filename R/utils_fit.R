@@ -132,7 +132,7 @@
 }
 
 # Decide if the fit stops or not
-.stoppingCriterion = function(i, prevNLL, NLL, prevpi, pi, fit.type, epsilon, isDebug)
+.stoppingCriterion = function(i, prevNLL, NLL, prevpi, pi, fit.type, epsilon, isDebug, K)
 {
   # Compute NLL difference after ith iteration
   NLL.Diff  <- prevNLL - NLL
@@ -153,11 +153,22 @@
   # Fit by MM
   if(fit.type == 'MM')
   {
-    # Compute pi's difference after ith iteration
-    pi.Diff  <- abs(prevpi - pi)
-
-    # Check for convergence -- all pi's have changed less than epsilon
-    stopping = all(pi.Diff < epsilon)
+    # With MM in general we are not interested in the logLik
+    # and we only look for variations in the actual mixing
+    # proportions. When the fit is however single-cluster, 
+    # we need to check also the logLik because the proportions
+    # never change by definition (do the abs beacuse Jensen's ineq. is invalid)
+    
+    if(K > 1)
+    {
+      # Compute pi's difference after ith iteration
+      pi.Diff  <- abs(prevpi - pi)
+  
+      # Check for convergence -- all pi's have changed less than epsilon
+      stopping = all(pi.Diff < epsilon)
+    }
+    else
+      stopping = abs(NLL.Diff) < epsilon
   }
 
   # Some printing
@@ -255,10 +266,10 @@
     select(-init.value) %>%
     spread(key = type, value = fit.value)
   
-  pi = v$`Mixing proportion`
-  names(pi) = v$cluster
+  # pi = v$`Mixing proportion`
+  # names(pi) = v$cluster
   
-  
+  pi = pio:::nmfy(v$cluster, v$`Mixing proportion`)
   
   # ord.pi = c(pi['Tail'], pi[names(pi) != 'Tail'])
   ord.pi = c(
@@ -275,29 +286,73 @@
   names.BetaC = names(a)
   if(any(is.null(names.BetaC))) stop("params -- named vector required?")
   
-  fit$Clusters[
-    fit$Clusters$cluster %in% names.BetaC & fit$Clusters$type == 'a',
-    'fit.value'
-    ] =  a
+  # Dangerous for ordering of Beta clusters..
+  # fit$Clusters[
+  #   fit$Clusters$cluster %in% names.BetaC & fit$Clusters$type == 'a',
+  #   'fit.value'
+  #   ] =  a
   
-  fit$Clusters[
-    fit$Clusters$cluster %in% names.BetaC & fit$Clusters$type == 'b',
-    'fit.value'
-    ] =  b
+  # fit$Clusters[
+  #   fit$Clusters$cluster %in% names.BetaC & fit$Clusters$type == 'b',
+  #   'fit.value'
+  #   ] =  b
+  
+  
+  fit$Clusters = fit$Clusters %>%
+    mutate(
+      fit.value = 
+        ifelse(
+          (cluster %in% names.BetaC) & (type == 'a'), 
+          a[cluster],
+          fit.value
+        )
+    )
+  
+  fit$Clusters = fit$Clusters %>%
+    mutate(
+      fit.value = 
+        ifelse(
+          (cluster %in% names.BetaC) & (type == 'b'), 
+          b[cluster],
+          fit.value
+        )
+    )
+  
+  
   
   for (s in names.BetaC)
   {
     mv = .MeanVarBeta(a[s], b[s])
     
-    fit$Clusters[
-      fit$Clusters$cluster == s & fit$Clusters$type == 'Mean',
-      'fit.value'
-      ] =  mv$mean
+    # fit$Clusters[
+    #   fit$Clusters$cluster == s & fit$Clusters$type == 'Mean',
+    #   'fit.value'
+    #   ] =  mv$mean
     
-    fit$Clusters[
-      fit$Clusters$cluster == s & fit$Clusters$type == 'Variance',
-      'fit.value'
-      ] =  mv$var
+    # fit$Clusters[
+    #   fit$Clusters$cluster == s & fit$Clusters$type == 'Variance',
+    #   'fit.value'
+    #   ] =  mv$var
+    
+    fit$Clusters = fit$Clusters %>%
+      mutate(
+        fit.value = 
+          ifelse(
+            (cluster == s) & (type == 'Mean'), 
+            mv$mean,
+            fit.value
+          )
+      )
+    
+    fit$Clusters = fit$Clusters %>%
+      mutate(
+        fit.value = 
+          ifelse(
+            (cluster %in% s) & (type == 'Variance'), 
+            mv$var,
+            fit.value
+          )
+      )
   }
   
   fit
@@ -336,10 +391,20 @@
 # Set mixing proportions parameters
 .set_params_Pi = function(fit, pi)
 {
-  fit$Clusters[
-    fit$Clusters$type == 'Mixing proportion',
-    'fit.value'
-    ] =  pi
+  # Dangerous, not robust to ordering permutation..
+  # fit$Clusters[
+  #   fit$Clusters$type == 'Mixing proportion',
+  #   'fit.value'
+  #   ] =  pi
+  
+  fit$Clusters = fit$Clusters %>%
+    mutate(
+      fit.value = ifelse(
+        type == 'Mixing proportion', 
+        pi[cluster],
+        fit.value
+      )
+    )
   
   fit
 }

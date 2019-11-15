@@ -89,7 +89,7 @@ mobster_fit = function(x,
   # Check for basic input requirements
   check_input(x, K, samples, init, tail, epsilon, maxIter, fit.type, seed, model.selection, trace)
 
-  X = tibble::as.tibble(x)
+  X = tibble::as_tibble(x)
   
   ###################### Auto setup of parameters
   if(!is.null(auto_setup)) 

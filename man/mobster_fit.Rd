@@ -4,23 +4,11 @@
 \alias{mobster_fit}
 \title{Fit a model with MOBSTER.}
 \usage{
-mobster_fit(
-  x,
-  K = 1:3,
-  samples = 5,
-  init = "peaks",
-  tail = c(TRUE, FALSE),
-  epsilon = 1e-10,
-  maxIter = 250,
-  fit.type = "MM",
-  seed = 12345,
-  model.selection = "reICL",
-  trace = FALSE,
-  parallel = TRUE,
-  pi_cutoff = 0.02,
-  N_cutoff = 10,
-  auto_setup = NULL
-)
+mobster_fit(x, K = 1:3, samples = 5, init = "peaks", tail = c(TRUE,
+  FALSE), epsilon = 1e-10, maxIter = 250, fit.type = "MM",
+  seed = 12345, model.selection = "reICL", trace = FALSE,
+  parallel = TRUE, pi_cutoff = 0.02, N_cutoff = 10,
+  auto_setup = NULL)
 }
 \arguments{
 \item{x}{Input tibble (or data.frame) which is required to have a VAF column which reports the 

@@ -53,12 +53,12 @@
     names.ParetoC = 'Tail'
 
     # Compute initial conditions
-    fit$Clusters  = .initializer(X$VAF, K = fit$Kbeta, tail = tail, init = init)
+    fit$Clusters  = mobster:::.initializer(X$VAF, K = fit$Kbeta, tail = tail, init = init)
     fit$Clusters$fit.value = fit$Clusters$init.value
 
     # Extract Beta values
-    fit$a = .params_Beta(fit)$a
-    fit$b = .params_Beta(fit)$b
+    fit$a = mobster:::.params_Beta(fit)$a
+    fit$b = mobster:::.params_Beta(fit)$b
 
     names(fit$a) = names(fit$b) = names.BetaC
 
@@ -66,12 +66,12 @@
     fit$shape = fit$scale = NA
     if(fit$fit.tail)
     {
-      fit$shape = .params_Pareto(fit)$Shape
-      fit$scale = .params_Pareto(fit)$Scale
+      fit$shape = mobster:::.params_Pareto(fit)$Shape
+      fit$scale = mobster:::.params_Pareto(fit)$Scale
     }
 
     # Extract Mixin Prop
-    fit$pi = .params_Pi(fit)
+    fit$pi = mobster:::.params_Pi(fit)
 
     fit$scores = NULL
 
@@ -103,7 +103,7 @@
       ##===================
       # When pi(Pareto) --> 0 the MLE fit for shape --> 0/0 = NaN and thus at some point we get NaN here
       for (k in 1:fit$K)
-        fit$pdf.w[, k] = ddbpmm(fit,
+        fit$pdf.w[, k] = mobster::ddbpmm(fit,
                                 data = fit$data$VAF,
                                 components = k,
                                 a = fit$a,
@@ -114,7 +114,7 @@
                                 log = TRUE)
 
       # Calculate probabilities using the logSumExp trick for numerical stability
-      Z          = apply(fit$pdf.w, 1, .log_sum_exp)
+      Z          = apply(fit$pdf.w, 1, mobster:::.log_sum_exp)
       fit$z_nk   = fit$pdf.w - Z
       fit$z_nk   = apply(fit$z_nk, 2, exp)    # Exponentiate to get actual probabilities
       fit$NLL    = -sum(Z)  # Evaluate the NLL
@@ -135,7 +135,7 @@
         N.k / fit$N                  # Update mixing proportions for each cluster
 
       names(fit$pi) = c(names.ParetoC, names.BetaC)
-      fit = .set_params_Pi(fit, fit$pi)
+      fit = mobster:::.set_params_Pi(fit, fit$pi)
 
       # PARETO: NUMERICAL VERSION NOT REQUIRED
       # Pfun = NLLParetoMix(X, z_nk, pi, scale)
@@ -144,7 +144,7 @@
 
       # PARETO: analytical MLE
       fit$shape = as.numeric(-1 * (sum(fit$z_nk[, 1])) / (fit$z_nk[, 1] %*% (log(fit$scale) - logX)))
-      fit = .set_params_Pareto(fit, fit$shape, fit$scale)
+      fit = mobster:::.set_params_Pareto(fit, fit$shape, fit$scale)
 
       # BETA: numerical MLE or analytical MM
       for (k in 2:fit$K)
@@ -154,7 +154,7 @@
         {
           # Compute a functional of the negative logLik, which we minimize
           MLE.fit = stats4::mle(
-            minuslogl = .NLLBetaMix(k, X$VAF, fit$z_nk, fit$pi),
+            minuslogl = mobster:::.NLLBetaMix(k, X$VAF, fit$z_nk, fit$pi),
             start = list(a = fit$a[k - 1], b = fit$b[k - 1])
           )
 
@@ -173,25 +173,26 @@
             }
           }
           else {
-            par = .estBetaParams(mean, var)
+            par = mobster:::.estBetaParams(mean, var)
             fit$a[k - 1] = par$a
             fit$b[k - 1] = par$b
           }
 
           names(fit$a) = names(fit$b) = names.BetaC
-          fit = .set_params_Beta(fit, fit$a, fit$b)
+          fit = mobster:::.set_params_Beta(fit, fit$a, fit$b)
         }
       }
 
       ## Convergency test
-      if (.stoppingCriterion(i,
+      if (mobster:::.stoppingCriterion(i,
                              prevNLL,
                              fit$NLL,
                              prevpi,
                              fit$pi,
                              fit.type,
                              epsilon,
-                             is_verbose))
+                             is_verbose,
+                             fit$K))
         break
 
 
@@ -207,9 +208,9 @@
     names(fit$a) = names(fit$b) = names.BetaC
 
     # Update fit table
-    fit = .set_params_Beta(fit, fit$a, fit$b)
-    fit = .set_params_Pareto(fit, fit$shape, fit$scale)
-    fit = .set_params_Pi(fit, fit$pi)
+    fit = mobster:::.set_params_Beta(fit, fit$a, fit$b)
+    fit = mobster:::.set_params_Pareto(fit, fit$shape, fit$scale)
+    fit = mobster:::.set_params_Pi(fit, fit$pi)
 
     # Cluster labels of each data point. Each data point is assigned to the cluster
     # with the highest posterior responsibility. Hard assignment.

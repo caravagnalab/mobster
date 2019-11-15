@@ -4,13 +4,8 @@
 \alias{plot.dbpmm}
 \title{Plot a MOBSTER fit.}
 \usage{
-plot.dbpmm(
-  x,
-  alpha = 0.8,
-  colors = c(Tail = "gainsboro"),
-  cutoff_assignment = 0,
-  ...
-)
+plot.dbpmm(x, alpha = 0.8, colors = c(Tail = "gainsboro"),
+  cutoff_assignment = 0, ...)
 }
 \arguments{
 \item{x}{An object of class \code{"dbpmm"}.}

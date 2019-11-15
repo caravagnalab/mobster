@@ -39,17 +39,17 @@ choose_clusters = function(x,
   }
   
   # Cluster size - remove clusters smaller than pi_cutoff, or less than N_cutoff mutations
-  pi = .params_Pi(x)
+  pi = mobster:::.params_Pi(x)
   
   pass_clusters_picutoff = pi > pi_cutoff
   pass_clusters_Ncutoff = x$N.k > N_cutoff
   
-  tab_clusters = tibble(cluster = names(pi), pi = pi, N = x$N.k)
+  tab_clusters = tibble(cluster = names(pi), pi = pi, N = x$N.k[names(pi)])
   tab_clusters$F1 = pass_clusters_picutoff
   tab_clusters$F2 = pass_clusters_Ncutoff
   
   # CLusters that will be cancelled
-  clusters_to_cancel = !pass_clusters_picutoff | !pass_clusters_Ncutoff 
+  clusters_to_cancel = !pass_clusters_picutoff[names(pi)] | !pass_clusters_Ncutoff[names(pi)] 
   
   # Report to screen
   tab_clusters$remove = clusters_to_cancel
@@ -95,13 +95,13 @@ choose_clusters = function(x,
     y$pi = y$pi[c('Tail', remaining_clusters)]
   }
   
-  y = .set_params_Pi(y, y$pi)
+  y = mobster:::.set_params_Pi(y, y$pi)
   
   # If we need to cancel a tail
   if(!(y$fit.tail)) 
   {
     y$scale = y$shape = NA
-    y = .set_params_Pareto(y, y$scale, y$shape) # This should be useless
+    y = mobster:::.set_params_Pareto(y, y$scale, y$shape) # This should be useless
   }
   
   # For the Beta that remains, we need to subset their parameters

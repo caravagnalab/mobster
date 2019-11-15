@@ -4,12 +4,8 @@
 \alias{plot_bootstrap_tail}
 \title{Plot the boostrapped tail parameters.}
 \usage{
-plot_bootstrap_tail(
-  x,
-  bootstrap_results,
-  bootstrap_statistics,
-  colors = c(Tail = "gainsboro")
-)
+plot_bootstrap_tail(x, bootstrap_results, bootstrap_statistics,
+  colors = c(Tail = "gainsboro"))
 }
 \arguments{
 \item{x}{A MOBSTER fit.}

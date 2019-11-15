@@ -4,15 +4,8 @@
 \alias{mobster_bootstrap}
 \title{Bootstrap a MOBSTER fit.}
 \usage{
-mobster_bootstrap(
-  x,
-  n.resamples = 100,
-  bootstrap = "nonparametric",
-  cores.ratio = 0.8,
-  cache = NULL,
-  save_data = NULL,
-  ...
-)
+mobster_bootstrap(x, n.resamples = 100, bootstrap = "nonparametric",
+  cores.ratio = 0.8, cache = NULL, save_data = NULL, ...)
 }
 \arguments{
 \item{x}{An object of class \code{"dbpmm"}.}

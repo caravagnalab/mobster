@@ -4,12 +4,8 @@
 \alias{plot_bootstrap_coclustering}
 \title{Plot the boostrapped co-clustering probability.}
 \usage{
-plot_bootstrap_coclustering(
-  x,
-  bootstrap_results,
-  bootstrap_statistics,
-  colors = c(Tail = "gainsboro")
-)
+plot_bootstrap_coclustering(x, bootstrap_results, bootstrap_statistics,
+  colors = c(Tail = "gainsboro"))
 }
 \arguments{
 \item{x}{A MOBSTER fit.}
