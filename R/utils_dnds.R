@@ -208,7 +208,7 @@ wrapper_plot = function(results,
     labs(
       title = paste0("dN/dS values via dndscv"),
       subtitle = gene_list_label,
-      caption = paste('Synonimous mutations:', syn_label)
+      caption = paste('Synonymous mutations:', syn_label)
     ) +
     ggplot2::geom_hline(yintercept = 1.0,
                         lty = 2,
