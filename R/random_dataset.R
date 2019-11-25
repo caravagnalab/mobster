@@ -11,6 +11,8 @@
 #' Values on the order of 1000 give low variance, 100 represents a dataset with quite some dispersion (
 #' compared to a putative Binomial generative model).
 #' @param Beta_bounds Range of values to sample the Beta means.
+#' @param shape_bounds Range of values to sample the tail shape, default [1, 3],
+#' @param scale Tail scale, default 0.05.
 #' @param seed The seed to fix the process, default is 123.
 #'
 #' @return A list with the dataset in a tibble, the model parameters and a plot the data.
@@ -27,6 +29,8 @@ random_dataset = function(N = 5000,
                           Betas_separation = 0.1,
                           Beta_variance_scaling = 1e3,
                           Beta_bounds = c(.1, .9),
+                          shape_bounds = c(1, 1, 3),
+                          scale = 0.05,
                           seed = NULL)
 {
   require(MCMCpack)
@@ -76,9 +80,8 @@ random_dataset = function(N = 5000,
   # print(means)
   # print(vars)
   
-  shape = runif(1, 1, 4)
-  scale = 0.05
-  
+  shape = runif(1, shape_bounds[1], shape_bounds[2])
+
   # pio::pioStr("Tail (shape and scale)", '\n')
   # print(shape)
   # print(scale)
