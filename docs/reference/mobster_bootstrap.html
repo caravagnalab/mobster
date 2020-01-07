@@ -8,6 +8,13 @@
 
 <title>Bootstrap a MOBSTER fit. — mobster_bootstrap • mobster</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -18,13 +25,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -53,6 +62,7 @@ and uses  ?easypar." />
 <![endif]-->
 
 
+
   </head>
 
   <body>
@@ -77,7 +87,7 @@ and uses  ?easypar." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -115,6 +125,7 @@ and uses  ?easypar." />
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -168,25 +179,14 @@ and uses  <code>?easypar</code>.</p>
     <p>Data from the fits, resamples and a plottable figure.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='st'>'fit_example'</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'mobster'</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>'fit_example'</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'mobster'</span>)
 
 <span class='co'># Just 5 resamples of a nonparametric bootstrap run</span>
 <span class='no'>mb</span> <span class='kw'>=</span> <span class='fu'>mobster_bootstrap</span>(<span class='no'>fit_example</span>$<span class='no'>best</span>, <span class='kw'>n.resamples</span> <span class='kw'>=</span> <span class='fl'>5</span>)</div><div class='output co'>#&gt; <span style='color: #BBBBBB;background-color: #0000BB;'> [ MOBSTER bootstrap ~ 5 resamples from nonparametric bootstrap ] 
 #&gt; </span><span>
 #&gt; </span><span style='color: #00BBBB;'>=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span><span>
 #&gt; </span><span style='color: #00BBBB;'> Bootstrapping for this MOBSTER model</span><span>
-#&gt; </span><span style='color: #00BBBB;'>=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span><span>
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 426 </span><span style='color: #00BBBB;'>points with</span><span> K = 2 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 289 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
-#&gt;   Components (fit)  
-#&gt; </span><span>     Tail	n = 259 (0.64) 	 Shape = 1.8 
-#&gt;   Beta C1 	n = 63 (0.13) 	 Mean = 0.23
-#&gt;   Beta C2 	n = 104 (0.24) 	 Mean = 0.5
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
-#&gt;   Scores (model selection)  
-#&gt; </span><span>       NLL       BIC       AIC  entropy       ICL     reICL size
-#&gt;  -490.8661 -909.0789 -957.7322 80.79651 -828.2824 -908.2693   12
-#&gt; 
+#&gt; </span><span style='color: #00BBBB;'>=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span><span></div><div class='output co'>#&gt; <span class='message'>── </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] My MOBSTER model</span><span> n = 5000, fit by </span><span style='color: #00BB00;'>MM</span><span> in 75 steps </span><span style='color: #00BB00;'>(converged).</span><span> ───────────────────────────────────────────</span></div><div class='output co'>#&gt; <span class='message'>● Tail [n = 1370, 31%] with alpha = 1.2.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C1</span><span> [n = 2784, 55%] with mean = 0.48.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C2</span><span> [n = 846, 14%] with mean = 0.15.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Score(s): NLL = -5671.5; ICL = -10359.09 (-11266.35), H = 907.26 (0), </span></div><div class='output co'>#&gt; 
 #&gt; </span><span style='color: #00BBBB;'>=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span><span>
 #&gt; </span><span style='color: #00BBBB;'> Creating nonparametric bootstrap resamples</span><span>
 #&gt; </span><span style='color: #00BBBB;'>=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span><span>
@@ -195,154 +195,92 @@ and uses  <code>?easypar</code>.</p>
 #&gt; </span><span style='color: #00BBBB;'> Running fits (might take some time)</span><span>
 #&gt; </span><span style='color: #00BBBB;'>=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span><span></div><div class='input'>
 <span class='co'># The resample data is wrapped as lists of lists</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/lapply'>lapply</a></span>(<span class='no'>mb</span>$<span class='no'>resamples</span>, <span class='kw'>function</span>(<span class='no'>x</span>) <span class='no'>x</span><span class='kw'>[[</span><span class='fl'>1</span>]] <span class='kw'>%&gt;%</span> <span class='no'>as_tibble</span>)</div><div class='output co'>#&gt; [[1]]
-#&gt; </span><span style='color: #555555;'># A tibble: 426 x 3</span><span>
+<span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span>(<span class='no'>mb</span>$<span class='no'>resamples</span>, <span class='kw'>function</span>(<span class='no'>x</span>) <span class='no'>x</span><span class='kw'>[[</span><span class='fl'>1</span>]] <span class='kw'>%&gt;%</span> <span class='no'>as_tibble</span>)</div><div class='output co'>#&gt; [[1]]
+#&gt; </span><span style='color: #555555;'># A tibble: 5,000 x 3</span><span>
 #&gt;       id    VAF original.id
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span>     1 0.083</span><span style='text-decoration: underline;'>3</span><span>         263
-#&gt; </span><span style='color: #555555;'> 2</span><span>     2 0.371          356
-#&gt; </span><span style='color: #555555;'> 3</span><span>     3 0.072</span><span style='text-decoration: underline;'>2</span><span>         255
-#&gt; </span><span style='color: #555555;'> 4</span><span>     4 0.089</span><span style='text-decoration: underline;'>1</span><span>         309
-#&gt; </span><span style='color: #555555;'> 5</span><span>     5 0.514          338
-#&gt; </span><span style='color: #555555;'> 6</span><span>     6 0.059</span><span style='text-decoration: underline;'>5</span><span>         343
-#&gt; </span><span style='color: #555555;'> 7</span><span>     7 0.057</span><span style='text-decoration: underline;'>5</span><span>          23
-#&gt; </span><span style='color: #555555;'> 8</span><span>     8 0.435          328
-#&gt; </span><span style='color: #555555;'> 9</span><span>     9 0.099</span><span style='text-decoration: underline;'>0</span><span>          97
-#&gt; </span><span style='color: #555555;'>10</span><span>    10 0.510          322
-#&gt; </span><span style='color: #555555;'># … with 416 more rows</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span>     1 0.074</span><span style='text-decoration: underline;'>0</span><span>        </span><span style='text-decoration: underline;'>4</span><span>219
+#&gt; </span><span style='color: #555555;'> 2</span><span>     2 0.451          581
+#&gt; </span><span style='color: #555555;'> 3</span><span>     3 0.492         </span><span style='text-decoration: underline;'>2</span><span>443
+#&gt; </span><span style='color: #555555;'> 4</span><span>     4 0.452         </span><span style='text-decoration: underline;'>2</span><span>402
+#&gt; </span><span style='color: #555555;'> 5</span><span>     5 0.086</span><span style='text-decoration: underline;'>7</span><span>        </span><span style='text-decoration: underline;'>3</span><span>333
+#&gt; </span><span style='color: #555555;'> 6</span><span>     6 0.475          885
+#&gt; </span><span style='color: #555555;'> 7</span><span>     7 0.141         </span><span style='text-decoration: underline;'>3</span><span>608
+#&gt; </span><span style='color: #555555;'> 8</span><span>     8 0.462         </span><span style='text-decoration: underline;'>2</span><span>092
+#&gt; </span><span style='color: #555555;'> 9</span><span>     9 0.524         </span><span style='text-decoration: underline;'>1</span><span>269
+#&gt; </span><span style='color: #555555;'>10</span><span>    10 0.141         </span><span style='text-decoration: underline;'>3</span><span>289
+#&gt; </span><span style='color: #555555;'># … with 4,990 more rows</span><span>
 #&gt; 
 #&gt; [[2]]
-#&gt; </span><span style='color: #555555;'># A tibble: 426 x 3</span><span>
+#&gt; </span><span style='color: #555555;'># A tibble: 5,000 x 3</span><span>
 #&gt;       id    VAF original.id
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span>     1 0.115          115
-#&gt; </span><span style='color: #555555;'> 2</span><span>     2 0.184          138
-#&gt; </span><span style='color: #555555;'> 3</span><span>     3 0.135          249
-#&gt; </span><span style='color: #555555;'> 4</span><span>     4 0.072</span><span style='text-decoration: underline;'>2</span><span>         104
-#&gt; </span><span style='color: #555555;'> 5</span><span>     5 0.156          382
-#&gt; </span><span style='color: #555555;'> 6</span><span>     6 0.057</span><span style='text-decoration: underline;'>1</span><span>          66
-#&gt; </span><span style='color: #555555;'> 7</span><span>     7 0.205           34
-#&gt; </span><span style='color: #555555;'> 8</span><span>     8 0.050</span><span style='text-decoration: underline;'>5</span><span>         284
-#&gt; </span><span style='color: #555555;'> 9</span><span>     9 0.152          302
-#&gt; </span><span style='color: #555555;'>10</span><span>    10 0.299            9
-#&gt; </span><span style='color: #555555;'># … with 416 more rows</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span>     1 0.230         </span><span style='text-decoration: underline;'>4</span><span>041
+#&gt; </span><span style='color: #555555;'> 2</span><span>     2 0.461          531
+#&gt; </span><span style='color: #555555;'> 3</span><span>     3 0.129         </span><span style='text-decoration: underline;'>4</span><span>838
+#&gt; </span><span style='color: #555555;'> 4</span><span>     4 0.467         </span><span style='text-decoration: underline;'>1</span><span>653
+#&gt; </span><span style='color: #555555;'> 5</span><span>     5 0.080</span><span style='text-decoration: underline;'>6</span><span>        </span><span style='text-decoration: underline;'>3</span><span>574
+#&gt; </span><span style='color: #555555;'> 6</span><span>     6 0.079</span><span style='text-decoration: underline;'>7</span><span>        </span><span style='text-decoration: underline;'>4</span><span>864
+#&gt; </span><span style='color: #555555;'> 7</span><span>     7 0.055</span><span style='text-decoration: underline;'>2</span><span>        </span><span style='text-decoration: underline;'>4</span><span>658
+#&gt; </span><span style='color: #555555;'> 8</span><span>     8 0.501         </span><span style='text-decoration: underline;'>1</span><span>435
+#&gt; </span><span style='color: #555555;'> 9</span><span>     9 0.051</span><span style='text-decoration: underline;'>5</span><span>        </span><span style='text-decoration: underline;'>4</span><span>052
+#&gt; </span><span style='color: #555555;'>10</span><span>    10 0.070</span><span style='text-decoration: underline;'>6</span><span>        </span><span style='text-decoration: underline;'>3</span><span>360
+#&gt; </span><span style='color: #555555;'># … with 4,990 more rows</span><span>
 #&gt; 
 #&gt; [[3]]
-#&gt; </span><span style='color: #555555;'># A tibble: 426 x 3</span><span>
+#&gt; </span><span style='color: #555555;'># A tibble: 5,000 x 3</span><span>
 #&gt;       id    VAF original.id
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span>     1 0.096</span><span style='text-decoration: underline;'>2</span><span>         106
-#&gt; </span><span style='color: #555555;'> 2</span><span>     2 0.546          425
-#&gt; </span><span style='color: #555555;'> 3</span><span>     3 0.125          148
-#&gt; </span><span style='color: #555555;'> 4</span><span>     4 0.062</span><span style='text-decoration: underline;'>5</span><span>         334
-#&gt; </span><span style='color: #555555;'> 5</span><span>     5 0.546          425
-#&gt; </span><span style='color: #555555;'> 6</span><span>     6 0.5            406
-#&gt; </span><span style='color: #555555;'> 7</span><span>     7 0.058</span><span style='text-decoration: underline;'>1</span><span>         208
-#&gt; </span><span style='color: #555555;'> 8</span><span>     8 0.278           16
-#&gt; </span><span style='color: #555555;'> 9</span><span>     9 0.112          394
-#&gt; </span><span style='color: #555555;'>10</span><span>    10 0.546          113
-#&gt; </span><span style='color: #555555;'># … with 416 more rows</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span>     1 0.050</span><span style='text-decoration: underline;'>5</span><span>        </span><span style='text-decoration: underline;'>3</span><span>393
+#&gt; </span><span style='color: #555555;'> 2</span><span>     2 0.479         </span><span style='text-decoration: underline;'>2</span><span>706
+#&gt; </span><span style='color: #555555;'> 3</span><span>     3 0.498          864
+#&gt; </span><span style='color: #555555;'> 4</span><span>     4 0.060</span><span style='text-decoration: underline;'>0</span><span>        </span><span style='text-decoration: underline;'>3</span><span>616
+#&gt; </span><span style='color: #555555;'> 5</span><span>     5 0.150         </span><span style='text-decoration: underline;'>4</span><span>329
+#&gt; </span><span style='color: #555555;'> 6</span><span>     6 0.463         </span><span style='text-decoration: underline;'>1</span><span>012
+#&gt; </span><span style='color: #555555;'> 7</span><span>     7 0.438         </span><span style='text-decoration: underline;'>2</span><span>453
+#&gt; </span><span style='color: #555555;'> 8</span><span>     8 0.262         </span><span style='text-decoration: underline;'>3</span><span>473
+#&gt; </span><span style='color: #555555;'> 9</span><span>     9 0.464         </span><span style='text-decoration: underline;'>2</span><span>535
+#&gt; </span><span style='color: #555555;'>10</span><span>    10 0.141         </span><span style='text-decoration: underline;'>2</span><span>976
+#&gt; </span><span style='color: #555555;'># … with 4,990 more rows</span><span>
 #&gt; 
 #&gt; [[4]]
-#&gt; </span><span style='color: #555555;'># A tibble: 426 x 3</span><span>
+#&gt; </span><span style='color: #555555;'># A tibble: 5,000 x 3</span><span>
 #&gt;       id    VAF original.id
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span>     1 0.057</span><span style='text-decoration: underline;'>1</span><span>          66
-#&gt; </span><span style='color: #555555;'> 2</span><span>     2 0.556          254
-#&gt; </span><span style='color: #555555;'> 3</span><span>     3 0.098</span><span style='text-decoration: underline;'>8</span><span>         111
-#&gt; </span><span style='color: #555555;'> 4</span><span>     4 0.061</span><span style='text-decoration: underline;'>1</span><span>         311
-#&gt; </span><span style='color: #555555;'> 5</span><span>     5 0.050</span><span style='text-decoration: underline;'>5</span><span>         284
-#&gt; </span><span style='color: #555555;'> 6</span><span>     6 0.104          215
-#&gt; </span><span style='color: #555555;'> 7</span><span>     7 0.074</span><span style='text-decoration: underline;'>4</span><span>         380
-#&gt; </span><span style='color: #555555;'> 8</span><span>     8 0.539            7
-#&gt; </span><span style='color: #555555;'> 9</span><span>     9 0.072</span><span style='text-decoration: underline;'>2</span><span>         255
-#&gt; </span><span style='color: #555555;'>10</span><span>    10 0.068</span><span style='text-decoration: underline;'>6</span><span>         314
-#&gt; </span><span style='color: #555555;'># … with 416 more rows</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span>     1 0.465          545
+#&gt; </span><span style='color: #555555;'> 2</span><span>     2 0.153         </span><span style='text-decoration: underline;'>2</span><span>919
+#&gt; </span><span style='color: #555555;'> 3</span><span>     3 0.517         </span><span style='text-decoration: underline;'>2</span><span>193
+#&gt; </span><span style='color: #555555;'> 4</span><span>     4 0.059</span><span style='text-decoration: underline;'>1</span><span>        </span><span style='text-decoration: underline;'>3</span><span>886
+#&gt; </span><span style='color: #555555;'> 5</span><span>     5 0.463          912
+#&gt; </span><span style='color: #555555;'> 6</span><span>     6 0.171         </span><span style='text-decoration: underline;'>2</span><span>893
+#&gt; </span><span style='color: #555555;'> 7</span><span>     7 0.526         </span><span style='text-decoration: underline;'>1</span><span>373
+#&gt; </span><span style='color: #555555;'> 8</span><span>     8 0.489          726
+#&gt; </span><span style='color: #555555;'> 9</span><span>     9 0.117         </span><span style='text-decoration: underline;'>3</span><span>415
+#&gt; </span><span style='color: #555555;'>10</span><span>    10 0.158         </span><span style='text-decoration: underline;'>2</span><span>957
+#&gt; </span><span style='color: #555555;'># … with 4,990 more rows</span><span>
 #&gt; 
 #&gt; [[5]]
-#&gt; </span><span style='color: #555555;'># A tibble: 426 x 3</span><span>
+#&gt; </span><span style='color: #555555;'># A tibble: 5,000 x 3</span><span>
 #&gt;       id    VAF original.id
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span>     1 0.237          149
-#&gt; </span><span style='color: #555555;'> 2</span><span>     2 0.478           17
-#&gt; </span><span style='color: #555555;'> 3</span><span>     3 0.068</span><span style='text-decoration: underline;'>6</span><span>         286
-#&gt; </span><span style='color: #555555;'> 4</span><span>     4 0.079</span><span style='text-decoration: underline;'>5</span><span>         275
-#&gt; </span><span style='color: #555555;'> 5</span><span>     5 0.529          408
-#&gt; </span><span style='color: #555555;'> 6</span><span>     6 0.063</span><span style='text-decoration: underline;'>8</span><span>         130
-#&gt; </span><span style='color: #555555;'> 7</span><span>     7 0.086</span><span style='text-decoration: underline;'>0</span><span>         395
-#&gt; </span><span style='color: #555555;'> 8</span><span>     8 0.131          371
-#&gt; </span><span style='color: #555555;'> 9</span><span>     9 0.051</span><span style='text-decoration: underline;'>0</span><span>         342
-#&gt; </span><span style='color: #555555;'>10</span><span>    10 0.419          357
-#&gt; </span><span style='color: #555555;'># … with 416 more rows</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span>     1 0.501         </span><span style='text-decoration: underline;'>2</span><span>415
+#&gt; </span><span style='color: #555555;'> 2</span><span>     2 0.554         </span><span style='text-decoration: underline;'>3</span><span>389
+#&gt; </span><span style='color: #555555;'> 3</span><span>     3 0.448          954
+#&gt; </span><span style='color: #555555;'> 4</span><span>     4 0.136         </span><span style='text-decoration: underline;'>4</span><span>679
+#&gt; </span><span style='color: #555555;'> 5</span><span>     5 0.050</span><span style='text-decoration: underline;'>5</span><span>        </span><span style='text-decoration: underline;'>3</span><span>393
+#&gt; </span><span style='color: #555555;'> 6</span><span>     6 0.521         </span><span style='text-decoration: underline;'>1</span><span>681
+#&gt; </span><span style='color: #555555;'> 7</span><span>     7 0.466         </span><span style='text-decoration: underline;'>2</span><span>379
+#&gt; </span><span style='color: #555555;'> 8</span><span>     8 0.451          644
+#&gt; </span><span style='color: #555555;'> 9</span><span>     9 0.067</span><span style='text-decoration: underline;'>9</span><span>        </span><span style='text-decoration: underline;'>4</span><span>118
+#&gt; </span><span style='color: #555555;'>10</span><span>    10 0.064</span><span style='text-decoration: underline;'>2</span><span>        </span><span style='text-decoration: underline;'>3</span><span>701
+#&gt; </span><span style='color: #555555;'># … with 4,990 more rows</span><span>
 #&gt; </div><div class='input'>
 <span class='co'># The best fits are returned</span>
-<span class='no'>mb</span>$<span class='no'>fits</span></div><div class='output co'>#&gt; $`1`
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 426 </span><span style='color: #00BBBB;'>points with</span><span> K = 2 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 140 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
-#&gt;   Components (fit)  
-#&gt; </span><span>     Tail	n = 254 (0.63) 	 Shape = 1.8 
-#&gt;   Beta C1 	n = 106 (0.24) 	 Mean = 0.5
-#&gt;   Beta C2 	n = 66 (0.13) 	 Mean = 0.23
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
-#&gt;   Scores (model selection)  
-#&gt; </span><span>       NLL       BIC       AIC  entropy       ICL reduced.entropy     reICL
-#&gt;  -491.8202 -929.1504 -965.6404 74.25181 -854.8986       0.5409804 -928.6095
-#&gt;  size
-#&gt;     9
-#&gt; 
-#&gt; $`2`
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 426 </span><span style='color: #00BBBB;'>points with</span><span> K = 2 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 216 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
-#&gt;   Components (fit)  
-#&gt; </span><span>     Tail	n = 230 (0.54) 	 Shape = 2.1 
-#&gt;   Beta C1 	n = 96 (0.22) 	 Mean = 0.5
-#&gt;   Beta C2 	n = 100 (0.24) 	 Mean = 0.18
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
-#&gt;   Scores (model selection)  
-#&gt; </span><span>       NLL       BIC       AIC  entropy      ICL reduced.entropy     reICL size
-#&gt;  -522.8306 -991.1713 -1027.661 136.9822 -854.189        2.519035 -988.6523    9
-#&gt; 
-#&gt; $`3`
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 426 </span><span style='color: #00BBBB;'>points with</span><span> K = 1 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 26 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
-#&gt;   Components (fit)  
-#&gt; </span><span>     Tail	n = 314 (0.76) 	 Shape = 1.4 
-#&gt;   Beta C1 	n = 112 (0.24) 	 Mean = 0.49
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
-#&gt;   Scores (model selection)  
-#&gt; </span><span>       NLL       BIC       AIC  entropy       ICL reduced.entropy     reICL
-#&gt;  -477.4943 -918.6619 -942.9885 29.94818 -888.7137               0 -918.6619
-#&gt;  size
-#&gt;     6
-#&gt; 
-#&gt; $`4`
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 426 </span><span style='color: #00BBBB;'>points with</span><span> K = 2 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 244 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #00BB00;'>[CONVERGED]</span><span> 
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
-#&gt;   Components (fit)  
-#&gt; </span><span>     Tail	n = 232 (0.54) 	 Shape = 1.9 
-#&gt;   Beta C1 	n = 114 (0.26) 	 Mean = 0.5
-#&gt;   Beta C2 	n = 80 (0.2) 	 Mean = 0.19
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
-#&gt;   Scores (model selection)  
-#&gt; </span><span>       NLL       BIC       AIC  entropy       ICL reduced.entropy     reICL
-#&gt;  -467.3392 -880.1884 -916.6784 132.9965 -747.1919        7.895264 -872.2932
-#&gt;  size
-#&gt;     9
-#&gt; 
-#&gt; $`5`
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ]</span><span> N = 426 </span><span style='color: #00BBBB;'>points with</span><span> K = 2 </span><span style='color: #00BBBB;'>Beta clusters, fit by</span><span> </span><span style='color: #BBBB00;'>MM</span><span> </span><span style='color: #00BBBB;'>in</span><span> 250 </span><span style='color: #00BBBB;'>steps</span><span> </span><span style='color: #BB0000;'>[NON CONVERGED]</span><span> 
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
-#&gt;   Components (fit)  
-#&gt; </span><span>     Tail	n = 237 (0.55) 	 Shape = 1.8 
-#&gt;   Beta C1 	n = 99 (0.22) 	 Mean = 0.5
-#&gt;   Beta C2 	n = 90 (0.22) 	 Mean = 0.2
-#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
-#&gt;   Scores (model selection)  
-#&gt; </span><span>       NLL       BIC       AIC  entropy       ICL reduced.entropy     reICL
-#&gt;  -463.8741 -873.2582 -909.7481 138.3993 -734.8589        6.521388 -866.7368
-#&gt;  size
-#&gt;     9
-#&gt; </div></span></pre>
+<span class='no'>mb</span>$<span class='no'>fits</span></div><div class='output co'>#&gt; $`1`</div><div class='output co'>#&gt; <span class='message'>── </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] My MOBSTER model</span><span> n = 5000, fit by </span><span style='color: #00BB00;'>MM</span><span> in 19 steps </span><span style='color: #00BB00;'>(converged).</span><span> ───────────────────────────────────────────</span></div><div class='output co'>#&gt; <span class='message'>● Tail [n = 2217, 46%] with alpha = 1.1.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C1</span><span> [n = 2783, 54%] with mean = 0.48.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Score(s): NLL = -5324.75; ICL = -10271.07 (-10598.4), H = 327.33 (0), </span></div><div class='output co'>#&gt; 
+#&gt; $`2`</div><div class='output co'>#&gt; <span class='message'>── </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] My MOBSTER model</span><span> n = 5000, fit by </span><span style='color: #00BB00;'>MM</span><span> in 18 steps </span><span style='color: #00BB00;'>(converged).</span><span> ───────────────────────────────────────────</span></div><div class='output co'>#&gt; <span class='message'>● Tail [n = 2200, 45%] with alpha = 1.1.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C1</span><span> [n = 2800, 55%] with mean = 0.48.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Score(s): NLL = -5241.31; ICL = -10099.69 (-10431.51), H = 331.82 (0), </span></div><div class='output co'>#&gt; 
+#&gt; $`3`</div><div class='output co'>#&gt; <span class='message'>── </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] My MOBSTER model</span><span> n = 5000, fit by </span><span style='color: #00BB00;'>MM</span><span> in 15 steps </span><span style='color: #00BB00;'>(converged).</span><span> ───────────────────────────────────────────</span></div><div class='output co'>#&gt; <span class='message'>● Tail [n = 2245, 46%] with alpha = 1.1.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C1</span><span> [n = 2755, 54%] with mean = 0.48.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Score(s): NLL = -5350.93; ICL = -10331.16 (-10650.75), H = 319.59 (0), </span></div><div class='output co'>#&gt; 
+#&gt; $`4`</div><div class='output co'>#&gt; <span class='message'>── </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] My MOBSTER model</span><span> n = 5000, fit by </span><span style='color: #00BB00;'>MM</span><span> in 187 steps </span><span style='color: #00BB00;'>(converged).</span><span> ──────────────────────────────────────────</span></div><div class='output co'>#&gt; <span class='message'>● Tail [n = 1389, 32%] with alpha = 1.2.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C1</span><span> [n = 2760, 54%] with mean = 0.48.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C2</span><span> [n = 851, 14%] with mean = 0.15.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Score(s): NLL = -5531.05; ICL = -10066.82 (-10985.44), H = 918.62 (0), </span></div><div class='output co'>#&gt; 
+#&gt; $`5`</div><div class='output co'>#&gt; <span class='message'>── </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] My MOBSTER model</span><span> n = 5000, fit by </span><span style='color: #00BB00;'>MM</span><span> in 125 steps </span><span style='color: #00BB00;'>(converged).</span><span> ──────────────────────────────────────────</span></div><div class='output co'>#&gt; <span class='message'>● Tail [n = 1348, 31%] with alpha = 1.2.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C1</span><span> [n = 2793, 55%] with mean = 0.48.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C2</span><span> [n = 859, 14%] with mean = 0.15.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Score(s): NLL = -5715.9; ICL = -10443.21 (-11355.14), H = 911.93 (0), </span></div><div class='output co'>#&gt; </div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -355,19 +293,23 @@ and uses  <code>?easypar</code>.</p>
   </div>
 </div>
 
+
       <footer>
       <div class="copyright">
   <p>Developed by Giulio Caravagna.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

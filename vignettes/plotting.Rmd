@@ -82,7 +82,7 @@ print(fit_example$fits.table)
 
 One can plot of the sum of squared error (SSE) between the fit density and the data (binned with bins of size 0.01), for several solutions at once. This measure can represent a sort of goodness of fit statistics.
 
-```{r, fig.width=3, fig.height=6}
+```{r, fig.width=6, fig.height=3}
 # Goodness of fit (SSE), for the top 3 fits.
 plot_gofit(fit_example, TOP = 3)
 ```

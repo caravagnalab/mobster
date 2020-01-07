@@ -82,7 +82,7 @@ dnds_stats = dnds(
 ```
 
 The returned outputs are the tables returned by `dndscv`, as well as a `ggplot` plot for the object. The column `dnds_group` labels the group used to compute the statistics.
-```{r, fig.width=3, fig.height=9, warning=FALSE}
+```{r, fig.width=9, fig.height=3, warning=FALSE}
 # Summary statistics
 print(dnds_stats$dnds_summary)
 
@@ -144,7 +144,7 @@ data('PD4120a_breast_sample', package = 'mobster')
 
 We pool the data before the call to `dnds`, subsetting the columns to the ones required for this computation.
 
-```{r, fig.width=3, fig.height=9, warning=FALSE}
+```{r, fig.width=9, fig.height=3, warning=FALSE}
 dnds_multi = dnds(
   rbind(
     Clusters(LU4_lung_sample$best) %>% select(chr, from, ref, alt, cluster) %>% mutate(sample = 'LU4'),

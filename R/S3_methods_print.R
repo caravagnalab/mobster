@@ -30,9 +30,20 @@ print.dbpmm = function(x, ...)
 {
   stopifnot(inherits(x, "dbpmm"))
   
+  # cli::cli_rule(
+  #   paste(
+  #     crayon::bgYellow(crayon::black("[ MOBSTER ]")),
+  #     'n = {.value {x$N}}, fit by {.field {x$fit.type}} in {.value {length(x$all.NLL)}} steps',
+  #     ifelse(
+  #       x$status,
+  #       crayon::green('(converged).'),
+  #       crayon::red('(interrupted).')
+  #     )
+  #   )
+  # )
   cli::cli_rule(
     paste(
-      crayon::bgYellow(crayon::black("[ MOBSTER ]")),
+      crayon::bgYellow(crayon::black("[ MOBSTER ] {.value {x$description}}")),
       'n = {.value {x$N}}, fit by {.field {x$fit.type}} in {.value {length(x$all.NLL)}} steps',
       ifelse(
         x$status,

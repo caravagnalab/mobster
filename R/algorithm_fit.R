@@ -10,7 +10,8 @@
            fit.type = 'MM',
            trace = FALSE,
            pi_cutoff = 0.02,
-           N_cutoff = 10)
+           N_cutoff = 10,
+           description = "My MOBSTER model.")
   {
     stopifnot(fit.type %in% c('MLE', 'MM'))
     stopifnot(tail | K > 0)
@@ -29,6 +30,7 @@
 
     fit$data      = X
     fit$Call      = match.call()
+    fit$description = description
 
     fit$fit.type  = fit.type # MLE or MM
 

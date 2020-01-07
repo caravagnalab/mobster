@@ -8,7 +8,8 @@ mobster_fit(x, K = 1:3, samples = 5, init = "peaks", tail = c(TRUE,
   FALSE), epsilon = 1e-10, maxIter = 250, fit.type = "MM",
   seed = 12345, model.selection = "reICL", trace = FALSE,
   parallel = TRUE, pi_cutoff = 0.02, N_cutoff = 10,
-  auto_setup = NULL, silent = FALSE)
+  auto_setup = NULL, silent = FALSE,
+  description = "My MOBSTER model")
 }
 \arguments{
 \item{x}{Input tibble (or data.frame) which is required to have a VAF column which reports the
@@ -57,6 +58,8 @@ assigned to a cluster to be returned as output.}
 Availables keys: `FAST`, uses 1) max 2 clones (1 subclone), 2) random initial conditions 3) 2 samples per parameter set
 4) mild `epsilon` and `maxIter`, sequential run. For reference, the default set of parameters represent a more exhaustive
 analysis.}
+
+\item{description}{A textual description of this dataset.}
 }
 \value{
 A list of all fits computed (objects of class \code{dbpmm}), the best fit, a table with the results of the fits and a

@@ -6,9 +6,16 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Plotting mobster fits • mobster</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Plotting mobster fits">
 <meta property="og:description" content="">
 <meta property="og:image" content="/logo.png">
@@ -39,7 +46,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -77,6 +84,7 @@
 <!--/.navbar -->
 
       
+
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
@@ -93,28 +101,18 @@
     
     
 <p>This vignette describes the plotting functions available in <a href="https://github.com/caravagn/MOBSTER">MOBSTER</a>.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(mobster)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="co">#&gt;  [ MOBSTER - Model-based clustering in cancer ] </span></a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="co">#&gt; Author :  Giulio Caravagna &lt;gcaravagn@gmail.com&gt; </span></a>
-<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="co">#&gt; GitHub :  caravagn/mobster </span></a>
-<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="co">#&gt;  &gt;  [https://https://caravagn.github.io/evoverse] Use package "evoverse" to implement cancer evolution analyses from multi-sample data. The evovers integrates MOBSTER and VIBER packages.</span></a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(mobster)</a></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># We load the fit available inside the package</span></a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/data">data</a></span>(<span class="st">'fit_example'</span>, <span class="dt">package =</span> <span class="st">'mobster'</span>)</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">'fit_example'</span>, <span class="dt">package =</span> <span class="st">'mobster'</span>)</a>
 <a class="sourceLine" id="cb2-3" data-line-number="3"></a>
 <a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co"># Print and plot the model</span></a>
-<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(fit_example<span class="op">$</span>best)</a>
-<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt; [ MOBSTER ] N = 426 points with K = 2 Beta clusters, fit by MM in 289 steps [CONVERGED] </span></a>
-<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt;   Components (fit)  </span></a>
-<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt;      Tail    n = 259 (0.64)   Shape = 1.8 </span></a>
-<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt;   Beta C1    n = 63 (0.13)    Mean = 0.23</span></a>
-<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="co">#&gt;   Beta C2    n = 104 (0.24)   Mean = 0.5</span></a>
-<a class="sourceLine" id="cb2-12" data-line-number="12"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="co">#&gt;   Scores (model selection)  </span></a>
-<a class="sourceLine" id="cb2-14" data-line-number="14"><span class="co">#&gt;        NLL       BIC       AIC  entropy       ICL     reICL size</span></a>
-<a class="sourceLine" id="cb2-15" data-line-number="15"><span class="co">#&gt;  -490.8661 -909.0789 -957.7322 80.79651 -828.2824 -908.2693   12</span></a>
-<a class="sourceLine" id="cb2-16" data-line-number="16"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(fit_example<span class="op">$</span>best)</a></code></pre></div>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(fit_example<span class="op">$</span>best)</a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt; ── [ MOBSTER ] My MOBSTER model n = 5000, fit by MM in 75 steps (converged). ───────────────────────────────────────────</span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt; ● Tail [n = 1370, 31%] with alpha = 1.2.</span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt; ● Beta C1 [n = 2784, 55%] with mean = 0.48.</span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt; ● Beta C2 [n = 846, 14%] with mean = 0.15.</span></a>
+<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt; ℹ Score(s): NLL = -5671.5; ICL = -10359.09 (-11266.35), H = 907.26 (0),</span></a>
+<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(fit_example<span class="op">$</span>best)</a></code></pre></div>
 <p><img src="plotting_files/figure-html/unnamed-chunk-3-1.png" width="480"></p>
 <p>You can plot mutations annotated if the <code>x</code>% of probability mass in their maximum responsibility (<em>hard clustering</em>) is below a certain cutoff. Non-assigned mutations are</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="../reference/plot_latent_variables.html">plot_latent_variables</a></span>(fit_example<span class="op">$</span>best, <span class="dt">cutoff_assignment =</span> <span class="fl">.8</span>)</a></code></pre></div>
@@ -133,71 +131,35 @@
 <a href="#selecting-alternative-best-models" class="anchor"></a>Selecting alternative best models<a name="alternative"></a>
 </h3>
 <p>Alternative models are returned function <code>mobster_fit</code>, and can be easly visualized.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">require</a></span>(ggpubr)</a>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span>(ggpubr)</a>
 <a class="sourceLine" id="cb7-2" data-line-number="2"></a>
 <a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co"># Figure assembly</span></a>
-<a class="sourceLine" id="cb7-4" data-line-number="4">figure =<span class="st"> </span><span class="kw"><a href="https://rpkgs.datanovia.com/ggpubr/reference/ggarrange.html">ggarrange</a></span>(</a>
-<a class="sourceLine" id="cb7-5" data-line-number="5">  <span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(fit_example<span class="op">$</span>runs[[<span class="dv">1</span>]]),</a>
-<a class="sourceLine" id="cb7-6" data-line-number="6">  <span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(fit_example<span class="op">$</span>runs[[<span class="dv">2</span>]]),</a>
-<a class="sourceLine" id="cb7-7" data-line-number="7">  <span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(fit_example<span class="op">$</span>runs[[<span class="dv">3</span>]]),</a>
+<a class="sourceLine" id="cb7-4" data-line-number="4">figure =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/ggpubr/man/ggarrange.html">ggarrange</a></span>(</a>
+<a class="sourceLine" id="cb7-5" data-line-number="5">  <span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(fit_example<span class="op">$</span>runs[[<span class="dv">1</span>]]),</a>
+<a class="sourceLine" id="cb7-6" data-line-number="6">  <span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(fit_example<span class="op">$</span>runs[[<span class="dv">2</span>]]),</a>
+<a class="sourceLine" id="cb7-7" data-line-number="7">  <span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(fit_example<span class="op">$</span>runs[[<span class="dv">3</span>]]),</a>
 <a class="sourceLine" id="cb7-8" data-line-number="8">  <span class="dt">ncol =</span> <span class="dv">3</span>, <span class="dt">nrow =</span> <span class="dv">1</span></a>
 <a class="sourceLine" id="cb7-9" data-line-number="9">)</a>
 <a class="sourceLine" id="cb7-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(figure)</a></code></pre></div>
+<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(figure)</a></code></pre></div>
 <p><img src="plotting_files/figure-html/unnamed-chunk-8-1.png" width="1440"> The table reportin the scores can be visualised, and everal plots are available to inspect model selection.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(fit_example<span class="op">$</span>fits.table)</a>
-<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="co">#&gt;          NLL       BIC       AIC    entropy       ICL     reICL size K</span></a>
-<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="co">#&gt; 12 -490.8661 -909.0789 -957.7322  80.796509 -828.2824 -908.2693   12 2</span></a>
-<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="co">#&gt; 11 -473.6845 -892.8791 -929.3691  30.459809 -862.4193 -892.8791    9 1</span></a>
-<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="co">#&gt; 20 -492.1583 -893.5001 -954.3166  93.918943 -799.5811 -878.4559   15 3</span></a>
-<a class="sourceLine" id="cb8-6" data-line-number="6"><span class="co">#&gt; 19 -496.0924 -901.3683 -962.1849 167.110472 -734.2578 -878.0683   15 3</span></a>
-<a class="sourceLine" id="cb8-7" data-line-number="7"><span class="co">#&gt; 13 -474.8448 -877.0362 -925.6895  41.587255 -835.4490 -863.1812   12 2</span></a>
-<a class="sourceLine" id="cb8-8" data-line-number="8"><span class="co">#&gt; 17 -491.1523 -891.4879 -952.3045 122.506702 -768.9812 -847.7891   15 3</span></a>
-<a class="sourceLine" id="cb8-9" data-line-number="9"><span class="co">#&gt; 21 -491.1479 -891.4792 -952.2958 125.433049 -766.0461 -844.8758   15 3</span></a>
-<a class="sourceLine" id="cb8-10" data-line-number="10"><span class="co">#&gt; 18 -477.4523 -864.0881 -924.9047  51.762421 -812.3256 -839.4878   15 3</span></a>
-<a class="sourceLine" id="cb8-11" data-line-number="11"><span class="co">#&gt; 14 -473.9464 -875.2396 -923.8928  73.798152 -801.4414 -828.2466   12 2</span></a>
-<a class="sourceLine" id="cb8-12" data-line-number="12"><span class="co">#&gt; 16 -490.8662 -890.9158 -951.7323 146.300796 -744.6150 -822.2152   15 3</span></a>
-<a class="sourceLine" id="cb8-13" data-line-number="13"><span class="co">#&gt; 15 -490.8661 -890.9156 -951.7322 149.176183 -741.7394 -819.2321   15 3</span></a>
-<a class="sourceLine" id="cb8-14" data-line-number="14"><span class="co">#&gt; 23 -490.8662 -890.9158 -951.7324 149.870868 -741.0450 -818.5155   15 3</span></a>
-<a class="sourceLine" id="cb8-15" data-line-number="15"><span class="co">#&gt; 22 -490.8661 -890.9157 -951.7322 150.237868 -740.6778 -818.1323   15 3</span></a>
-<a class="sourceLine" id="cb8-16" data-line-number="16"><span class="co">#&gt; 5  -461.3178 -856.0369 -900.6357  80.216220 -775.8206 -775.8206   11 3</span></a>
-<a class="sourceLine" id="cb8-17" data-line-number="17"><span class="co">#&gt; 2  -381.2801 -714.1247 -746.5602   6.357585 -707.7671 -707.7671    8 2</span></a>
-<a class="sourceLine" id="cb8-18" data-line-number="18"><span class="co">#&gt; 3  -382.2699 -697.9410 -742.5398  19.058974 -678.8820 -678.8820   11 3</span></a>
-<a class="sourceLine" id="cb8-19" data-line-number="19"><span class="co">#&gt; 9  -381.2060 -695.8132 -740.4120  48.470941 -647.3422 -647.3356   11 3</span></a>
-<a class="sourceLine" id="cb8-20" data-line-number="20"><span class="co">#&gt; 8  -381.2234 -695.8479 -740.4468  54.533310 -641.3146 -641.3161   11 3</span></a>
-<a class="sourceLine" id="cb8-21" data-line-number="21"><span class="co">#&gt; 7  -381.2801 -695.9613 -740.5601  75.879458 -620.0818 -620.0819   11 3</span></a>
-<a class="sourceLine" id="cb8-22" data-line-number="22"><span class="co">#&gt; 4  -381.2801 -695.9613 -740.5602  77.799795 -618.1615 -618.1616   11 3</span></a>
-<a class="sourceLine" id="cb8-23" data-line-number="23"><span class="co">#&gt; 6  -381.2801 -695.9614 -740.5602  77.942082 -618.0193 -618.0193   11 3</span></a>
-<a class="sourceLine" id="cb8-24" data-line-number="24"><span class="co">#&gt; 10 -381.2801 -695.9614 -740.5602  77.992067 -617.9693 -617.9693   11 3</span></a>
-<a class="sourceLine" id="cb8-25" data-line-number="25"><span class="co">#&gt; 1  -244.4977 -458.7232 -478.9954   0.000000 -458.7232 -458.7232    5 1</span></a>
-<a class="sourceLine" id="cb8-26" data-line-number="26"><span class="co">#&gt;     tail</span></a>
-<a class="sourceLine" id="cb8-27" data-line-number="27"><span class="co">#&gt; 12  TRUE</span></a>
-<a class="sourceLine" id="cb8-28" data-line-number="28"><span class="co">#&gt; 11  TRUE</span></a>
-<a class="sourceLine" id="cb8-29" data-line-number="29"><span class="co">#&gt; 20  TRUE</span></a>
-<a class="sourceLine" id="cb8-30" data-line-number="30"><span class="co">#&gt; 19  TRUE</span></a>
-<a class="sourceLine" id="cb8-31" data-line-number="31"><span class="co">#&gt; 13  TRUE</span></a>
-<a class="sourceLine" id="cb8-32" data-line-number="32"><span class="co">#&gt; 17  TRUE</span></a>
-<a class="sourceLine" id="cb8-33" data-line-number="33"><span class="co">#&gt; 21  TRUE</span></a>
-<a class="sourceLine" id="cb8-34" data-line-number="34"><span class="co">#&gt; 18  TRUE</span></a>
-<a class="sourceLine" id="cb8-35" data-line-number="35"><span class="co">#&gt; 14  TRUE</span></a>
-<a class="sourceLine" id="cb8-36" data-line-number="36"><span class="co">#&gt; 16  TRUE</span></a>
-<a class="sourceLine" id="cb8-37" data-line-number="37"><span class="co">#&gt; 15  TRUE</span></a>
-<a class="sourceLine" id="cb8-38" data-line-number="38"><span class="co">#&gt; 23  TRUE</span></a>
-<a class="sourceLine" id="cb8-39" data-line-number="39"><span class="co">#&gt; 22  TRUE</span></a>
-<a class="sourceLine" id="cb8-40" data-line-number="40"><span class="co">#&gt; 5  FALSE</span></a>
-<a class="sourceLine" id="cb8-41" data-line-number="41"><span class="co">#&gt; 2  FALSE</span></a>
-<a class="sourceLine" id="cb8-42" data-line-number="42"><span class="co">#&gt; 3  FALSE</span></a>
-<a class="sourceLine" id="cb8-43" data-line-number="43"><span class="co">#&gt; 9  FALSE</span></a>
-<a class="sourceLine" id="cb8-44" data-line-number="44"><span class="co">#&gt; 8  FALSE</span></a>
-<a class="sourceLine" id="cb8-45" data-line-number="45"><span class="co">#&gt; 7  FALSE</span></a>
-<a class="sourceLine" id="cb8-46" data-line-number="46"><span class="co">#&gt; 4  FALSE</span></a>
-<a class="sourceLine" id="cb8-47" data-line-number="47"><span class="co">#&gt; 6  FALSE</span></a>
-<a class="sourceLine" id="cb8-48" data-line-number="48"><span class="co">#&gt; 10 FALSE</span></a>
-<a class="sourceLine" id="cb8-49" data-line-number="49"><span class="co">#&gt; 1  FALSE</span></a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(fit_example<span class="op">$</span>fits.table)</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="co">#&gt;         NLL        BIC        AIC   entropy        ICL reduced.entropy</span></a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="co">#&gt; 5 -5671.504 -11266.353 -11325.008  907.2581 -10359.095    8.466073e-11</span></a>
+<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="co">#&gt; 1 -5332.989 -10614.876 -10653.979  323.0130 -10291.863    0.000000e+00</span></a>
+<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="co">#&gt; 2 -5332.968 -10589.280 -10647.935 2186.1915  -8403.089    1.903207e+03</span></a>
+<a class="sourceLine" id="cb8-6" data-line-number="6"><span class="co">#&gt; 4 -4442.905  -8834.707  -8873.810  544.0481  -8290.658    5.440481e+02</span></a>
+<a class="sourceLine" id="cb8-7" data-line-number="7"><span class="co">#&gt; 3 -1570.709  -3115.867  -3135.419    0.0000  -3115.867    0.000000e+00</span></a>
+<a class="sourceLine" id="cb8-8" data-line-number="8"><span class="co">#&gt;        reICL size K  tail</span></a>
+<a class="sourceLine" id="cb8-9" data-line-number="9"><span class="co">#&gt; 5 -11266.353    9 2  TRUE</span></a>
+<a class="sourceLine" id="cb8-10" data-line-number="10"><span class="co">#&gt; 1 -10614.876    6 1  TRUE</span></a>
+<a class="sourceLine" id="cb8-11" data-line-number="11"><span class="co">#&gt; 2  -8686.073    9 2  TRUE</span></a>
+<a class="sourceLine" id="cb8-12" data-line-number="12"><span class="co">#&gt; 4  -8290.658    6 2 FALSE</span></a>
+<a class="sourceLine" id="cb8-13" data-line-number="13"><span class="co">#&gt; 3  -3115.867    3 1 FALSE</span></a></code></pre></div>
 <p>One can plot of the sum of squared error (SSE) between the fit density and the data (binned with bins of size 0.01), for several solutions at once. This measure can represent a sort of goodness of fit statistics.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="co"># Goodness of fit (SSE), for the top 3 fits.</span></a>
 <a class="sourceLine" id="cb9-2" data-line-number="2"><span class="kw"><a href="../reference/plot_gofit.html">plot_gofit</a></span>(fit_example, <span class="dt">TOP =</span> <span class="dv">3</span>)</a></code></pre></div>
-<p><img src="plotting_files/figure-html/unnamed-chunk-10-1.png" width="288"></p>
+<p><img src="plotting_files/figure-html/unnamed-chunk-10-1.png" width="576"></p>
 <p>The scores can also be compared graphically. Running <code>plot_fit_scores</code> all the computed scoring functions (BIC, AIC, ICL and reICL) are shown, which helps understanding if the best model with the default score (reICL) is the best also according to the other scores. In this graphics the red dot represents the best model according to each score.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw"><a href="../reference/plot_fit_scores.html">plot_fit_scores</a></span>(fit_example)</a></code></pre></div>
 <p><img src="plotting_files/figure-html/unnamed-chunk-11-1.png" width="384"></p>
@@ -214,17 +176,20 @@
 </div>
 
 
+
       <footer><div class="copyright">
   <p>Developed by Giulio Caravagna.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
 </div>
 
   
+
 
   </body>
 </html>

@@ -6,9 +6,16 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MOBSTER - Model-based tumour subclonal deconvolution • mobster</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="MOBSTER - Model-based tumour subclonal deconvolution">
 <meta property="og:description" content="MOBSTER is a package that implements a statistical model for tumour subclonal deconvolution
   which combines Dirichlet mixtures with distributions predicted by theoretical population genetics. The
@@ -24,7 +31,7 @@
 <![endif]-->
 </head>
 <body>
-    <div class="container template-article">
+    <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
@@ -44,7 +51,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -82,23 +89,26 @@
 <!--/.navbar -->
 
       
-      </header><div class="row">
-  <div class="col-md-9 contents">
-    
 
-    
-    
+      </header><div class="row">
+  <div class="contents col-md-9">
 <div id="mobster" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#mobster" class="anchor"></a>MOBSTER <img src="reference/figures/logo.png" align="right" height="139">
+<a href="#mobster" class="anchor"></a>mobster <a href="https://caravagn.github.io/mobster"><img src="reference/figures/logo.png" align="right" height="139"></a>
 </h1></div>
-<p><code>MOBSTER</code> is a package to provide a model-based clustering approach to subclonal deconvolution from cancer genome sequencing data.</p>
+<!-- badges: start -->
+
+<p><code>mobster</code> is a package that implements a model-based clustering approach to subclonal deconvolution from cancer genome sequencing data (<a href="https://www.biorxiv.org/content/10.1101/586560v1">Caravagna et al.; https://doi.org/10.1101/586560</a>).</p>
 <p>The package integrates evolutionary theory and Machine-Learning to analyze bulk sequencing data of a cancer biopsy - ideally, high-resolution whole-genome sequencing data (e.g., WGS &gt;100x).</p>
-<p><code>MOBSTER</code> is part of the <code>evoverse</code>, a package that gathers multiple R packages to implement Cancer Evolution analyses; see more <a href="https://caravagn.github.io/evoverse">about evoverse</a>.</p>
-<div id="statistical-model" class="section level2">
-<h2 class="hasAnchor">
-<a href="#statistical-model" class="anchor"></a>Statistical Model</h2>
-<p><code>MOBSTER</code> implements a <code>K+1</code>-dimensional Dirichlet mixture model integrating 1) the theoretical distributions predicted by population genetics - modelling clonal dynamics, the model - with 2) Beta distributions that capture positive selection - peaks generated by non-neutral clonal expansions in the allele frequency spectrum.</p>
+<p><code>mobster</code> is part of the <code>evoverse</code>, a package that gathers multiple R packages to implement Cancer Evolution analyses; see more <a href="https://caravagn.github.io/evoverse">about evoverse</a>.</p>
+<div id="statistical-model" class="section level4">
+<h4 class="hasAnchor">
+<a href="#statistical-model" class="anchor"></a>Statistical Model</h4>
+<p><code>mobster</code> implements a <code>(k+1)</code>-dimensional Dirichlet mixture model integrating</p>
+<ul>
+<li>the theoretical distribution (the model) predicted by Population Genetics of within-clone neutral dynamics;</li>
+<li>Beta distributions (<code>k</code>) that capture positive selection - <code>k</code> peaks generated by non-neutral clonal expansions in the allele frequency spectrum.</li>
+</ul>
 <p>The model has <code>K&gt;0</code> Beta and 1 Pareto component, and can reconstruct the clonal architecture of a tumour (subclonal deconvolution) integrating evolutionary theory and Machine-Learning.</p>
 </div>
 <div id="motivation" class="section level2">
@@ -109,27 +119,25 @@
 <div id="features" class="section level2">
 <h2 class="hasAnchor">
 <a href="#features" class="anchor"></a>Features</h2>
-<p><code>MOBSTER</code> fits can be computed via moment-matching or maximum-likelihood, and model selection can be done with several likelihood-based scores (BIC, ICL and reICL, a new reduced-entropy variation to ICL). S3 objects allow easy visualization of the data, the fits and the quality of the model. Parametric and nonparametric bootstrap routines are available.</p>
+<p><code>mobster</code> fits can be computed via moment-matching or maximum-likelihood, and model selection can be done with several likelihood-based scores (BIC, ICL and reICL, a new reduced-entropy variation to ICL). S3 objects allow easy visualization of the data, the fits and the quality of the model. Parametric and nonparametric bootstrap routines are available.</p>
+<div id="help-and-support" class="section level4">
+<h4 class="hasAnchor">
+<a href="#help-and-support" class="anchor"></a>Help and support</h4>
+<p><a href="https://caravagn.github.io/mobster"><img src="https://img.shields.io/badge/GitHub%20Pages-https://caravagn.github.io/mobster/-yellow.svg"></a></p>
+</div>
 <div id="installation" class="section level3">
 <h3 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h3>
 <p><em>Note that the actual name of the package is spelled lowercase.</em></p>
 <p>You can install the released version of <code>MOBSTER</code> from <a href="https://github.com/">GitHub</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># install.packages("devtools")</span></a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/reexports">install_github</a></span>(<span class="st">"caravagn/MOBSTER"</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb1-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"caravagn/mobster"</span>)</a></code></pre></div>
 <hr>
 <div id="copyright-and-contacts" class="section level4">
 <h4 class="hasAnchor">
 <a href="#copyright-and-contacts" class="anchor"></a>Copyright and contacts</h4>
 <p>Giulio Caravagna, PhD. <em>Institute of Cancer Research, London, UK</em>.</p>
-<ul>
-<li>Personal webpage: <a href="https://sites.google.com/site/giuliocaravagna/">https://bit.ly/2kc9E6Y</a>,</li>
-<li>Email address: <a href="mailto:giulio.caravagna@icr.ac.uk">giulio.caravagna@icr.ac.uk</a> and <a href="mailto:gcaravagn@gmail.com">gcaravagn@gmail.com</a>
-</li>
-<li>Twitter feed: <span class="citation">[@gcaravagna]</span>(<a href="https://twitter.com/gcaravagna" class="uri">https://twitter.com/gcaravagna</a>)</li>
-<li>GitHub space: <a href="https://github.com/caravagn">caravagn</a>
-</li>
-</ul>
+<p><a href="mailto:gcaravagn@gmail.com"><img src="https://img.shields.io/badge/Email-gcaravagn@gmail.com-seagreen.svg"></a> <a href="https://github.com/caravagn"><img src="https://img.shields.io/badge/Github-caravagn-seagreen.svg"></a> <a href="https://twitter.com/gcaravagna"><img src="https://img.shields.io/badge/Twitter-@gcaravagna-steelblue.svg"></a> <a href="https://sites.google.com/site/giuliocaravagna/"><img src="https://img.shields.io/badge/Personal%20webpage-https://bit.ly/2kc9E6Y-red.svg"></a></p>
 </div>
 </div>
 </div>
@@ -150,9 +158,15 @@
 </ul>
 </div>
 
-
-      </div>
-
+  <div class="dev-status">
+<h2>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://travis-ci.org/caravagn/mobster"><img src="https://travis-ci.org/caravagn/mobster.svg?branch=master" alt="Travis build status"></a></li>
+<li><a href="https://www.tidyverse.org/lifecycle/#maturing"><img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="Lifecycle: maturing"></a></li>
+<li><a href="https://caravagn.github.io/evoverse"><img src="https://img.shields.io/badge/Part%20of-evoverse-blue.svg"></a></li>
+</ul>
+</div>
+</div>
 </div>
 
 
@@ -161,12 +175,14 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
 </div>
 
   
+
 
   </body>
 </html>

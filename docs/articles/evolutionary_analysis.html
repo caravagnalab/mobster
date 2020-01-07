@@ -6,9 +6,16 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Evolutionary analyses of mobster fits • mobster</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Evolutionary analyses of mobster fits">
 <meta property="og:description" content="">
 <meta property="og:image" content="/logo.png">
@@ -39,7 +46,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -77,6 +84,7 @@
 <!--/.navbar -->
 
       
+
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
@@ -97,12 +105,7 @@
 <li>computation of dnds values via the package <code>dndscv</code>;</li>
 <li>computation of evolutionary parameters;</li>
 </ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(mobster)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="co">#&gt;  [ MOBSTER - Model-based clustering in cancer ] </span></a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="co">#&gt; Author :  Giulio Caravagna &lt;gcaravagn@gmail.com&gt; </span></a>
-<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="co">#&gt; GitHub :  caravagn/mobster </span></a>
-<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="co">#&gt;  &gt;  [https://https://caravagn.github.io/evoverse] Use package "evoverse" to implement cancer evolution analyses from multi-sample data. The evovers integrates MOBSTER and VIBER packages.</span></a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(mobster)</a></code></pre></div>
 <div id="computing-dnds-values" class="section level2">
 <h2 class="hasAnchor">
 <a href="#computing-dnds-values" class="anchor"></a>Computing dnds values</h2>
@@ -117,44 +120,37 @@
 <li>the mutant and the reference alleles, labelled as <code>alt</code> and <code>ref</code>.</li>
 </ul>
 <p>To show these analysis we use the fits for the <code>PD4120a</code> breast cancer sample available in MOBSTER.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/data">data</a></span>(<span class="st">'PD4120a_breast_sample'</span>, <span class="dt">package =</span> <span class="st">'mobster'</span>)</a>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">'PD4120a_breast_sample'</span>, <span class="dt">package =</span> <span class="st">'mobster'</span>)</a>
 <a class="sourceLine" id="cb2-2" data-line-number="2"></a>
 <a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co"># Print and plot the model</span></a>
-<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(PD4120a_breast_sample<span class="op">$</span>best)</a>
-<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt; [ MOBSTER ] N = 4643 points with K = 3 Beta clusters, fit by MM in 259 steps [CONVERGED] </span></a>
-<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt;   Components (fit)  </span></a>
-<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt;      Tail    n = 1006 (0.26)      Shape = 1.5 </span></a>
-<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt;   Beta C1    n = 1740 (0.37)      Mean = 0.52</span></a>
-<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt;   Beta C2    n = 1167 (0.24)      Mean = 0.29</span></a>
-<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="co">#&gt;   Beta C3    n = 730 (0.13)   Mean = 0.16</span></a>
-<a class="sourceLine" id="cb2-12" data-line-number="12"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="co">#&gt;   Scores (model selection)  </span></a>
-<a class="sourceLine" id="cb2-14" data-line-number="14"><span class="co">#&gt;       NLL       BIC       AIC  entropy       ICL reduced.entropy     reICL</span></a>
-<a class="sourceLine" id="cb2-15" data-line-number="15"><span class="co">#&gt;  -3201.73 -6302.143 -6379.461 955.2519 -5346.891        188.3106 -6113.833</span></a>
-<a class="sourceLine" id="cb2-16" data-line-number="16"><span class="co">#&gt;  size</span></a>
-<a class="sourceLine" id="cb2-17" data-line-number="17"><span class="co">#&gt;    12</span></a>
-<a class="sourceLine" id="cb2-18" data-line-number="18"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(PD4120a_breast_sample<span class="op">$</span>best)</a></code></pre></div>
+<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(PD4120a_breast_sample<span class="op">$</span>best)</a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt; ── [ MOBSTER ]  n = 4643, fit by MM in 259 steps (converged). ──────────────────────────────────────────────────────────</span></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt; ● Tail [n = 1006, 26%] with alpha = 1.5.</span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt; ● Beta C1 [n = 1740, 37%] with mean = 0.52.</span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt; ● Beta C2 [n = 1167, 24%] with mean = 0.29.</span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt; ● Beta C3 [n = 730, 13%] with mean = 0.16.</span></a>
+<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt; ℹ Score(s): NLL = -3201.73; ICL = -5346.89 (-6113.83), H = 955.25 (188.31),</span></a>
+<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(PD4120a_breast_sample<span class="op">$</span>best)</a></code></pre></div>
 <p><img src="evolutionary_analysis_files/figure-html/unnamed-chunk-3-1.png" width="480"></p>
 <p>To compute the values one first extracts the clustering assignments from the best fit.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">clusters =<span class="st"> </span><span class="kw"><a href="../reference/Clusters.html">Clusters</a></span>(PD4120a_breast_sample<span class="op">$</span>best)</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2">pio<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/pio/topics/pioDisp">pioDisp</a></span>(clusters)</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">pio<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/pio/man/pioDisp.html">pioDisp</a></span>(clusters)</a>
 <a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">#&gt; # A tibble: 4,643 x 19</span></a>
-<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#&gt;    region gene  chr     from     to ref   alt   vartype VAF.tumour</span></a>
-<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt;    &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;  &lt;int&gt;  &lt;int&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;        &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt;  1 inter… LOC1… chr3   74574  74574 G     A     SNP          0.371</span></a>
-<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt;  2 inter… LOC1… chr3   80489  80489 C     T     SNP          0.276</span></a>
-<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt;  3 inter… LOC1… chr3  139091 139091 G     C     SNP          0.049</span></a>
-<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt;  4 inter… LOC1… chr3  150557 150557 G     C     SNP          0.077</span></a>
-<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt;  5 inter… LOC1… chr3  190860 190860 T     A     SNP          0.033</span></a>
-<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt;  6 inter… LOC1… chr3  198896 198896 C     G     SNP          0.347</span></a>
-<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt;  7 inter… LOC1… chr3  234298 234298 C     T     SNP          0.233</span></a>
-<a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co">#&gt;  8 intro… CHL1  chr3  271958 271958 C     G     SNP          0.282</span></a>
-<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt;  9 intro… CHL1  chr3  312028 312028 C     T     SNP          0.083</span></a>
-<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co">#&gt; 10 intro… CHL1  chr3  321624 321624 C     T     SNP          0.162</span></a>
-<a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co">#&gt; # … with 4,633 more rows, and 10 more variables: VAF.normal &lt;dbl&gt;,</span></a>
-<a class="sourceLine" id="cb3-17" data-line-number="17"><span class="co">#&gt; #   depth.tumour &lt;dbl&gt;, depth.normal &lt;chr&gt;, NV &lt;dbl&gt;, VAF &lt;dbl&gt;,</span></a>
-<a class="sourceLine" id="cb3-18" data-line-number="18"><span class="co">#&gt; #   cluster &lt;chr&gt;, Tail &lt;dbl&gt;, C1 &lt;dbl&gt;, C2 &lt;dbl&gt;, C3 &lt;dbl&gt;</span></a></code></pre></div>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#&gt;    region gene  chr     from     to ref   alt   vartype VAF.tumour VAF.normal</span></a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt;    &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;  &lt;int&gt;  &lt;int&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;        &lt;dbl&gt;      &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt;  1 inter… LOC1… chr3   74574  74574 G     A     SNP          0.371          0</span></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt;  2 inter… LOC1… chr3   80489  80489 C     T     SNP          0.276          0</span></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt;  3 inter… LOC1… chr3  139091 139091 G     C     SNP          0.049          0</span></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt;  4 inter… LOC1… chr3  150557 150557 G     C     SNP          0.077          0</span></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt;  5 inter… LOC1… chr3  190860 190860 T     A     SNP          0.033          0</span></a>
+<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt;  6 inter… LOC1… chr3  198896 198896 C     G     SNP          0.347          0</span></a>
+<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt;  7 inter… LOC1… chr3  234298 234298 C     T     SNP          0.233          0</span></a>
+<a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co">#&gt;  8 intro… CHL1  chr3  271958 271958 C     G     SNP          0.282          0</span></a>
+<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt;  9 intro… CHL1  chr3  312028 312028 C     T     SNP          0.083          0</span></a>
+<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co">#&gt; 10 intro… CHL1  chr3  321624 321624 C     T     SNP          0.162          0</span></a>
+<a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co">#&gt; # … with 4,633 more rows, and 9 more variables: depth.tumour &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb3-17" data-line-number="17"><span class="co">#&gt; #   depth.normal &lt;chr&gt;, NV &lt;dbl&gt;, VAF &lt;dbl&gt;, cluster &lt;chr&gt;, Tail &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb3-18" data-line-number="18"><span class="co">#&gt; #   C1 &lt;dbl&gt;, C2 &lt;dbl&gt;, C3 &lt;dbl&gt;</span></a></code></pre></div>
 <p>The available clusters are <code>C1</code>, <code>C2</code>, <code>C3</code> and <code>Tail</code>; <code>C1</code> is the clonal cluster and <code>C2</code> and <code>C3</code> are subclones.</p>
 <p>To compute the dnds statistics one has to define a custom grouping on top of the actual clusters, so that the statistics are computed by group.</p>
 <p>Groups are defined from a <code>mapping</code> variable.</p>
@@ -165,7 +161,7 @@
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co"># Run with this grouping and default gene list</span></a>
 <a class="sourceLine" id="cb4-2" data-line-number="2">dnds_stats =<span class="st"> </span><span class="kw"><a href="../reference/dnds.html">dnds</a></span>(</a>
 <a class="sourceLine" id="cb4-3" data-line-number="3">  clusters,</a>
-<a class="sourceLine" id="cb4-4" data-line-number="4">  <span class="dt">mapping =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">`</span><span class="dt">C1</span><span class="st">`</span> =<span class="st"> 'Non-tail'</span>, <span class="st">`</span><span class="dt">C2</span><span class="st">`</span> =<span class="st"> 'Non-tail'</span>, <span class="st">`</span><span class="dt">C3</span><span class="st">`</span> =<span class="st"> 'Non-tail'</span>, <span class="st">`</span><span class="dt">Tail</span><span class="st">`</span> =<span class="st"> 'Tail'</span>),</a>
+<a class="sourceLine" id="cb4-4" data-line-number="4">  <span class="dt">mapping =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">`</span><span class="dt">C1</span><span class="st">`</span> =<span class="st"> 'Non-tail'</span>, <span class="st">`</span><span class="dt">C2</span><span class="st">`</span> =<span class="st"> 'Non-tail'</span>, <span class="st">`</span><span class="dt">C3</span><span class="st">`</span> =<span class="st"> 'Non-tail'</span>, <span class="st">`</span><span class="dt">Tail</span><span class="st">`</span> =<span class="st"> 'Tail'</span>),</a>
 <a class="sourceLine" id="cb4-5" data-line-number="5">  <span class="dt">gene_list =</span> <span class="ot">NULL</span></a>
 <a class="sourceLine" id="cb4-6" data-line-number="6">)</a>
 <a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co">#&gt; </span></a>
@@ -228,7 +224,7 @@
 <a class="sourceLine" id="cb4-64" data-line-number="64"><span class="co">#&gt; </span></a></code></pre></div>
 <p>The returned outputs are the tables returned by <code>dndscv</code>, as well as a <code>ggplot</code> plot for the object. The column <code>dnds_group</code> labels the group used to compute the statistics.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># Summary statistics</span></a>
-<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(dnds_stats<span class="op">$</span>dnds_summary)</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(dnds_stats<span class="op">$</span>dnds_summary)</a>
 <a class="sourceLine" id="cb5-3" data-line-number="3"><span class="co">#&gt; # A tibble: 10 x 5</span></a>
 <a class="sourceLine" id="cb5-4" data-line-number="4"><span class="co">#&gt;    name           mle  cilow cihigh dnds_group</span></a>
 <a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt;    &lt;chr&gt;        &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;     </span></a>
@@ -244,27 +240,26 @@
 <a class="sourceLine" id="cb5-15" data-line-number="15"><span class="co">#&gt; 10 wall  0.592        0.174    2.01 Tail</span></a>
 <a class="sourceLine" id="cb5-16" data-line-number="16"></a>
 <a class="sourceLine" id="cb5-17" data-line-number="17"><span class="co"># Table observation countns</span></a>
-<a class="sourceLine" id="cb5-18" data-line-number="18"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(dnds_stats<span class="op">$</span>dndscv_table)</a>
+<a class="sourceLine" id="cb5-18" data-line-number="18"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(dnds_stats<span class="op">$</span>dndscv_table)</a>
 <a class="sourceLine" id="cb5-19" data-line-number="19"><span class="co">#&gt; # A tibble: 40,182 x 15</span></a>
-<a class="sourceLine" id="cb5-20" data-line-number="20"><span class="co">#&gt;    gene_name n_syn n_mis n_non n_spl wmis_cv wnon_cv wspl_cv pmis_cv</span></a>
-<a class="sourceLine" id="cb5-21" data-line-number="21"><span class="co">#&gt;    &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb5-22" data-line-number="22"><span class="co">#&gt;  1 CNTN4         0     1     1     0    507.   3544.   3544. 1.36e-3</span></a>
-<a class="sourceLine" id="cb5-23" data-line-number="23"><span class="co">#&gt;  2 P4HTM         0     0     1     0      0   11135.  11135. 9.67e-1</span></a>
-<a class="sourceLine" id="cb5-24" data-line-number="24"><span class="co">#&gt;  3 PRSS46        0     1     0     0   4274.      0       0  1.39e-4</span></a>
-<a class="sourceLine" id="cb5-25" data-line-number="25"><span class="co">#&gt;  4 SPICE1        1     0     1     0      0    2859.   2859. 9.42e-1</span></a>
-<a class="sourceLine" id="cb5-26" data-line-number="26"><span class="co">#&gt;  5 C3orf56       0     1     0     0   2721.      0       0  2.25e-4</span></a>
-<a class="sourceLine" id="cb5-27" data-line-number="27"><span class="co">#&gt;  6 CISH          0     1     0     0   2426.      0       0  2.54e-4</span></a>
-<a class="sourceLine" id="cb5-28" data-line-number="28"><span class="co">#&gt;  7 TMEM45A       0     1     0     0   1871.      0       0  3.36e-4</span></a>
-<a class="sourceLine" id="cb5-29" data-line-number="29"><span class="co">#&gt;  8 PLSCR1        0     1     0     0   1798.      0       0  3.50e-4</span></a>
-<a class="sourceLine" id="cb5-30" data-line-number="30"><span class="co">#&gt;  9 LMCD1         0     1     0     0   1757.      0       0  3.59e-4</span></a>
-<a class="sourceLine" id="cb5-31" data-line-number="31"><span class="co">#&gt; 10 DNAJC13       0     0     1     0      0    1711.   1711. 9.23e-1</span></a>
-<a class="sourceLine" id="cb5-32" data-line-number="32"><span class="co">#&gt; # … with 40,172 more rows, and 6 more variables: ptrunc_cv &lt;dbl&gt;,</span></a>
-<a class="sourceLine" id="cb5-33" data-line-number="33"><span class="co">#&gt; #   pallsubs_cv &lt;dbl&gt;, qmis_cv &lt;dbl&gt;, qtrunc_cv &lt;dbl&gt;, qallsubs_cv &lt;dbl&gt;,</span></a>
-<a class="sourceLine" id="cb5-34" data-line-number="34"><span class="co">#&gt; #   dnds_group &lt;chr&gt;</span></a>
-<a class="sourceLine" id="cb5-35" data-line-number="35"></a>
-<a class="sourceLine" id="cb5-36" data-line-number="36"><span class="co"># Plot</span></a>
-<a class="sourceLine" id="cb5-37" data-line-number="37"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(dnds_stats<span class="op">$</span>plot)</a></code></pre></div>
-<p><img src="evolutionary_analysis_files/figure-html/unnamed-chunk-6-1.png" width="288"></p>
+<a class="sourceLine" id="cb5-20" data-line-number="20"><span class="co">#&gt;    gene_name n_syn n_mis n_non n_spl wmis_cv wnon_cv wspl_cv pmis_cv ptrunc_cv</span></a>
+<a class="sourceLine" id="cb5-21" data-line-number="21"><span class="co">#&gt;    &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb5-22" data-line-number="22"><span class="co">#&gt;  1 CNTN4         0     1     1     0    507.   3544.   3544. 1.36e-3 0.000170 </span></a>
+<a class="sourceLine" id="cb5-23" data-line-number="23"><span class="co">#&gt;  2 P4HTM         0     0     1     0      0   11135.  11135. 9.67e-1 0.0000506</span></a>
+<a class="sourceLine" id="cb5-24" data-line-number="24"><span class="co">#&gt;  3 PRSS46        0     1     0     0   4274.      0       0  1.39e-4 0.992    </span></a>
+<a class="sourceLine" id="cb5-25" data-line-number="25"><span class="co">#&gt;  4 SPICE1        1     0     1     0      0    2859.   2859. 9.42e-1 0.000209 </span></a>
+<a class="sourceLine" id="cb5-26" data-line-number="26"><span class="co">#&gt;  5 C3orf56       0     1     0     0   2721.      0       0  2.25e-4 0.993    </span></a>
+<a class="sourceLine" id="cb5-27" data-line-number="27"><span class="co">#&gt;  6 CISH          0     1     0     0   2426.      0       0  2.54e-4 0.995    </span></a>
+<a class="sourceLine" id="cb5-28" data-line-number="28"><span class="co">#&gt;  7 TMEM45A       0     1     0     0   1871.      0       0  3.36e-4 0.991    </span></a>
+<a class="sourceLine" id="cb5-29" data-line-number="29"><span class="co">#&gt;  8 PLSCR1        0     1     0     0   1798.      0       0  3.50e-4 0.987    </span></a>
+<a class="sourceLine" id="cb5-30" data-line-number="30"><span class="co">#&gt;  9 LMCD1         0     1     0     0   1757.      0       0  3.59e-4 0.991    </span></a>
+<a class="sourceLine" id="cb5-31" data-line-number="31"><span class="co">#&gt; 10 DNAJC13       0     0     1     0      0    1711.   1711. 9.23e-1 0.000369 </span></a>
+<a class="sourceLine" id="cb5-32" data-line-number="32"><span class="co">#&gt; # … with 40,172 more rows, and 5 more variables: pallsubs_cv &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb5-33" data-line-number="33"><span class="co">#&gt; #   qmis_cv &lt;dbl&gt;, qtrunc_cv &lt;dbl&gt;, qallsubs_cv &lt;dbl&gt;, dnds_group &lt;chr&gt;</span></a>
+<a class="sourceLine" id="cb5-34" data-line-number="34"></a>
+<a class="sourceLine" id="cb5-35" data-line-number="35"><span class="co"># Plot</span></a>
+<a class="sourceLine" id="cb5-36" data-line-number="36"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(dnds_stats<span class="op">$</span>plot)</a></code></pre></div>
+<p><img src="evolutionary_analysis_files/figure-html/unnamed-chunk-6-1.png" width="864"></p>
 <p>By default, the plot contains all the results from the substitution models availavle in <code>dndscv</code>. If one wants to visualize only the global dnds score parameter <code>dndscv_plot</code> should be set to <code>wall</code> in the call to <code><a href="../reference/dnds.html">dnds()</a></code>.</p>
 <div id="using-custom-genes-lists" class="section level3">
 <h3 class="hasAnchor">
@@ -279,10 +274,10 @@
 </ul>
 <p>which are available to load.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="co"># Load the list</span></a>
-<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/data">data</a></span>(<span class="st">'cancer_genes_dnds'</span>, <span class="dt">package =</span> <span class="st">'mobster'</span>)</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">'cancer_genes_dnds'</span>, <span class="dt">package =</span> <span class="st">'mobster'</span>)</a>
 <a class="sourceLine" id="cb6-3" data-line-number="3"></a>
 <a class="sourceLine" id="cb6-4" data-line-number="4"><span class="co"># Each sublist is a list </span></a>
-<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/lapply">lapply</a></span>(cancer_genes_dnds, head))</a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(cancer_genes_dnds, head))</a>
 <a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co">#&gt; $Martincorena_drivers</span></a>
 <a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#&gt; [1] "CCDC6"     "EIF1AX"    "HIST1H2BD" "MED12"     "POLE"      "SMARCB1"  </span></a>
 <a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt; </span></a>
@@ -299,7 +294,7 @@
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co"># Not run here</span></a>
 <a class="sourceLine" id="cb7-2" data-line-number="2">dnds_stats =<span class="st"> </span><span class="kw"><a href="../reference/dnds.html">dnds</a></span>(</a>
 <a class="sourceLine" id="cb7-3" data-line-number="3">  clusters,</a>
-<a class="sourceLine" id="cb7-4" data-line-number="4">  <span class="dt">mapping =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">`</span><span class="dt">C1</span><span class="st">`</span> =<span class="st"> 'Non-tail'</span>, <span class="st">`</span><span class="dt">C2</span><span class="st">`</span> =<span class="st"> 'Non-tail'</span>, <span class="st">`</span><span class="dt">C3</span><span class="st">`</span> =<span class="st"> 'Non-tail'</span>, <span class="st">`</span><span class="dt">Tail</span><span class="st">`</span> =<span class="st"> 'Tail'</span>),</a>
+<a class="sourceLine" id="cb7-4" data-line-number="4">  <span class="dt">mapping =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">`</span><span class="dt">C1</span><span class="st">`</span> =<span class="st"> 'Non-tail'</span>, <span class="st">`</span><span class="dt">C2</span><span class="st">`</span> =<span class="st"> 'Non-tail'</span>, <span class="st">`</span><span class="dt">C3</span><span class="st">`</span> =<span class="st"> 'Non-tail'</span>, <span class="st">`</span><span class="dt">Tail</span><span class="st">`</span> =<span class="st"> 'Tail'</span>),</a>
 <a class="sourceLine" id="cb7-5" data-line-number="5">  <span class="dt">gene_list =</span> cancer_genes_dnds<span class="op">$</span>Martincorena_drivers</a>
 <a class="sourceLine" id="cb7-6" data-line-number="6">)</a></code></pre></div>
 </div>
@@ -308,17 +303,17 @@
 <a href="#pooling-data-from-multiple-patients" class="anchor"></a>Pooling data from multiple patients</h3>
 <p>The input format of the <code>dnds</code> function allows to pool data from several MOBSTER fits.</p>
 <p>Here we load and pool together some of the real datasets available in the package, and use the same grouping as shown above.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/data">data</a></span>(<span class="st">'LU4_lung_sample'</span>, <span class="dt">package =</span> <span class="st">'mobster'</span>)</a>
-<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/data">data</a></span>(<span class="st">'LUFF76_lung_sample'</span>, <span class="dt">package =</span> <span class="st">'mobster'</span>)</a>
-<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/data">data</a></span>(<span class="st">'PD4120a_breast_sample'</span>, <span class="dt">package =</span> <span class="st">'mobster'</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">'LU4_lung_sample'</span>, <span class="dt">package =</span> <span class="st">'mobster'</span>)</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">'LUFF76_lung_sample'</span>, <span class="dt">package =</span> <span class="st">'mobster'</span>)</a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">'PD4120a_breast_sample'</span>, <span class="dt">package =</span> <span class="st">'mobster'</span>)</a></code></pre></div>
 <p>We pool the data before the call to <code>dnds</code>, subsetting the columns to the ones required for this computation.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">dnds_multi =<span class="st"> </span><span class="kw"><a href="../reference/dnds.html">dnds</a></span>(</a>
-<a class="sourceLine" id="cb9-2" data-line-number="2">  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cbind">rbind</a></span>(</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">  <span class="kw"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(</a>
 <a class="sourceLine" id="cb9-3" data-line-number="3">    <span class="kw"><a href="../reference/Clusters.html">Clusters</a></span>(LU4_lung_sample<span class="op">$</span>best) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(chr, from, ref, alt, cluster) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">sample =</span> <span class="st">'LU4'</span>),</a>
 <a class="sourceLine" id="cb9-4" data-line-number="4">    <span class="kw"><a href="../reference/Clusters.html">Clusters</a></span>(LUFF76_lung_sample<span class="op">$</span>best) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(chr, from, ref, alt, cluster) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">sample =</span> <span class="st">'LUFF76'</span>),</a>
 <a class="sourceLine" id="cb9-5" data-line-number="5">    <span class="kw"><a href="../reference/Clusters.html">Clusters</a></span>(PD4120a_breast_sample<span class="op">$</span>best) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(chr, from, ref, alt, cluster) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">sample =</span> <span class="st">'PD4120a'</span>)</a>
 <a class="sourceLine" id="cb9-6" data-line-number="6">  ),</a>
-<a class="sourceLine" id="cb9-7" data-line-number="7">  <span class="dt">mapping =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">`</span><span class="dt">C1</span><span class="st">`</span> =<span class="st"> 'Non-tail'</span>, <span class="st">`</span><span class="dt">C2</span><span class="st">`</span> =<span class="st"> 'Non-tail'</span>, <span class="st">`</span><span class="dt">C3</span><span class="st">`</span> =<span class="st"> 'Non-tail'</span>, <span class="st">`</span><span class="dt">Tail</span><span class="st">`</span> =<span class="st"> 'Tail'</span>),</a>
+<a class="sourceLine" id="cb9-7" data-line-number="7">  <span class="dt">mapping =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">`</span><span class="dt">C1</span><span class="st">`</span> =<span class="st"> 'Non-tail'</span>, <span class="st">`</span><span class="dt">C2</span><span class="st">`</span> =<span class="st"> 'Non-tail'</span>, <span class="st">`</span><span class="dt">C3</span><span class="st">`</span> =<span class="st"> 'Non-tail'</span>, <span class="st">`</span><span class="dt">Tail</span><span class="st">`</span> =<span class="st"> 'Tail'</span>),</a>
 <a class="sourceLine" id="cb9-8" data-line-number="8">)</a>
 <a class="sourceLine" id="cb9-9" data-line-number="9"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb9-10" data-line-number="10"><span class="co">#&gt; =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span></a>
@@ -376,8 +371,8 @@
 <a class="sourceLine" id="cb9-62" data-line-number="62"><span class="co">#&gt; Generating ouptut plot </span></a>
 <a class="sourceLine" id="cb9-63" data-line-number="63"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb9-64" data-line-number="64"></a>
-<a class="sourceLine" id="cb9-65" data-line-number="65"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(dnds_multi<span class="op">$</span>plot)</a></code></pre></div>
-<p><img src="evolutionary_analysis_files/figure-html/unnamed-chunk-10-1.png" width="288"></p>
+<a class="sourceLine" id="cb9-65" data-line-number="65"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(dnds_multi<span class="op">$</span>plot)</a></code></pre></div>
+<p><img src="evolutionary_analysis_files/figure-html/unnamed-chunk-10-1.png" width="864"></p>
 </div>
 </div>
   </div>
@@ -396,17 +391,20 @@
 </div>
 
 
+
       <footer><div class="copyright">
   <p>Developed by Giulio Caravagna.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
 </div>
 
   
+
 
   </body>
 </html>

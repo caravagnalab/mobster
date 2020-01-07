@@ -44,6 +44,7 @@
 #' Availables keys: `FAST`, uses 1) max 2 clones (1 subclone), 2) random initial conditions 3) 2 samples per parameter set
 #' 4) mild `epsilon` and `maxIter`, sequential run. For reference, the default set of parameters represent a more exhaustive
 #' analysis.
+#' @param description A textual description of this dataset.
 #'
 #' @return A list of all fits computed (objects of class \code{dbpmm}), the best fit, a table with the results of the fits and a
 #' variable that specify which score has been used for model selection.
@@ -84,7 +85,8 @@ mobster_fit = function(x,
                        pi_cutoff = 0.02,
                        N_cutoff = 10,
                        auto_setup = NULL,
-                       silent = FALSE)
+                       silent = FALSE,
+                       description = "My MOBSTER model")
 {
   pio::pioHdr(paste0("MOBSTER fit"))
   cat('\n')
@@ -112,14 +114,14 @@ mobster_fit = function(x,
     # Get the parameters, checks they are known, throws errors.
     template = auto_setup(auto_setup)
     
-    cat(
-      "\n\n",
-      '\t',
-      crayon::bgWhite(crayon::black(
-        "[MOBSTER AUTOMATIC SETUP] ", auto_setup
-      )),
-      " Overrides any parameter you have set.\n\n"
-    )
+    # cat(
+    #   "\n\n",
+    #   '\t',
+    #   crayon::bgWhite(crayon::black(
+    #     "[MOBSTER AUTOMATIC SETUP] ", auto_setup
+    #   )),
+    #   " Overrides any parameter you have set.\n\n"
+    # )
     
     K = template$K
     samples = template$samples
@@ -167,6 +169,8 @@ mobster_fit = function(x,
   cli::cli_alert_info(
     'Scoring ({.value {ifelse(parallel, green("with parallel"), red("without parallel"))}}) {.value {samples}} x {.value {length(K)}} x {.value {length(tail)}} = {.field {ntests}} models by {.field {model.selection}}.'
   )
+  cat('\n')
+  
   
   # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
   # Fits are obtained using the easypar package
@@ -188,7 +192,8 @@ mobster_fit = function(x,
                       fit.type = fit.type,
                       trace = trace,
                       pi_cutoff = pi_cutoff,
-                      N_cutoff = N_cutoff
+                      N_cutoff = N_cutoff, 
+                      description = description
                     ))
   
   runs = easypar::run(
@@ -212,10 +217,14 @@ mobster_fit = function(x,
   
   # Report timing to screen
   TIME = difftime(as.POSIXct(Sys.time(), format = "%H:%M:%S"), TIME, units = "mins")
+  
+  cat('\n\n')
   cli::cli_alert_info(
-    paste(bold("MOBSTER fit"), 'completed in',
+    paste(bold("MOBSTER best fit"), 'completed in',
       round(TIME, 2),
-      'mins.'))
+      'mins'))
+  cat('\n')
+  
   
   # Get all scores
   scores_succesfull_tasks = lapply(runs, function(w)
