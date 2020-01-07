@@ -8,46 +8,46 @@ mobster_fit(x, K = 1:3, samples = 5, init = "peaks", tail = c(TRUE,
   FALSE), epsilon = 1e-10, maxIter = 250, fit.type = "MM",
   seed = 12345, model.selection = "reICL", trace = FALSE,
   parallel = TRUE, pi_cutoff = 0.02, N_cutoff = 10,
-  auto_setup = NULL)
+  auto_setup = NULL, silent = FALSE)
 }
 \arguments{
-\item{x}{Input tibble (or data.frame) which is required to have a VAF column which reports the 
-frequency of the mutant allele (this should be computed adjusting the raw VAF for tumour purity 
+\item{x}{Input tibble (or data.frame) which is required to have a VAF column which reports the
+frequency of the mutant allele (this should be computed adjusting the raw VAF for tumour purity
 and copy number status). See also package \code{mmobster} which contains functions to prepare
 common inputs for this computation.}
 
-\item{K}{A vector with the number of Beta components to use. All values of \code{K} must be positive 
+\item{K}{A vector with the number of Beta components to use. All values of \code{K} must be positive
 and strictly greater than 0; they are combined with the value of \code{tail} to define all model
 configurations tested for model selection}
 
 \item{samples}{Number of fits that should be attempted for each configuration of the model tested.}
 
-\item{init}{Initial values for the paremeters of the model. With \code{"ranodm"} the mean and variance 
+\item{init}{Initial values for the paremeters of the model. With \code{"ranodm"} the mean and variance
 of each Beta component are randomply sampled in the interval (0,1). With \code{"peaks"} a peak detection
 heuristic is used to place the Beta means to match the peaks; in that case the variance is still randomised.
 In both cases the power-law shape is randomised.}
 
 \item{tail}{If \code{FALSE} the fit will not use a tail, if \code{TRUE} it will.}
 
-\item{epsilon}{Tolerance for convergency estimation. For MLE fit this is compared to the differential of the 
+\item{epsilon}{Tolerance for convergency estimation. For MLE fit this is compared to the differential of the
 negative log-likelihood (NLL); for MM fit the largest differential among the mixing proportions (pi) is used.}
 
 \item{maxIter}{Maximum number of steps for a fit. If convergency is not achieved before these steps, the fit is interrupted.}
 
-\item{fit.type}{A string that determines the type of fit. \code{"MLE"} is for the Maximum Likelihood Estimate 
+\item{fit.type}{A string that determines the type of fit. \code{"MLE"} is for the Maximum Likelihood Estimate
 of the Beta paraneters, \code{"MM"} is for the Momemnt Matching; MLE is numerical, and thus slower. In both cases
 the estimator of the tail shape - if required - is its MLE and its analytical.}
 
 \item{seed}{Seed for the random numbers generator}
 
-\item{model.selection}{Score to minimize to select the best model; this has to be one of \code{'reICL'}, \code{'ICL'}, 
+\item{model.selection}{Score to minimize to select the best model; this has to be one of \code{'reICL'}, \code{'ICL'},
 \code{'BIC'}, \code{'AIC'} or \code{'NLL'}. We advise to use only reICL and ICL}
 
 \item{trace}{If \code{TRUE}, a trace of the model fit is returned that can be used to animate the model run.}
 
 \item{parallel}{Optional parameter to run the fits in parallel (default), or not.}
 
-\item{pi_cutoff}{Parameter passed to function \code{choose_clusters}, which determines the minimum mixing proportion of a 
+\item{pi_cutoff}{Parameter passed to function \code{choose_clusters}, which determines the minimum mixing proportion of a
 cluster to be returned as output.}
 
 \item{N_cutoff}{Parameter passed to function \code{choose_clusters}, which determines the minimum number of mutations
@@ -71,11 +71,11 @@ variable that specify which score has been used for model selection. The fitting
 also runs the function \code{choose_clusters} which implements a simple heuristic to filter
 out small clusters from the fit output.
 
-Note: You can also use the "auto setup" functionality that, with one keyword, loads preset 
+Note: You can also use the "auto setup" functionality that, with one keyword, loads preset
 parameter values in order to implement different analysis.
 }
 \examples{
-# Generate a random dataset 
+# Generate a random dataset
 x = random_dataset(seed = 123, Beta_variance_scaling = 100, N = 200)
 print(x) # Contains a ggplot object
 

@@ -20,18 +20,26 @@
   
   if(mobster_welcome_message)
   {
-    pio::pioHdr('MOBSTER - Model-based clustering in cancer')
-    pio::pioStr("Author : ", "Giulio Caravagna <gcaravagn@gmail.com>", suffix = '\n')
-    pio::pioStr("GitHub : ", "caravagn/mobster", suffix = '\n')
-    pio::pioStr("   WWW : ", "https://caravagn.github.io/mobster/", suffix = '\n')
+    # pio::pioHdr('MOBSTER - Model-based clustering in cancer')
+    # pio::pioStr("Author : ", "Giulio Caravagna <gcaravagn@gmail.com>", suffix = '\n')
+    # pio::pioStr("GitHub : ", "caravagn/mobster", suffix = '\n')
+    # pio::pioStr("   WWW : ", "https://caravagn.github.io/mobster/", suffix = '\n')
+    # 
+    # 
+    # cat(
+    #   "\n > MOBSTER is part of the", crayon::green("\"evoverse\""), 
+    #   crayon::blue("[https://bit.ly/2orn94e]"),
+    #   "- a collection of packages to implement Cancer Evolution analyses from cancer sequencing data.\n"
+    #   )
     
+    pk = 'mobster'
+    pk_l = 'Model-based clustering in cancer'
+    www = "https://caravagn.github.io/mobster/"
+    em = "gcaravagn@gmail.com"
     
-    cat(
-      "\n > MOBSTER is part of the", crayon::green("\"evoverse\""), 
-      crayon::blue("[https://bit.ly/2orn94e]"),
-      "- a collection of packages to implement Cancer Evolution analyses from cancer sequencing data.\n"
-      )
-
+    cli::cli_alert_success(
+      'Loading {.field {pk}}, {.emph \'{pk_l}\'}. Support : {.url { www}}' )
+    
     options(mobster_welcome_message = FALSE) 
   }
   
