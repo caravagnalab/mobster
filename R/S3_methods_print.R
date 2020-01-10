@@ -44,12 +44,7 @@ print.dbpmm = function(x, ...)
   cli::cli_rule(
     paste(
       crayon::bgYellow(crayon::black("[ MOBSTER ] {.value {x$description}}")),
-      'n = {.value {x$N}}, fit by {.field {x$fit.type}} in {.value {length(x$all.NLL)}} steps',
-      ifelse(
-        x$status,
-        crayon::green('(converged).'),
-        crayon::red('(interrupted).')
-      )
+      'n = {.value {x$N}} with {.field k = {x$Kbeta}} Beta(s) {.value {ifelse(x$fit.tail, crayon::green("and a tail"), crayon::red("without tail"))}}' 
     )
   )
   
@@ -71,6 +66,17 @@ print.dbpmm = function(x, ...)
   # Print components
   # cat(crayon::black(crayon::bgYellow("\n  Components (mixture)  \n")))
   # cat("\n")
+  
+  # Pi proportions
+  sor_p = sort(x$pi, decreasing = TRUE)
+  sor_p = names(sor_p)
+  
+  pi = round(x$pi[sor_p], digits = 2) * 100
+  pi = pi[pi > 0]
+  pi_label = paste0(pi, '% [', yellow(names(pi)), ']')
+  cli::cli_li(
+    ' Clusters: \u03C0 = {.value {pi_label}}, with \u03C0 > 0.'
+  )  
   
   
   if (!x$fit.tail)
@@ -136,6 +142,6 @@ print.dbpmm = function(x, ...)
   # cat('\n')
   xs = round(x$scores, 2)
   cli::cli_alert_info(
-    'Score(s): NLL = {.value {xs["NLL"]}}; ICL = {.value {xs["ICL"]}} ({.value {xs["reICL"]}}), H = {.value {xs["entropy"]}} ({.value {xs["reduced.entropy"]}}), '
+    'Score(s): NLL = {.value {xs["NLL"]}}; ICL = {.value {xs["ICL"]}} ({.value {xs["reICL"]}}), H = {.value {xs["entropy"]}} ({.value {xs["reduced.entropy"]}}). Fit {.value {ifelse(x$status, crayon::green("converged"), crayon::red("interrupted"))}} by {.field {x$fit.type}} in {.value {length(x$all.NLL)}} steps.',
   )
 }
