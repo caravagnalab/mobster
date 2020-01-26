@@ -70,6 +70,9 @@
       <a href="../articles/evolutionary_analysis.html">Evolutionary analyses of mobster fits</a>
     </li>
     <li>
+      <a href="../articles/introduction.html">Introduction</a>
+    </li>
+    <li>
       <a href="../articles/plotting.html">Plotting mobster fits</a>
     </li>
   </ul>
@@ -120,8 +123,8 @@
 <a class="sourceLine" id="cb2-5" data-line-number="5">  <span class="dt">Beta_variance_scaling =</span> <span class="dv">100</span></a>
 <a class="sourceLine" id="cb2-6" data-line-number="6">  )</a>
 <a class="sourceLine" id="cb2-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co"># Fit model</span></a>
-<a class="sourceLine" id="cb2-9" data-line-number="9">fit =<span class="st"> </span><span class="kw"><a href="../reference/mobster_fit.html">mobster_fit</a></span>(dataset<span class="op">$</span>data, <span class="dt">samples =</span> <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co"># Fit model -- FAST option to speed up the vignette</span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9">fit =<span class="st"> </span><span class="kw"><a href="../reference/mobster_fit.html">mobster_fit</a></span>(dataset<span class="op">$</span>data, <span class="dt">auto_setup =</span> <span class="st">'FAST'</span>)</a>
 <a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt;  [ MOBSTER fit ]</span></a>
 <a class="sourceLine" id="cb2-11" data-line-number="11"></a>
 <a class="sourceLine" id="cb2-12" data-line-number="12"><span class="co"># Composition with cowplot</span></a>
@@ -134,28 +137,16 @@
 <a class="sourceLine" id="cb2-19" data-line-number="19"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(figure)</a></code></pre></div>
 <p><img src="bootstrap_files/figure-html/unnamed-chunk-3-1.png" width="768"></p>
 <p>Now we are ready to compute <code>n.resamples</code> nonparametric bootstraps, and the bootstrapped statistics. We can do that using function <code>mobster_bootstrap</code> to which we can pass some parameters that will be forwarded to the calls of <code>mobster_fit</code></p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># The returned object contains also the list of bootstrap resamples, and the fits.</span></a>
-<a class="sourceLine" id="cb3-2" data-line-number="2">bootstrap_results =<span class="st"> </span><span class="kw"><a href="../reference/mobster_bootstrap.html">mobster_bootstrap</a></span>(</a>
-<a class="sourceLine" id="cb3-3" data-line-number="3">  fit<span class="op">$</span>best,</a>
-<a class="sourceLine" id="cb3-4" data-line-number="4">  <span class="dt">bootstrap =</span> <span class="st">'nonparametric'</span>,</a>
-<a class="sourceLine" id="cb3-5" data-line-number="5">  <span class="dt">n.resamples =</span> <span class="dv">3</span>,</a>
-<a class="sourceLine" id="cb3-6" data-line-number="6">  <span class="dt">epsilon =</span> <span class="fl">1e-4</span>,   <span class="co"># forwarded to mobster_fit, optimization epsilon</span></a>
-<a class="sourceLine" id="cb3-7" data-line-number="7">  <span class="dt">K =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1</span>, <span class="dv">2</span>),      <span class="co"># forwarded to mobster_fit, test only models with 1 or 2 Betas</span></a>
-<a class="sourceLine" id="cb3-8" data-line-number="8">  <span class="dt">cache =</span> <span class="ot">NULL</span>      <span class="co"># forwarded to mobster_fit, no cache</span></a>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># options(easypar.parallel = FALSE)</span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co"># The returned object contains also the list of bootstrap resamples, and the fits.</span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4">bootstrap_results =<span class="st"> </span><span class="kw"><a href="../reference/mobster_bootstrap.html">mobster_bootstrap</a></span>(</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5">  fit<span class="op">$</span>best,</a>
+<a class="sourceLine" id="cb3-6" data-line-number="6">  <span class="dt">bootstrap =</span> <span class="st">'nonparametric'</span>,</a>
+<a class="sourceLine" id="cb3-7" data-line-number="7">  <span class="dt">n.resamples =</span> <span class="dv">25</span>,</a>
+<a class="sourceLine" id="cb3-8" data-line-number="8">  <span class="dt">auto_setup =</span> <span class="st">'FAST'</span> <span class="co"># forwarded to mobster_fit</span></a>
 <a class="sourceLine" id="cb3-9" data-line-number="9">  )</a>
-<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt;  [ MOBSTER bootstrap ~ 3 resamples from nonparametric bootstrap ] </span></a>
-<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt; =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span></a>
-<a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co">#&gt;  Bootstrapping for this MOBSTER model</span></a>
-<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt; =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span></a>
-<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co">#&gt; =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span></a>
-<a class="sourceLine" id="cb3-17" data-line-number="17"><span class="co">#&gt;  Creating nonparametric bootstrap resamples</span></a>
-<a class="sourceLine" id="cb3-18" data-line-number="18"><span class="co">#&gt; =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span></a>
-<a class="sourceLine" id="cb3-19" data-line-number="19"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb3-20" data-line-number="20"><span class="co">#&gt; =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span></a>
-<a class="sourceLine" id="cb3-21" data-line-number="21"><span class="co">#&gt;  Running fits (might take some time)</span></a>
-<a class="sourceLine" id="cb3-22" data-line-number="22"><span class="co">#&gt; =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span></a></code></pre></div>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt;  [ MOBSTER bootstrap ~ 25 resamples from nonparametric bootstrap ]</span></a></code></pre></div>
 <p>The output object contains all the relevant information to analyze the results of this computation, which include the bootstrap resamples, the fits and possible errors.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co"># Resamples are available for inspection as list of lists, </span></a>
 <a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co"># with a mapping to record the mutation id of the resample data.</span></a>
@@ -164,25 +155,27 @@
 <a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">#&gt; # A tibble: 400 x 3</span></a>
 <a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#&gt;       id    VAF original.id</span></a>
 <a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co">#&gt;    &lt;int&gt;  &lt;dbl&gt;       &lt;int&gt;</span></a>
-<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co">#&gt;  1     1 0.757           55</span></a>
-<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="co">#&gt;  2     2 0.413          145</span></a>
-<a class="sourceLine" id="cb4-10" data-line-number="10"><span class="co">#&gt;  3     3 0.787            3</span></a>
-<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="co">#&gt;  4     4 0.850           18</span></a>
-<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="co">#&gt;  5     5 0.524          135</span></a>
-<a class="sourceLine" id="cb4-13" data-line-number="13"><span class="co">#&gt;  6     6 0.272          351</span></a>
-<a class="sourceLine" id="cb4-14" data-line-number="14"><span class="co">#&gt;  7     7 0.532          249</span></a>
-<a class="sourceLine" id="cb4-15" data-line-number="15"><span class="co">#&gt;  8     8 0.344          202</span></a>
-<a class="sourceLine" id="cb4-16" data-line-number="16"><span class="co">#&gt;  9     9 0.0981         396</span></a>
-<a class="sourceLine" id="cb4-17" data-line-number="17"><span class="co">#&gt; 10    10 0.0768         354</span></a>
+<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co">#&gt;  1     1 0.877           10</span></a>
+<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="co">#&gt;  2     2 0.965           58</span></a>
+<a class="sourceLine" id="cb4-10" data-line-number="10"><span class="co">#&gt;  3     3 0.791           77</span></a>
+<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="co">#&gt;  4     4 0.715           98</span></a>
+<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="co">#&gt;  5     5 0.270          338</span></a>
+<a class="sourceLine" id="cb4-13" data-line-number="13"><span class="co">#&gt;  6     6 0.405          174</span></a>
+<a class="sourceLine" id="cb4-14" data-line-number="14"><span class="co">#&gt;  7     7 0.482          129</span></a>
+<a class="sourceLine" id="cb4-15" data-line-number="15"><span class="co">#&gt;  8     8 0.0691         361</span></a>
+<a class="sourceLine" id="cb4-16" data-line-number="16"><span class="co">#&gt;  9     9 0.270          338</span></a>
+<a class="sourceLine" id="cb4-17" data-line-number="17"><span class="co">#&gt; 10    10 0.829           93</span></a>
 <a class="sourceLine" id="cb4-18" data-line-number="18"><span class="co">#&gt; # … with 390 more rows</span></a>
 <a class="sourceLine" id="cb4-19" data-line-number="19"></a>
 <a class="sourceLine" id="cb4-20" data-line-number="20"><span class="co"># Fits are available inside the $fits list</span></a>
 <a class="sourceLine" id="cb4-21" data-line-number="21"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(bootstrap_results<span class="op">$</span>fits[[<span class="dv">1</span>]])</a>
-<a class="sourceLine" id="cb4-22" data-line-number="22"><span class="co">#&gt; ── [ MOBSTER ] My MOBSTER model n = 400, fit by MM in 28 steps (converged). ────────────────────────────────────────────</span></a>
-<a class="sourceLine" id="cb4-23" data-line-number="23"><span class="co">#&gt; ● Tail [n = 61, 15%] with alpha = 2.2.</span></a>
-<a class="sourceLine" id="cb4-24" data-line-number="24"><span class="co">#&gt; ● Beta C1 [n = 339, 85%] with mean = 0.57.</span></a>
-<a class="sourceLine" id="cb4-25" data-line-number="25"><span class="co">#&gt; ℹ Score(s): NLL = -57.95; ICL = -45.75 (-79.95), H = 34.2 (0),</span></a>
-<a class="sourceLine" id="cb4-26" data-line-number="26"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(bootstrap_results<span class="op">$</span>fits[[<span class="dv">1</span>]])</a></code></pre></div>
+<a class="sourceLine" id="cb4-22" data-line-number="22"><span class="co">#&gt; ── [ MOBSTER ] My MOBSTER model n = 400 with k = 2 Beta(s) and a tail ─────────────────────────────────────────────────</span></a>
+<a class="sourceLine" id="cb4-23" data-line-number="23"><span class="co">#&gt; ● Clusters: π = 46% [C2], 32% [C1] and 22% [Tail], with π &gt; 0.</span></a>
+<a class="sourceLine" id="cb4-24" data-line-number="24"><span class="co">#&gt; ● Tail [n = 77, 22%] with alpha = 1.1.</span></a>
+<a class="sourceLine" id="cb4-25" data-line-number="25"><span class="co">#&gt; ● Beta C1 [n = 129, 32%] with mean = 0.79.</span></a>
+<a class="sourceLine" id="cb4-26" data-line-number="26"><span class="co">#&gt; ● Beta C2 [n = 194, 46%] with mean = 0.44.</span></a>
+<a class="sourceLine" id="cb4-27" data-line-number="27"><span class="co">#&gt; ℹ Score(s): NLL = -76.38; ICL = -28.36 (-77.8), H = 70.48 (21.03). Fit converged by MM in 92 steps.</span></a>
+<a class="sourceLine" id="cb4-28" data-line-number="28"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(bootstrap_results<span class="op">$</span>fits[[<span class="dv">1</span>]])</a></code></pre></div>
 <p><img src="bootstrap_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"></a>
 <a class="sourceLine" id="cb5-2" data-line-number="2"><span class="co"># If any the computations raised an erorr, they will be stored </span></a>
@@ -203,109 +196,100 @@
 <a class="sourceLine" id="cb6-3" data-line-number="3">  fit<span class="op">$</span>best, </a>
 <a class="sourceLine" id="cb6-4" data-line-number="4">  <span class="dt">bootstrap_results =</span> bootstrap_results</a>
 <a class="sourceLine" id="cb6-5" data-line-number="5">  )</a>
-<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#&gt; =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span></a>
-<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt;  Bootstrap observations n = 3</span></a>
-<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co">#&gt; =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span></a>
-<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="co">#&gt; =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span></a>
-<a class="sourceLine" id="cb6-12" data-line-number="12"><span class="co">#&gt;  Bootstrapped model frequency</span></a>
-<a class="sourceLine" id="cb6-13" data-line-number="13"><span class="co">#&gt; =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span></a>
-<a class="sourceLine" id="cb6-14" data-line-number="14"><span class="co">#&gt; # A tibble: 2 x 3</span></a>
-<a class="sourceLine" id="cb6-15" data-line-number="15"><span class="co">#&gt;   Model           Frequency fit.model</span></a>
-<a class="sourceLine" id="cb6-16" data-line-number="16"><span class="co">#&gt;   &lt;fct&gt;               &lt;dbl&gt; &lt;lgl&gt;    </span></a>
-<a class="sourceLine" id="cb6-17" data-line-number="17"><span class="co">#&gt; 1 K = 2 with tail     0.667 TRUE     </span></a>
-<a class="sourceLine" id="cb6-18" data-line-number="18"><span class="co">#&gt; 2 K = 1 with tail     0.333 FALSE    </span></a>
+<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co">#&gt; ℹ Bootstrap observations n = 25</span></a>
+<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#&gt; ℹ Computing model frequency</span></a>
+<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt; # A tibble: 2 x 3</span></a>
+<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co">#&gt;   Model           Frequency fit.model</span></a>
+<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="co">#&gt;   &lt;fct&gt;               &lt;dbl&gt; &lt;lgl&gt;    </span></a>
+<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="co">#&gt; 1 K = 2 with tail       0.6 TRUE     </span></a>
+<a class="sourceLine" id="cb6-12" data-line-number="12"><span class="co">#&gt; 2 K = 1 with tail       0.4 FALSE</span></a>
+<a class="sourceLine" id="cb6-13" data-line-number="13"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb6-14" data-line-number="14">                           </a>
+<a class="sourceLine" id="cb6-15" data-line-number="15">✓ Computing model frequency ... done</a>
+<a class="sourceLine" id="cb6-16" data-line-number="16"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb6-17" data-line-number="17"></a>
+<a class="sourceLine" id="cb6-18" data-line-number="18">ℹ Confidence <span class="kw">Intervals</span> (CI) <span class="cf">for</span> empirical quantiles</a>
 <a class="sourceLine" id="cb6-19" data-line-number="19"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb6-20" data-line-number="20"><span class="co">#&gt; =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span></a>
-<a class="sourceLine" id="cb6-21" data-line-number="21"><span class="co">#&gt;  CI (empirical quantiles from bootstrap replicates)</span></a>
-<a class="sourceLine" id="cb6-22" data-line-number="22"><span class="co">#&gt; =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span></a>
-<a class="sourceLine" id="cb6-23" data-line-number="23"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb6-24" data-line-number="24"><span class="co">#&gt; Mixing proportions </span></a>
-<a class="sourceLine" id="cb6-25" data-line-number="25"><span class="co">#&gt;  # A tibble: 3 x 8</span></a>
-<a class="sourceLine" id="cb6-26" data-line-number="26"><span class="co">#&gt;   cluster statistics   min lower_quantile higher_quantile   max fit.value</span></a>
-<a class="sourceLine" id="cb6-27" data-line-number="27"><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb6-28" data-line-number="28"><span class="co">#&gt; 1 C1      Mixing pr… 0.274          0.276           0.825 0.852     0.292</span></a>
-<a class="sourceLine" id="cb6-29" data-line-number="29"><span class="co">#&gt; 2 C2      Mixing pr… 0.460          0.461           0.511 0.512     0.463</span></a>
-<a class="sourceLine" id="cb6-30" data-line-number="30"><span class="co">#&gt; 3 Tail    Mixing pr… 0.148          0.152           0.226 0.227     0.245</span></a>
-<a class="sourceLine" id="cb6-31" data-line-number="31"><span class="co">#&gt; # … with 1 more variable: init.value &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb6-32" data-line-number="32"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb6-33" data-line-number="33"><span class="co">#&gt; Tail shape/ scale </span></a>
-<a class="sourceLine" id="cb6-34" data-line-number="34"><span class="co">#&gt;  # A tibble: 2 x 8</span></a>
-<a class="sourceLine" id="cb6-35" data-line-number="35"><span class="co">#&gt;   cluster statistics    min lower_quantile higher_quantile    max fit.value</span></a>
-<a class="sourceLine" id="cb6-36" data-line-number="36"><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb6-37" data-line-number="37"><span class="co">#&gt; 1 Tail    Scale      0.0508         0.0508          0.0513 0.0513    0.0500</span></a>
-<a class="sourceLine" id="cb6-38" data-line-number="38"><span class="co">#&gt; 2 Tail    Shape      1.18           1.19            2.15   2.20      1.25  </span></a>
-<a class="sourceLine" id="cb6-39" data-line-number="39"><span class="co">#&gt; # … with 1 more variable: init.value &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb6-40" data-line-number="40"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb6-41" data-line-number="41"><span class="co">#&gt; Beta peaks </span></a>
-<a class="sourceLine" id="cb6-42" data-line-number="42"><span class="co">#&gt;  # A tibble: 4 x 8</span></a>
-<a class="sourceLine" id="cb6-43" data-line-number="43"><span class="co">#&gt;   cluster statistics     min lower_quantile higher_quantile     max fit.value</span></a>
-<a class="sourceLine" id="cb6-44" data-line-number="44"><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;        &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb6-45" data-line-number="45"><span class="co">#&gt; 1 C1      Mean       0.566          0.578           0.820   0.820     0.798  </span></a>
-<a class="sourceLine" id="cb6-46" data-line-number="46"><span class="co">#&gt; 2 C1      Variance   0.00452        0.00453         0.0427  0.0447    0.00664</span></a>
-<a class="sourceLine" id="cb6-47" data-line-number="47"><span class="co">#&gt; 3 C2      Mean       0.444          0.444           0.454   0.454     0.446  </span></a>
-<a class="sourceLine" id="cb6-48" data-line-number="48"><span class="co">#&gt; 4 C2      Variance   0.00835        0.00837         0.00928 0.00930   0.00731</span></a>
-<a class="sourceLine" id="cb6-49" data-line-number="49"><span class="co">#&gt; # … with 1 more variable: init.value &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb6-50" data-line-number="50"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb6-51" data-line-number="51"><span class="co">#&gt; =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span></a>
-<a class="sourceLine" id="cb6-52" data-line-number="52"><span class="co">#&gt;  Bootstrapped co-clustering probability from nonparametric bootstrap</span></a>
-<a class="sourceLine" id="cb6-53" data-line-number="53"><span class="co">#&gt; =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</span></a>
-<a class="sourceLine" id="cb6-54" data-line-number="54"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb6-55" data-line-number="55">  <span class="op">|</span><span class="st">                                                                            </span></a>
-<a class="sourceLine" id="cb6-56" data-line-number="56"><span class="st">  </span><span class="er">|</span><span class="st">                                                                      </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</a>
-<a class="sourceLine" id="cb6-57" data-line-number="57">  <span class="op">|</span><span class="st">                                                                            </span></a>
-<a class="sourceLine" id="cb6-58" data-line-number="58"><span class="st">  </span><span class="er">|=======================</span><span class="st">                                               </span><span class="er">|</span><span class="st">  </span><span class="dv">33</span>%</a>
-<a class="sourceLine" id="cb6-59" data-line-number="59">  <span class="op">|</span><span class="st">                                                                            </span></a>
-<a class="sourceLine" id="cb6-60" data-line-number="60"><span class="st">  </span><span class="er">|===============================================</span><span class="st">                       </span><span class="er">|</span><span class="st">  </span><span class="dv">67</span>%</a>
-<a class="sourceLine" id="cb6-61" data-line-number="61">  <span class="op">|</span><span class="st">                                                                            </span></a>
-<a class="sourceLine" id="cb6-62" data-line-number="62"><span class="st">  </span><span class="er">|======================================================================|</span><span class="st"> </span><span class="dv">100</span>%</a></code></pre></div>
+<a class="sourceLine" id="cb6-20" data-line-number="20"><span class="co">#&gt; Mixing proportions </span></a>
+<a class="sourceLine" id="cb6-21" data-line-number="21"><span class="co">#&gt;  # A tibble: 3 x 8</span></a>
+<a class="sourceLine" id="cb6-22" data-line-number="22"><span class="co">#&gt;   cluster statistics   min lower_quantile higher_quantile   max fit.value</span></a>
+<a class="sourceLine" id="cb6-23" data-line-number="23"><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb6-24" data-line-number="24"><span class="co">#&gt; 1 C1      Mixing pr… 0.256          0.258           0.866 0.873     0.292</span></a>
+<a class="sourceLine" id="cb6-25" data-line-number="25"><span class="co">#&gt; 2 C2      Mixing pr… 0.440          0.441           0.526 0.527     0.463</span></a>
+<a class="sourceLine" id="cb6-26" data-line-number="26"><span class="co">#&gt; 3 Tail    Mixing pr… 0.127          0.134           0.263 0.273     0.245</span></a>
+<a class="sourceLine" id="cb6-27" data-line-number="27"><span class="co">#&gt; # … with 1 more variable: init.value &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb6-28" data-line-number="28"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb6-29" data-line-number="29"><span class="co">#&gt; Tail shape/ scale </span></a>
+<a class="sourceLine" id="cb6-30" data-line-number="30"><span class="co">#&gt;  # A tibble: 2 x 8</span></a>
+<a class="sourceLine" id="cb6-31" data-line-number="31"><span class="co">#&gt;   cluster statistics    min lower_quantile higher_quantile    max fit.value</span></a>
+<a class="sourceLine" id="cb6-32" data-line-number="32"><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb6-33" data-line-number="33"><span class="co">#&gt; 1 Tail    Scale      0.0500         0.0500          0.0518 0.0526    0.0500</span></a>
+<a class="sourceLine" id="cb6-34" data-line-number="34"><span class="co">#&gt; 2 Tail    Shape      1.08           1.14            2.53   2.62      1.25  </span></a>
+<a class="sourceLine" id="cb6-35" data-line-number="35"><span class="co">#&gt; # … with 1 more variable: init.value &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb6-36" data-line-number="36"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb6-37" data-line-number="37"><span class="co">#&gt; Beta peaks </span></a>
+<a class="sourceLine" id="cb6-38" data-line-number="38"><span class="co">#&gt;  # A tibble: 4 x 8</span></a>
+<a class="sourceLine" id="cb6-39" data-line-number="39"><span class="co">#&gt;   cluster statistics     min lower_quantile higher_quantile    max fit.value</span></a>
+<a class="sourceLine" id="cb6-40" data-line-number="40"><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;        &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb6-41" data-line-number="41"><span class="co">#&gt; 1 C1      Mean       0.526          0.532            0.818  0.824    0.798  </span></a>
+<a class="sourceLine" id="cb6-42" data-line-number="42"><span class="co">#&gt; 2 C1      Variance   0.00356        0.00416          0.0514 0.0517   0.00664</span></a>
+<a class="sourceLine" id="cb6-43" data-line-number="43"><span class="co">#&gt; 3 C2      Mean       0.431          0.432            0.464  0.467    0.446  </span></a>
+<a class="sourceLine" id="cb6-44" data-line-number="44"><span class="co">#&gt; 4 C2      Variance   0.00540        0.00556          0.0104 0.0109   0.00731</span></a>
+<a class="sourceLine" id="cb6-45" data-line-number="45"><span class="co">#&gt; # … with 1 more variable: init.value &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb6-46" data-line-number="46"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb6-47" data-line-number="47">                                                   </a>
+<a class="sourceLine" id="cb6-48" data-line-number="48">✓ Confidence <span class="kw">Intervals</span> (CI) <span class="cf">for</span> empirical quantiles ... done</a>
+<a class="sourceLine" id="cb6-49" data-line-number="49"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb6-50" data-line-number="50"></a>
+<a class="sourceLine" id="cb6-51" data-line-number="51">ℹ Co<span class="op">-</span>clustering probability from nonparametric bootstrap</a>
+<a class="sourceLine" id="cb6-52" data-line-number="52">                                                        </a>
+<a class="sourceLine" id="cb6-53" data-line-number="53">✓ Co<span class="op">-</span>clustering probability from nonparametric bootstrap ... done</a></code></pre></div>
 <p>Object <code>bootstrap_statistics</code> contains several tibbles that aggregate the data, and for each one of them there is a MOBSTER function to plot the data.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co"># All bootstrapped values</span></a>
 <a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(bootstrap_statistics<span class="op">$</span>bootstrap_values)</a>
-<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">#&gt; # A tibble: 40 x 5</span></a>
-<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co">#&gt;    cluster statistics        fit.value init.value resample</span></a>
-<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co">#&gt;    &lt;chr&gt;   &lt;chr&gt;                 &lt;dbl&gt;      &lt;dbl&gt;    &lt;int&gt;</span></a>
-<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="co">#&gt;  1 Tail    Shape                2.20      3.01           1</span></a>
-<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">#&gt;  2 Tail    Scale                0.0508    0.0508         1</span></a>
-<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">#&gt;  3 Tail    Mean                 0.0933    0.0761         1</span></a>
-<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">#&gt;  4 Tail    Variance             0.0202    0.00190        1</span></a>
-<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">#&gt;  5 C1      a                    2.54     94.3            1</span></a>
-<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="co">#&gt;  6 C1      b                    1.95     94.3            1</span></a>
-<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co">#&gt;  7 C1      Mean                 0.566     0.565          1</span></a>
-<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="co">#&gt;  8 C1      Variance             0.0447    0.00146        1</span></a>
-<a class="sourceLine" id="cb7-14" data-line-number="14"><span class="co">#&gt;  9 Tail    Mixing proportion    0.148     0.5            1</span></a>
-<a class="sourceLine" id="cb7-15" data-line-number="15"><span class="co">#&gt; 10 C1      Mixing proportion    0.852     0.5            1</span></a>
-<a class="sourceLine" id="cb7-16" data-line-number="16"><span class="co">#&gt; # … with 30 more rows</span></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">#&gt; # A tibble: 325 x 5</span></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co">#&gt;    cluster statistics fit.value init.value resample</span></a>
+<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co">#&gt;    &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;      &lt;dbl&gt;    &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="co">#&gt;  1 Tail    Shape        1.08       1.14           1</span></a>
+<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">#&gt;  2 Tail    Scale        0.0508     0.0508         1</span></a>
+<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">#&gt;  3 Tail    Mean         0.670      0.414          1</span></a>
+<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">#&gt;  4 Tail    Variance   Inf        Inf              1</span></a>
+<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">#&gt;  5 C2      a           14.0       20.4            1</span></a>
+<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="co">#&gt;  6 C2      b           17.6       20.4            1</span></a>
+<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co">#&gt;  7 C2      Mean         0.443      0.645          1</span></a>
+<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="co">#&gt;  8 C2      Variance     0.00757    0.00702        1</span></a>
+<a class="sourceLine" id="cb7-14" data-line-number="14"><span class="co">#&gt;  9 C1      a           18.6       16.5            1</span></a>
+<a class="sourceLine" id="cb7-15" data-line-number="15"><span class="co">#&gt; 10 C1      b            4.84      16.5            1</span></a>
+<a class="sourceLine" id="cb7-16" data-line-number="16"><span class="co">#&gt; # … with 315 more rows</span></a>
 <a class="sourceLine" id="cb7-17" data-line-number="17"></a>
 <a class="sourceLine" id="cb7-18" data-line-number="18"><span class="co"># The model probability</span></a>
 <a class="sourceLine" id="cb7-19" data-line-number="19"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(bootstrap_statistics<span class="op">$</span>bootstrap_model)</a>
 <a class="sourceLine" id="cb7-20" data-line-number="20"><span class="co">#&gt; # A tibble: 2 x 3</span></a>
 <a class="sourceLine" id="cb7-21" data-line-number="21"><span class="co">#&gt;   Model           Frequency fit.model</span></a>
 <a class="sourceLine" id="cb7-22" data-line-number="22"><span class="co">#&gt;   &lt;fct&gt;               &lt;dbl&gt; &lt;lgl&gt;    </span></a>
-<a class="sourceLine" id="cb7-23" data-line-number="23"><span class="co">#&gt; 1 K = 2 with tail     0.667 TRUE     </span></a>
-<a class="sourceLine" id="cb7-24" data-line-number="24"><span class="co">#&gt; 2 K = 1 with tail     0.333 FALSE</span></a>
+<a class="sourceLine" id="cb7-23" data-line-number="23"><span class="co">#&gt; 1 K = 2 with tail       0.6 TRUE     </span></a>
+<a class="sourceLine" id="cb7-24" data-line-number="24"><span class="co">#&gt; 2 K = 1 with tail       0.4 FALSE</span></a>
 <a class="sourceLine" id="cb7-25" data-line-number="25"></a>
 <a class="sourceLine" id="cb7-26" data-line-number="26"><span class="co"># The parameter stastics</span></a>
 <a class="sourceLine" id="cb7-27" data-line-number="27"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(bootstrap_statistics<span class="op">$</span>bootstrap_statistics)</a>
 <a class="sourceLine" id="cb7-28" data-line-number="28"><span class="co">#&gt; # A tibble: 15 x 8</span></a>
-<a class="sourceLine" id="cb7-29" data-line-number="29"><span class="co">#&gt;    cluster statistics     min lower_quantile higher_quantile       max fit.value</span></a>
-<a class="sourceLine" id="cb7-30" data-line-number="30"><span class="co">#&gt;    &lt;chr&gt;   &lt;chr&gt;        &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb7-31" data-line-number="31"><span class="co">#&gt;  1 C1      a          2.54e+0        3.71           26.0      26.0      18.6    </span></a>
-<a class="sourceLine" id="cb7-32" data-line-number="32"><span class="co">#&gt;  2 C1      b          1.95e+0        2.14            6.00      6.02      4.69   </span></a>
-<a class="sourceLine" id="cb7-33" data-line-number="33"><span class="co">#&gt;  3 C1      Mean       5.66e-1        0.578           0.820     0.820     0.798  </span></a>
-<a class="sourceLine" id="cb7-34" data-line-number="34"><span class="co">#&gt;  4 C1      Mixing pr… 2.74e-1        0.276           0.825     0.852     0.292  </span></a>
-<a class="sourceLine" id="cb7-35" data-line-number="35"><span class="co">#&gt;  5 C1      Variance   4.52e-3        0.00453         0.0427    0.0447    0.00664</span></a>
-<a class="sourceLine" id="cb7-36" data-line-number="36"><span class="co">#&gt;  6 C2      a          1.16e+1       11.7            12.7      12.7      14.6    </span></a>
-<a class="sourceLine" id="cb7-37" data-line-number="37"><span class="co">#&gt;  7 C2      b          1.40e+1       14.0            15.8      15.9      18.2    </span></a>
-<a class="sourceLine" id="cb7-38" data-line-number="38"><span class="co">#&gt;  8 C2      Mean       4.44e-1        0.444           0.454     0.454     0.446  </span></a>
-<a class="sourceLine" id="cb7-39" data-line-number="39"><span class="co">#&gt;  9 C2      Mixing pr… 4.60e-1        0.461           0.511     0.512     0.463  </span></a>
-<a class="sourceLine" id="cb7-40" data-line-number="40"><span class="co">#&gt; 10 C2      Variance   8.35e-3        0.00837         0.00928   0.00930   0.00731</span></a>
-<a class="sourceLine" id="cb7-41" data-line-number="41"><span class="co">#&gt; 11 Tail    Mean       9.33e-2        0.0996          0.324     0.329     0.247  </span></a>
-<a class="sourceLine" id="cb7-42" data-line-number="42"><span class="co">#&gt; 12 Tail    Mixing pr… 1.48e-1        0.152           0.226     0.227     0.245  </span></a>
-<a class="sourceLine" id="cb7-43" data-line-number="43"><span class="co">#&gt; 13 Tail    Scale      5.08e-2        0.0508          0.0513    0.0513    0.0500 </span></a>
-<a class="sourceLine" id="cb7-44" data-line-number="44"><span class="co">#&gt; 14 Tail    Shape      1.18e+0        1.19            2.15      2.20      1.25   </span></a>
-<a class="sourceLine" id="cb7-45" data-line-number="45"><span class="co">#&gt; 15 Tail    Variance   2.02e-2      Inf             Inf       Inf       Inf      </span></a>
+<a class="sourceLine" id="cb7-29" data-line-number="29"><span class="co">#&gt;    cluster statistics     min lower_quantile higher_quantile      max fit.value</span></a>
+<a class="sourceLine" id="cb7-30" data-line-number="30"><span class="co">#&gt;    &lt;chr&gt;   &lt;chr&gt;        &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb7-31" data-line-number="31"><span class="co">#&gt;  1 C1      a          2.08e+0        2.11            29.4     35.4     18.6    </span></a>
+<a class="sourceLine" id="cb7-32" data-line-number="32"><span class="co">#&gt;  2 C1      b          1.69e+0        1.70             6.89     9.04     4.69   </span></a>
+<a class="sourceLine" id="cb7-33" data-line-number="33"><span class="co">#&gt;  3 C1      Mean       5.26e-1        0.532            0.818    0.824    0.798  </span></a>
+<a class="sourceLine" id="cb7-34" data-line-number="34"><span class="co">#&gt;  4 C1      Mixing pr… 2.56e-1        0.258            0.866    0.873    0.292  </span></a>
+<a class="sourceLine" id="cb7-35" data-line-number="35"><span class="co">#&gt;  5 C1      Variance   3.56e-3        0.00416          0.0514   0.0517   0.00664</span></a>
+<a class="sourceLine" id="cb7-36" data-line-number="36"><span class="co">#&gt;  6 C2      a          9.32e+0       10.2             19.2     19.8     14.6    </span></a>
+<a class="sourceLine" id="cb7-37" data-line-number="37"><span class="co">#&gt;  7 C2      b          1.23e+1       12.7             24.2     24.9     18.2    </span></a>
+<a class="sourceLine" id="cb7-38" data-line-number="38"><span class="co">#&gt;  8 C2      Mean       4.31e-1        0.432            0.464    0.467    0.446  </span></a>
+<a class="sourceLine" id="cb7-39" data-line-number="39"><span class="co">#&gt;  9 C2      Mixing pr… 4.40e-1        0.441            0.526    0.527    0.463  </span></a>
+<a class="sourceLine" id="cb7-40" data-line-number="40"><span class="co">#&gt; 10 C2      Variance   5.40e-3        0.00556          0.0104   0.0109   0.00731</span></a>
+<a class="sourceLine" id="cb7-41" data-line-number="41"><span class="co">#&gt; 11 Tail    Mean       8.09e-2        0.0829           0.477    0.670    0.247  </span></a>
+<a class="sourceLine" id="cb7-42" data-line-number="42"><span class="co">#&gt; 12 Tail    Mixing pr… 1.27e-1        0.134            0.263    0.273    0.245  </span></a>
+<a class="sourceLine" id="cb7-43" data-line-number="43"><span class="co">#&gt; 13 Tail    Scale      5.00e-2        0.0500           0.0518   0.0526   0.0500 </span></a>
+<a class="sourceLine" id="cb7-44" data-line-number="44"><span class="co">#&gt; 14 Tail    Shape      1.08e+0        1.14             2.53     2.62     1.25   </span></a>
+<a class="sourceLine" id="cb7-45" data-line-number="45"><span class="co">#&gt; 15 Tail    Variance   4.04e-3        0.00533        Inf      Inf      Inf      </span></a>
 <a class="sourceLine" id="cb7-46" data-line-number="46"><span class="co">#&gt; # … with 1 more variable: init.value &lt;dbl&gt;</span></a></code></pre></div>
 <p>Bootstrapping, one can plot the model probability across re-samples as a barplot</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="../reference/plot_bootstrap_model_frequency.html">plot_bootstrap_model_frequency</a></span>(</a>

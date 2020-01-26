@@ -28,3 +28,15 @@ of the input points. All the bootstrapped values are also returned. For the
 bootstrapped statistics the confidence intervals are returned for a 
 required  alpha value.
 }
+\examples{
+# Random small dataset
+dataset = random_dataset(N = 200, seed = 123, Beta_variance_scaling = 100)
+x = mobster_fit(dataset$data, auto_setup = 'FAST')
+
+# Just 5 resamples of a nonparametric bootstrap run, disabling the parallel engine
+options(easypar.parallel = FALSE)
+boot_results = mobster_bootstrap(x$best, n.resamples = 5, auto_setup = 'FAST')
+
+boot_stats = bootstrapped_statistics(x$best, boot_results)
+print(boot_stats)
+}

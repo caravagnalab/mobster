@@ -19,16 +19,19 @@
 #' @export
 #'
 #' @examples
-#' data('fit_example', package = 'mobster')
+#' # Random small dataset
+#' dataset = random_dataset(N = 200, seed = 123, Beta_variance_scaling = 100)
+#' x = mobster_fit(dataset$data, auto_setup = 'FAST')
 #' 
-#' # Just 5 resamples of a nonparametric bootstrap run
-#' mb = mobster_bootstrap(fit_example$best, n.resamples = 5)
+#' # Just 5 resamples of a nonparametric bootstrap run, disabling the parallel engine
+#' options(easypar.parallel = FALSE)
+#' boot_results = mobster_bootstrap(x$best, n.resamples = 5, auto_setup = 'FAST')
 #' 
-#' # The resample data is wrapped as lists of lists
-#' lapply(mb$resamples, function(x) x[[1]] %>% as_tibble)
+#' # The resample data is available in a list
+#' print(boot_results$resamples[[1]])
 #' 
 #' # The best fits are returned
-#' mb$fits
+#' print(boot_results$fits)
 mobster_bootstrap = function(x,
                              n.resamples = 100,
                              bootstrap = 'nonparametric',
@@ -41,14 +44,16 @@ mobster_bootstrap = function(x,
     paste0("MOBSTER bootstrap ~ ", n.resamples, ' resamples from ',
            bootstrap, ' bootstrap')
   )
+  cat('\n')
   
   is_mobster_fit(x)
   stopifnot(bootstrap %in% c('parametric', 'nonparametric'))
   
-  pio::pioTit(paste0("Bootstrapping for this MOBSTER model"))
+  # pio::pioTit(paste0("Bootstrapping for this MOBSTER model"))
   print(x)
+  cat('\n')
   
-  pio::pioTit(paste0("Creating ", bootstrap, " bootstrap resamples"))
+  cli::cli_process_start(paste0("Creating ", bootstrap, " bootstrap resamples"))
   
   resamples = NULL
   
@@ -61,15 +66,20 @@ mobster_bootstrap = function(x,
   
   resamples = lapply(resamples, list)
   
+  cli::cli_process_done()
+  
   # Save data if required
   if(!is.null(save_data) & is.character(save_data))
   {
-    pio::pioStr("Resamples saved to file ", paste0(save_data, '.RData'), suffix = '\n')
+    cli::cli_alert_info("Resamples saved to file {.field {save_data}.RData}")
     
     save(resamples, file = paste0(save_data, '.RData'))
   }
   
-  pio::pioTit("Running fits (might take some time)")
+  cat('\n')
+  cli::cli_rule("Running fits", right = "Might take some time")
+  cli::cli_process_start(paste0("Fitting ", bootstrap, " bootstrap resamples"))
+  cat('\n')
   
   # easypar
   fits = easypar::run(
@@ -108,6 +118,9 @@ mobster_bootstrap = function(x,
   }
   
   fits = easypar::filterErrors(fits)
+  
+  cli::cli_process_done()
+  
   
   return(list(resamples = resamples, fits = fits, bootstrap = bootstrap, errors = errors))
 }

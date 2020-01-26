@@ -18,6 +18,16 @@
 #' @export
 #'
 #' @examples
+#' # Random small dataset
+#' dataset = random_dataset(N = 200, seed = 123, Beta_variance_scaling = 100)
+#' x = mobster_fit(dataset$data, auto_setup = 'FAST')
+#' 
+#' # Just 5 resamples of a nonparametric bootstrap run, disabling the parallel engine
+#' options(easypar.parallel = FALSE)
+#' boot_results = mobster_bootstrap(x$best, n.resamples = 5, auto_setup = 'FAST')
+#' 
+#' boot_stats = bootstrapped_statistics(x$best, boot_results)
+#' print(boot_stats)
 bootstrapped_statistics = function(x, bootstrap_results, bootstrap = 'nonparametric', alpha = 0.025)
 {
   is_mobster_fit(x)
@@ -29,7 +39,9 @@ bootstrapped_statistics = function(x, bootstrap_results, bootstrap = 'nonparamet
   
   n = length(bootstrap.fits)
   
-  pio::pioTit(paste("Bootstrap observations n =", n))
+  cli::cli_alert_info(paste("Bootstrap observations n =", n))
+  
+  cli::cli_process_start(paste("Computing model frequency"))
   
   res = NULL
   
@@ -89,10 +101,10 @@ bootstrapped_statistics = function(x, bootstrap_results, bootstrap = 'nonparamet
     left_join(fit$Clusters, by = c('cluster', 'statistics')) %>%
     ungroup()
   
-  pio::pioTit("Bootstrapped model frequency")
   pio::pioDisp(model.frequency)
+  cli::cli_process_done()
   
-  pio::pioTit("CI (empirical quantiles from bootstrap replicates)")
+  cli::cli_process_start("Confidence Intervals (CI) for empirical quantiles")
   # pio::pioDisp(stats)
   
   pio::pioStr("\nMixing proportions", "\n")
@@ -107,12 +119,18 @@ bootstrapped_statistics = function(x, bootstrap_results, bootstrap = 'nonparamet
   print(stats %>%
           filter(statistics %in% c('Mean', 'Variance') & cluster != 'Tail'))
   
+  cli::cli_process_done()
+  
   # Co-cclustering only for nonparametric bootstrap
   co_clustering = NULL
   if(bootstrap == 'nonparametric') {
-    pio::pioTit("Bootstrapped co-clustering probability from nonparametric bootstrap")
+
+    cli::cli_process_start("Co-clustering probability from nonparametric bootstrap")
+    cat
     
     co_clustering = compute_co_clustering(x, resamples, bootstrap.fits)
+    
+    cli::cli_process_done()
   }
   
   ret = list(

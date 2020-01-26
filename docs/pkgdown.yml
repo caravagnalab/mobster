@@ -4,6 +4,7 @@ pkgdown_sha: ~
 articles:
   bootstrap: bootstrap.html
   evolutionary_analysis: evolutionary_analysis.html
+  introduction: introduction.html
   mobster: mobster.html
   plotting: plotting.html
 

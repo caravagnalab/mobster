@@ -45,8 +45,8 @@ dataset = random_dataset(
   Beta_variance_scaling = 100
   )
 
-# Fit model
-fit = mobster_fit(dataset$data, samples = 1)
+# Fit model -- FAST option to speed up the vignette
+fit = mobster_fit(dataset$data, auto_setup = 'FAST')
 
 # Composition with cowplot
 figure = cowplot::plot_grid(
@@ -61,14 +61,14 @@ print(figure)
 Now we are ready to compute `n.resamples` nonparametric bootstraps, and the bootstrapped statistics. We can do that using function `mobster_bootstrap` to which we can pass some parameters that will be forwarded to the calls of `mobster_fit`
 
 ```{r, fig.width=9, fig.height=9, message=FALSE, warning=FALSE, eval=T}
+# options(easypar.parallel = FALSE)
+
 # The returned object contains also the list of bootstrap resamples, and the fits.
 bootstrap_results = mobster_bootstrap(
   fit$best,
   bootstrap = 'nonparametric',
-  n.resamples = 3,
-  epsilon = 1e-4,   # forwarded to mobster_fit, optimization epsilon
-  K = c(1, 2),      # forwarded to mobster_fit, test only models with 1 or 2 Betas
-  cache = NULL      # forwarded to mobster_fit, no cache
+  n.resamples = 25,
+  auto_setup = 'FAST' # forwarded to mobster_fit
   )
 ```
 The output object contains all the relevant information to analyze the results of this computation, which include the bootstrap resamples, the fits and possible errors.

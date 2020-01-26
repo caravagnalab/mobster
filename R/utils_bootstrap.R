@@ -80,11 +80,13 @@ compute_co_clustering = function(x, resamples, fits)
     colnames(co.clustering) = 1:N
   
   # Extract co-clustering labels
-  pb = txtProgressBar(0, length(fits), style = 3)
+  # pb = txtProgressBar(0, length(fits), style = 3)
+  sp1 <- make_spinner()
   
   for(w in seq(fits))
   {    
-    setTxtProgressBar(pb, w)
+    # setTxtProgressBar(pb, w)
+    sp1$spin();
     
     cluster.results = Clusters(fits[[w]], cutoff_assignment = 0)
     
@@ -93,6 +95,8 @@ compute_co_clustering = function(x, resamples, fits)
     
     co.clustering = .coocc(l = cluster.labels, M = co.clustering)
   }
+  
+  sp1$finish()
   
   ordered.data = x$data[, c('VAF', 'cluster')]
   ordered.data$id = 1:N

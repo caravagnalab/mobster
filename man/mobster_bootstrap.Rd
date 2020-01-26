@@ -29,14 +29,17 @@ bootstrap estimates for MOBSTER fits. This computation is parallel
 and uses  \code{?easypar}.
 }
 \examples{
-data('fit_example', package = 'mobster')
+# Random small dataset
+dataset = random_dataset(N = 200, seed = 123, Beta_variance_scaling = 100)
+x = mobster_fit(dataset$data, auto_setup = 'FAST')
 
-# Just 5 resamples of a nonparametric bootstrap run
-mb = mobster_bootstrap(fit_example$best, n.resamples = 5)
+# Just 5 resamples of a nonparametric bootstrap run, disabling the parallel engine
+options(easypar.parallel = FALSE)
+boot_results = mobster_bootstrap(x$best, n.resamples = 5, auto_setup = 'FAST')
 
-# The resample data is wrapped as lists of lists
-lapply(mb$resamples, function(x) x[[1]] \%>\% as_tibble)
+# The resample data is available in a list
+print(boot_results$resamples[[1]])
 
 # The best fits are returned
-mb$fits
+print(boot_results$fits)
 }

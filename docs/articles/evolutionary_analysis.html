@@ -70,6 +70,9 @@
       <a href="../articles/evolutionary_analysis.html">Evolutionary analyses of mobster fits</a>
     </li>
     <li>
+      <a href="../articles/introduction.html">Introduction</a>
+    </li>
+    <li>
       <a href="../articles/plotting.html">Plotting mobster fits</a>
     </li>
   </ul>
@@ -124,13 +127,14 @@
 <a class="sourceLine" id="cb2-2" data-line-number="2"></a>
 <a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co"># Print and plot the model</span></a>
 <a class="sourceLine" id="cb2-4" data-line-number="4"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(PD4120a_breast_sample<span class="op">$</span>best)</a>
-<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt; ── [ MOBSTER ]  n = 4643, fit by MM in 259 steps (converged). ──────────────────────────────────────────────────────────</span></a>
-<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt; ● Tail [n = 1006, 26%] with alpha = 1.5.</span></a>
-<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt; ● Beta C1 [n = 1740, 37%] with mean = 0.52.</span></a>
-<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt; ● Beta C2 [n = 1167, 24%] with mean = 0.29.</span></a>
-<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt; ● Beta C3 [n = 730, 13%] with mean = 0.16.</span></a>
-<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt; ℹ Score(s): NLL = -3201.73; ICL = -5346.89 (-6113.83), H = 955.25 (188.31),</span></a>
-<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(PD4120a_breast_sample<span class="op">$</span>best)</a></code></pre></div>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt; ── [ MOBSTER ]  n = 4643 with k = 3 Beta(s) and a tail ────────────────────────────────────────────────────────────────</span></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt; ● Clusters: π = 37% [C2], 26% [Tail], 24% [C1] and 13% [C3], with π &gt; 0.</span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt; ● Tail [n = 1006, 26%] with alpha = 1.5.</span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt; ● Beta C1 [n = 1740, 37%] with mean = 0.52.</span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt; ● Beta C2 [n = 1167, 24%] with mean = 0.29.</span></a>
+<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt; ● Beta C3 [n = 730, 13%] with mean = 0.16.</span></a>
+<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="co">#&gt; ℹ Score(s): NLL = -3201.73; ICL = -5346.89 (-6113.83), H = 955.25 (188.31). Fit converged by MM in 259 steps.</span></a>
+<a class="sourceLine" id="cb2-12" data-line-number="12"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(PD4120a_breast_sample<span class="op">$</span>best)</a></code></pre></div>
 <p><img src="evolutionary_analysis_files/figure-html/unnamed-chunk-3-1.png" width="480"></p>
 <p>To compute the values one first extracts the clustering assignments from the best fit.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">clusters =<span class="st"> </span><span class="kw"><a href="../reference/Clusters.html">Clusters</a></span>(PD4120a_breast_sample<span class="op">$</span>best)</a>

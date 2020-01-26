@@ -16,6 +16,16 @@
 #' @export
 #'
 #' @examples
+#' # Random small dataset
+#' dataset = random_dataset(N = 200, seed = 123, Beta_variance_scaling = 100)
+#' x = mobster_fit(dataset$data, auto_setup = 'FAST')
+#' 
+#' # Just 5 resamples of a nonparametric bootstrap run, disabling the parallel engine
+#' options(easypar.parallel = FALSE)
+#' boot_results = mobster_bootstrap(x$best, n.resamples = 5, auto_setup = 'FAST')
+#' 
+#' boot_stats = bootstrapped_statistics(x$best, boot_results)
+#' plot_bootstrap_mixing_proportions(x, boot_results, boot_stats)
 plot_bootstrap_mixing_proportions = function(x,
                                              bootstrap_results, 
                                              bootstrap_statistics,
