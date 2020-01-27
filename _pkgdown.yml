@@ -3,7 +3,7 @@ template:
     part_of: evoverse
     footer: Test of my footer
 url:
-  caravagn.github.io/revolver
+  caravagn.github.io/mobster
   
 articles:
 - title: R Markdown
@@ -29,32 +29,6 @@ reference:
   - PD4120a_breast_sample
   - cancer_genes_dnds
 
-- title: Analysis functions
-  desc:  These functions can be used to analyse a REVOLVER cohort.
-  contents:
-  - revolver_fit
-  - revolver_cluster
-  - revolver_jackknife
-  
-- title: Getters functions
-  desc:  These functions can be used to extract data from a REVOLVER cohort object. These include the raw data used to create the cohort, driver information, clonal and subclonal events, the trees that are associated to the patients and other analysis results.
-  contents:
-  - Data
-  - Drivers
-  - Truncal
-  - Subclonal
-  - Samples
-  - Clonal_cluster
-  - CCF
-  - CCF_clusters
-  - Phylo
-  - ITransfer
-  - get_features
-  - Cluster
-  - Jackknife_patient_coclustering
-  - Jackknife_cluster_stability
-  - Jackknife_trajectories_stability
-  
 - title: Fitting functions
   desc:  Functions to cluster the data, extract the results, and use the density of a `mobster` fit to generated datasets.
   contents:
@@ -86,7 +60,7 @@ reference:
   - plot_model_selection
   
   
-- title: Boostrap functions
+- title: Bootstrap functions
   desc:  Bootstrap function for `mobster` fits.
   contents:
   - mobster_bootstrap

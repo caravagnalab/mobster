@@ -78,9 +78,7 @@ mobster_bootstrap = function(x,
   
   cat('\n')
   cli::cli_rule("Running fits", right = "Might take some time")
-  cli::cli_process_start(paste0("Fitting ", bootstrap, " bootstrap resamples"))
-  cat('\n')
-  
+
   # easypar
   fits = easypar::run(
     FUN = function(w) {
@@ -118,8 +116,6 @@ mobster_bootstrap = function(x,
   }
   
   fits = easypar::filterErrors(fits)
-  
-  cli::cli_process_done()
   
   
   return(list(resamples = resamples, fits = fits, bootstrap = bootstrap, errors = errors))
