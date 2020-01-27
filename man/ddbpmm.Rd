@@ -4,8 +4,17 @@
 \alias{ddbpmm}
 \title{Density function for MOBSTER.}
 \usage{
-ddbpmm(x, data = NULL, components = 1:x$K, a = NULL, b = NULL,
-  pi = NULL, scale = NULL, shape = NULL, log = TRUE)
+ddbpmm(
+  x,
+  data = NULL,
+  components = 1:x$K,
+  a = NULL,
+  b = NULL,
+  pi = NULL,
+  scale = NULL,
+  shape = NULL,
+  log = TRUE
+)
 }
 \arguments{
 \item{x}{An object of class \code{"dbpmm"}.}
