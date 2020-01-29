@@ -96,6 +96,14 @@ to_string = function(x)
   
   values = bind_cols(values, ssedf)
   
+  # Per cluster error measure
+  # densities = per_cluster_err(x)
+  #   
+  # densities = densities %>%
+  #   group_by(cluster) %>%
+  #   summarise(median(err))
+  
+  
   
   values
   # 
@@ -106,4 +114,44 @@ to_string = function(x)
   #   )
   
   return(values)
+}
+
+per_cluster_err = function(x)
+{
+  # Binning o the VAF spectrum
+  binning = 1e-3
+  x_domain = seq(1e-3, 1-binning, by = binning)
+  
+  # Hard assignments from the model
+  domain = mobster::Clusters_denovo(x, data.frame(VAF = x_domain)) %>%
+    select(cluster)
+  
+  # Density of each mixture component in the domain
+  densities = mobster:::template_density(
+    x,
+    x.axis = x_domain,
+    binwidth = binning,
+    reduce = TRUE) %>%
+    spread(cluster, y) %>%
+    as_tibble()
+  
+  densities$cluster = domain$cluster
+  
+  # Empirical density
+  empirical = hist(x$data$VAF, breaks = x_domain, plot = FALSE)$density
+  empirical[length(empirical) + 1] = empirical[length(empirical)]
+  empirical = empirical * binning # adjust for binwidth
+  
+  empirical = data.frame(x = x_domain, e = empirical) %>% as_tibble()
+  
+  densities = densities %>%
+    left_join(empirical, by = 'x') %>%
+    filter(x >= min(!!x$data$VAF))
+  
+  densities$M = NA
+  for(j in 1:nrow(densities)) densities$M[j] = unlist(densities[j, densities$cluster[j]])
+  
+  densities$err = abs(densities$M - densities$e)
+  
+  densities 
 }
