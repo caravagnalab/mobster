@@ -72,7 +72,7 @@ to_string = function(x)
   
   # Re-format and sort columns
   colnames(values) = gsub('\\.', '_',   colnames(values))
-  values = values %>% dplyr::select(order(colnames(values)) %>% noquote)
+  values = values %>% dplyr::select(order(colnames(values)) %>% noquote %>% as.vector)
   
   # Add scores
   values = bind_cols(values, x$scores)
