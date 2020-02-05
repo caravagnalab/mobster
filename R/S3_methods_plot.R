@@ -240,7 +240,7 @@ plot.dbpmm = function(x,
     
     nudge = max(points_df$density)/5
     
-    pl + 
+    pl = pl + 
       geom_point(
         data = points_df, 
         aes(x = VAF, y = density), 
