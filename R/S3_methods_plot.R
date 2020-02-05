@@ -25,6 +25,7 @@ plot.dbpmm = function(x,
                       alpha = .8,
                       colors = c(`Tail` = 'gainsboro'),
                       cutoff_assignment = 0,
+                      annotation_extras = NULL,
                       ...
                       )
 {
@@ -219,8 +220,46 @@ plot.dbpmm = function(x,
   #                inherit.aes = FALSE)
   # }
   #
+  
+  pl = add_fill_color_pl(x, hist_pl, colors)
+  
+  if(!is.null(annotation_extra))
+  {
+    points_df = mobster::Clusters_denovo(x, annotation_extra)
+    points_df$density = sapply(
+      points_df$VAF, 
+      function(v){
+        
+        mobster:::template_density(x,
+                                   x.axis = v,
+                                   binwidth = binwidth,
+                                   reduce = TRUE) %>%
+          dplyr::summarise(d = sum(y)) %>%
+          pull(d)
+      })
+    
+    nudge = max(points_df$density)/5
+    
+    pl + 
+      geom_point(
+        data = points_df, 
+        aes(x = VAF, y = density), 
+        show.legend = F
+      ) +
+      ggrepel::geom_label_repel(
+        data = points_df, 
+        aes(x = VAF, y = density, label = label),
+        nudge_y = nudge,
+        nudge_x = nudge,
+        direction = 'x', 
+        angle = 45,
+        vjust = 0,
+        segment.size = 0.2,   
+        show.legend = F
+      ) +
+      coord_cartesian(clip = 'off')
+  }
 
-
-  return(add_fill_color_pl(x, hist_pl, colors))
+  return(pl)
 }
 
