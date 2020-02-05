@@ -223,9 +223,9 @@ plot.dbpmm = function(x,
   
   pl = add_fill_color_pl(x, hist_pl, colors)
   
-  if(!is.null(annotation_extra))
+  if(!is.null(annotation_extras))
   {
-    points_df = mobster::Clusters_denovo(x, annotation_extra)
+    points_df = mobster::Clusters_denovo(x, annotation_extras)
     points_df$density = sapply(
       points_df$VAF, 
       function(v){
