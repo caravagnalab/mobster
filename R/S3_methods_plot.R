@@ -256,8 +256,7 @@ plot.dbpmm = function(x,
         vjust = 0,
         segment.size = 0.2,   
         show.legend = F
-      ) +
-      coord_cartesian(clip = 'off')
+      ) 
   }
 
   return(pl)
