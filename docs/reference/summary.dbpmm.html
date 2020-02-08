@@ -44,7 +44,7 @@
 
 <meta property="og:title" content="Summary for an object of class <code>'dbpmm'</code> is a print. — summary.dbpmm" />
 <meta property="og:description" content="Summary for an object of class 'dbpmm' is a print." />
-<meta property="og:image" content="/logo.png" />
+<meta property="og:image" content="caravagn.github.io/mobster/logo.png" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -106,13 +106,16 @@
       <a href="../articles/bootstrap.html">Confidence estimation via the bootstrap</a>
     </li>
     <li>
-      <a href="../articles/evolutionary_analysis.html">Evolutionary analyses of mobster fits</a>
+      <a href="../articles/dnds.html">dN/dS statistics for mobster fits</a>
     </li>
     <li>
       <a href="../articles/introduction.html">Introduction</a>
     </li>
     <li>
       <a href="../articles/plotting.html">Plotting mobster fits</a>
+    </li>
+    <li>
+      <a href="../articles/popgen.html">Population Genetics statistics for mobster fits</a>
     </li>
   </ul>
 </li>
@@ -162,7 +165,7 @@
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>fit_example</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>fit_example</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; <span class='message'>── <span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] My MOBSTER model</span><span> n = 5000 with </span><span style='color: #00BB00;'>k = 2</span><span> Beta(s) </span><span style='color: #00BB00;'>and a tail</span><span> ────────────────────────────────────────────────</span></div><div class='output co'>#&gt; <span class='message'>● Clusters: π = 55% [</span><span style='color: #BBBB00;'>C1</span><span>], 31% [</span><span style='color: #BBBB00;'>Tail</span><span>] and 14% [</span><span style='color: #BBBB00;'>C2</span><span>], with π &gt; 0.</span></div><div class='output co'>#&gt; <span class='message'>● Tail [n = 1370, 31%] with alpha = 1.2.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C1</span><span> [n = 2784, 55%] with mean = 0.48.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C2</span><span> [n = 846, 14%] with mean = 0.15.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Score(s): NLL = -5671.5; ICL = -10359.09 (-11266.35), H = 907.26 (0). Fit </span><span style='color: #00BB00;'>converged</span><span> by </span><span style='color: #00BB00;'>MM</span><span> in 75 steps.</span></div></span></pre>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>fit_example</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; <span class='message'>── <span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] My MOBSTER model</span><span> n = 5000 with </span><span style='color: #00BB00;'>k = 2</span><span> Beta(s) </span><span style='color: #00BB00;'>and a tail</span><span> ─────────────────────────────────</span></div><div class='output co'>#&gt; <span class='message'>● Clusters: π = 55% [</span><span style='color: #BBBB00;'>C1</span><span>], 31% [</span><span style='color: #BBBB00;'>Tail</span><span>] and 14% [</span><span style='color: #BBBB00;'>C2</span><span>], with π &gt; 0.</span></div><div class='output co'>#&gt; <span class='message'>● Tail [n = 1370, 31%] with alpha = 1.2.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C1</span><span> [n = 2784, 55%] with mean = 0.48.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C2</span><span> [n = 846, 14%] with mean = 0.15.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Score(s): NLL = -5671.5; ICL = -10359.09 (-11266.35), H = 907.26 (0). Fit </span><span style='color: #00BB00;'>converged</span><span> by </span><span style='color: #00BB00;'>MM</span><span> in 75 steps.</span></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -178,7 +181,7 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Giulio Caravagna.</p>
+  <p>Developed by <a href='https://sites.google.com/site/giuliocaravagna/'>Giulio Caravagna</a>.</p>
 </div>
 
 <div class="pkgdown">

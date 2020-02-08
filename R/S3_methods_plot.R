@@ -8,6 +8,8 @@
 #' @param cutoff_assignment Parameters passed to run function \code{Clusters} which
 #' returns the hard clustering assignments for the histogram plot if one wants to plot
 #' only mutations with responsibility above this parameter.
+#' @param annotation_extras A dataframe that contains a label column, and a VAF value.
+#' The labels will be annotated to the corresponding clusters of the VAF values.
 #' @param ... 
 #'
 #' @return A ggplot object for the plot.

@@ -1,7 +1,7 @@
 ---
 title: "mobster"
 author: "Giulio Caravagna"
-date: "September 2019"
+date: "January 2020"
 institute: "Institute for Cancer Research"
 email: "giulio.caravagna@icr.ac.uk"
 output: rmarkdown::github_document
@@ -19,22 +19,22 @@ knitr::opts_chunk$set(
 ```
 
 
-`mobster` implements a `(k+1)`-dimensional Dirichlet mixture model to detect statistical signals of ongoing subclonal evolution from cancer genome sequencing data. The models performs a deconvolution of the site/ allele frequency spectrum of the signal in order to detect non-neutral subclonal expansions.
+`mobster` implements a `(k+1)`-dimensional Dirichlet mixture model to detect ongoing positive subclonal  selection from cancer genome sequencing data. The models performs a deconvolution of the site/ allele frequency spectrum of mutation data (signal).
 
-The statistical model integrates principles from evolutionary theory and Machine-Learning. 
+The statistical model in `mobster` integrates principles from both *evolutionary theory* and *Machine Learning*. The mixture contains two types of distributions:
 
-* Beta distributions (`k`) that capture `k` peaks originating possibly from alleles enjoying positive selection. 
-* One power law theoretical distribution (the model) for within-clone neutral dynamics, predicted by Population Genetics;
+* Beta distributions (`k`), that capture `k` peaks of alleles raising up in frequency, as a proxy for subclone enjoying positive selection;
+* One ParetoType-I power law for within-clone neutral dynamics, a  distribution predicted by theoretical Population Genetics.
 
-The model is a mixture with `K>0` Beta and 1 Pareto  Type-I power law component, and can be used toreconstruct the clonal architecture of a tumour (subclonal deconvolution). Compared to alternative models for subclonal deconvolution, `mobster` is the first model to integrate neutral evolutionary dynamics in this analysis. 
-
+This is a model-based method to analyse cancer data, where the "model" is the power law tail that is used to integrate evolutionary dynamics in this analysis. Results from `mobster` deconvolution can be used to reconstruct the clonal architecture of a tumour (subclonal deconvolution), focusing on potential patterns of functional heterogeneity. 
 
 Available vignettes
 -------
 
 * [Introduction (data formats, example datasets)](https://caravagn.github.io/mobster/articles/introduction.html). 
-* [Plotting mobster fits](https://caravagn.github.io/CNAqc/articles/plotting.html). 
-* [Evolutionary analysis of mobster fits](https://caravagn.github.io/CNAqc/articles/evolutionary_analysis.html). 
-* [Confidence estimation via the bootstrap](https://caravagn.github.io/CNAqc/articles/bootstrap.html). 
+* [Plotting mobster fits](https://caravagn.github.io/mobster/articles/plotting.html). 
+* [dN/dS statistics of mobster fits](https://caravagn.github.io/mobster/articles/dnds.html). 
+* [Population Genetics statistics of mobster fits](https://caravagn.github.io/mobster/articles/popgen.html). 
+* [Confidence estimation via the bootstrap](https://caravagn.github.io/mobster/articles/bootstrap.html). 
 
 

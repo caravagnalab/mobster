@@ -3,8 +3,12 @@ pkgdown: 1.4.1
 pkgdown_sha: ~
 articles:
   bootstrap: bootstrap.html
-  evolutionary_analysis: evolutionary_analysis.html
+  dnds: dnds.html
   introduction: introduction.html
   mobster: mobster.html
   plotting: plotting.html
+  popgen: popgen.html
+urls:
+  reference: caravagn.github.io/mobster/reference
+  article: caravagn.github.io/mobster/articles
 

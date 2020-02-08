@@ -15,6 +15,9 @@ only the ones in \code{x} are used.}
 \item{nx}{Columns in the matrix layout.}
 
 \item{ny}{Rows in the matrix layout.}
+
+\item{TOP}{The top set of fits to use, if more than the one available
+only the ones in \code{x} are used.}
 }
 \value{
 A plot of the goodness of fit.

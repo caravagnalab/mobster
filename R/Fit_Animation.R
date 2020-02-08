@@ -17,7 +17,17 @@
 #'
 #' @examples
 #' data(fit_example)
-#' fit_animation(fit_example, lib = 'plotly')
+#' 
+#' model = mobster_fit(
+#' fit_example$best$data, 
+#' parallel =  FALSE, 
+#' samples = 3,
+#' init = 'random',
+#' trace = TRUE,
+#' K = 2,
+#' tail = T)
+#' 
+#' fit_animation(model$best, lib = 'plotly')
 fit_animation = function(x,
                          density = 0.05,
                          lib = 'plotly')

@@ -44,7 +44,7 @@
 
 <meta property="og:title" content="Plot a MOBSTER fit. — plot.dbpmm" />
 <meta property="og:description" content="Plot a MOBSTER fit." />
-<meta property="og:image" content="/logo.png" />
+<meta property="og:image" content="caravagn.github.io/mobster/logo.png" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -106,13 +106,16 @@
       <a href="../articles/bootstrap.html">Confidence estimation via the bootstrap</a>
     </li>
     <li>
-      <a href="../articles/evolutionary_analysis.html">Evolutionary analyses of mobster fits</a>
+      <a href="../articles/dnds.html">dN/dS statistics for mobster fits</a>
     </li>
     <li>
       <a href="../articles/introduction.html">Introduction</a>
     </li>
     <li>
       <a href="../articles/plotting.html">Plotting mobster fits</a>
+    </li>
+    <li>
+      <a href="../articles/popgen.html">Population Genetics statistics for mobster fits</a>
     </li>
   </ul>
 </li>
@@ -142,7 +145,7 @@
     </div>
 
     <pre class="usage"><span class='fu'>plot.dbpmm</span>(<span class='no'>x</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.8</span>, <span class='kw'>colors</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>Tail</span> <span class='kw'>=</span> <span class='st'>"gainsboro"</span>),
-  <span class='kw'>cutoff_assignment</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='no'>...</span>)</pre>
+  <span class='kw'>cutoff_assignment</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>annotation_extras</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -166,6 +169,11 @@ By default the tail colour is provided as 'gainsboro'.</p></td>
       <td><p>Parameters passed to run function <code>Clusters</code> which
 returns the hard clustering assignments for the histogram plot if one wants to plot
 only mutations with responsibility above this parameter.</p></td>
+    </tr>
+    <tr>
+      <th>annotation_extras</th>
+      <td><p>A dataframe that contains a label column, and a VAF value.
+The labels will be annotated to the corresponding clusters of the VAF values.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -195,7 +203,7 @@ only mutations with responsibility above this parameter.</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Giulio Caravagna.</p>
+  <p>Developed by <a href='https://sites.google.com/site/giuliocaravagna/'>Giulio Caravagna</a>.</p>
 </div>
 
 <div class="pkgdown">

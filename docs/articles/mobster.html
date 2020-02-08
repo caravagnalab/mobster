@@ -18,7 +18,7 @@
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="mobster">
 <meta property="og:description" content="">
-<meta property="og:image" content="/logo.png">
+<meta property="og:image" content="caravagn.github.io/mobster/logo.png">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -67,13 +67,16 @@
       <a href="../articles/bootstrap.html">Confidence estimation via the bootstrap</a>
     </li>
     <li>
-      <a href="../articles/evolutionary_analysis.html">Evolutionary analyses of mobster fits</a>
+      <a href="../articles/dnds.html">dN/dS statistics for mobster fits</a>
     </li>
     <li>
       <a href="../articles/introduction.html">Introduction</a>
     </li>
     <li>
       <a href="../articles/plotting.html">Plotting mobster fits</a>
+    </li>
+    <li>
+      <a href="../articles/popgen.html">Population Genetics statistics for mobster fits</a>
     </li>
   </ul>
 </li>
@@ -94,7 +97,7 @@
       <h1>mobster</h1>
                         <h4 class="author">Giulio Caravagna</h4>
             
-            <h4 class="date">September 2019</h4>
+            <h4 class="date">January 2020</h4>
       
       
       <div class="hidden name"><code>mobster.Rmd</code></div>
@@ -103,13 +106,13 @@
 
     
     
-<p><code>mobster</code> implements a <code>(k+1)</code>-dimensional Dirichlet mixture model to detect statistical signals of ongoing subclonal evolution from cancer genome sequencing data. The models performs a deconvolution of the site/ allele frequency spectrum of the signal in order to detect non-neutral subclonal expansions.</p>
-<p>The statistical model integrates principles from evolutionary theory and Machine-Learning.</p>
+<p><code>mobster</code> implements a <code>(k+1)</code>-dimensional Dirichlet mixture model to detect ongoing positive subclonal selection from cancer genome sequencing data. The models performs a deconvolution of the site/ allele frequency spectrum of mutation data (signal).</p>
+<p>The statistical model in <code>mobster</code> integrates principles from both <em>evolutionary theory</em> and <em>Machine Learning</em>. The mixture contains two types of distributions:</p>
 <ul>
-<li>Beta distributions (<code>k</code>) that capture <code>k</code> peaks originating possibly from alleles enjoying positive selection.</li>
-<li>One power law theoretical distribution (the model) for within-clone neutral dynamics, predicted by Population Genetics;</li>
+<li>Beta distributions (<code>k</code>), that capture <code>k</code> peaks of alleles raising up in frequency, as a proxy for subclone enjoying positive selection;</li>
+<li>One ParetoType-I power law for within-clone neutral dynamics, a distribution predicted by theoretical Population Genetics.</li>
 </ul>
-<p>The model is a mixture with <code>K&gt;0</code> Beta and 1 Pareto Type-I power law component, and can be used toreconstruct the clonal architecture of a tumour (subclonal deconvolution). Compared to alternative models for subclonal deconvolution, <code>mobster</code> is the first model to integrate neutral evolutionary dynamics in this analysis.</p>
+<p>This is a model-based method to analyse cancer data, where the “model” is the power law tail that is used to integrate evolutionary dynamics in this analysis. Results from <code>mobster</code> deconvolution can be used to reconstruct the clonal architecture of a tumour (subclonal deconvolution), focusing on potential patterns of functional heterogeneity.</p>
 <div id="available-vignettes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#available-vignettes" class="anchor"></a>Available vignettes</h2>
@@ -117,11 +120,13 @@
 <li>
 <a href="https://caravagn.github.io/mobster/articles/introduction.html">Introduction (data formats, example datasets)</a>.</li>
 <li>
-<a href="https://caravagn.github.io/CNAqc/articles/plotting.html">Plotting mobster fits</a>.</li>
+<a href="https://caravagn.github.io/mobster/articles/plotting.html">Plotting mobster fits</a>.</li>
 <li>
-<a href="https://caravagn.github.io/CNAqc/articles/evolutionary_analysis.html">Evolutionary analysis of mobster fits</a>.</li>
+<a href="https://caravagn.github.io/mobster/articles/dnds.html">dN/dS statistics of mobster fits</a>.</li>
 <li>
-<a href="https://caravagn.github.io/CNAqc/articles/bootstrap.html">Confidence estimation via the bootstrap</a>.</li>
+<a href="https://caravagn.github.io/mobster/articles/popgen.html">Population Genetics statistics of mobster fits</a>.</li>
+<li>
+<a href="https://caravagn.github.io/mobster/articles/bootstrap.html">Confidence estimation via the bootstrap</a>.</li>
 </ul>
 </div>
   </div>
@@ -142,7 +147,7 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Giulio Caravagna.</p>
+  <p>Developed by <a href="https://sites.google.com/site/giuliocaravagna/">Giulio Caravagna</a>.</p>
 </div>
 
 <div class="pkgdown">
