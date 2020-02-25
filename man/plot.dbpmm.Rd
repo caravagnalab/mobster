@@ -4,8 +4,9 @@
 \alias{plot.dbpmm}
 \title{Plot a MOBSTER fit.}
 \usage{
-plot.dbpmm(x, alpha = 0.8, colors = c(Tail = "gainsboro"),
-  cutoff_assignment = 0, annotation_extras = NULL, ...)
+plot.dbpmm(x, alpha = 0.7, colors = c(Tail = "gainsboro"),
+  cutoff_assignment = 0, annotation_extras = NULL,
+  secondary_axis = NULL, ...)
 }
 \arguments{
 \item{x}{An object of class \code{"dbpmm"}.}
@@ -22,6 +23,10 @@ only mutations with responsibility above this parameter.}
 
 \item{annotation_extras}{A dataframe that contains a label column, and a VAF value.
 The labels will be annotated to the corresponding clusters of the VAF values.}
+
+\item{secondary_axis}{\code{NULL} to leave the second axis empty, \code{"SSE"} to 
+report the cumulative percentage of SSE error, and \code{"N"} to report the
+cumulative number of mutations.}
 
 \item{...}{}
 }

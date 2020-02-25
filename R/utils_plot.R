@@ -60,10 +60,12 @@ add_fill_color_pl = function(x, pl, colors)
 # Default ggplot theme for all plots of this package
 my_ggplot_theme = function(cex = 1) 
 {
-  theme_light(base_size = 10 * cex) +
+  cex_opt = getOption('mobster_cex', default = 1)
+  
+  theme_light(base_size = 10 * cex_opt) +
     theme(
       legend.position = "bottom",
-      legend.key.size = unit(.3 * cex, "cm"),
+      legend.key.size = unit(.3 * cex_opt, "cm"),
       panel.background = element_rect(fill = 'white')
     )
 }
