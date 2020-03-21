@@ -15,6 +15,8 @@ to subclonal deconvolution from cancer genome sequencing data
 ([Caravagna et al.;
 https://doi.org/10.1101/586560](https://www.biorxiv.org/content/10.1101/586560v1)).
 
+The paper as of today is still under review.
+
 The package integrates evolutionary theory and Machine-Learning to
 analyze bulk sequencing data of a cancer biopsy - ideally,
 high-resolution whole-genome sequencing data (e.g., WGS \>100x).
@@ -32,7 +34,7 @@ analyses.
 
 #### Help and support
 
-[![](https://img.shields.io/badge/GitHub%20Pages-https://caravagn.github.io/mobster/-yellow.svg)](https://caravagn.github.io/mobster)
+[![](https://img.shields.io/badge/GitHub%20Pages-https://caravagn.github.io/mobster/-steelblue.svg)](https://caravagn.github.io/mobster)
 
 ### Installation
 
@@ -51,7 +53,7 @@ devtools::install_github("caravagn/mobster")
 Giulio Caravagna, PhD. *Institute of Cancer Research, London,
 UK*.
 
-[![](https://img.shields.io/badge/Email-gcaravagn@gmail.com-seagreen.svg)](mailto:gcaravagn@gmail.com)
-[![](https://img.shields.io/badge/Github-caravagn-seagreen.svg)](https://github.com/caravagn)
-[![](https://img.shields.io/badge/Twitter-@gcaravagna-steelblue.svg)](https://twitter.com/gcaravagna)
-[![](https://img.shields.io/badge/Personal%20webpage-https://bit.ly/2kc9E6Y-red.svg)](https://sites.google.com/site/giuliocaravagna/)
+[![](https://img.shields.io/badge/Email-gcaravagn@gmail.com-informational.svg?style=social)](mailto:gcaravagn@gmail.com)
+[![](https://img.shields.io/badge/caravagn-informational.svg?style=social&logo=GitHub)](https://github.com/caravagn)
+[![](https://img.shields.io/badge/@gcaravagna-informational.svg?style=social&logo=Twitter)](https://twitter.com/gcaravagna)
+[![](https://img.shields.io/badge/Personal-homepage-informational.svg?style=social&logo=Google)](https://sites.google.com/site/giuliocaravagna/)
