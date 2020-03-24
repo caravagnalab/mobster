@@ -1,0 +1,140 @@
+---
+title: "Introduction"
+author: "Giulio Caravagna"
+date: "September 2019"
+institute: "Institute for Cancer Research"
+email: "giulio.caravagna@icr.ac.uk"
+output: rmarkdown::github_document
+vignette: >
+  %\VignetteIndexEntry{Introduction}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+```{r, message=FALSE, warning=F}
+library(mobster)
+library(tidyr)
+library(dplyr)
+```
+
+
+
+## Input data
+
+Input data must be a `data.frame` (or, `tibble`) with a columun named `VAF` whose values are numerical $0<x<1$, without `NA` entries. Extra columns will be retained, but not modified.
+
+```{r, message=FALSE, warning=F}
+# Exanple dataset
+mobster::PD4120a_breast_sample$best$data %>% as_tibble
+```
+`PD4120a_breast_sample` is an example dataset [available within the package](https://github.com/caravagn/MOBSTER/docs/reference/index.html). Other datasets can be loaded as `data("xxx", package = 'mobster')` where `xxx` is the dataset name.
+
+**Generating radom datasets.** You can sample a random dataset with the `random_dataset` function, setting:
+
+* the number of mutations (`n`) and Beta components (`k`, subclones) to generate;
+* ranges and constraints on the size of the components;
+* ranges for the mean and variance of the Beta components.
+
+The variance of the Betas is sampled as $u/B \~ U[0,1]$, where $B$  is set via parameter  `Beta_variance_scaling`. Roughly, values of `Beta_variance_scaling` on the order of `1000` give low variance (shark peaked distributions) representative of high-coverage sequencing; lower values mimick data observed at low-sequencing coverage.
+
+```{r, message=FALSE, warning=F}
+dataset = random_dataset(
+  seed = 123, 
+  Beta_variance_scaling = 100    # variance ~ U[0, 1]/Beta_variance_scaling
+  )
+```
+
+A list with 3 components is returned with the actual data, sampled parameters of the generative model, and a plot of the data. 
+
+In `mobster` we provide the implementation of the model's density function (`ddbpmm`, density Dirichlet Beta Pareto mixture model) , and a sampler (`rdbpmm`) which is used internally by `random_dataset`.
+
+
+```{r, fig.width=4, fig.height=3}
+# Data, in the MOBSTER input format with a "VAF" column.
+print(dataset$data)
+
+# The generated model contains the parameters of the Beta components (a and b),
+# the shape and scale of the tail, and the mixing proportion. 
+print(dataset$model)
+
+# A plot object (ggplot) is available where each data-point is coloured by 
+# its generative mixture component. The vertical lines annontate the means of
+# the sampled Beta distributions.
+print(dataset$plot)
+```
+
+## Fitting a dataset
+
+Function `mobster_fit` fits a MOBSTER model.
+
+The function implements a model selection routine that by default scores models by their reICL (*reduced Integrative Classification Likelihood*) score, a variant to the popular BIC that uses the entropy of the latent variables of the mixture reICL is discussed in the main MOBSTER paper. 
+
+This function has several parameters to customize the fitting procedure, and a set of special pre-parametrised runs that can be activated with parameter `auto_setup`. Here we use `auto_setup = "FAST"`, an automatic setup that provides usually faster runs; default parameters test more extensive types of fits.
+
+```{r, fig.width=4, fig.height=3}
+fit = mobster_fit(
+  dataset$data,    
+  auto_setup = "FAST"
+  )
+```
+
+A call of `mobster_fit` will return a list with:
+
+* the best fit `fit$best`;
+* `fit$runs`, a list with the ranked fits; the object available in `best` matches the head of this list,;
+* `fit$fits.table`, a table that summarises the scores for each one of the runs.
+
+Each fit object (`best` or any object stored in `runs`) is from the S3 class `dbpmm`. 
+```{r, fig.width=4, fig.height=3}
+# Print the best model, as well as the first 3 models in the runs list
+print(fit$best)
+
+# Same as best
+print(fit$runs[[1]]) 
+
+# Second best fit
+print(fit$runs[[2]])
+
+# Third best fit
+print(fit$runs[[3]])
+```
+
+MOBSTER clusters can be plot as an histogram overlaid to the model density. By default MOBSTER names Beta clusters according to the decreasing order of their mean; so `C1` is always the label of the cluster with highest mean, etc. If the data are correct, this should represent the pool of clonal mutations in the analysed biopsy.
+
+```{r, fig.width=5, fig.height=4}
+# Plot the best model
+plot(fit$best)
+```
+
+The basic plot shows, mirrored on the y-axis, the percentage of cumulative sum-of-squared-error (SSE) of the fit, and the caption annotates information about the run. A comparative plot between fits can be assembled using [cowplot](https://cran.r-project.org/web/packages/cowplot/vignettes/introduction.html).
+```{r, fig.width=10, fig.height=4}
+figure = cowplot::plot_grid(
+  dataset$plot, 
+  plot(fit$best), 
+  ncol = 2,
+  align = 'h')
+
+print(figure)
+```
+
+Hard clustering assignments can be accessed with function `Clusters`, and subset imposing a minimum cutoff to the reponsibilities of the mutations. The output tibble is a copy of the input, with the new  `cluster` column (unassigned mutation with `NA`), plus a set of columns for the latent variables.
+```{r}
+# Assign mutations with at least 80% of probability mass to their maximum responsibility
+clusters = Clusters(
+  fit$best, 
+  cutoff_assignment = .8
+  )
+
+print(clusters)
+```
+
+Several functions can be used to  [plot the data](https://github.com/caravagn/MOBSTER/docs/articles/plotting.html).s
+

@@ -2,29 +2,60 @@
 % Please edit documentation in R/density.R
 \name{ddbpmm}
 \alias{ddbpmm}
-\title{Density function for a Dirichlet Beta-Pareto Mixture Model}
+\title{Density function for MOBSTER.}
 \usage{
 ddbpmm(x, data = NULL, components = 1:x$K, a = NULL, b = NULL,
   pi = NULL, scale = NULL, shape = NULL, log = TRUE)
 }
 \arguments{
-\item{x}{an object of class dbpmm}
+\item{x}{An object of class \code{"dbpmm"}.}
 
-\item{data}{data to compute the (log)-likelihood, if this is null the data stored inside the object is used.}
+\item{data}{Data to compute the (log)-likelihood, if this is null the data stored
+inside \code{x$data} is used.}
 
-\item{components}{a vector specifying which components should be used to compute the density (this is used in the implementation of the
-fitting algorithms for this mixture -- most users would not use this option).}
+\item{components}{A vector specifying which components should be used to compute
+the density. Position 1 is reserved for the tail (regardless that is fit or not
+to the data), the other positions refer to Beta components.}
 
-\item{log}{log-likelihood or just likelihood.}
+\item{a}{Vector of parameters for the Beta components; if this is null values stored
+inside \code{x} are used.}
 
-\item{init}{if TRUE, it uses the initial values for model fit, otherwise final.}
+\item{b}{Vector of parameters for the Beta components; if this is null values stored
+inside \code{x} are used.}
+
+\item{pi}{Mixing proportions for the mixture; if this is null values stored
+inside \code{x} are used.}
+
+\item{scale}{Scale of the power law; if this is null values stored
+inside \code{x} are used.}
+
+\item{shape}{Shape of the power law; if this is null values stored
+inside \code{x} are used.}
+
+\item{log}{Boolean value to select the log-likelihood, or the likelihood.}
 }
 \value{
-The density for the data. Notice, this is NOT the negative LL returned during fit (which is this value with different sign).
+The density for the data. Notice that to compute the negative log-likelihood
+used during fit one needs to use \code{log = TRUE} and change sign.
 }
 \description{
-Density function for a Dirichlet Beta-Pareto Mixture Model
+The density function for a MOBSTER mixture. The function
+allows to compute the density from the data and parameters stored
+inside an object of class \code{dbpmm}, or from
+a custom set of parameters and data that can be passed as input. The
+function can also compute the density only for a subset of components
+of the mixture.
 }
 \examples{
-Will make some..
+data('fit_example', package = 'mobster')
+
+# Use the full mixture, and its internal data
+ddbpmm(fit_example$best)
+
+# Use only some of the mixture components, and pass some data
+ddbpmm(fit_example$best, data = .4, components = 1)
+
+# An internal function to get f(x) with x the [0,1] range.
+ggplot(mobster:::template_density(fit_example$best, reduce = TRUE),
+       aes(x = x, y = y, color = cluster)) + geom_line()
 }

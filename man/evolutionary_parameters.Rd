@@ -2,41 +2,42 @@
 % Please edit documentation in R/evodynamics.R
 \name{evolutionary_parameters}
 \alias{evolutionary_parameters}
-\title{Extract evolutionary parameters using MOBSTER fit}
+\title{Extract evolutionary parameters from a MOBSTER fit}
 \usage{
-evolutionary_parameters(fit, Nmax = 10^10, lq = 0.025, uq = 0.975)
+evolutionary_parameters(x, Nmax = 10^10, lq = 0.1, uq = 0.9,
+  ploidy = 2, ncells = 2)
 }
 \arguments{
-\item{fit}{An object fit by MOBSTER}
+\item{x}{An object fit by MOBSTER.}
 
 \item{Nmax}{Time when tumour is sampled (in tumour doublings)}
 
-\item{lq}{Lower quantile}
+\item{lq}{lower quantile of VAF (0.05)}
 
-\item{uq}{Upper quantile}
+\item{uq}{upper quantile of VAF (0.95)}
+
+\item{ploidy}{of mutations (2)}
+
+\item{ncells}{Number of cells that accumulate mutations at each division 1 or 2, default is 1}
 }
 \value{
 Mutation rate, time of emergence and selection coefficient of subclones.
 }
 \description{
 Mutation rate, time of emergence and selection coefficient of subclones are calculated.
-}
-\details{
 These values are calculated based on a population genetics model of tumour evolution
-see Williams et al. 2016 and 2018 for more details.
+see Williams et al. 2016 and 2018 for more details (Nature Genetics).
 
 The mutation rate scaled by the probability of lineage survival \eqn{\beta}, \eqn{\mu/\beta} is given by:
 \deqn{\mu/\beta = M / (1/fmin - 1/fmax)}
-Where \eqn{fmin} is the minimum VAF and \eqn{fmax} is the maximum, and 
+Where \eqn{fmin} is the minimum VAF and \eqn{fmax} is the maximum, and
 \eqn{M} is the number of mutations between \eqn{fmin} and \eqn{fmax}.
 
-Selection is defined as the relative growth rates of host tumour cell 
+Selection is defined as the relative growth rates of host tumour cell
 populations (\eqn{\lambda h}) vs subclone (\eqn{\lambda s}):
 \deqn{1+s=\lambda h / \lambda s}
 }
 \examples{
-
-mobsterfit = mobster_fit(subclonedynamics, K = 1:2, tail = c(T, F))
-evolutionary_parameters(mobsterfit, Nmax = 10^6)
-
+data('fit_example', package = 'mobster')
+evolutionary_parameters(fit_example)
 }

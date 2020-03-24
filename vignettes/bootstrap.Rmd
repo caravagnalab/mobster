@@ -1,0 +1,164 @@
+---
+title: "Confidence estimation via the bootstrap"
+author: "Giulio Caravagna"
+date: "January 2020"
+institute: "Institute for Cancer Research"
+email: "giulio.caravagna@icr.ac.uk"
+output: rmarkdown::github_document
+vignette: >
+  %\VignetteIndexEntry{Confidence estimation via the bootstrap}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r, message=FALSE, warning=F}
+library(mobster)
+library(tidyr)
+library(dplyr)
+```
+
+This vignette describes how to compute the *bootstrap* confidence of a MOBSTER model.
+
+
+## Bootstrapping a model
+
+Both *parametric* and *nonparametric* bootstrap options are available: the former samples data from the model, the latter re-samples the data (with repetitions). Statistics are bootstrap estimates (averages) of the bootstrap fits. In both cases a model bootstrap probability can be computed, as well as the probability of clustering together any two mutations.
+
+We show this with a small synthetic dataset .to speed up the computation.
+```{r eval=T, fig.height=4, fig.width=8, message=FALSE, warning=FALSE}
+# Data generation
+dataset = random_dataset(
+  N = 400, 
+  seed = 123, 
+  Beta_variance_scaling = 100
+  )
+
+# Fit model -- FAST option to speed up the vignette
+fit = mobster_fit(dataset$data, auto_setup = 'FAST')
+
+# Composition with cowplot
+cowplot::plot_grid(
+  dataset$plot, 
+  plot(fit$best), 
+  ncol = 2, 
+  align = 'h') %>%
+  print
+```
+
+Now we can compute `n.resamples` nonparametric bootstraps using function `mobster_bootstrap`, passing parameters to the calls of `mobster_fit`. This function by defaults runs the fits in parallel (using a default percentage of the available cores); parallel computing capabilities are achieved using package [easypar](https://github.com/caravagn/easypar).
+
+```{r, fig.width=9, fig.height=9, message=FALSE, warning=FALSE, eval=T}
+# The returned object contains also the list of bootstrap resamples, and the fits.
+bootstrap_results = mobster_bootstrap(
+  fit$best,
+  bootstrap = 'nonparametric',
+  n.resamples = 25,
+  auto_setup = 'FAST' # forwarded to mobster_fit
+  )
+```
+The output object includes the bootstrap resamples, the fits and possible error returned by the runs.
+
+```{r}
+# Resamples are available for inspection as list of lists, 
+# with a mapping to record the mutation id of the resample data.
+# Ids are row numbers.
+print(bootstrap_results$resamples[[1]][[1]] %>% as_tibble())
+
+# Fits are available inside the $fits list
+print(bootstrap_results$fits[[1]])
+plot(bootstrap_results$fits[[1]])
+```
+
+Errors of each run are available, if any.
+```{r}
+print(bootstrap_results$errors)
+```
+
+## Bootstrap statistics
+
+Bootstrap statistics can be computed with `bootstrapped_statistics`. 
+
+With nonparametric bootstrap  the data co-clustering probability is also computed (the probability of any pair of mutations in the data to be clustered together). Note that this probability depends on the joint resample probability of each pair of mutations (each bootstrapped with probability $1/n$, for $n$ mutations).
+
+`bootstrap_statistics` shows to screen several statistics.
+
+```{r, fig.width=2, fig.height=3}
+bootstrap_statistics = bootstrapped_statistics(
+  fit$best, 
+  bootstrap_results = bootstrap_results
+  )
+```
+
+## Visualising bootstrap results
+
+Object `bootstrap_statistics` contains tibbles that can be plot with specific `mobster` functions.
+```{r, fig.width=2, fig.height=3}
+# All bootstrapped values
+print(bootstrap_statistics$bootstrap_values)
+
+# The model probability
+print(bootstrap_statistics$bootstrap_model)
+
+# The parameter stastics
+print(bootstrap_statistics$bootstrap_statistics)
+```
+
+Bootstrapping, one can plot the model frequency across re-samples. A model is identified by its mixture components (e.g., 2 Betas plus one tail).
+```{r, fig.width=2.5, fig.height=3}
+plot_bootstrap_model_frequency(
+  bootstrap_results, 
+  bootstrap_statistics
+  )
+```
+
+The bootstrap estimates of the parameters can be visualised.
+```{r, fig.width=12, fig.height=3}
+# Plot the mixing proportions
+mplot = plot_bootstrap_mixing_proportions(
+  fit$best, 
+  bootstrap_results = bootstrap_results, 
+  bootstrap_statistics = bootstrap_statistics
+  )
+
+# Plot the tail parameters
+tplot = plot_bootstrap_tail(
+  fit$best, 
+  bootstrap_results = bootstrap_results, 
+  bootstrap_statistics = bootstrap_statistics
+  )
+
+# Plot the Beta parameters
+bplot = plot_bootstrap_Beta(
+  fit$best, 
+  bootstrap_results = bootstrap_results, 
+  bootstrap_statistics = bootstrap_statistics
+  )
+
+# Figure
+figure = ggarrange(
+  mplot,
+  tplot,
+  bplot,
+  ncol = 3, nrow = 1,
+  widths = c(.7, 1, 1)
+)
+
+print(figure)
+```
+
+For a nonparametric bootstrap we can plot also the co-clustering probability of the data.
+```{r, fig.width=5.6, fig.height=5}
+
+plot_bootstrap_coclustering(
+  fit$best, 
+  bootstrap_results = bootstrap_results, 
+  bootstrap_statistics = bootstrap_statistics
+  )
+```

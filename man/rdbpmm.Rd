@@ -2,41 +2,66 @@
 % Please edit documentation in R/density.R
 \name{rdbpmm}
 \alias{rdbpmm}
-\title{Generate a random sample from a DBPMM model.}
+\title{Generate a random sample from a MOBSTER model.}
 \usage{
 rdbpmm(x, a = NULL, b = NULL, pi = NULL, shape = NULL,
   scale = NULL, n = 1, tail.cutoff = 1)
 }
 \arguments{
-\item{x}{an object with computed from MOBSTER}
+\item{x}{An object of class \code{"dbpmm"}.}
 
-\item{a}{if passed, `a` for the Beta components}
+\item{a}{Vector of parameters for the Beta components; if this is null values stored
+inside \code{x} are used.}
 
-\item{b}{if passed, `a` for the Beta components}
+\item{b}{Vector of parameters for the Beta components; if this is null values stored
+inside \code{x} are used.}
 
-\item{pi}{if passed, `pi` for the mixing proportions}
+\item{pi}{Mixing proportions for the mixture; if this is null values stored
+inside \code{x} are used.}
 
-\item{shape}{if passed, `shape` of the tail}
+\item{shape}{Shape of the power law; if this is null values stored
+inside \code{x} are used.}
 
-\item{scale}{if passed, `scale` of the tail}
+\item{scale}{Scale of the power law; if this is null values stored
+inside \code{x} are used.}
 
-\item{n}{number of samples required}
+\item{n}{Number of samples required (i.e., points).}
 
-\item{tail.cutoff}{reject Pareto Type I samples above this value (ensure that will be returned
-the number of samples required anyway).}
+\item{tail.cutoff}{Because the Pareto Type I power law has support
+over all the positive real line, tail values above \code{tail.cutoff}
+are rejected (and re-sampled).}
 }
 \value{
 n samples from the mixture
 }
 \description{
-Generate a random sample from a DBPMM model.
+This function can be used to generate data from a MOBSTER
+model, or from a custom mixture. The principle is the same of function
+\code{\link{ddbpmm}}.
 }
 \examples{
+# 1 Beta component at 0.5 mean (symmetrical Beta)
 a = b = 50
 names(a) = names(b) = "C1"
 
+# 60\% tail mutations
 pi = c('Tail' = .6, 'C1' = .4)
 
-v = rdbpmm(x = NULL, n = 1000, a = a, b = b, pi = pi, shape = 2, scale = 0.05)
-hist(v, breaks = seq(0, 1, 0.01))
+# Sample
+v = data.frame(x = rdbpmm(
+   x = NULL,
+   n = 1000,
+   a = a,
+   b = b,
+   pi = pi,
+   shape = 2,
+   scale = 0.05
+ ))
+ggplot(v, aes(x)) + geom_histogram(binwidth = 0.01)
+
+# Or use the parameters of a model available
+data('fit_example', package = 'mobster')
+
+v = data.frame(x = rdbpmm(x = fit_example$best, n = 1000))
+ggplot(v, aes(x)) + geom_histogram(binwidth = 0.01)
 }

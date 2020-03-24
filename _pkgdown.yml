@@ -1,0 +1,88 @@
+template:
+  params:
+    part_of: evoverse
+    footer: Test of my footer
+url:
+  caravagn.github.io/mobster
+  
+articles:
+- title: R Markdown
+  contents:
+  - starts_with("authoring")
+- title: Websites
+  contents:
+  - rmarkdown_websites
+  - rmarkdown_site_generators
+
+  
+authors:
+  Giulio Caravagna:
+    href: https://sites.google.com/site/giuliocaravagna/
+
+reference:
+- title: Available data
+  desc:  Data and fits released with the package
+  contents:
+  - fit_example
+  - LU4_lung_sample 
+  - LUFF76_lung_sample 
+  - PD4120a_breast_sample
+  - cancer_genes_dnds
+
+- title: Fitting functions
+  desc:  Functions to cluster the data, extract the results, and use the density of a `mobster` fit to generated datasets.
+  contents:
+  - mobster_fit
+  - choose_clusters
+  - Clusters
+  - Clusters_denovo
+  - ddbpmm
+  - rdbpmm
+  - random_dataset
+
+- title: S3 functions
+  desc:  Mobster S3 object.
+  contents:
+  - print.dbpmm
+  - summary.dbpmm
+  - plot.dbpmm
+  
+- title: Plotting functions
+  desc:  These functions can be used to plot data, fits and clusters from a REVOLVER cohort object.
+  contents:
+  - plot_NLL
+  - plot_entropy
+  - plot_fit_scores
+  - plot_gofit
+  - plot_init
+  - plot_latent_variables
+  - plot_mixing_proportions
+  - plot_model_selection
+  
+  
+- title: Bootstrap functions
+  desc:  Bootstrap function for `mobster` fits.
+  contents:
+  - mobster_bootstrap
+  - bootstrapped_statistics
+  - plot_bootstrap_Beta
+  - plot_bootstrap_coclustering
+  - plot_bootstrap_mixing_proportions
+  - plot_bootstrap_model_frequency 
+  - plot_bootstrap_tail
+
+  
+- title: Extra features
+  desc:  Other analyses for `mobster` fits.
+  contents:
+  - dnds
+  - evolutionary_parameters
+  - fit_animation
+
+
+
+
+
+
+
+
