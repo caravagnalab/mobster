@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 
 `mobster` is a package that implements a model-based clustering approach to _subclonal deconvolution_ from cancer genome sequencing data ([Caravagna et al.; https://doi.org/10.1101/586560](https://www.biorxiv.org/content/10.1101/586560v1), _under review_).
 
-The package integrates evolutionary theory and Machine-Learning to analyze (e.g., whole-genome) bulk cancer sequencing data. This analysis problem relates to clustering; we approach it via a maximum-likelihood formulation (mixture models), and use bootstrap routines to assess confidence of the parameters. The package implements S3 objects to visualize the data and the fits
+The package integrates evolutionary theory and Machine-Learning to analyze (e.g., whole-genome) bulk data from cancer samples. This analysis relates to clustering; we approach it via a maximum-likelihood formulation of Dirichlet mixture models, and use bootstrap routines to assess the confidence of the parameters. The package implements S3 objects to visualize the data and the fits.
 
 `mobster` is part of the `evoverse` set of [R packages](https://caravagn.github.io/evoverse) to implement Cancer Evolution analyses.
 

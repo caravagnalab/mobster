@@ -11,21 +11,17 @@ maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www
 <!-- badges: end -->
 
 `mobster` is a package that implements a model-based clustering approach
-to subclonal deconvolution from cancer genome sequencing data
+to *subclonal deconvolution* from cancer genome sequencing data
 ([Caravagna et al.;
-https://doi.org/10.1101/586560](https://www.biorxiv.org/content/10.1101/586560v1)).
-
-The paper as of today is still under review.
+https://doi.org/10.1101/586560](https://www.biorxiv.org/content/10.1101/586560v1),
+*under review*).
 
 The package integrates evolutionary theory and Machine-Learning to
-analyze bulk sequencing data of a cancer biopsy - ideally,
-high-resolution whole-genome sequencing data (e.g., WGS \>100x).
-`mobster` fits can be computed via moment-matching or
-maximum-likelihood, and model selection can be done with multiple
-likelihood-based scores (BIC, ICL and reICL, a new reduced-entropy
-variation to ICL). S3 objects allow easy visualization of the data, the
-fits and the quality of the model. Parametric and nonparametric
-bootstrap routines are available to assess confidence of the parameters.
+analyze (e.g., whole-genome) bulk data from cancer samples. This
+analysis relates to clustering; we approach it via a maximum-likelihood
+formulation of Dirichlet mixture models, and use bootstrap routines to
+assess the confidence of the parameters. The package implements S3
+objects to visualize the data and the fits.
 
 `mobster` is part of the `evoverse` set of [R
 packages](https://caravagn.github.io/evoverse) to implement Cancer
