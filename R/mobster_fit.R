@@ -106,22 +106,13 @@ mobster_fit = function(x,
   
   X = tibble::as_tibble(x)
   
-  cli::cli_alert_success("Loaded input data, n = {.value {nrow(x)}}.")
+  mobster:::m_ok("Loaded input data, n = {.value {nrow(x)}}.") %>% cli::cli_text()
   
   ###################### Auto setup of parameters
   if (!is.null(auto_setup))
   {
     # Get the parameters, checks they are known, throws errors.
     template = auto_setup(auto_setup)
-    
-    # cat(
-    #   "\n\n",
-    #   '\t',
-    #   crayon::bgWhite(crayon::black(
-    #     "[MOBSTER AUTOMATIC SETUP] ", auto_setup
-    #   )),
-    #   " Overrides any parameter you have set.\n\n"
-    # )
     
     K = template$K
     samples = template$samples
@@ -155,20 +146,20 @@ mobster_fit = function(x,
   ntests = nrow(tests)
   
   ###################### Print message
-  cli::cli_alert_info(
+  mobster:::m_txt(
     "n = {.value {nrow(x)}}. Mixture with k = {.field {paste(K, collapse = ',')}} Beta(s). Pareto tail: {.field {tail}}. Output clusters with \u03c0 > {.value {pi_cutoff}} and n > {.value {N_cutoff}}."
-  )
+  ) %>% cli::cli_text()
   
   if (!is.null(auto_setup))
-    cli::cli_alert_warning("mobster automatic setup {.field {auto_setup}} for the analysis.")
+    mobster:::m_wrn("mobster automatic setup {.field {auto_setup}} for the analysis.") %>% cli::cli_text()
   else
-    cli::cli_alert_info(
+    mobster:::m_txt(
       'Custom fit by {.field {ifelse(fit.type == \'MM\', "Moments-matching", "Maximum-Likelihood")}} in up to {.value {maxIter}} steps, with \u03B5 = {.value {epsilon}} and {.field {init}} initialisation.'
-    )
+    ) %>% cli::cli_text()
   
-  cli::cli_alert_info(
+  mobster:::m_txt(
     'Scoring ({.value {ifelse(parallel, green("with parallel"), red("without parallel"))}}) {.value {samples}} x {.value {length(K)}} x {.value {length(tail)}} = {.field {ntests}} models by {.field {model.selection}}.'
-  )
+  ) %>% cli::cli_text()
   cat('\n')
   
   
@@ -219,12 +210,8 @@ mobster_fit = function(x,
   TIME = difftime(as.POSIXct(Sys.time(), format = "%H:%M:%S"), TIME, units = "mins")
   
   cat('\n\n')
-  cli::cli_alert_info(
-    paste(bold("MOBSTER best fit"), 'completed in',
-      round(TIME, 2),
-      'mins'))
+  mobster:::m_inf("{crayon::bold('MOBSTER fits')} completed in {.value {prettyunits::pretty_dt(TIME)}}.") %>% cli::cli_text()
   cat('\n')
-  
   
   # Get all scores
   scores_succesfull_tasks = lapply(runs, function(w)

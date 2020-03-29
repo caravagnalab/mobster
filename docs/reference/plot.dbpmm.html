@@ -119,6 +119,9 @@
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         
@@ -144,8 +147,9 @@
     <p>Plot a MOBSTER fit.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plot.dbpmm</span>(<span class='no'>x</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.8</span>, <span class='kw'>colors</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>Tail</span> <span class='kw'>=</span> <span class='st'>"gainsboro"</span>),
-  <span class='kw'>cutoff_assignment</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>annotation_extras</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>plot.dbpmm</span>(<span class='no'>x</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.7</span>, <span class='kw'>colors</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>Tail</span> <span class='kw'>=</span> <span class='st'>"gainsboro"</span>),
+  <span class='kw'>cutoff_assignment</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>annotation_extras</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>secondary_axis</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -174,6 +178,12 @@ only mutations with responsibility above this parameter.</p></td>
       <th>annotation_extras</th>
       <td><p>A dataframe that contains a label column, and a VAF value.
 The labels will be annotated to the corresponding clusters of the VAF values.</p></td>
+    </tr>
+    <tr>
+      <th>secondary_axis</th>
+      <td><p><code>NULL</code> to leave the second axis empty, <code>"SSE"</code> to 
+report the cumulative percentage of SSE error, and <code>"N"</code> to report the
+cumulative number of mutations.</p></td>
     </tr>
     <tr>
       <th>...</th>

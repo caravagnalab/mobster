@@ -71,13 +71,13 @@ mobster_bootstrap = function(x,
   # Save data if required
   if(!is.null(save_data) & is.character(save_data))
   {
-    cli::cli_alert_info("Resamples saved to file {.field {save_data}.RData}")
+    mobster:::m_inf("Resamples will be saved to file {.field {save_data}.RData}")
     
     save(resamples, file = paste0(save_data, '.RData'))
   }
   
   cat('\n')
-  cli::cli_rule("Running fits", right = "Might take some time")
+  cli::cli_rule("Running fits", right = "Might take some time ... ")
 
   # easypar
   fits = easypar::run(
@@ -116,7 +116,6 @@ mobster_bootstrap = function(x,
   }
   
   fits = easypar::filterErrors(fits)
-  
   
   return(list(resamples = resamples, fits = fits, bootstrap = bootstrap, errors = errors))
 }

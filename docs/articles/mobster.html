@@ -64,6 +64,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/Example_tumour_simulation.html">Visualizing subclonal expansions</a>
+    </li>
+    <li>
       <a href="../articles/bootstrap.html">Confidence estimation via the bootstrap</a>
     </li>
     <li>
@@ -79,6 +82,9 @@
       <a href="../articles/popgen.html">Population Genetics statistics for mobster fits</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right"></ul>
@@ -106,28 +112,23 @@
 
     
     
-<p><code>mobster</code> implements a <code>(k+1)</code>-dimensional Dirichlet mixture model to detect ongoing positive subclonal selection from cancer genome sequencing data. The models performs a deconvolution of the site/ allele frequency spectrum of mutation data (signal).</p>
-<p>The statistical model in <code>mobster</code> integrates principles from both <em>evolutionary theory</em> and <em>Machine Learning</em>. The mixture contains two types of distributions:</p>
+<p><code>mobster</code> implements a Dirichlet finite mixture model to detect ongoing positive subclonal selection from cancer genome sequencing data. The algorithm works best with high-resolution whole-genome sequencing data.</p>
+<p><img src="mobster_files/figure-html/unnamed-chunk-3-1.png" width="384"></p>
+<p>The models performs a deconvolution of the site/ allele frequency spectrum of mutation data (the <em>signal</em>), and looks for models with <code>k+1</code> mixture components to fit the data. The plot above shows a subclonal expansion (<code>C2</code>, at about <code>30%</code> allelic frequency) outgrowing an ancestral clonal population (<code>C1</code>, at <code>50%</code> allelic frequency for heterozygous mutations), as <a href="https://caravagn.github.io/mobster/articles/Example_tumour_simulation.html">expected from the interplay of positive and neutral selection forces</a>.</p>
+<p>Inspired from both <em>mathematical modelling of evolutionary processes</em> and <em>Machine Learning</em>, the signal is modeled as mixture density with two types of distributions:</p>
 <ul>
-<li>Beta distributions (<code>k</code>), that capture <code>k</code> peaks of alleles raising up in frequency, as a proxy for subclone enjoying positive selection;</li>
-<li>One ParetoType-I power law for within-clone neutral dynamics, a distribution predicted by theoretical Population Genetics.</li>
+<li>
+<code>k</code> Betas to capture the peaks of alleles raising up in frequency in different clones (subclones enjoying positive selection, and the clonal cluster);</li>
+<li>
+<code>1</code> Pareto Type-I power law to model within-clone neutral dynamics, which is the distribution predicted by theoretical Population Genetics.</li>
 </ul>
-<p>This is a model-based method to analyse cancer data, where the “model” is the power law tail that is used to integrate evolutionary dynamics in this analysis. Results from <code>mobster</code> deconvolution can be used to reconstruct the clonal architecture of a tumour (subclonal deconvolution), focusing on potential patterns of functional heterogeneity.</p>
+<p>This is a <em>model-based</em> approach to analyse cancer data, meaning that a power law tail is used to integrate evolutionary dynamics in this traditional clustering problem. Results from <code>mobster</code> deconvolution can be used to reconstruct the clonal architecture of a tumour (<em>subclonal deconvolution</em>) and identify patterns of functional heterogeneity (subclones under positive selection).</p>
 <div id="available-vignettes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#available-vignettes" class="anchor"></a>Available vignettes</h2>
-<ul>
-<li>
-<a href="https://caravagn.github.io/mobster/articles/introduction.html">Introduction (data formats, example datasets)</a>.</li>
-<li>
-<a href="https://caravagn.github.io/mobster/articles/plotting.html">Plotting mobster fits</a>.</li>
-<li>
-<a href="https://caravagn.github.io/mobster/articles/dnds.html">dN/dS statistics of mobster fits</a>.</li>
-<li>
-<a href="https://caravagn.github.io/mobster/articles/popgen.html">Population Genetics statistics of mobster fits</a>.</li>
-<li>
-<a href="https://caravagn.github.io/mobster/articles/bootstrap.html">Confidence estimation via the bootstrap</a>.</li>
-</ul>
+<p>We suggest you to <a href="https://caravagn.github.io/mobster/articles/introduction.html">read about some example data</a> and then <a href="https://caravagn.github.io/mobster/articles/plotting.html">move on to plot the fits</a> of your analysis.</p>
+<p>That is the basics, but if you want to do more you can use your fits to <a href="https://caravagn.github.io/mobster/articles/dnds.html">compute dN/dS statistics</a> from the clusters, or <a href="https://caravagn.github.io/mobster/articles/popgen.html">extract Population Genetics parameters</a> of tumour growth. You should also <a href="https://caravagn.github.io/mobster/articles/bootstrap.html">assess the confidence of your estimates</a> via the bootstrap.</p>
+<p>For a real case study with <code>mobster</code>, check the <a href="https://caravagn.github.io/">Supplementary Data</a> released with our paper.</p>
 </div>
   </div>
 

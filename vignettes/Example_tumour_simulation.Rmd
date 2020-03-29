@@ -1,0 +1,139 @@
+---
+title: "Visualizing subclonal expansions"
+author: "Giulio Caravagna and Marc Williams"
+date: "February 2019"
+institute: "Institute for Cancer Research"
+email: "giulio.caravagna@icr.ac.uk"
+output: rmarkdown::github_document
+vignette: >
+  %\VignetteIndexEntry{Introduction}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Stochastic branching processes models of tumour growth describe cell division processes and the propagation of somatic alleles that accrue during tumour evolution. 
+
+In this RMarkdown, we use these population genetics models to visualise the joint effects of _neutral evolution_ and _positive selection_ on sequencing data of tumour's Variant Allele Frequencies (VAFs).
+
+You can generate similar dynamics using the [Tumour Emulator (TEMULATOR)](https://t-heide.github.io/TEMULATOR) available at the [Sottoriva Lab](http://www.sottorivalab.org/). 
+
+# Simulated tumour growth
+
+We have simulated a tumour with 2 clones. The tumours starts with the ancestral clone at time `t = 0`, and the subclone with increased positive selection relative to its ancestor ($s>0$), emerging at time `t = 9`. 
+
+We load the simulation object [simulationdata.Rdata](./simulationdata.Rdata).
+
+```{r, warning=FALSE, message=FALSE}
+require(mobster)
+require(dplyr)
+require(tibble)
+require(ggplot2)
+
+# Load input data from Marc
+load('simulationdata.Rdata')
+
+# Split by time point (`d` variable)
+df.steps = split(df, f = df$d)
+
+# Integer times
+t_integers = df$d %>%  round() %>% unique %>% sort 
+
+df = df %>% 
+  as_tibble() %>%
+  filter(d %in% t_integers) %>%
+  mutate(cloneid = paste0(cloneid)) 
+
+print(df %>% as_tibble)
+```
+
+We first use `gganimate` to create a GIF of the simulated data.
+
+```{r, fig.width=5, fig.height=6, warning=F, message=F}
+ani = df %>%
+  as_tibble()  %>%
+  mutate(cloneid = paste0(cloneid)) %>%
+  ggplot(aes(x = VAF, fill = cloneid)) +
+  geom_histogram(binwidth = 0.01) +
+  gganimate::transition_states(
+    d,
+    transition_length = 2,
+    state_length = 2
+    ) +
+  gganimate::ease_aes('cubic-in-out') +
+  ylab("Counts (number of mutations)") +
+  labs(
+    title = 'Simulated VAF distribution',
+    subtitle = 'Tumour doublings (clock): t = {closest_state}'
+    ) +
+  ggthemes::scale_fill_ptol() +
+  CNAqc:::my_ggplot_theme() 
+
+  gganimate::animate(ani,
+                   width = 480,
+                   height = 480,
+                   renderer = gganimate::magick_renderer())
+```
+
+
+The time units of the plot are _genome doublings_. We have simulate Poisson-distributed  *whole-genome sequencing* (WGS)  data at `120x` median depth, and perfect tumour purity (`100%`). These parameters affect the observable dynamics; here the subclone is visible after `t = 14` doublings, and sweeps completely at `t = 19`.
+
+We can plot the data distribution at each of a discrete set of time-points.
+
+```{r, fig.width=14, fig.height=6, warning=F, message=F}
+df %>%
+  ggplot(aes(x = VAF, fill = cloneid)) +
+  geom_histogram(binwidth = 0.01) +
+  theme_light() +
+  facet_wrap( ~ d, nrow = 3) +
+  geom_vline(xintercept = 0.05,
+             linetype = 'dashed',
+             size = .3) +
+  labs(
+    title = 'Snapshots of tumour growth with positive subclonal selection dynamics', 
+    y = "Counts", 
+    x = 'Simulated VAF'
+    ) +
+  CNAqc:::my_ggplot_theme() +
+  ggthemes::scale_fill_ptol()
+```
+WGS data are simulated independently at each time-point, and the VAFs at each point are therefore uncorrelated. The monoclonal ancestral population is dark blue; mutations in the new subclone plus the hitchikkers are coloured in purple. 
+
+The dynamics of the tumour span from time `t=0` to `t=23`; the subclone is undetectable before `t=14`, and  has sweeped through at the end of the simulation.
+
+# MOBSTER fits
+
+We capture the dynamics (fit and plot) with a snapshot function `snap`. 
+```{r, fig.width=10, fig.height=4, warning=F, message=T, echo=T}
+snap = function(data, t, ...)
+{
+  x = data[[t]]
+  x = x[x$VAF > 0.05,]
+  
+  time_label = paste0('t_0 = ', x$d[1])
+  
+  # Ellipsis to get what fits we want
+  f = mobster_fit(x, description = time_label, ...)$best
+  
+  return(list(fit = f, plot = plot(f) + labs(title = time_label)))
+}
+
+# Initial clone (monoclonal)
+initiation = snap(data = df.steps, t = 5, K = 1, samples = 1, parallel = FALSE)
+
+# Ongoing subclonal expansion (polyclonal)
+selection =  snap(data = df.steps, t = 34, K = 2, samples = 1, parallel = FALSE) 
+
+# Sweeped clone (monoclonal)
+sweep =  snap(data = df.steps, t = length(df.steps), K = 1, samples = 1, parallel = FALSE) 
+
+cowplot::plot_grid(initiation$plot, selection$plot, sweep$plot, nrow = 1)
+```
+
+Notice that the tail at the end of the simulation is now mostly dominated by the progeny of the most recent clone, and the amount of mutations in the tail and the clonal cluster is balanced as in the beginning of the simulation. This because in this simulation the mutation rate of the tumour is the same across all simulated clones. 

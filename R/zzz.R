@@ -37,8 +37,7 @@
     www = "https://caravagn.github.io/mobster/"
     em = "gcaravagn@gmail.com"
     
-    cli::cli_alert_success(
-      'Loading {.field {pk}}, {.emph \'{pk_l}\'}. Support : {.url { www}}' )
+    cli::cli_text("{crayon::green(clisymbols::symbol$tick)} Loading {.field {pk}}, {.emph \'{pk_l}\'}. Support : {.url { www}}.")
     
     options(mobster_welcome_message = FALSE) 
   }
