@@ -74,27 +74,23 @@ print.dbpmm = function(x, ...)
   pi = round(x$pi[sor_p], digits = 2) * 100
   pi = pi[pi > 0]
   pi_label = paste0(pi, '% [', yellow(names(pi)), ']')
-  cli::cli_li(
-    ' Clusters: \u03C0 = {.value {pi_label}}, with \u03C0 > 0.'
-  )  
+  
+  mobster:::m_txt(
+    ' Clusters: \u03C0 = {.value {pi_label}}, with \u03C0 > 0.',
+    symbol = 'clisymbols::symbol$bullet'
+  ) %>% cli::cli_text()
   
   
   if (!x$fit.tail)
-    cli::cli_alert_danger("No tail fit.")
+    cli::cli_text("{crayon::red(clisymbols::symbol$cross)} No tail fit.") %>% cli::cli_text()
   else
-    cli::cli_li(
+    mobster:::m_txt(
       paste(
         sprintf('%7s', 'Tail'),
         "[n = {.value {n.tail}}, {.value {pi.tail}}%] with alpha = {.value {shape.tail}}."
-      )
-    )
-  
-  # if (!x$fit.tail)
-  #   cat(sprintf('%9s', 'Tail'), crayon::red('OFF\n'))
-  # else
-  #   cat(paste0(
-  #     sprintf('%9s', 'Tail'),
-  #     '\tn = ', n.tail, ' (', pi.tail  , ') \t Shape = ', shape.tail), '\n')
+      ),
+      symbol = 'clisymbols::symbol$bullet'
+    ) %>% cli::cli_text()
   
   B.comp = x$Clusters %>%
     dplyr::filter(cluster != 'Tail', type == 'Mean' |
@@ -106,42 +102,14 @@ print.dbpmm = function(x, ...)
   B.comp$Mean = round(B.comp$Mean, 2)
   
   for (i in 1:nrow(B.comp))
-    cli::cli_li(
+    mobster:::m_txt(
       paste0(
         "Beta {.field {B.comp$cluster[i]}} [n = {.value {clus.size[B.comp$cluster[i]]}}, {.value {B.comp$`Mixing proportion`[i]}}%] with mean = {.value {B.comp$Mean[i]}}."
-      )
-    )
-  
-  # for (i in 1:nrow(B.comp))
-  #   cat(
-  #     paste0(
-  #       sprintf('%9s', paste('Beta', B.comp$cluster[i])),
-  #       ' \tn = ',
-  #       ifelse(
-  #         B.comp$cluster[i] %in% names(clus.size),
-  #         clus.size[B.comp$cluster[i]],
-  #         crayon::red('0')
-  #       ),
-  #       ' (',
-  #       B.comp$`Mixing proportion`[i],
-  #       ') \t Mean = ',
-  #       B.comp$Mean[i],
-  #       '\n'
-  #     )
-  #   )
-  
-  
-  
-  ####################### Scores
-  # cat(crayon::black(crayon::bgYellow("\n  Scores\n")))
-  # # cat('\n')
-  # print(x$scores, row.names = '')
-  
-  cli::cli_end()
+      ),
+      symbol = 'clisymbols::symbol$bullet'
+    ) %>% cli::cli_text()
   
   # cat('\n')
   xs = round(x$scores, 2)
-  cli::cli_alert_info(
-    'Score(s): NLL = {.value {xs["NLL"]}}; ICL = {.value {xs["ICL"]}} ({.value {xs["reICL"]}}), H = {.value {xs["entropy"]}} ({.value {xs["reduced.entropy"]}}). Fit {.value {ifelse(x$status, crayon::green("converged"), crayon::red("interrupted"))}} by {.field {x$fit.type}} in {.value {length(x$all.NLL)}} steps.',
-  )
+  mobster:::m_inf('Score(s): NLL = {.value {xs["NLL"]}}; ICL = {.value {xs["ICL"]}} ({.value {xs["reICL"]}}), H = {.value {xs["entropy"]}} ({.value {xs["reduced.entropy"]}}). Fit {.value {ifelse(x$status, crayon::green("converged"), crayon::red("interrupted"))}} by {.field {x$fit.type}} in {.value {length(x$all.NLL)}} steps.') %>% cli::cli_text()
 }

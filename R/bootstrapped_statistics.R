@@ -39,7 +39,7 @@ bootstrapped_statistics = function(x, bootstrap_results, bootstrap = 'nonparamet
   
   n = length(bootstrap.fits)
   
-  cli::cli_alert_info(paste("Bootstrap observations n =", n))
+  mobster:::m_inf(paste("Bootstrap observations n =", n))
   
   cli::cli_process_start(paste("Computing model frequency"))
   
