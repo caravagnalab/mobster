@@ -113,10 +113,6 @@
     
     
 <p><code>mobster</code> implements a Dirichlet finite mixture model to detect ongoing positive subclonal selection from cancer genome sequencing data. The algorithm works best with high-resolution whole-genome sequencing data (e.g., WGS <code>&gt;100x</code>). The models performs a deconvolution of the site/ allele frequency spectrum of mutation data (the <em>signal</em>), and looks for models with <code>k+1</code> mixture components to fit the data (<code>k</code> subclones).</p>
-<pre><code>#&gt; ✓ Loading CNAqc, 'Copy Number Alteration quality check'. Support : &lt;https://caravagn.github.io/CNAqc/&gt;
-#&gt; Warning in brewer.pal(2, "Set1"): minimal value for n is 3, returning requested palette with 3 different levels
-#&gt; Scale for 'fill' is already present. Adding another scale for 'fill', which
-#&gt; will replace the existing scale.</code></pre>
 <p><img src="mobster_files/figure-html/unnamed-chunk-3-1.png" width="768"></p>
 <p>The plot shows the fit (right) of a simulated subclonal expansion (left, Muller plot with <a href="https://cran.r-project.org/web/packages/ggmuller/vignettes/ggmuller.html">ggmuller</a>); <code>C2</code>, the subclone at <code>~30%</code> allelic frequency is outgrowing an ancestral clonal population <code>C1</code>, at <code>~50%</code> allelic frequency (heterozygous mutations). Their dynamics are consistent with what we <a href="https://caravagn.github.io/mobster/articles/Example_tumour_simulation.html">expect from the interplay of positive selection between clones and neutral evolution within each clone</a>.</p>
 <p>Inspired from both <em>mathematical modelling of evolutionary processes</em> and <em>Machine Learning</em>, the signal is modeled as mixture density with two types of distributions:</p>

@@ -22,6 +22,7 @@ knitr::opts_chunk$set(
 
 ```{r, include = FALSE, warning=FALSE, message=FALSE, echo=F}
 require(dplyr)
+require(CNAqc)
 
 load('simulationdata.Rdata')
 
@@ -41,7 +42,7 @@ mydf = df %>% as_tibble() %>%
 
 Muller_df <- ggmuller::get_Muller_df(data.frame(Parent = 'Ancestral', Identity = 'Subclone'), mydf)
 ```
-```{r, fig.width=8, fig.height=3, echo=FALSE}
+```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE,message=FALSE}
 cowplot::plot_grid(
   ggmuller::Muller_pop_plot(Muller_df) + 
     CNAqc:::my_ggplot_theme() +
