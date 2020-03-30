@@ -69,7 +69,6 @@
 #' print(x$best)
 #'
 #' lapply(x$runs[1:3], plot)
-#'
 mobster_fit = function(x,
                        K = 1:3,
                        samples = 5,

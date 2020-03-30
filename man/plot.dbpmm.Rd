@@ -39,6 +39,8 @@ Plot a MOBSTER fit.
 \examples{
 data(fit_example)
 plot(fit_example$best)
+plot(fit_example$best, secondary_axis = 'SSE')
+plot(fit_example$best, secondary_axis = 'N')
 plot(fit_example$best, alpha = 1, cutoff_assignment = .7)
 plot(fit_example$best, colors =  c(`Tail` = 'gainsboro', `C1` = 'darkorange'))
 }

@@ -1,10 +1,19 @@
+destination: docs
+
 template:
   params:
     part_of: evoverse
-    footer: Test of my footer
+    footer: G. Caravagna, PhD.
 url:
   caravagn.github.io/mobster
   
+repo:
+  url:
+    home: https://github.com/caravagn/mobster/
+    source: https://github.com/caravagn/mobster
+    issue: https://github.com/caravagn/mobster/issues
+    user: https://github.com/caravagn
+
 articles:
 - title: R Markdown
   contents:
@@ -78,6 +87,7 @@ reference:
   - dnds
   - evolutionary_parameters
   - fit_animation
+  - get_clone_trees
 
 
 

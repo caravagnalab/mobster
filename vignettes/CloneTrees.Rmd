@@ -1,0 +1,101 @@
+---
+title: "Computing clone trees from mobster fits"
+author: "Giulio Caravagna"
+date: "January 2020"
+institute: "Institute for Cancer Research"
+email: "giulio.caravagna@icr.ac.uk"
+output: rmarkdown::github_document
+vignette: >
+  %\VignetteIndexEntry{Computing clone trees from mobster fits}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+<center>
+<a href="https://caravagn.github.io/mobster"><img src="https://caravagn.github.io/mobster/reference/figures/logo.png" width=77px height=91px></img></a>
+<a href="https://caravagn.github.io/ctree"><img src="https://caravagn.github.io/ctree/reference/figures/logo.png" width=77px height=91px></img></a>
+</center>
+<br>
+
+```{r, message=FALSE, warning=F}
+library(mobster)
+library(tidyr)
+library(dplyr)
+```
+
+This vignette explains how to compute _clone trees_ from [MOBSTER fits.](https://caravagn.github.io/mobster)
+
+The computation is done interfacing `mobster` with [ctree](https://caravagn.github.io/ctree), another [evoverse](https://caravagn.github.io/evoverse) package. 
+
+
+
+
+# Requirements
+
+You need to have annotated in the data of your object the `gene` and `driver` status of all the annotated mutations.
+
+We show the analysis with a datasets that has only `gene` associated, and select some random genes as drivers.
+
+
+```{r, fig.width=5, fig.height=4}
+# We take one of the released datasets
+x = mobster::PD4120a_breast_sample$best
+
+# Genes are already annotated in this data
+head(x$data$gene)
+
+# Drivers we add, just taken at random from the exonic mutations.
+x$data %>% 
+  filter(region == 'exonic') %>%
+  as_tibble
+
+# SETD2 could really be a driver, we take it together with other
+# two genes from the list
+
+genes_list = c('ARHGAP31', 'ABCC5', 'SETD2')
+
+x$data = x$data %>% 
+   dplyr::mutate(
+     driver = ifelse(region == 'exonic' & gene %in% genes_list, TRUE, FALSE)
+     )
+```
+
+# Tree computation
+
+Now we get the trees using `get_clone_trees`, and extract the best tree.
+```{r, fig.width=12, fig.height=4, warning=FALSE}
+# Get the trees, select top-rank
+trees = get_clone_trees(x)
+```
+
+The _top-rank_ tree is in position `1` of `trees`,
+```{r, fig.width=12, fig.height=4, warning=FALSE}
+top_rank = trees[[1]]
+
+# Print with S3 methods
+ctree:::print.ctree(top_rank)
+```
+
+We can plot the top tree, aggregating different `ctree` plots.
+```{r, fig.width=12, fig.height=4, warning=FALSE}
+# 1) Clone tree
+# 2) Input ctree data (here adjusted VAF)
+# 3) Clone size barplot
+ggpubr::ggarrange(
+  ctree::plot.ctree(top_rank),
+  ctree::plot_CCF_clusters(top_rank),
+  ctree::plot_clone_size(top_rank),
+  nrow = 1,
+  ncol = 3
+)
+```
+
+

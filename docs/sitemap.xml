@@ -43,6 +43,9 @@
     <loc>caravagn.github.io/mobster/reference/fit_example.html</loc>
   </url>
   <url>
+    <loc>caravagn.github.io/mobster/reference/get_clone_trees.html</loc>
+  </url>
+  <url>
     <loc>caravagn.github.io/mobster/reference/mobster_bootstrap.html</loc>
   </url>
   <url>
@@ -104,26 +107,5 @@
   </url>
   <url>
     <loc>caravagn.github.io/mobster/reference/to_string.html</loc>
-  </url>
-  <url>
-    <loc>caravagn.github.io/mobster/articles/Example_tumour_simulation.html</loc>
-  </url>
-  <url>
-    <loc>caravagn.github.io/mobster/articles/bootstrap.html</loc>
-  </url>
-  <url>
-    <loc>caravagn.github.io/mobster/articles/dnds.html</loc>
-  </url>
-  <url>
-    <loc>caravagn.github.io/mobster/articles/introduction.html</loc>
-  </url>
-  <url>
-    <loc>caravagn.github.io/mobster/articles/mobster.html</loc>
-  </url>
-  <url>
-    <loc>caravagn.github.io/mobster/articles/plotting.html</loc>
-  </url>
-  <url>
-    <loc>caravagn.github.io/mobster/articles/popgen.html</loc>
   </url>
 </urlset>
