@@ -92,34 +92,7 @@ ddbpmm." />
   </a>
 </li>
 <li>
-  <a href="../articles/mobster.html">Get started</a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/bootstrap.html">Confidence estimation via the bootstrap</a>
-    </li>
-    <li>
-      <a href="../articles/dnds.html">dN/dS statistics for mobster fits</a>
-    </li>
-    <li>
-      <a href="../articles/introduction.html">Introduction</a>
-    </li>
-    <li>
-      <a href="../articles/plotting.html">Plotting mobster fits</a>
-    </li>
-    <li>
-      <a href="../articles/popgen.html">Population Genetics statistics for mobster fits</a>
-    </li>
-  </ul>
 </li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -203,7 +176,7 @@ are rejected (and re-sampled).</p></td>
     <p>n samples from the mixture</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># 1 Beta component at 0.5 mean (symmetrical Beta)</span>
+    <pre class="examples"><span class='co'># 1 Beta component at 0.5 mean (symmetrical Beta)</span>
 <span class='no'>a</span> <span class='kw'>=</span> <span class='no'>b</span> <span class='kw'>=</span> <span class='fl'>50</span>
 <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>a</span>) <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>b</span>) <span class='kw'>=</span> <span class='st'>"C1"</span>
 
@@ -220,12 +193,13 @@ are rejected (and re-sampled).</p></td>
    <span class='kw'>shape</span> <span class='kw'>=</span> <span class='fl'>2</span>,
    <span class='kw'>scale</span> <span class='kw'>=</span> <span class='fl'>0.05</span>
  ))
-<span class='fu'>ggplot</span>(<span class='no'>v</span>, <span class='fu'>aes</span>(<span class='no'>x</span>)) + <span class='fu'>geom_histogram</span>(<span class='kw'>binwidth</span> <span class='kw'>=</span> <span class='fl'>0.01</span>)</div><div class='img'><img src='rdbpmm-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'>ggplot</span>(<span class='no'>v</span>, <span class='fu'>aes</span>(<span class='no'>x</span>)) + <span class='fu'>geom_histogram</span>(<span class='kw'>binwidth</span> <span class='kw'>=</span> <span class='fl'>0.01</span>)
+
 <span class='co'># Or use the parameters of a model available</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>'fit_example'</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'mobster'</span>)
 
 <span class='no'>v</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fu'>rdbpmm</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='no'>fit_example</span>$<span class='no'>best</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1000</span>))
-<span class='fu'>ggplot</span>(<span class='no'>v</span>, <span class='fu'>aes</span>(<span class='no'>x</span>)) + <span class='fu'>geom_histogram</span>(<span class='kw'>binwidth</span> <span class='kw'>=</span> <span class='fl'>0.01</span>)</div><div class='img'><img src='rdbpmm-2.png' alt='' width='700' height='433' /></div></pre>
+<span class='fu'>ggplot</span>(<span class='no'>v</span>, <span class='fu'>aes</span>(<span class='no'>x</span>)) + <span class='fu'>geom_histogram</span>(<span class='kw'>binwidth</span> <span class='kw'>=</span> <span class='fl'>0.01</span>)</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

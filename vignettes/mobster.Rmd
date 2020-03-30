@@ -4,6 +4,12 @@ author: "Giulio Caravagna"
 date: "January 2020"
 institute: "Institute for Cancer Research"
 email: "giulio.caravagna@icr.ac.uk"
+opengraph:
+  image: 
+    src: "http://example.com/pkg/batpig.png"
+  twitter:
+    card: summary
+    creator: "@dataandme"
 output: rmarkdown::github_document
 vignette: >
   %\VignetteIndexEntry{mobster}
@@ -19,16 +25,42 @@ knitr::opts_chunk$set(
 ```
 
 `mobster` implements a Dirichlet finite mixture model to detect ongoing positive subclonal selection from cancer genome sequencing data. The algorithm works best with high-resolution whole-genome sequencing data  (e.g., WGS `>100x`). The models performs a deconvolution of the site/ allele frequency spectrum of mutation data (the _signal_), and looks for models with `k+1` mixture components to fit the data (`k` subclones).
-```{r, include = FALSE}
+
+```{r, include = FALSE, warning=FALSE, message=FALSE, echo=F}
+require(dplyr)
+require(CNAqc)
+
+load('simulationdata.Rdata')
+
+# Fit
 x = mobster::random_dataset(seed = 123, Beta_variance_scaling = 100, N = 2000)
 x$data$VAF = (x$data$VAF / max(x$data$VAF)) / 1.6
 x = mobster::mobster_fit(x$data, auto_setup = 'FAST')
+
+
+library(ggmuller)
+
+mydf = df %>% as_tibble() %>%
+  rename(Generation = d, Identity = cloneid) %>%
+  mutate(Identity = ifelse(Identity == 1, 'Ancestral', 'Subclone')) %>%
+  group_by(Generation, Identity) %>%
+  summarise(Population = n()) 
+
+Muller_df <- ggmuller::get_Muller_df(data.frame(Parent = 'Ancestral', Identity = 'Subclone'), mydf)
 ```
-```{r, fig.width=4, fig.height=3, echo=FALSE}
-mobster::plot.dbpmm(x$best) + labs(caption = NULL)
+```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE,message=FALSE}
+cowplot::plot_grid(
+  ggmuller::Muller_pop_plot(Muller_df) + 
+    CNAqc:::my_ggplot_theme() +
+    guides(fill = guide_legend('Clone')) +
+    labs(title = 'Population size (simulation)', subtitle = "Muller plot (ggmuller)") +
+    scale_fill_manual(values = alpha(brewer.pal(2, "Set1"), alpha = .7)) +
+    geom_vline(xintercept = 16, linetype = 'dashed', size = .3),
+  mobster::plot.dbpmm(x$best) + labs(caption = NULL)
+)
 ```
 
-The plot shows the fit of a subclonal expansion (`C2`, `~30%` allelic frequency) outgrowing an ancestral clonal population (`C1`, `~50%` allelic frequency for heterozygous mutations), as [expected from the interplay of positive and neutral selection forces](https://caravagn.github.io/mobster/articles/Example_tumour_simulation.html).
+The plot shows the fit (right) of a simulated subclonal expansion (left, Muller plot with [ggmuller](https://cran.r-project.org/web/packages/ggmuller/vignettes/ggmuller.html)); `C2`, the subclone at `~30%` allelic frequency is outgrowing an ancestral clonal population `C1`, at `~50%` allelic frequency (heterozygous mutations). Their dynamics are consistent with what we [expect from the interplay of positive selection between clones and neutral evolution within each clone](https://caravagn.github.io/mobster/articles/Example_tumour_simulation.html).
 
 Inspired from both _mathematical modelling of evolutionary processes_ and _Machine Learning_, the  signal is modeled as mixture density with two types of distributions:
 
@@ -48,5 +80,14 @@ We suggest you to [read about some example data](https://caravagn.github.io/mobs
 
 That is the basics, but if you want to do more you can use your fits to [compute dN/dS statistics](https://caravagn.github.io/mobster/articles/dnds.html) from the clusters, or [extract Population Genetics parameters](https://caravagn.github.io/mobster/articles/popgen.html) of tumour growth. You should also [assess the confidence of your estimates](https://caravagn.github.io/mobster/articles/bootstrap.html) via the bootstrap. 
 
+If you are confident about your clusters, you can [compute the clone trees](https://caravagn.github.io/mobster/articles/CloneTrees.html) that fit your MOBSTER analysis.
+
 For a real case study with `mobster`, check the [Supplementary Data ](https://caravagn.github.io/) released with our paper. 
 
+Check out also the [`evoverse` pipelines](https://caravagn.github.io/evoverse) that use `mobster`.
+
+<center>
+<a href="https://caravagn.github.io/mobster"><img src="https://caravagn.github.io/mobster/reference/figures/logo.png" width=77px height=91px></img></a>
+<a href="https://caravagn.github.io/evoverse"><img src="https://caravagn.github.io/evoverse/reference/figures/logo.png" width=77px height=91px></img></a>
+</center>
+<br>

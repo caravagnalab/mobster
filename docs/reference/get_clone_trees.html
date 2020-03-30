@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Plot the boostrapped tail parameters. — plot_bootstrap_Beta • mobster</title>
+<title>Return clone trees from the fit. — get_clone_trees • mobster</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,10 +42,19 @@
 
 
 
-<meta property="og:title" content="Plot the boostrapped tail parameters. — plot_bootstrap_Beta" />
-<meta property="og:description" content="From the results of a call to mobster_boostrap, and
-the results of a call to bootstrapped_statistics, a boxplot with
-the tail parameters is produced." />
+<meta property="og:title" content="Return clone trees from the fit. — get_clone_trees" />
+<meta property="og:description" content="This function uses the output fit of MOBSTER
+to create a call to ctree (https://caravagn.github.io/ctree/),
+a package to create clone trees for cancer evolution models.
+Creation of a clone tree requires annotations that are not usually 
+necessary for just a plain MOBSTER analyses. These annotations report the status of driver 
+and gene for each one of the input datapoints, and should
+be part of data given in input for MOBSTER (so they should be in x$data).
+MOBSTER clusters are only used if the come from a Beta distribtutions; that is
+the tail is removed. The clonal cluster is estimated from the cluster with the highest parameter
+value for the Beta peak.
+The output is the result of calling the constructor ctree::cetrees
+on the input clustering results x." />
 <meta property="og:image" content="caravagn.github.io/mobster/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -113,19 +122,27 @@ the tail parameters is produced." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Plot the boostrapped tail parameters.</h1>
+    <h1>Return clone trees from the fit.</h1>
     
-    <div class="hidden name"><code>plot_bootstrap_Beta.Rd</code></div>
+    <div class="hidden name"><code>get_clone_trees.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>From the results of a call to <code>mobster_boostrap</code>, and
-the results of a call to <code>bootstrapped_statistics</code>, a boxplot with
-the tail parameters is produced.</p>
+    <p>This function uses the output fit of MOBSTER
+to create a call to <code>ctree</code> (<a href='https://caravagn.github.io/ctree/'>https://caravagn.github.io/ctree/</a>),
+a package to create clone trees for cancer evolution models.</p>
+<p>Creation of a clone tree requires annotations that are not usually 
+necessary for just a plain MOBSTER analyses. These annotations report the status of <code>driver</code> 
+and <code>gene</code> for each one of the input datapoints, and should
+be part of data given in input for MOBSTER (so they should be in <code>x$data</code>).</p>
+<p>MOBSTER clusters are only used if the come from a Beta distribtutions; that is
+the tail is removed. The clonal cluster is estimated from the cluster with the highest parameter
+value for the Beta peak.</p>
+<p>The output is the result of calling the constructor <code>ctree::cetrees</code>
+on the input clustering results <code>x</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plot_bootstrap_Beta</span>(<span class='no'>x</span>, <span class='no'>bootstrap_results</span>, <span class='no'>bootstrap_statistics</span>,
-  <span class='kw'>colors</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>Tail</span> <span class='kw'>=</span> <span class='st'>"gainsboro"</span>))</pre>
+    <pre class="usage"><span class='fu'>get_clone_trees</span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -135,36 +152,42 @@ the tail parameters is produced.</p>
       <td><p>A MOBSTER fit.</p></td>
     </tr>
     <tr>
-      <th>bootstrap_results</th>
-      <td><p>Results of a call to <code>mobster_boostrap</code>.</p></td>
-    </tr>
-    <tr>
-      <th>colors</th>
-      <td><p>If provided, these colours will be used for each cluster.
-If a subset of colours is provided, palette Set1 from <code>RColorBrewer</code> is used.
-By default the tail colour is provided as 'gainsboro'.</p></td>
-    </tr>
-    <tr>
-      <th>bootstrap_statisticsResults</th>
-      <td><p>of a call to <code>bootstrapped_statistics</code>.</p></td>
+      <th>...</th>
+      <td><p>Extra parameters passed to the constructor <code>ctree::cetrees</code>, which
+affect the sampling of the trees.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A barplot of the bootstrapped tail parameters.</p>
+    <p>The output of the constructor <code>ctree::cetrees</code>.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># Random small dataset</span>
-<span class='no'>dataset</span> <span class='kw'>=</span> <span class='fu'><a href='random_dataset.html'>random_dataset</a></span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>200</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>123</span>, <span class='kw'>Beta_variance_scaling</span> <span class='kw'>=</span> <span class='fl'>100</span>)
-<span class='no'>x</span> <span class='kw'>=</span> <span class='fu'><a href='mobster_fit.html'>mobster_fit</a></span>(<span class='no'>dataset</span>$<span class='no'>data</span>, <span class='kw'>auto_setup</span> <span class='kw'>=</span> <span class='st'>'FAST'</span>)
+    <pre class="examples"><span class='co'># We take one of the released datasets</span>
+<span class='no'>x</span> <span class='kw'>=</span> <span class='kw pkg'>mobster</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/mobster/man/PD4120a_breast_sample.html'>PD4120a_breast_sample</a></span>$<span class='no'>best</span>
 
-<span class='co'># Just 5 resamples of a nonparametric bootstrap run, disabling the parallel engine</span>
-<span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span>(<span class='kw'>easypar.parallel</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-<span class='no'>boot_results</span> <span class='kw'>=</span> <span class='fu'><a href='mobster_bootstrap.html'>mobster_bootstrap</a></span>(<span class='no'>x</span>$<span class='no'>best</span>, <span class='kw'>n.resamples</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>auto_setup</span> <span class='kw'>=</span> <span class='st'>'FAST'</span>)
+<span class='co'># Genes are already annotated</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>x</span>$<span class='no'>data</span>$<span class='no'>gene</span>)
 
-<span class='no'>boot_stats</span> <span class='kw'>=</span> <span class='fu'><a href='bootstrapped_statistics.html'>bootstrapped_statistics</a></span>(<span class='no'>x</span>$<span class='no'>best</span>, <span class='no'>boot_results</span>)
-<span class='fu'>plot_bootstrap_Beta</span>(<span class='no'>x</span>, <span class='no'>boot_results</span>, <span class='no'>boot_stats</span>)</pre>
+<span class='co'># Drivers we add, just taken at random from the exonic mutations.</span>
+<span class='co'># Just print: x$data %&gt;% filter(region == 'exonic')</span>
+<span class='co'># SETD2 could really be a driver.</span>
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='no'>dplyr</span>)
+<span class='no'>genes_list</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'ARHGAP31'</span>, <span class='st'>'ABCC5'</span>, <span class='st'>'SETD2'</span>)
+<span class='no'>x</span>$<span class='no'>data</span> <span class='kw'>=</span> <span class='no'>x</span>$<span class='no'>data</span> <span class='kw'>%&gt;%</span>
+  <span class='kw pkg'>dplyr</span><span class='kw ns'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(
+    <span class='kw'>driver</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span>(<span class='no'>region</span> <span class='kw'>==</span> <span class='st'>'exonic'</span> <span class='kw'>&amp;</span> <span class='no'>gene</span> <span class='kw'>%in%</span> <span class='no'>genes_list</span>, <span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>)
+    )
+
+<span class='co'># Get the trees</span>
+<span class='no'>trees</span> <span class='kw'>=</span> <span class='fu'>get_clone_trees</span>(<span class='no'>x</span>)
+
+<span class='co'># Print and plot the first tree (top rank)</span>
+<span class='kw pkg'>ctree</span><span class='kw ns'>:::</span><span class='fu'><a href='https://rdrr.io/pkg/ctree/man/print.ctree.html'>print.ctree</a></span>(<span class='no'>trees</span><span class='kw'>[[</span><span class='fl'>1</span>]])
+<span class='kw pkg'>ctree</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ctree/man/plot.ctree.html'>plot.ctree</a></span>(<span class='no'>trees</span><span class='kw'>[[</span><span class='fl'>1</span>]])
+<span class='kw pkg'>ctree</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ctree/man/plot_CCF_clusters.html'>plot_CCF_clusters</a></span>(<span class='no'>trees</span><span class='kw'>[[</span><span class='fl'>1</span>]])
+<span class='kw pkg'>ctree</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ctree/man/plot_icon.html'>plot_icon</a></span>(<span class='no'>trees</span><span class='kw'>[[</span><span class='fl'>1</span>]])
+<span class='kw pkg'>ctree</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ctree/man/plot_clone_size.html'>plot_clone_size</a></span>(<span class='no'>trees</span><span class='kw'>[[</span><span class='fl'>1</span>]])</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

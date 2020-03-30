@@ -18,11 +18,17 @@ knitr::opts_chunk$set(
 )
 ```
 
+<center>
+<a href="https://t-heide.github.io/TEMULATOR/"><img src="https://t-heide.github.io/TEMULATOR/reference/figures/logo.png" width=77px height=91px></img></a>
+</center>
+<br>
+
+
 Stochastic branching processes models of tumour growth describe cell division processes and the propagation of somatic alleles that accrue during tumour evolution. 
 
 In this RMarkdown, we use these population genetics models to visualise the joint effects of _neutral evolution_ and _positive selection_ on sequencing data of tumour's Variant Allele Frequencies (VAFs).
 
-You can generate similar dynamics using the [Tumour Emulator (TEMULATOR)](https://t-heide.github.io/TEMULATOR) available at the [Sottoriva Lab](http://www.sottorivalab.org/). 
+You can generate similar dynamics using the R package [Tumour Emulator (TEMULATOR)](https://t-heide.github.io/TEMULATOR) or the Julia package [CancerSeqSim](https://github.com/marcjwilliams1/CancerSeqSim).
 
 # Simulated tumour growth
 
