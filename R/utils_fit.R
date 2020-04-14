@@ -84,10 +84,10 @@
       Betas,
       tibble::tribble(
         ~cluster, ~type, ~fit.value, ~init.value,
-        paste0('C',i), "a", NA, unlist(beta['a', i]),
-        paste0('C',i), "b", NA, unlist(beta['a', i]),
-        paste0('C',i), "Mean", NA, unlist(beta['mean', i]),
-        paste0('C',i), "Variance", NA, unlist(beta['var', i])
+        paste0('C',i), "a", NA, unlist(beta['a', i]) %>% as.vector,
+        paste0('C',i), "b", NA, unlist(beta['a', i]) %>% as.vector,
+        paste0('C',i), "Mean", NA, unlist(beta['mean', i]) %>% as.vector,
+        paste0('C',i), "Variance", NA, unlist(beta['var', i]) %>% as.vector
       )
     )
 
@@ -104,8 +104,8 @@
       ~cluster, ~type, ~fit.value, ~init.value,
       'Tail', "Shape", NA, shape,
       'Tail', "Scale", NA, scale,
-      'Tail', "Mean", NA, mv$mean,
-      'Tail', "Variance", NA, mv$var
+      'Tail', "Mean", NA, mv$mean %>% as.vector,
+      'Tail', "Variance", NA, mv$var %>% as.vector
     )
   }
 
