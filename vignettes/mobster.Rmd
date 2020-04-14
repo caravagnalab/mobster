@@ -5,11 +5,9 @@ date: "January 2020"
 institute: "Institute for Cancer Research"
 email: "giulio.caravagna@icr.ac.uk"
 opengraph:
-  image: 
-    src: "http://example.com/pkg/batpig.png"
   twitter:
     card: summary
-    creator: "@dataandme"
+    creator: "@gcaravagna"
 output: rmarkdown::github_document
 vignette: >
   %\VignetteIndexEntry{mobster}
