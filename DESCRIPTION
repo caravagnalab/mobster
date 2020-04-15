@@ -27,12 +27,20 @@ Imports:
     easypar,
     clisymbols,
     gganimate,
-    dndscv
+    dndscv,
+    cli
+RoxygenNote: 7.1.0
+Suggests: knitr,
+    rmarkdown,
+    ctree,
+    CNAqc,
+    MCMCpack,
+    webshot,
+    ggmuller
 Remotes:
     caravagn/easypar,
     caravagn/pio,
-    im3sanger/dndscv
-RoxygenNote: 7.1.0
-Suggests: knitr,
-    rmarkdown
+    im3sanger/dndscv,
+    caravagn/ctree,
+    caravagn/CNAqc
 VignetteBuilder: knitr
