@@ -5,6 +5,10 @@ cache: packages
 
 dist: xenial
 addons:
+    snaps:
+        - name: gifski
+
+addons:
     apt:
         update: true
         sources:
@@ -21,7 +25,4 @@ addons:
         - r-cran-rgdal
         - libfftw3-dev
         - cargo
-    snaps:
-        - name: gifski
-        confinement: classic
-        channel: edge
+
