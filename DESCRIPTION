@@ -38,7 +38,10 @@ Suggests: knitr,
     CNAqc,
     MCMCpack,
     webshot,
-    ggmuller
+    ggmuller,
+    png,
+    gifski,
+    magick
 Remotes:
     caravagn/easypar,
     caravagn/pio,
