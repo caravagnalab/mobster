@@ -4,7 +4,7 @@
 \alias{plot.dbpmm}
 \title{Plot a MOBSTER fit.}
 \usage{
-plot.dbpmm(
+\method{plot}{dbpmm}(
   x,
   alpha = 0.7,
   colors = c(Tail = "gainsboro"),

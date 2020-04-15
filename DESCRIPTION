@@ -28,7 +28,9 @@ Imports:
     clisymbols,
     gganimate,
     dndscv,
-    cli
+    cli,
+    magrittr,
+    tidyr
 RoxygenNote: 7.1.0
 Suggests: knitr,
     rmarkdown,

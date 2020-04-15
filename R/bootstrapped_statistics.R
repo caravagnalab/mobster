@@ -15,7 +15,7 @@
 #' @return A list with the bootstrapped values, the model frequency, the bootstraped statistics and
 #' the co-clustering probability - non-null only for nonparametric boostrap.
 #' 
-#' @importFrom cli cli_process_start cli_process_done
+#' @importFrom cli cli_process_start cli_process_done make_spinner
 #' 
 #' @export
 #'
