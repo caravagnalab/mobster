@@ -3,6 +3,7 @@
 language: R
 cache: packages
 
+dist: xenial
 addons:
     apt:
         update: true
@@ -20,8 +21,6 @@ addons:
         - r-cran-rgdal
         - libfftw3-dev
         - cargo
-
-addons:
     snaps:
         - name: gifski
         confinement: classic
