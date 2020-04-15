@@ -24,10 +24,14 @@ Imports:
     pio,
     ggpubr,
     dplyr,
-    easypar
+    easypar,
+    clisymbols,
+    gganimate,
+    dndscv
 Remotes:
     caravagn/easypar,
-    caravagn/pio
+    caravagn/pio,
+    im3sanger/dndscv
 RoxygenNote: 7.1.0
 Suggests: knitr,
     rmarkdown

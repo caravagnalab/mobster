@@ -4,7 +4,7 @@
 \alias{summary.dbpmm}
 \title{Summary for an object of class \code{'dbpmm'} is a print.}
 \usage{
-\method{summary}{dbpmm}(x, ...)
+summary.dbpmm(x, ...)
 }
 \arguments{
 \item{x}{An obj of class \code{'dbpmm'}.}
