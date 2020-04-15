@@ -4,8 +4,14 @@
 \alias{evolutionary_parameters}
 \title{Extract evolutionary parameters from a MOBSTER fit}
 \usage{
-evolutionary_parameters(x, Nmax = 10^10, lq = 0.1, uq = 0.9,
-  ploidy = 2, ncells = 2)
+evolutionary_parameters(
+  x,
+  Nmax = 10^10,
+  lq = 0.1,
+  uq = 0.9,
+  ploidy = 2,
+  ncells = 2
+)
 }
 \arguments{
 \item{x}{An object fit by MOBSTER.}

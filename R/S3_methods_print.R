@@ -22,6 +22,7 @@ summary.dbpmm = function(x, ...) {
 #' @export
 #' @import crayon
 #' @import cli
+#' @import clisymbols
 #'
 #' @examples
 #' data(fit_example)
