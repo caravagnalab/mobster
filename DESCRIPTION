@@ -6,11 +6,11 @@ Author: Giulio Caravagna
 Maintainer: Giulio Caravagna <gcaravagn@gmail.com>
 Authors@R: person("Giulio", "Caravagna", role = c("aut", "cre"), email = "gcaravagn@gmail.com")
 Description: MOBSTER is a package that implements a statistical model for tumour subclonal deconvolution
-  which combines Dirichlet mixtures with distributions predicted by theoretical population genetics. The
-  model implemented is a parametric (finite) mixture with multiple Beta components, and one Pareto power 
-  law tail. Beta components capture mutations that rise up in frequency by positive selection, and the 
-  Pareto tail models alleles resulting from neutral, intra-clone, evolutionary dynamics. MOBSTER is part of the
-  evoverse, a package that gathers multiple R packages to implement Cancer Evolution analyses.
+    which combines Dirichlet mixtures with distributions predicted by theoretical population genetics. The
+    model implemented is a parametric (finite) mixture with multiple Beta components, and one Pareto power 
+    law tail. Beta components capture mutations that rise up in frequency by positive selection, and the 
+    Pareto tail models alleles resulting from neutral, intra-clone, evolutionary dynamics. MOBSTER is part of the
+    evoverse, a package that gathers multiple R packages to implement Cancer Evolution analyses.
 License: GPL
 Encoding: UTF-8
 LazyData: true
@@ -25,6 +25,9 @@ Imports:
     ggpubr,
     dplyr,
     easypar
+Remotes:
+    caravagn/easypar,
+    caravagn/pio
 RoxygenNote: 7.0.0
 Suggests: knitr,
     rmarkdown
