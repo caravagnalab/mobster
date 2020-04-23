@@ -1,12 +1,12 @@
 ---
-title: "Population Genetics statistics for mobster fits"
+title: "4. Population Genetics statistics"
 author: "Giulio Caravagna"
 date: "January 2020"
 institute: "Institute for Cancer Research"
 email: "giulio.caravagna@icr.ac.uk"
 output: rmarkdown::github_document
 vignette: >
-  %\VignetteIndexEntry{"Population Genetics statistics for mobster fits"}
+  %\VignetteIndexEntry{4}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

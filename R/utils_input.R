@@ -2,27 +2,9 @@ is_mobster_fit = function(x)
 {
   if (!inherits(x, 'dbpmm'))
   {
-    cat(
-      crayon::red(
-        "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nThe input object is not a MOBSTER fit (see below).\n"
-      )
+    cli::cli_alert_danger(
+      "The input object is not a MOBSTER fit; if you have run \"mobster_fit\" access the object named \"best\" (e.g., x$best)."
     )
-    
-    cat(
-      crayon::red(
-        "If you have run \"mobster_fit\" to fit your data, try to access the object named \"best\" (e.g., x$best).\n"
-      )
-    )
-    
-    cat(
-      crayon::red(
-        "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-      )
-    )
-    
-    cat("\nstr() for the input object.\n")
-    print(str(x))
-    cat("\n\n")
     
     stop("Wrong parameter, a fit was instead expected.")
   }
@@ -31,13 +13,8 @@ is_mobster_fit = function(x)
 is_mobster_input_dataset = function(x)
 {
   merr = function(s) {
-    cat(
-      crayon::red(
-        "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n",
-        "The input object is not a MOBSTER valid input.\n",
-        s, '\n',
-        "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
-      )
+    cli::cli_alert_danger(
+      "The input object is not a MOBSTER fit; {.value {s}}."
     )
     
     stop("Bad MOBSTER input.")
@@ -55,15 +32,10 @@ is_mobster_input_dataset = function(x)
 is_list_mobster_fits = function(x)
 {
   merr = function(s) {
-    cat(
-      crayon::red(
-        "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n",
-        "The input object is not a MOBSTER valid list of fit returned from \"mobster_fit\".\n",
-        s, '\n',
-        "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
+      cli::cli_alert_danger(
+        "The input object is not a list of MOBSTER fits; {.value {s}}."
       )
-    )
-    
+      
     stop("Bad MOBSTER input (list of fits).")
   }
   

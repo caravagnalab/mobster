@@ -21,8 +21,7 @@
   which combines Dirichlet mixtures with distributions predicted by theoretical population genetics. The
   model implemented is a parametric (finite) mixture with multiple Beta components, and one Pareto power 
   law tail. Beta components capture mutations that rise up in frequency by positive selection, and the 
-  Pareto tail models alleles resulting from neutral, intra-clone, evolutionary dynamics. MOBSTER is part of the
-  evoverse, a package that gathers multiple R packages to implement Cancer Evolution analyses.">
+  Pareto tail models alleles resulting from neutral, intra-clone, evolutionary dynamics.">
 <meta property="og:image" content="caravagn.github.io/mobster/logo.png">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -69,25 +68,25 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="articles/CloneTrees.html">Computing clone trees from mobster fits</a>
+      <a href="articles/a1_introduction.html">1. Introduction</a>
     </li>
     <li>
-      <a href="articles/Example_tumour_simulation.html">Visualizing subclonal expansions</a>
+      <a href="articles/a2_plotting.html">2. Plotting fits</a>
     </li>
     <li>
-      <a href="articles/bootstrap.html">Confidence estimation via the bootstrap</a>
+      <a href="articles/a3_bootstrap.html">3. Bootstrap confidence estimation</a>
     </li>
     <li>
-      <a href="articles/dnds.html">dN/dS statistics for mobster fits</a>
+      <a href="articles/a4_popgen.html">4. Population Genetics statistics</a>
     </li>
     <li>
-      <a href="articles/introduction.html">Introduction</a>
+      <a href="articles/a5_dnds.html">5. dN/dS statisticss</a>
     </li>
     <li>
-      <a href="articles/plotting.html">Plotting mobster fits</a>
+      <a href="articles/a6_CloneTrees.html">6. Clone trees</a>
     </li>
     <li>
-      <a href="articles/popgen.html">Population Genetics statistics for mobster fits</a>
+      <a href="articles/a7_Example_tumour_simulation.html">7. Visualizing subclonal expansions</a>
     </li>
   </ul>
 </li>
@@ -95,7 +94,14 @@
   <a href="news/index.html">Changelog</a>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/caravagn/mobster">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 <!--/.nav-collapse -->
   </div>
@@ -139,7 +145,16 @@
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <div class="license">
+    <div class="links">
+<h2>Links</h2>
+<ul class="list-unstyled">
+<li>Browse source code at <br><a href="https://github.com/caravagn/mobster">https://​github.com/​caravagn/​mobster</a>
+</li>
+<li>Report a bug at <br><a href="https://github.com/caravagn/mobster/issues">https://​github.com/​caravagn/​mobster/​issues</a>
+</li>
+</ul>
+</div>
+<div class="license">
 <h2>License</h2>
 <ul class="list-unstyled">
 <li>GPL</li>
@@ -149,7 +164,7 @@
 <h2>Developers</h2>
 <ul class="list-unstyled">
 <li>
-<a href="https://sites.google.com/site/giuliocaravagna/">Giulio Caravagna</a> <br><small class="roles"> Author, maintainer </small>  </li>
+<a href="https://sites.google.com/site/giuliocaravagna/">Giulio Caravagna</a> <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-4240-3265" target="orcid.widget"><img src="https://members.orcid.org/sites/default/files/vector_iD_icon.svg" class="orcid" alt="ORCID"></a> </li>
 </ul>
 </div>
 
@@ -157,10 +172,9 @@
 <h2>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://travis-ci.org/caravagn/mobster"><img src="https://travis-ci.org/caravagn/mobster.svg?branch=master" alt="Travis build master"></a></li>
-<li><a href="https://travis-ci.org/caravagn/MOBSTER"><img src="https://travis-ci.org/caravagn/MOBSTER.svg?branch=development" alt="Travis build development"></a></li>
+<li><a href="https://travis-ci.org/caravagn/mobster"><img src="https://travis-ci.org/caravagn/mobster.svg?branch=development" alt="Travis build development"></a></li>
 <li><a href="https://www.tidyverse.org/lifecycle/#maturing"><img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="Lifecycle: maturing"></a></li>
 <li><a href="https://caravagn.github.io/evoverse"><img src="https://img.shields.io/badge/Part%20of-evoverse-blue.svg"></a></li>
-<li><a href="https://travis-ci.org/caravagn/MOBSTER"><img src="https://travis-ci.org/caravagn/MOBSTER.svg?branch=development" alt="Travis build status"></a></li>
 </ul>
 </div>
 </div>

@@ -8,8 +8,7 @@
 #' only the ones in \code{x} are used.
 #' @param nx Columns in the matrix layout.
 #' @param ny Rows in the matrix layout.
-#' @param TOP The top set of fits to use, if more than the one available
-#' only the ones in \code{x} are used.
+#' @param TOP The first \code{TOP} fits are used.
 #' @return A plot of the goodness of fit.
 #' @export
 #'

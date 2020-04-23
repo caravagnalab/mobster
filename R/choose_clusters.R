@@ -14,8 +14,9 @@
 #'
 #' @return A MOBSTER fit object where clusters are larger than \code{pi_cutoff} and contain
 #' at least \code{N_cutoff}. If no such cluster exists an error is generated.
+#' 
 #' @export
-#'
+#' 
 #' @examples
 #' data('fit_example', package = 'mobster')
 #'
@@ -61,7 +62,7 @@ choose_clusters = function(x,
   if(sum(tab_clusters$remove) == 0) return(x)
   
   # Clusters that remain, which we remove from a copy of x
-  remaining_clusters = tab_clusters %>% filter(!remove) %>% pull(cluster)
+  remaining_clusters = tab_clusters %>% dplyr::filter(!remove) %>% dplyr::pull(cluster)
   remaining_beta_clusters = remaining_clusters[grepl('C', remaining_clusters)]
   
   # We modify a copy of the input
@@ -69,12 +70,12 @@ choose_clusters = function(x,
   
   # Remove from the clusters table any information regarding old clusters,
   # preserving the tail's proportion as a valid entry
-  y$Clusters = y$Clusters %>% filter(cluster %in% remaining_clusters)
+  y$Clusters = y$Clusters %>% dplyr::filter(cluster %in% remaining_clusters)
   y$fit.tail = 'Tail' %in% remaining_clusters
   
   if(!(y$fit.tail)) 
     y$Clusters = y$Clusters %>%
-    bind_rows(
+    dplyr::bind_rows(
       tibble::tribble(
         ~cluster, ~type, ~fit.value, ~init.value,
         'Tail', "Mixing proportion", 0, NA

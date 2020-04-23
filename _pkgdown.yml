@@ -14,14 +14,6 @@ repo:
     issue: https://github.com/caravagn/mobster/issues
     user: https://github.com/caravagn
 
-articles:
-- title: R Markdown
-  contents:
-  - starts_with("authoring")
-- title: Websites
-  contents:
-  - rmarkdown_websites
-  - rmarkdown_site_generators
 
   
 authors:
@@ -48,6 +40,7 @@ reference:
   - ddbpmm
   - rdbpmm
   - random_dataset
+  - to_string
 
 - title: S3 functions
   desc:  Mobster S3 object.
@@ -88,7 +81,6 @@ reference:
   - evolutionary_parameters
   - fit_animation
   - get_clone_trees
-
 
 
 

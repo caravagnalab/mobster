@@ -67,7 +67,7 @@ bootstrapped_statistics = function(x, bootstrap_results, bootstrap = 'nonparamet
   models.tab = Reduce(rbind, models.tab)
   
   model_fr = data.frame(table(models.tab$Model)/n, stringsAsFactors = F)
-  model.frequency = model_fr %>% as_tibble %>% arrange(desc(Freq))
+  model.frequency = model_fr %>% as_tibble %>% dplyr::arrange(dplyr::desc(Freq))
   colnames(model.frequency) = c("Model", "Frequency")
   
   this.model = paste0(
@@ -87,21 +87,21 @@ bootstrapped_statistics = function(x, bootstrap_results, bootstrap = 'nonparamet
                               cbind(bootstrap.fits[[w]]$Clusters, `resample` = w))
   
   bootstrap.values = tibble::as_tibble(Reduce(rbind, bootstrap.values)) %>%
-    rename(statistics = type) 
+    dplyr::rename(statistics = type) 
   
   # Stats table
   fit$Clusters = fit$Clusters %>% rename(statistics = type)
   
   stats = bootstrap.values %>%
-    group_by(cluster, statistics) %>%
-    summarise(
+    dplyr::group_by(cluster, statistics) %>%
+    dplyr::summarise(
       min = min(fit.value),
       lower_quantile = quantile(fit.value, alpha, na.rm = TRUE),
       higher_quantile = quantile(fit.value, 1-alpha, na.rm = TRUE),
       max = max(fit.value)
     ) %>%
-    left_join(fit$Clusters, by = c('cluster', 'statistics')) %>%
-    ungroup()
+    dplyr::left_join(fit$Clusters, by = c('cluster', 'statistics')) %>%
+    dplyr::ungroup()
   
   pio::pioDisp(model.frequency)
   cli::cli_process_done()
@@ -111,26 +111,25 @@ bootstrapped_statistics = function(x, bootstrap_results, bootstrap = 'nonparamet
   
   pio::pioStr("\nMixing proportions", "\n")
   print(stats %>%
-          filter(statistics == 'Mixing proportion'))
+          dplyr::filter(statistics == 'Mixing proportion'))
   
   pio::pioStr("\nTail shape/ scale", "\n")
   print(stats %>%
-          filter(cluster == 'Tail' & statistics %in% c('Shape', 'Scale')))
+          dplyr::filter(cluster == 'Tail' & statistics %in% c('Shape', 'Scale')))
   
   pio::pioStr("\nBeta peaks", "\n")
   print(stats %>%
-          filter(statistics %in% c('Mean', 'Variance') & cluster != 'Tail'))
+          dplyr::filter(statistics %in% c('Mean', 'Variance') & cluster != 'Tail'))
   
   cli::cli_process_done()
   
-  # Co-cclustering only for nonparametric bootstrap
+  # Co-clustering only for nonparametric bootstrap
   co_clustering = NULL
   if(bootstrap == 'nonparametric') {
 
     cli::cli_process_start("Co-clustering probability from nonparametric bootstrap")
-    cat
-    
-    co_clustering = compute_co_clustering(x, resamples, bootstrap.fits)
+
+    co_clustering = mobster:::compute_co_clustering(x, resamples, bootstrap.fits)
     
     cli::cli_process_done()
   }

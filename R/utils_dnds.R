@@ -1,21 +1,3 @@
-# Check package
-check_dnds_package = function()
-{
-  package = installed.packages() %>%
-    as_tibble() %>%
-    filter(Package == 'dndscv')
-  
-  if (nrow(package) == 0)
-  {
-    stop(
-      "dndscv is not installed, you should install it.\nSee https://github.com/im3sanger/dndscv"
-    )
-  }
-  else{
-    pio::pioTit("MOBSTER wrapper for dndscv version", package$Version)
-  }
-}
-
 # Return the input for dndscv, checking that parameters make sense
 get_dnds_input = function(x, mapping, refdb, gene_list)
 {

@@ -3,9 +3,21 @@
   # =-=-=-=-=-=-
   # Required packages will be listed here
   # =-=-=-=-=-=-
-  requirements = c('tidyverse', 'pio', 'crayon', 'easypar', 'ggpubr', 'sads')
-  
-  suppressMessages(sapply(requirements, require, character.only = TRUE))
+  # requirements = c('tidyverse', 'pio', 'crayon', 'easypar', 'ggpubr', 'sads')
+  # 
+  # # dplyr,
+  # # tidyr,
+  # # sads,
+  # # ggplot2,
+  # # ggpubr,
+  # # cowplot,
+  # # cli,
+  # # crayon,
+  # # easypar,
+  # # pio,
+  # # ctree
+  # 
+  # suppressMessages(sapply(requirements, require, character.only = TRUE))
   
   # =-=-=-=-=-=-
   # Package options

@@ -1,6 +1,14 @@
-  annotate_genes_from_locations = function(x)
+# This function uses
+# GenomicRanges
+# GenomicFeatures
+# TxDb.Hsapiens.UCSC.hg19.knownGene
+# org.Hs.egSYMBOL
+annotate_genes_from_locations = function(x)
 {
-  library(Homo.sapiens)
+  crash_ifnotinstalled(c('Homo.sapiens', 'GenomicRanges', 'GenomicFeatures', 'TxDb.Hsapiens.UCSC.hg19.knownGene', 'org.Hs.egSYMBOL'))
+    
+  # This loads most of the required stuff
+  require(Homo.sapiens)
   
   if(!all(c('chr', 'from', 'to', 'ref', 'alt') %in% colnames(x$data)))
     stop("Missing genomic coordinates (chr, from, ref, alt) from the input data, cannot annotate genes.")
@@ -23,11 +31,12 @@
     ) %>%
     dplyr::select(chrom, start, end) 
   
-  GR_df_mutations = mutations %>% 
-    data.frame(stringsAsFactors = FALSE) %>%
-    makeGRangesFromDataFrame 
+  GR_df_mutations = GenomicRanges::makeGRangesFromDataFrame(
+    mutations %>% 
+    data.frame(stringsAsFactors = FALSE)
+    )
   
-  GR_df_overlaps = subsetByOverlaps(GenomicFeatures::genes(TxDb.Hsapiens.UCSC.hg19.knownGene), GR_df_mutations) %>%
+  GR_df_overlaps = GenomicRanges::subsetByOverlaps(GenomicFeatures::genes(TxDb.Hsapiens.UCSC.hg19.knownGene), GR_df_mutations) %>%
     data.frame(stringsAsFactors = FALSE) %>% 
     tibble::as_tibble() %>%
     dplyr::mutate(
@@ -65,20 +74,3 @@
     dplyr::left_join(mutations_enriched, by = c('chr', 'from', 'to')) %>%
     dplyr::select(chr, from, to, ref, alt, gene, everything())
 }
-
-# x = evoverse.datasets::MSEQ_CRC_ADENOCARCINOMA_SET6$mutations %>%
-#   dplyr::select(chr, from, to,ref,alt, gene) %>% 
-#   dplyr::rename(G = gene) %>%
-#   annotate_genes_from_locations
-# 
-# x = NULL
-# x$data = evoverse.datasets::MSEQ_CRC_ADENOCARCINOMA_SET6$mutations %>%
-#   dplyr::select(chr, from, to,ref,alt, gene) %>% 
-#   dplyr::rename(G = gene) 
-# 
-# 
-# load('~/Documents/Davros/Data_koerber_et_al/MOBSTER_paper/H043-5VWP/post_dpl_fit.RData')
-# post_dpl_fit=post_dpl_fit$fit$best
-# post_dpl_fit$data = post_dpl_fit %>% annotate_genes_from_locations
-# post_dpl_fit$data %>% filter(gene != GENE) %>% select(gene, GENE) %>% View
-

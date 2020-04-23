@@ -106,25 +106,25 @@ and their rank as well." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/CloneTrees.html">Computing clone trees from mobster fits</a>
+      <a href="../articles/CloneTrees.html">6. Clone trees</a>
     </li>
     <li>
       <a href="../articles/Example_tumour_simulation.html">Visualizing subclonal expansions</a>
     </li>
     <li>
-      <a href="../articles/bootstrap.html">Confidence estimation via the bootstrap</a>
+      <a href="../articles/bootstrap.html">3. Bootstrap confidence estimation</a>
     </li>
     <li>
-      <a href="../articles/dnds.html">dN/dS statistics for mobster fits</a>
+      <a href="../articles/dnds.html">5. dN/dS statisticss</a>
     </li>
     <li>
-      <a href="../articles/introduction.html">Introduction</a>
+      <a href="../articles/introduction.html">1. Introduction</a>
     </li>
     <li>
-      <a href="../articles/plotting.html">Plotting mobster fits</a>
+      <a href="../articles/plotting.html">2. Plotting fits</a>
     </li>
     <li>
-      <a href="../articles/popgen.html">Population Genetics statistics for mobster fits</a>
+      <a href="../articles/popgen.html">4. Population Genetics statistics</a>
     </li>
   </ul>
 </li>
@@ -170,13 +170,14 @@ and their rank as well.</p>
     </tr>
     <tr>
       <th>TOP</th>
-      <td><p>The top set of fits to use.</p></td>
+      <td><p>The first <code>TOP</code> fits are used (by ranking).</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A complex figure with all plots arranged.</p>
+    <p>A complex figure with all plots arranged using both
+<code>ggpubr</code> and <code>cowplot</code>.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>'fit_example'</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'mobster'</span>)

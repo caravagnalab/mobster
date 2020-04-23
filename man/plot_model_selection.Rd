@@ -9,10 +9,11 @@ plot_model_selection(x, TOP = 6, nx = 3, ny = 2, ...)
 \arguments{
 \item{x}{A list of fits computed via \code{mobster_fit}.}
 
-\item{TOP}{The top set of fits to use.}
+\item{TOP}{The first \code{TOP} fits are used (by ranking).}
 }
 \value{
-A complex figure with all plots arranged.
+A complex figure with all plots arranged using both
+\code{ggpubr} and \code{cowplot}.
 }
 \description{
 This plot is usefull to understand the different

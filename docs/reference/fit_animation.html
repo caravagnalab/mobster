@@ -103,25 +103,25 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/CloneTrees.html">Computing clone trees from mobster fits</a>
+      <a href="../articles/CloneTrees.html">6. Clone trees</a>
     </li>
     <li>
       <a href="../articles/Example_tumour_simulation.html">Visualizing subclonal expansions</a>
     </li>
     <li>
-      <a href="../articles/bootstrap.html">Confidence estimation via the bootstrap</a>
+      <a href="../articles/bootstrap.html">3. Bootstrap confidence estimation</a>
     </li>
     <li>
-      <a href="../articles/dnds.html">dN/dS statistics for mobster fits</a>
+      <a href="../articles/dnds.html">5. dN/dS statisticss</a>
     </li>
     <li>
-      <a href="../articles/introduction.html">Introduction</a>
+      <a href="../articles/introduction.html">1. Introduction</a>
     </li>
     <li>
-      <a href="../articles/plotting.html">Plotting mobster fits</a>
+      <a href="../articles/plotting.html">2. Plotting fits</a>
     </li>
     <li>
-      <a href="../articles/popgen.html">Population Genetics statistics for mobster fits</a>
+      <a href="../articles/popgen.html">4. Population Genetics statistics</a>
     </li>
   </ul>
 </li>
@@ -190,23 +190,9 @@ n points in the trace, one every n*0.05 is used to animate the fit.</p></td>
 <span class='kw'>init</span> <span class='kw'>=</span> <span class='st'>'random'</span>,
 <span class='kw'>trace</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
 <span class='kw'>K</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-<span class='kw'>tail</span> <span class='kw'>=</span> <span class='no'>T</span>)</div><div class='output co'>#&gt; <span style='color: #BBBBBB;background-color: #0000BB;'> [ MOBSTER fit ] 
-#&gt; </span><span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #00BB00;'>✔</span><span> Loaded input data, n = 5000.</span></div><div class='output co'>#&gt; <span class='message'>❯ n = 5000. Mixture with k = </span><span style='color: #00BB00;'>2</span><span> Beta(s). Pareto tail: </span><span style='color: #00BB00;'>TRUE</span><span>. Output clusters with π &gt; 0.02 and n &gt; 10.</span></div><div class='output co'>#&gt; <span class='message'>❯ Custom fit by </span><span style='color: #00BB00;'>Moments-matching</span><span> in up to 250 steps, with ε = 1e-10 and </span><span style='color: #00BB00;'>random</span><span> initialisation.</span></div><div class='output co'>#&gt; <span class='message'>❯ Scoring (</span><span style='color: #BB0000;'>without parallel</span><span>) 3 x 1 x 1 = </span><span style='color: #00BB00;'>3</span><span> models by </span><span style='color: #00BB00;'>reICL</span><span>.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>[easypar] 2020-03-30 19:22:31 - Overriding parallel execution setup [FALSE] with global option : FALSE</span></div><div class='output co'>#&gt; 
-#&gt; </div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBBBB;'>ℹ</span><span> </span><span style='font-weight: bold;'>MOBSTER fits</span><span> completed in 14.1s.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>── </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] My MOBSTER model</span><span> n = 5000 with </span><span style='color: #00BB00;'>k = 2</span><span> Beta(s) </span><span style='color: #00BB00;'>and a tail</span><span> ──────────────────────────────────────────────────</span></div><div class='output co'>#&gt; <span class='message'>● Clusters: π = 55% [</span><span style='color: #BBBB00;'>C1</span><span>], 31% [</span><span style='color: #BBBB00;'>Tail</span><span>] and 14% [</span><span style='color: #BBBB00;'>C2</span><span>], with π &gt; 0.</span></div><div class='output co'>#&gt; <span class='message'>● Tail [n = 1370, 31%] with alpha = 1.2.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C1</span><span> [n = 2784, 55%] with mean = 0.48.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C2</span><span> [n = 846, 14%] with mean = 0.15.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBBBB;'>ℹ</span><span> Score(s): NLL = -5671.5; ICL = -10359.11 (-11266.35), H = 907.24 (0). Fit </span><span style='color: #00BB00;'>converged</span><span> by </span><span style='color: #00BB00;'>MM</span><span> in 134 steps.</span></div><div class='input'>
-<span class='fu'>fit_animation</span>(<span class='no'>model</span>$<span class='no'>best</span>, <span class='kw'>lib</span> <span class='kw'>=</span> <span class='st'>'plotly'</span>)</div><div class='output co'>#&gt; <span class='message'>Loading required package: plotly</span></div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'>Attaching package: ‘plotly’</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:MASS’:</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    select</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:bbmle’:</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    slice</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:crayon’:</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    style</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:ggplot2’:</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    last_plot</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:stats’:</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    filter</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:graphics’:</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    layout</span></div></span></pre>
+<span class='kw'>tail</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span style='color: #BBBBBB;background-color: #0000BB;'> [ MOBSTER fit ] 
+#&gt; </span><span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #00BB00;'>✔</span><span> Loaded input data, n = 5000.</span></div><div class='output co'>#&gt; <span class='message'>❯ n = 5000. Mixture with k = </span><span style='color: #00BB00;'>2</span><span> Beta(s). Pareto tail: </span><span style='color: #00BB00;'>TRUE</span><span>. Output clusters with π &gt; 0.02 and n &gt; 10.</span></div><div class='output co'>#&gt; <span class='message'>❯ Custom fit by </span><span style='color: #00BB00;'>Moments-matching</span><span> in up to 250 steps, with ε = 1e-10 and </span><span style='color: #00BB00;'>random</span><span> initialisation.</span></div><div class='output co'>#&gt; <span class='message'>❯ Scoring (</span><span style='color: #BB0000;'>without parallel</span><span>) 3 x 1 x 1 = </span><span style='color: #00BB00;'>3</span><span> models by </span><span style='color: #00BB00;'>reICL</span><span>.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>[easypar] 2020-04-23 16:24:38 - Overriding parallel execution setup [FALSE] with global option : FALSE</span></div><div class='output co'>#&gt; <span class='message'>[easypar] run 1 - Error in spread(., key = type, value = fit.value): could not find function "spread"</span></div><div class='output co'>#&gt; <span class='message'>[easypar] run 2 - Error in spread(., key = type, value = fit.value): could not find function "spread"</span></div><div class='output co'>#&gt; <span class='message'>[easypar] run 3 - Error in spread(., key = type, value = fit.value): could not find function "spread"</span></div><div class='output co'>#&gt; <span class='message'>[easypar] 3/3 computations returned errors and will be removed.</span></div><div class='output co'>#&gt; <span class='error'>Error in mobster_fit(fit_example$best$data, parallel = FALSE, samples = 3,     init = "random", trace = TRUE, K = 2, tail = TRUE): All task returned errors, no fit available, raising this error to interrupt the computation....</span></div><div class='input'>
+<span class='fu'>fit_animation</span>(<span class='no'>model</span>$<span class='no'>best</span>, <span class='kw'>lib</span> <span class='kw'>=</span> <span class='st'>'plotly'</span>)</div><div class='output co'>#&gt; <span class='error'>Error: object 'model' not found</span></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

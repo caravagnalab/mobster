@@ -30,7 +30,7 @@
 #' 
 #' @export
 #' 
-#' @import sads
+#' @importFrom  sads dpareto
 #'
 #' @examples 
 #' data('fit_example', package = 'mobster')
@@ -192,6 +192,8 @@ template_density = function(x,
 #' are rejected (and re-sampled). 
 #'
 #' @return n samples from the mixture
+#' 
+#' 
 #' @export
 #'
 #' @examples

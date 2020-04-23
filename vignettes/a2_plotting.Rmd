@@ -1,12 +1,12 @@
 ---
-title: "Plotting mobster fits"
+title: "2. Plotting fits"
 author: "Giulio Caravagna"
 date: "January 2020"
 institute: "Institute for Cancer Research"
 email: "giulio.caravagna@icr.ac.uk"
 output: rmarkdown::github_document
 vignette: >
-  %\VignetteIndexEntry{Plotting mobster fits}
+  %\VignetteIndexEntry{2}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

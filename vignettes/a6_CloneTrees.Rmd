@@ -1,12 +1,12 @@
 ---
-title: "Computing clone trees from mobster fits"
+title: "6. Clone trees"
 author: "Giulio Caravagna"
 date: "January 2020"
 institute: "Institute for Cancer Research"
 email: "giulio.caravagna@icr.ac.uk"
 output: rmarkdown::github_document
 vignette: >
-  %\VignetteIndexEntry{Computing clone trees from mobster fits}
+  %\VignetteIndexEntry{6}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

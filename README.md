@@ -6,12 +6,10 @@
 [![Travis build
 master](https://travis-ci.org/caravagn/mobster.svg?branch=master)](https://travis-ci.org/caravagn/mobster)
 [![Travis build
-development](https://travis-ci.org/caravagn/MOBSTER.svg?branch=development)](https://travis-ci.org/caravagn/MOBSTER)
+development](https://travis-ci.org/caravagn/mobster.svg?branch=development)](https://travis-ci.org/caravagn/mobster)
 [![Lifecycle:
 maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![](https://img.shields.io/badge/Part%20of-evoverse-blue.svg)](https://caravagn.github.io/evoverse)
-[![Travis build
-status](https://travis-ci.org/caravagn/MOBSTER.svg?branch=development)](https://travis-ci.org/caravagn/MOBSTER)
 <!-- badges: end -->
 
 `mobster` is a package that implements a model-based clustering approach

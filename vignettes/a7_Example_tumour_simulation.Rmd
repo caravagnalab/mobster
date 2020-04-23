@@ -1,12 +1,12 @@
 ---
-title: "Visualizing subclonal expansions"
+title: "7. Visualizing subclonal expansions"
 author: "Giulio Caravagna and Marc Williams"
 date: "February 2019"
 institute: "Institute for Cancer Research"
 email: "giulio.caravagna@icr.ac.uk"
 output: rmarkdown::github_document
 vignette: >
-  %\VignetteIndexEntry{Introduction}
+  %\VignetteIndexEntry{7}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

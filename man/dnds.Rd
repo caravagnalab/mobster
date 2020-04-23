@@ -4,15 +4,9 @@
 \alias{dnds}
 \title{Run a dN/dS analysis on MOBSTER clusters.}
 \usage{
-dnds(
-  x,
-  mapping = NULL,
-  gene_list = NULL,
-  colors = c(Tail = "gray"),
-  refdb = "hg19",
-  dndscv_plot = c("wall", "wmis", "wnon", "wspl", "wtru"),
-  ...
-)
+dnds(x, mapping = NULL, gene_list = NULL, colors = c(Tail = "gray"),
+  refdb = "hg19", dndscv_plot = c("wall", "wmis", "wnon", "wspl",
+  "wtru"), ...)
 }
 \arguments{
 \item{x}{A MOBSTER fit object.}
@@ -46,4 +40,17 @@ by package \code{dndscv}, together with a \code{ggplot} plot for the results.
 This function takes a MOBSTER fit and runs `dndscv` (https://github.com/im3sanger/dndscv) to calculate dN/dS
 values per cluster. It computes global dN/dS and per gene dN/dS values and makes a plot. dN/dS values are computed with
 the best fitting MOBSTER model.
+}
+\examples{
+
+# Example run with real data
+data('PD4120a_breast_sample', package = 'mobster')
+
+clusters = Clusters(PD4120a_breast_sample$best)
+
+dnds_stats = dnds(
+  clusters,
+  mapping = c(`C1` = 'Non-tail', `C2` = 'Non-tail', `C3` = 'Non-tail', `Tail` = 'Tail'),
+  gene_list = NULL
+)
 }

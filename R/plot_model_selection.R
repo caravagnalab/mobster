@@ -6,11 +6,10 @@
 #' and their rank as well.
 #'
 #' @param x A list of fits computed via \code{mobster_fit}.
-#' @param TOP The top set of fits to use.
+#' @param TOP The first \code{TOP} fits are used (by ranking).
 #'
-#' @return A complex figure with all plots arranged.
-#'
-#' @import ggpubr
+#' @return A complex figure with all plots arranged using both
+#' \code{ggpubr} and \code{cowplot}.
 #'
 #' @export
 #'

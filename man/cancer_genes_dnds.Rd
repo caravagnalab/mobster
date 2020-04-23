@@ -4,9 +4,7 @@
 \name{cancer_genes_dnds}
 \alias{cancer_genes_dnds}
 \title{List of cancer genes to compute dnds values.}
-\format{
-List of cancer genes to compute dnds values.
-}
+\format{List of cancer genes to compute dnds values.}
 \usage{
 data(cancer_genes_dnds)
 }
