@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Confidence estimation via the bootstrap • mobster</title>
+<title>3. Bootstrap confidence estimation • mobster</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -16,7 +16,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Confidence estimation via the bootstrap">
+<script src="../pkgdown.js"></script><meta property="og:title" content="3. Bootstrap confidence estimation">
 <meta property="og:description" content="">
 <meta property="og:image" content="caravagn.github.io/mobster/logo.png">
 <meta name="twitter:card" content="summary">
@@ -64,25 +64,25 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/CloneTrees.html">Computing clone trees from mobster fits</a>
+      <a href="../articles/CloneTrees.html">6. Clone trees</a>
     </li>
     <li>
       <a href="../articles/Example_tumour_simulation.html">Visualizing subclonal expansions</a>
     </li>
     <li>
-      <a href="../articles/bootstrap.html">Confidence estimation via the bootstrap</a>
+      <a href="../articles/bootstrap.html">3. Bootstrap confidence estimation</a>
     </li>
     <li>
-      <a href="../articles/dnds.html">dN/dS statistics for mobster fits</a>
+      <a href="../articles/dnds.html">5. dN/dS statisticss</a>
     </li>
     <li>
-      <a href="../articles/introduction.html">Introduction</a>
+      <a href="../articles/introduction.html">1. Introduction</a>
     </li>
     <li>
-      <a href="../articles/plotting.html">Plotting mobster fits</a>
+      <a href="../articles/plotting.html">2. Plotting fits</a>
     </li>
     <li>
-      <a href="../articles/popgen.html">Population Genetics statistics for mobster fits</a>
+      <a href="../articles/popgen.html">4. Population Genetics statistics</a>
     </li>
   </ul>
 </li>
@@ -103,7 +103,7 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>Confidence estimation via the bootstrap</h1>
+      <h1>3. Bootstrap confidence estimation</h1>
                         <h4 class="author">Giulio Caravagna</h4>
             
             <h4 class="date">January 2020</h4>
@@ -174,7 +174,7 @@
 <a class="sourceLine" id="cb4-19" data-line-number="19"></a>
 <a class="sourceLine" id="cb4-20" data-line-number="20"><span class="co"># Fits are available inside the $fits list</span></a>
 <a class="sourceLine" id="cb4-21" data-line-number="21"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(bootstrap_results<span class="op">$</span>fits[[<span class="dv">1</span>]])</a>
-<a class="sourceLine" id="cb4-22" data-line-number="22"><span class="co">#&gt; ── [ MOBSTER ] My MOBSTER model n = 400 with k = 2 Beta(s) and a tail ───────────────────────────────────────────────────</span></a>
+<a class="sourceLine" id="cb4-22" data-line-number="22"><span class="co">#&gt; ── [ MOBSTER ] My MOBSTER model n = 400 with k = 2 Beta(s) and a tail ────────────────────────────────────────────────────</span></a>
 <a class="sourceLine" id="cb4-23" data-line-number="23"><span class="co">#&gt; ● Clusters: π = 46% [C2], 32% [C1] and 22% [Tail], with π &gt; 0.</span></a>
 <a class="sourceLine" id="cb4-24" data-line-number="24"><span class="co">#&gt; ● Tail [n = 77, 22%] with alpha = 1.1.</span></a>
 <a class="sourceLine" id="cb4-25" data-line-number="25"><span class="co">#&gt; ● Beta C1 [n = 129, 32%] with mean = 0.79.</span></a>
@@ -326,7 +326,7 @@
 <a class="sourceLine" id="cb9-23" data-line-number="23"><span class="co">#&gt; Warning: Removed 4 rows containing missing values (geom_bar).</span></a>
 <a class="sourceLine" id="cb9-24" data-line-number="24"></a>
 <a class="sourceLine" id="cb9-25" data-line-number="25"><span class="co"># Figure</span></a>
-<a class="sourceLine" id="cb9-26" data-line-number="26">figure =<span class="st"> </span><span class="kw">ggarrange</span>(</a>
+<a class="sourceLine" id="cb9-26" data-line-number="26">figure =<span class="st"> </span>ggpubr<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ggpubr/man/ggarrange.html">ggarrange</a></span>(</a>
 <a class="sourceLine" id="cb9-27" data-line-number="27">  mplot,</a>
 <a class="sourceLine" id="cb9-28" data-line-number="28">  tplot,</a>
 <a class="sourceLine" id="cb9-29" data-line-number="29">  bplot,</a>

@@ -5,7 +5,7 @@
 #' This functionr returns a table with all the parameters fits (one per column), the scores
 #' of the model, and the SSE of the fit versus data.
 #'
-#' @param x A mobster fit.
+#' @param x A MOBSTER fit.
 #'
 #' @return
 #' @export
@@ -75,7 +75,7 @@ to_string = function(x)
   values = values %>% dplyr::select(order(colnames(values)) %>% noquote %>% as.vector)
   
   # Add scores
-  values = bind_cols(values, x$scores)
+  values = dplyr::bind_cols(values, x$scores)
   
   # SSE profile (data vs fit)
   sse = mobster:::.compute_fit_sqerr(x, binning = 1e-2)
@@ -102,17 +102,7 @@ to_string = function(x)
   # densities = densities %>%
   #   group_by(cluster) %>%
   #   summarise(median(err))
-  
-  
-  
-  values
-  # 
-  #   # Data information
-  #   data_info = data.frame(
-  #     min_X = min(x$data$VAF)
-  #     max_X = max(x$data$VAF)
-  #   )
-  
+
   return(values)
 }
 

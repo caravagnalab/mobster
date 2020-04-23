@@ -7,7 +7,7 @@
 to_string(x)
 }
 \arguments{
-\item{x}{A mobster fit.}
+\item{x}{A MOBSTER fit.}
 }
 \description{
 This functionr returns a table with all the parameters fits (one per column), the scores

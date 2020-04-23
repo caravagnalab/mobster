@@ -14,8 +14,6 @@
 #'
 #' @return Data from the fits, resamples and a plottable figure.
 #'
-#' @import easypar
-#'
 #' @export
 #'
 #' @examples

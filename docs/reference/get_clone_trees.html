@@ -114,25 +114,25 @@ on the input clustering results x." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/CloneTrees.html">Computing clone trees from mobster fits</a>
+      <a href="../articles/CloneTrees.html">6. Clone trees</a>
     </li>
     <li>
       <a href="../articles/Example_tumour_simulation.html">Visualizing subclonal expansions</a>
     </li>
     <li>
-      <a href="../articles/bootstrap.html">Confidence estimation via the bootstrap</a>
+      <a href="../articles/bootstrap.html">3. Bootstrap confidence estimation</a>
     </li>
     <li>
-      <a href="../articles/dnds.html">dN/dS statistics for mobster fits</a>
+      <a href="../articles/dnds.html">5. dN/dS statisticss</a>
     </li>
     <li>
-      <a href="../articles/introduction.html">Introduction</a>
+      <a href="../articles/introduction.html">1. Introduction</a>
     </li>
     <li>
-      <a href="../articles/plotting.html">Plotting mobster fits</a>
+      <a href="../articles/plotting.html">2. Plotting fits</a>
     </li>
     <li>
-      <a href="../articles/popgen.html">Population Genetics statistics for mobster fits</a>
+      <a href="../articles/popgen.html">4. Population Genetics statistics</a>
     </li>
   </ul>
 </li>
@@ -209,8 +209,14 @@ affect the sampling of the trees.</p></td>
 <span class='co'># Drivers we add, just taken at random from the exonic mutations.</span>
 <span class='co'># Just print: x$data %&gt;% filter(region == 'exonic')</span>
 <span class='co'># SETD2 could really be a driver.</span>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='no'>dplyr</span>)
-<span class='no'>genes_list</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'ARHGAP31'</span>, <span class='st'>'ABCC5'</span>, <span class='st'>'SETD2'</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='no'>dplyr</span>)</div><div class='output co'>#&gt; <span class='message'>Loading required package: dplyr</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>Attaching package: ‘dplyr’</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:MASS’:</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>    select</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:stats’:</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>    filter, lag</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:base’:</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>    intersect, setdiff, setequal, union</span></div><div class='input'><span class='no'>genes_list</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'ARHGAP31'</span>, <span class='st'>'ABCC5'</span>, <span class='st'>'SETD2'</span>)
 <span class='no'>x</span>$<span class='no'>data</span> <span class='kw'>=</span> <span class='no'>x</span>$<span class='no'>data</span> <span class='kw'>%&gt;%</span>
   <span class='kw pkg'>dplyr</span><span class='kw ns'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(
     <span class='kw'>driver</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span>(<span class='no'>region</span> <span class='kw'>==</span> <span class='st'>'exonic'</span> <span class='kw'>&amp;</span> <span class='no'>gene</span> <span class='kw'>%in%</span> <span class='no'>genes_list</span>, <span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>)
@@ -233,7 +239,7 @@ affect the sampling of the trees.</p></td>
 #&gt; </span><span style='color: #00BB00;background-color: #BBBB00;'>✔</span><span style='color: #000000;background-color: #BBBB00;'> Pigeonhole Principle</span><span>  </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt; </span><span style='color: #00BB00;background-color: #BBBB00;'>✔</span><span style='color: #000000;background-color: #BBBB00;'> Ranking trees</span><span>  </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt; </span><span style='color: #00BB00;background-color: #BBBB00;'>✔</span><span style='color: #000000;background-color: #BBBB00;'> Trees with non-zero sscore</span><span> 2 storing 2 </span><span style='color: #000000;background-color: #BBBB00;'>
-#&gt; </span><span></div><div class='output co'>#&gt; <span class='message'>[easypar] 2020-03-30 19:22:50 - Overriding parallel execution setup [FALSE] with global option : FALSE</span></div><div class='input'>
+#&gt; </span><span></div><div class='output co'>#&gt; <span class='message'>[easypar] 2020-04-23 16:24:40 - Overriding parallel execution setup [FALSE] with global option : FALSE</span></div><div class='input'>
 <span class='co'># Print and plot the first tree (top rank)</span>
 <span class='kw pkg'>ctree</span><span class='kw ns'>:::</span><span class='fu'><a href='https://rdrr.io/pkg/ctree/man/print.ctree.html'>print.ctree</a></span>(<span class='no'>trees</span><span class='kw'>[[</span><span class='fl'>1</span>]])</div><div class='output co'>#&gt; </span><span style='color: #BBBBBB;background-color: #0000BB;'> [ ctree - ctree rank 1/2 for MOBSTER_dataset ] 
 #&gt; </span><span>
@@ -248,8 +254,8 @@ affect the sampling of the trees.</p></td>
 #&gt; 
 #&gt; </span><span>  \-GL
 #&gt;    \-C1 :: ARHGAP31, ARHGAP31
-#&gt;     |-C3 :: SETD2
 #&gt;     \-C2 :: ABCC5
+#&gt;      \-C3 :: SETD2
 #&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt; Information transfer</span><span>  </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt; 
@@ -257,8 +263,7 @@ affect the sampling of the trees.</p></td>
 #&gt;    ARHGAP31 ---&gt; ABCC5 
 #&gt;    GL ---&gt; ARHGAP31 
 #&gt;    GL ---&gt; ARHGAP31 
-#&gt;    ARHGAP31 ---&gt; SETD2 
-#&gt;    ARHGAP31 ---&gt; SETD2 
+#&gt;    ABCC5 ---&gt; SETD2 
 #&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt; Tree score</span><span> 0.5 </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt; </span><span></div><div class='input'><span class='kw pkg'>ctree</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ctree/man/plot.ctree.html'>plot.ctree</a></span>(<span class='no'>trees</span><span class='kw'>[[</span><span class='fl'>1</span>]])</div><div class='output co'>#&gt; <span class='warning'>Warning: Duplicated aesthetics after name standardisation: na.rm</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Removed 1 rows containing missing values (geom_point).</span></div><div class='img'><img src='get_clone_trees-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='kw pkg'>ctree</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ctree/man/plot_CCF_clusters.html'>plot_CCF_clusters</a></span>(<span class='no'>trees</span><span class='kw'>[[</span><span class='fl'>1</span>]])</div><div class='img'><img src='get_clone_trees-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='kw pkg'>ctree</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ctree/man/plot_icon.html'>plot_icon</a></span>(<span class='no'>trees</span><span class='kw'>[[</span><span class='fl'>1</span>]])</div><div class='img'><img src='get_clone_trees-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='kw pkg'>ctree</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ctree/man/plot_clone_size.html'>plot_clone_size</a></span>(<span class='no'>trees</span><span class='kw'>[[</span><span class='fl'>1</span>]])</div><div class='img'><img src='get_clone_trees-4.png' alt='' width='700' height='433' /></div></span></pre>

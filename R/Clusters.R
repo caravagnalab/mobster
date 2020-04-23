@@ -36,5 +36,5 @@ Clusters = function(x, cutoff_assignment = 0)
   
   x$data$cluster = assignments
   
-  bind_cols(x$data, lv$z_nk %>% as_tibble())
+  dplyr::bind_cols(x$data, lv$z_nk %>% as_tibble())
 }

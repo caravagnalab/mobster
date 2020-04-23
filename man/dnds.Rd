@@ -41,3 +41,16 @@ This function takes a MOBSTER fit and runs `dndscv` (https://github.com/im3sange
 values per cluster. It computes global dN/dS and per gene dN/dS values and makes a plot. dN/dS values are computed with
 the best fitting MOBSTER model.
 }
+\examples{
+
+# Example run with real data
+data('PD4120a_breast_sample', package = 'mobster')
+
+clusters = Clusters(PD4120a_breast_sample$best)
+
+dnds_stats = dnds(
+  clusters,
+  mapping = c(`C1` = 'Non-tail', `C2` = 'Non-tail', `C3` = 'Non-tail', `Tail` = 'Tail'),
+  gene_list = NULL
+)
+}

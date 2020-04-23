@@ -1,12 +1,12 @@
 ---
-title: "Confidence estimation via the bootstrap"
+title: "3. Bootstrap confidence estimation"
 author: "Giulio Caravagna"
 date: "January 2020"
 institute: "Institute for Cancer Research"
 email: "giulio.caravagna@icr.ac.uk"
 output: rmarkdown::github_document
 vignette: >
-  %\VignetteIndexEntry{Confidence estimation via the bootstrap}
+  %\VignetteIndexEntry{3}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -142,7 +142,7 @@ bplot = plot_bootstrap_Beta(
   )
 
 # Figure
-figure = ggarrange(
+figure = ggpubr::ggarrange(
   mplot,
   tplot,
   bplot,

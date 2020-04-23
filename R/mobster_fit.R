@@ -50,13 +50,7 @@
 #' variable that specify which score has been used for model selection.
 #'
 #' @export
-#'
-#' @import crayon
-#' @import ggplot2
-#' @import dplyr
-#' @import tidyr
-#' @import magrittr
-#'
+#
 #' @examples
 #' # Generate a random dataset
 #' x = random_dataset(seed = 123, Beta_variance_scaling = 100, N = 200)

@@ -1,12 +1,12 @@
 ---
-title: "Introduction"
+title: "1. Introduction"
 author: "Giulio Caravagna"
 date: "September 2019"
 institute: "Institute for Cancer Research"
 email: "giulio.caravagna@icr.ac.uk"
 output: rmarkdown::github_document
 vignette: >
-  %\VignetteIndexEntry{Introduction}
+  %\VignetteIndexEntry{1}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

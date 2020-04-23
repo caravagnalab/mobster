@@ -33,7 +33,7 @@ samples = 3,
 init = 'random',
 trace = TRUE,
 K = 2,
-tail = T)
+tail = TRUE)
 
 fit_animation(model$best, lib = 'plotly')
 }

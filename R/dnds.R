@@ -26,8 +26,18 @@
 #'
 #' @export
 #' 
-#' @import dndscv
-#'
+#' @examples
+#' 
+#' # Example run with real data
+#' data('PD4120a_breast_sample', package = 'mobster')
+#' 
+#' clusters = Clusters(PD4120a_breast_sample$best)
+#' 
+#' dnds_stats = dnds(
+#'   clusters,
+#'   mapping = c(`C1` = 'Non-tail', `C2` = 'Non-tail', `C3` = 'Non-tail', `Tail` = 'Tail'),
+#'   gene_list = NULL
+#' )
 dnds <- function(x,
                  mapping = NULL,
                  gene_list = NULL,
@@ -38,12 +48,12 @@ dnds <- function(x,
 )
 {
   # Check(s): dndscv installationand mobster fit
-  check_dnds_package()
+  crash_ifnotinstalled(c('dndscv'))
   
   if(!is.data.frame(x))
   {
     mobster:::is_mobster_fit(x)
-    x = Clusters(x)
+    x = mobster::Clusters(x)
   }
   
   # Getter -- checks for the mapping correctness and apply it

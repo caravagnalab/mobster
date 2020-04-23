@@ -36,7 +36,7 @@ Clusters_denovo = function(x, y)
   densities = NULL
   for(component in seq_along(components))
   {
-    densities = bind_cols(
+    densities = dplyr::bind_cols(
       densities,
       ddbpmm(x, data = y$VAF, components = component, log = TRUE) %>% data.frame()
     )
@@ -47,5 +47,5 @@ Clusters_denovo = function(x, y)
   # Hard clustering assignments
   densities$cluster = components[apply(densities, 1, which.max)]
   
-  bind_cols(y, densities) %>% as_tibble()
+  dplyr::bind_cols(y, densities) %>% as_tibble()
 }

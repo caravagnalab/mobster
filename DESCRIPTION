@@ -4,13 +4,16 @@ Title: MOBSTER - Model-based tumour subclonal deconvolution
 Version: 0.1.0
 Author: Giulio Caravagna
 Maintainer: Giulio Caravagna <gcaravagn@gmail.com>
-Authors@R: person("Giulio", "Caravagna", role = c("aut", "cre"), email = "gcaravagn@gmail.com")
+Authors@R: c(
+    person("Giulio", "Caravagna", , "gcaravagn@gmail.com", role = c("aut", "cre"),
+      comment = c(ORCID = "0000-0003-4240-3265")
+    )
+  )
 Description: MOBSTER is a package that implements a statistical model for tumour subclonal deconvolution
   which combines Dirichlet mixtures with distributions predicted by theoretical population genetics. The
   model implemented is a parametric (finite) mixture with multiple Beta components, and one Pareto power 
   law tail. Beta components capture mutations that rise up in frequency by positive selection, and the 
-  Pareto tail models alleles resulting from neutral, intra-clone, evolutionary dynamics. MOBSTER is part of the
-  evoverse, a package that gathers multiple R packages to implement Cancer Evolution analyses.
+  Pareto tail models alleles resulting from neutral, intra-clone, evolutionary dynamics.
 License: GPL
 Encoding: UTF-8
 LazyData: true
@@ -24,8 +27,30 @@ Imports:
     pio,
     ggpubr,
     dplyr,
-    easypar
-RoxygenNote: 7.0.0
+    easypar,
+    clisymbols,
+    gganimate,
+    dndscv,
+    cli,
+    tidyr,
+    magrittr
+RoxygenNote: 7.1.0
 Suggests: knitr,
-    rmarkdown
+    rmarkdown,
+    ctree,
+    CNAqc,
+    MCMCpack,
+    webshot,
+    ggmuller,
+    png,
+    gifski,
+    magick
+Remotes:
+    caravagn/easypar,
+    caravagn/pio,
+    im3sanger/dndscv,
+    caravagn/ctree,
+    caravagn/CNAqc
 VignetteBuilder: knitr
+URL: https://github.com/caravagn/mobster
+BugReports: https://github.com/caravagn/mobster/issues

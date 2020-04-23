@@ -2,14 +2,14 @@ pandoc: 2.3.1
 pkgdown: 1.4.1
 pkgdown_sha: ~
 articles:
-  CloneTrees: CloneTrees.html
-  Example_tumour_simulation: Example_tumour_simulation.html
-  bootstrap: bootstrap.html
-  dnds: dnds.html
-  introduction: introduction.html
+  a1_introduction: a1_introduction.html
+  a2_plotting: a2_plotting.html
+  a3_bootstrap: a3_bootstrap.html
+  a4_popgen: a4_popgen.html
+  a5_dnds: a5_dnds.html
+  a6_CloneTrees: a6_CloneTrees.html
+  a7_Example_tumour_simulation: a7_Example_tumour_simulation.html
   mobster: mobster.html
-  plotting: plotting.html
-  popgen: popgen.html
 urls:
   reference: caravagn.github.io/mobster/reference
   article: caravagn.github.io/mobster/articles

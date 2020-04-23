@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Computing clone trees from mobster fits • mobster</title>
+<title>6. Clone trees • mobster</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -16,7 +16,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Computing clone trees from mobster fits">
+<script src="../pkgdown.js"></script><meta property="og:title" content="6. Clone trees">
 <meta property="og:description" content="">
 <meta property="og:image" content="caravagn.github.io/mobster/logo.png">
 <meta name="twitter:card" content="summary">
@@ -64,25 +64,25 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/CloneTrees.html">Computing clone trees from mobster fits</a>
+      <a href="../articles/CloneTrees.html">6. Clone trees</a>
     </li>
     <li>
       <a href="../articles/Example_tumour_simulation.html">Visualizing subclonal expansions</a>
     </li>
     <li>
-      <a href="../articles/bootstrap.html">Confidence estimation via the bootstrap</a>
+      <a href="../articles/bootstrap.html">3. Bootstrap confidence estimation</a>
     </li>
     <li>
-      <a href="../articles/dnds.html">dN/dS statistics for mobster fits</a>
+      <a href="../articles/dnds.html">5. dN/dS statisticss</a>
     </li>
     <li>
-      <a href="../articles/introduction.html">Introduction</a>
+      <a href="../articles/introduction.html">1. Introduction</a>
     </li>
     <li>
-      <a href="../articles/plotting.html">Plotting mobster fits</a>
+      <a href="../articles/plotting.html">2. Plotting fits</a>
     </li>
     <li>
-      <a href="../articles/popgen.html">Population Genetics statistics for mobster fits</a>
+      <a href="../articles/popgen.html">4. Population Genetics statistics</a>
     </li>
   </ul>
 </li>
@@ -103,7 +103,7 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>Computing clone trees from mobster fits</h1>
+      <h1>6. Clone trees</h1>
                         <h4 class="author">Giulio Caravagna</h4>
             
             <h4 class="date">January 2020</h4>
@@ -212,8 +212,8 @@
 <a class="sourceLine" id="cb4-15" data-line-number="15"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb4-16" data-line-number="16"><span class="co">#&gt;   \-GL</span></a>
 <a class="sourceLine" id="cb4-17" data-line-number="17"><span class="co">#&gt;    \-C1 :: ARHGAP31, ARHGAP31</span></a>
-<a class="sourceLine" id="cb4-18" data-line-number="18"><span class="co">#&gt;     |-C3 :: SETD2</span></a>
-<a class="sourceLine" id="cb4-19" data-line-number="19"><span class="co">#&gt;     \-C2 :: ABCC5</span></a>
+<a class="sourceLine" id="cb4-18" data-line-number="18"><span class="co">#&gt;     \-C2 :: ABCC5</span></a>
+<a class="sourceLine" id="cb4-19" data-line-number="19"><span class="co">#&gt;      \-C3 :: SETD2</span></a>
 <a class="sourceLine" id="cb4-20" data-line-number="20"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb4-21" data-line-number="21"><span class="co">#&gt; Information transfer  </span></a>
 <a class="sourceLine" id="cb4-22" data-line-number="22"><span class="co">#&gt; </span></a>
@@ -221,10 +221,9 @@
 <a class="sourceLine" id="cb4-24" data-line-number="24"><span class="co">#&gt;    ARHGAP31 ---&gt; ABCC5 </span></a>
 <a class="sourceLine" id="cb4-25" data-line-number="25"><span class="co">#&gt;    GL ---&gt; ARHGAP31 </span></a>
 <a class="sourceLine" id="cb4-26" data-line-number="26"><span class="co">#&gt;    GL ---&gt; ARHGAP31 </span></a>
-<a class="sourceLine" id="cb4-27" data-line-number="27"><span class="co">#&gt;    ARHGAP31 ---&gt; SETD2 </span></a>
-<a class="sourceLine" id="cb4-28" data-line-number="28"><span class="co">#&gt;    ARHGAP31 ---&gt; SETD2 </span></a>
-<a class="sourceLine" id="cb4-29" data-line-number="29"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb4-30" data-line-number="30"><span class="co">#&gt; Tree score 0.5</span></a></code></pre></div>
+<a class="sourceLine" id="cb4-27" data-line-number="27"><span class="co">#&gt;    ABCC5 ---&gt; SETD2 </span></a>
+<a class="sourceLine" id="cb4-28" data-line-number="28"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb4-29" data-line-number="29"><span class="co">#&gt; Tree score 0.5</span></a></code></pre></div>
 <p>We can plot the top tree, aggregating different <code>ctree</code> plots.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># 1) Clone tree</span></a>
 <a class="sourceLine" id="cb5-2" data-line-number="2"><span class="co"># 2) Input ctree data (here adjusted VAF)</span></a>
