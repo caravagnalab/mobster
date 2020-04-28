@@ -21,7 +21,7 @@ add_extra_plot_annotations = function(x, annotation_extras, base_plot)
     all_list = all_list %>% dplyr::bind_rows(annotation_extras)
   
   # If there is anything to add
-  if(!is.null(all_list))
+  if(!is.null(all_list) & nrow(all_list) > 0)
   {
     all_list = all_list %>% dplyr::select(VAF, driver_label)
     
@@ -39,7 +39,7 @@ add_extra_plot_annotations = function(x, annotation_extras, base_plot)
           pull(d)
       })
     
-    nudge = max(points_df$density)/5
+    nudge = max(points_df$density, na.rm = TRUE)/5
     
     base_plot = base_plot + 
       geom_point(
