@@ -7,7 +7,7 @@
 # x = mobster::mobster_fit(inp, auto_setup = 'FAST')$best
 # plot(x)
 
-add_extra_plot_annotations = function(x, annotation_extras, base_plot)
+add_extra_plot_annotations = function(x, annotation_extras, base_plot, binwidth = 0.01)
 {
   all_list = NULL
   
