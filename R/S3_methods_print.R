@@ -113,4 +113,14 @@ print.dbpmm = function(x, ...)
   # cat('\n')
   xs = round(x$scores, 2)
   mobster:::m_inf('Score(s): NLL = {.value {xs["NLL"]}}; ICL = {.value {xs["ICL"]}} ({.value {xs["reICL"]}}), H = {.value {xs["entropy"]}} ({.value {xs["reduced.entropy"]}}). Fit {.value {ifelse(x$status, crayon::green("converged"), crayon::red("interrupted"))}} by {.field {x$fit.type}} in {.value {length(x$all.NLL)}} steps.') %>% cli::cli_text()
+  
+  if(all(c('is_driver', 'driver_label') %in% colnames(x$data)))
+  {
+    mobster:::m_inf('The fit object model contains also drivers annotated.') %>% cli::cli_text()
+    x$data %>% 
+      dplyr::filter(is_driver) %>% 
+      dplyr::select(is_driver, driver_label, VAF, cluster) %>%
+      pio::pioDisp()
+  }
+  
 }

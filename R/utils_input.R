@@ -27,8 +27,6 @@ is_mobster_input_dataset = function(x)
   if (any(is.na(x$VAF)) ) merr("The column named VAF contains NA values.")
 }
 
-
-
 is_list_mobster_fits = function(x)
 {
   merr = function(s) {
@@ -44,3 +42,4 @@ is_list_mobster_fits = function(x)
   if(!all(sapply(x$runs, class) == 'dbpmm')) merr("Runs objects are not MOBSTER fits.")
   if(class(x$best) != 'dbpmm') merr("Best is not MOBSTER a fits.")
 }
+
