@@ -1,7 +1,7 @@
 ---
-title: "6. Clone trees"
+title: "6. Clone trees from clusters"
 author: "Giulio Caravagna"
-date: "January 2020"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 institute: "Institute for Cancer Research"
 email: "giulio.caravagna@icr.ac.uk"
 output: rmarkdown::github_document
@@ -19,11 +19,11 @@ knitr::opts_chunk$set(
 ```
 
 
-<center>
-<a href="https://caravagn.github.io/mobster"><img src="https://caravagn.github.io/mobster/reference/figures/logo.png" width=77px height=91px></img></a>
-<a href="https://caravagn.github.io/ctree"><img src="https://caravagn.github.io/ctree/reference/figures/logo.png" width=77px height=91px></img></a>
-</center>
-<br>
+<!-- <center> -->
+<!-- <a href="https://caravagn.github.io/mobster"><img src="https://caravagn.github.io/mobster/reference/figures/logo.png" width=77px height=91px></img></a> -->
+<!-- <a href="https://caravagn.github.io/ctree"><img src="https://caravagn.github.io/ctree/reference/figures/logo.png" width=77px height=91px></img></a> -->
+<!-- </center> -->
+<!-- <br> -->
 
 ```{r, message=FALSE, warning=F}
 library(mobster)
@@ -31,56 +31,45 @@ library(tidyr)
 library(dplyr)
 ```
 
-This vignette explains how to compute _clone trees_ from [MOBSTER fits.](https://caravagn.github.io/mobster)
+Clone trees from `mobster` fits can be computing using the internal interface with [ctree](https://caravagn.github.io/ctree).
 
-The computation is done interfacing `mobster` with [ctree](https://caravagn.github.io/ctree), another [evoverse](https://caravagn.github.io/evoverse) package. 
+You need to have drivers annotated your object if you want to use `ctree`, and every `driver_label` has to be unique, as it will be used as the `variantID` column to identify the driver event.
 
-
-
-
-# Requirements
-
-You need to have annotated in the data of your object the `gene` and `driver` status of all the annotated mutations.
-
-We show the analysis with a datasets that has only `gene` associated, and select some random genes as drivers.
-
+We show the analysis with a synthetic dataset.
 
 ```{r, fig.width=5, fig.height=4}
-# We take one of the released datasets
-x = mobster::PD4120a_breast_sample$best
+# Example data where we annotate 3 events as drivers
+example_data = Clusters(mobster::fit_example$best)
 
-# Genes are already annotated in this data
-head(x$data$gene)
+# Drivers annotation
+drivers_rows = c(2239, 3246, 3800)
 
-# Drivers we add, just taken at random from the exonic mutations.
-x$data %>% 
-  filter(region == 'exonic') %>%
-  as_tibble
+example_data$is_driver = FALSE
+example_data$driver_label = NA
 
-# SETD2 could really be a driver, we take it together with other
-# two genes from the list
+example_data$is_driver[drivers_rows] = TRUE
+example_data$driver_label[drivers_rows] = c("DR1", "DR2", "DR3")
 
-genes_list = c('ARHGAP31', 'ABCC5', 'SETD2')
+# Fit and print the data
+fit = mobster_fit(example_data, auto_setup = 'FAST')
 
-x$data = x$data %>% 
-   dplyr::mutate(
-     driver = ifelse(region == 'exonic' & gene %in% genes_list, TRUE, FALSE)
-     )
+best_fit = fit$best
+print(best_fit)
 ```
 
 # Tree computation
 
-Now we get the trees using `get_clone_trees`, and extract the best tree.
+Tree computation removes any mutation that is assigned to a `Tail` cluster because the clone tree represents the clones.
 ```{r, fig.width=12, fig.height=4, warning=FALSE}
 # Get the trees, select top-rank
-trees = get_clone_trees(x)
+trees = get_clone_trees(best_fit)
 ```
 
-The _top-rank_ tree is in position `1` of `trees`,
+The _top-rank_ tree is in position `1` of `trees`; `ctree` implements S3 object methods to print an plot a tree. 
 ```{r, fig.width=12, fig.height=4, warning=FALSE}
 top_rank = trees[[1]]
 
-# Print with S3 methods
+# Print with S3 methods from ctree
 ctree:::print.ctree(top_rank)
 ```
 

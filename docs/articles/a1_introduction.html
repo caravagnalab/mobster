@@ -113,7 +113,7 @@
       <h1>1. Introduction</h1>
                         <h4 class="author">Giulio Caravagna</h4>
             
-            <h4 class="date">September 2019</h4>
+            <h4 class="date">03 May, 2020</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/caravagn/mobster/blob/master/vignettes/a1_introduction.Rmd"><code>vignettes/a1_introduction.Rmd</code></a></small>
       <div class="hidden name"><code>a1_introduction.Rmd</code></div>
@@ -125,68 +125,92 @@
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(mobster)</a>
 <a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tidyr)</a>
 <a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(dplyr)</a></code></pre></div>
-<div id="input-data" class="section level2">
+<div id="input-data-for-mobster" class="section level1">
+<h1 class="hasAnchor">
+<a href="#input-data-for-mobster" class="anchor"></a>Input data for <code>mobster</code>
+</h1>
+<p>You can run a MOBSTER analysis if, for a set of input mutations (SNVs, indels etc.), you have available VAF or CCF data. The input data can be loaded using different input formats.</p>
+<p>For VAF values you can use:</p>
+<ul>
+<li>a <code>data.frame</code> (or, <code>tibble</code>) with a column named <code>VAF</code> whose values are numerical <span class="math inline">\(0&lt;x&lt;1\)</span>, without <code>NA</code> entries;</li>
+<li>a VCF file that must contain at least a column with the total depth of sequencing and the number of reads with the variants. In this case you need first to use function <code>load_VCF</code> and load the VCF content, and then proceed using your data as a <code>data.frame</code>.</li>
+</ul>
+<p>For CCF values you can only use the a <code>data.frame</code> format. Importantly, you have to store the CCF values in a column again named <code>VAF</code>, which must follow the same convention of a VAF column (i.e., range of values). Since CCF values usually peak at around <code>1.0</code> for clonal mutations (i.e., present in 100% of the input cells), we suggest to adjust standard CCF estimates dividing them by <code>0.5</code> in order to reflect the peak of an <em>heterozygous clonal mutation</em> at 50% VAF for a 100% pure bulk sample.</p>
+<p><strong>Example dataset</strong>. Diploid mutations from sample <code>LU4</code> of the <a href="http://genome.kaist.ac.kr/">Comprehensive Omics Archive of Lung Adenocarcinoma</a> are available in the package under the name <code>LU4_lung_sample</code>. The available object is the results of an analysis with <code>mobster</code>, and the input mutation data is stored inside the object.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># Example dataset LU4_lung_sample, downloaded from http://genome.kaist.ac.kr/</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(mobster<span class="op">::</span>LU4_lung_sample<span class="op">$</span>best<span class="op">$</span>data)</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co">#&gt; # A tibble: 1,282 x 12</span></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co">#&gt;      Key Callers t_alt_count t_ref_count Variant_Classif…    DP    VAF chr  </span></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt;    &lt;int&gt; &lt;chr&gt;         &lt;int&gt;       &lt;int&gt; &lt;chr&gt;            &lt;int&gt;  &lt;dbl&gt; &lt;chr&gt;</span></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt;  1   370 mutect…          30          95 intergenic         125 0.24   chr2 </span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt;  2   371 mutect…          10         105 intergenic         115 0.0870 chr2 </span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt;  3   372 mutect…          40         108 intronic           148 0.270  chr2 </span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt;  4   373 mutect…          20         101 intronic           121 0.165  chr2 </span></a>
+<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt;  5   374 mutect…          39          89 intergenic         128 0.305  chr2 </span></a>
+<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="co">#&gt;  6   375 mutect…          41         120 intronic           161 0.255  chr2 </span></a>
+<a class="sourceLine" id="cb2-12" data-line-number="12"><span class="co">#&gt;  7   376 mutect…          43          93 intronic           136 0.316  chr2 </span></a>
+<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="co">#&gt;  8   377 mutect…          22          95 intergenic         117 0.188  chr2 </span></a>
+<a class="sourceLine" id="cb2-14" data-line-number="14"><span class="co">#&gt;  9   378 mutect            7         104 intergenic         111 0.0631 chr2 </span></a>
+<a class="sourceLine" id="cb2-15" data-line-number="15"><span class="co">#&gt; 10   379 mutect…          35          93 intergenic         128 0.273  chr2 </span></a>
+<a class="sourceLine" id="cb2-16" data-line-number="16"><span class="co">#&gt; # … with 1,272 more rows, and 4 more variables: from &lt;chr&gt;, ref &lt;chr&gt;,</span></a>
+<a class="sourceLine" id="cb2-17" data-line-number="17"><span class="co">#&gt; #   alt &lt;chr&gt;, cluster &lt;chr&gt;</span></a></code></pre></div>
+<p>Other datasets are available through the <code>data</code> command.</p>
+<div id="driver-annotations-in-the-data" class="section level2">
 <h2 class="hasAnchor">
-<a href="#input-data" class="anchor"></a>Input data</h2>
-<p>Input data must be a <code>data.frame</code> (or, <code>tibble</code>) with a columun named <code>VAF</code> whose values are numerical <span class="math inline">\(0&lt;x&lt;1\)</span>, without <code>NA</code> entries. Extra columns will be retained, but not modified.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># Exanple dataset</span></a>
-<a class="sourceLine" id="cb2-2" data-line-number="2">mobster<span class="op">::</span>PD4120a_breast_sample<span class="op">$</span>best<span class="op">$</span>data <span class="op">%&gt;%</span><span class="st"> </span>as_tibble</a>
-<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co">#&gt; # A tibble: 4,643 x 15</span></a>
-<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co">#&gt;    region gene  chr     from     to ref   alt   vartype VAF.tumour VAF.normal</span></a>
-<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt;    &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;  &lt;int&gt;  &lt;int&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;        &lt;dbl&gt;      &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt;  1 inter… LOC1… chr3   74574  74574 G     A     SNP          0.371          0</span></a>
-<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt;  2 inter… LOC1… chr3   80489  80489 C     T     SNP          0.276          0</span></a>
-<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt;  3 inter… LOC1… chr3  139091 139091 G     C     SNP          0.049          0</span></a>
-<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt;  4 inter… LOC1… chr3  150557 150557 G     C     SNP          0.077          0</span></a>
-<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt;  5 inter… LOC1… chr3  190860 190860 T     A     SNP          0.033          0</span></a>
-<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="co">#&gt;  6 inter… LOC1… chr3  198896 198896 C     G     SNP          0.347          0</span></a>
-<a class="sourceLine" id="cb2-12" data-line-number="12"><span class="co">#&gt;  7 inter… LOC1… chr3  234298 234298 C     T     SNP          0.233          0</span></a>
-<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="co">#&gt;  8 intro… CHL1  chr3  271958 271958 C     G     SNP          0.282          0</span></a>
-<a class="sourceLine" id="cb2-14" data-line-number="14"><span class="co">#&gt;  9 intro… CHL1  chr3  312028 312028 C     T     SNP          0.083          0</span></a>
-<a class="sourceLine" id="cb2-15" data-line-number="15"><span class="co">#&gt; 10 intro… CHL1  chr3  321624 321624 C     T     SNP          0.162          0</span></a>
-<a class="sourceLine" id="cb2-16" data-line-number="16"><span class="co">#&gt; # … with 4,633 more rows, and 5 more variables: depth.tumour &lt;dbl&gt;,</span></a>
-<a class="sourceLine" id="cb2-17" data-line-number="17"><span class="co">#&gt; #   depth.normal &lt;chr&gt;, NV &lt;dbl&gt;, VAF &lt;dbl&gt;, cluster &lt;chr&gt;</span></a></code></pre></div>
-<p><code>PD4120a_breast_sample</code> is an example dataset <a href="https://github.com/caravagn/MOBSTER/docs/reference/index.html">available within the package</a>. Other datasets can be loaded as <code><a href="https://rdrr.io/r/utils/data.html">data("xxx", package = 'mobster')</a></code> where <code>xxx</code> is the dataset name.</p>
-<p><strong>Generating radom datasets.</strong> You can sample a random dataset with the <code>random_dataset</code> function, setting:</p>
+<a href="#driver-annotations-in-the-data" class="anchor"></a>Driver annotations in the data</h2>
+<p>In the context of subclonal deconvolution we are often interested in linking “driver” events to clonal expansions. Since <code>mobster</code> works with somatic mutations data, it is possible to annotate the status of “driver mutation” in the input data; doing so, the drivers will be reported in some visualisations of the tool, but will not influence any of the computation carried out in <code>mobster</code>.</p>
+<p>The annotate one or more <em>driver mutations</em> you need to include in your column 2 extra columns:</p>
+<ul>
+<li>
+<code>is_driver</code>, a boolean <code>TRUE/FALSE</code> flag;</li>
+<li>
+<code>driver_label</code>, a character string that will be used as label in any visualisation that uses drivers.</li>
+</ul>
+</div>
+</div>
+<div id="generating-random-models-and-data" class="section level1">
+<h1 class="hasAnchor">
+<a href="#generating-random-models-and-data" class="anchor"></a>Generating random models and data</h1>
+<p>You can sample a random dataset with the <code>random_dataset</code> function, setting:</p>
 <ul>
 <li>the number of mutations (<code>n</code>) and Beta components (<code>k</code>, subclones) to generate;</li>
 <li>ranges and constraints on the size of the components;</li>
 <li>ranges for the mean and variance of the Beta components.</li>
 </ul>
-<p>The variance of the Betas is sampled as <span class="math inline">\(u/B \~ U[0,1]\)</span>, where <span class="math inline">\(B\)</span> is set via parameter <code>Beta_variance_scaling</code>. Roughly, values of <code>Beta_variance_scaling</code> on the order of <code>1000</code> give low variance (shark peaked distributions) representative of high-coverage sequencing; lower values mimick data observed at low-sequencing coverage.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">dataset =<span class="st"> </span><span class="kw"><a href="../reference/random_dataset.html">random_dataset</a></span>(</a>
+<p>The variance of the Betas is defined as <span class="math inline">\(u/B\)</span> where <span class="math inline">\(u \sim U[0,1]\)</span>, and <span class="math inline">\(B\)</span> is the input parameter <code>Beta_variance_scaling</code>. Roughly, values of <code>Beta_variance_scaling</code> on the order of <code>1000</code> give low variance and sharp peaked data distributions. Values on the order of <code>100</code> give much wider distributions.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">dataset =<span class="st"> </span>mobster<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/mobster/man/random_dataset.html">random_dataset</a></span>(</a>
 <a class="sourceLine" id="cb3-2" data-line-number="2">  <span class="dt">seed =</span> <span class="dv">123</span>, </a>
 <a class="sourceLine" id="cb3-3" data-line-number="3">  <span class="dt">Beta_variance_scaling =</span> <span class="dv">100</span>    <span class="co"># variance ~ U[0, 1]/Beta_variance_scaling</span></a>
 <a class="sourceLine" id="cb3-4" data-line-number="4">  )</a></code></pre></div>
-<p>A list with 3 components is returned with the actual data, sampled parameters of the generative model, and a plot of the data.</p>
-<p>In <code>mobster</code> we provide the implementation of the model’s density function (<code>ddbpmm</code>, density Dirichlet Beta Pareto mixture model) , and a sampler (<code>rdbpmm</code>) which is used internally by <code>random_dataset</code>.</p>
+<p>A list with 3 components is returned, which contains the actual data, sampled parameters of the generative model, and a plot of the data.</p>
+<p>In <code>mobster</code> we provide the implementation of the model’s density function (<code>ddbpmm</code>, density Dirichlet Beta Pareto mixture model), and a sampler (<code>rdbpmm</code>) which is used internally by <code>random_dataset</code> to generate the data.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co"># Data, in the MOBSTER input format with a "VAF" column.</span></a>
 <a class="sourceLine" id="cb4-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(dataset<span class="op">$</span>data)</a>
 <a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co">#&gt; # A tibble: 5,000 x 2</span></a>
 <a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co">#&gt;      VAF cluster</span></a>
 <a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">#&gt;    &lt;dbl&gt; &lt;chr&gt;  </span></a>
-<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#&gt;  1 0.848 C1     </span></a>
-<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co">#&gt;  2 0.774 C1     </span></a>
-<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co">#&gt;  3 0.829 C1     </span></a>
-<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="co">#&gt;  4 0.641 C1     </span></a>
-<a class="sourceLine" id="cb4-10" data-line-number="10"><span class="co">#&gt;  5 0.916 C1     </span></a>
-<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="co">#&gt;  6 0.795 C1     </span></a>
-<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="co">#&gt;  7 0.861 C1     </span></a>
-<a class="sourceLine" id="cb4-13" data-line-number="13"><span class="co">#&gt;  8 0.815 C1     </span></a>
-<a class="sourceLine" id="cb4-14" data-line-number="14"><span class="co">#&gt;  9 0.787 C1     </span></a>
-<a class="sourceLine" id="cb4-15" data-line-number="15"><span class="co">#&gt; 10 0.799 C1     </span></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#&gt;  1 0.544 C1     </span></a>
+<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co">#&gt;  2 0.495 C1     </span></a>
+<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co">#&gt;  3 0.719 C1     </span></a>
+<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="co">#&gt;  4 0.646 C1     </span></a>
+<a class="sourceLine" id="cb4-10" data-line-number="10"><span class="co">#&gt;  5 0.616 C1     </span></a>
+<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="co">#&gt;  6 0.451 C1     </span></a>
+<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="co">#&gt;  7 0.480 C1     </span></a>
+<a class="sourceLine" id="cb4-13" data-line-number="13"><span class="co">#&gt;  8 0.622 C1     </span></a>
+<a class="sourceLine" id="cb4-14" data-line-number="14"><span class="co">#&gt;  9 0.747 C1     </span></a>
+<a class="sourceLine" id="cb4-15" data-line-number="15"><span class="co">#&gt; 10 0.624 C1     </span></a>
 <a class="sourceLine" id="cb4-16" data-line-number="16"><span class="co">#&gt; # … with 4,990 more rows</span></a>
 <a class="sourceLine" id="cb4-17" data-line-number="17"></a>
 <a class="sourceLine" id="cb4-18" data-line-number="18"><span class="co"># The generated model contains the parameters of the Beta components (a and b),</span></a>
 <a class="sourceLine" id="cb4-19" data-line-number="19"><span class="co"># the shape and scale of the tail, and the mixing proportion. </span></a>
 <a class="sourceLine" id="cb4-20" data-line-number="20"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(dataset<span class="op">$</span>model)</a>
 <a class="sourceLine" id="cb4-21" data-line-number="21"><span class="co">#&gt; $a</span></a>
-<a class="sourceLine" id="cb4-22" data-line-number="22"><span class="co">#&gt;       C1       C2 </span></a>
-<a class="sourceLine" id="cb4-23" data-line-number="23"><span class="co">#&gt; 16.40514 16.78235 </span></a>
+<a class="sourceLine" id="cb4-22" data-line-number="22"><span class="co">#&gt;        C1        C2 </span></a>
+<a class="sourceLine" id="cb4-23" data-line-number="23"><span class="co">#&gt; 15.001213  3.758771 </span></a>
 <a class="sourceLine" id="cb4-24" data-line-number="24"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb4-25" data-line-number="25"><span class="co">#&gt; $b</span></a>
-<a class="sourceLine" id="cb4-26" data-line-number="26"><span class="co">#&gt;        C1        C2 </span></a>
-<a class="sourceLine" id="cb4-27" data-line-number="27"><span class="co">#&gt;  4.247342 21.373956 </span></a>
+<a class="sourceLine" id="cb4-26" data-line-number="26"><span class="co">#&gt;       C1       C2 </span></a>
+<a class="sourceLine" id="cb4-27" data-line-number="27"><span class="co">#&gt; 11.19567 32.76085 </span></a>
 <a class="sourceLine" id="cb4-28" data-line-number="28"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb4-29" data-line-number="29"><span class="co">#&gt; $shape</span></a>
 <a class="sourceLine" id="cb4-30" data-line-number="30"><span class="co">#&gt; [1] 1</span></a>
@@ -196,7 +220,7 @@
 <a class="sourceLine" id="cb4-34" data-line-number="34"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb4-35" data-line-number="35"><span class="co">#&gt; $pi</span></a>
 <a class="sourceLine" id="cb4-36" data-line-number="36"><span class="co">#&gt;      Tail        C1        C2 </span></a>
-<a class="sourceLine" id="cb4-37" data-line-number="37"><span class="co">#&gt; 0.2919682 0.3054546 0.4025772</span></a>
+<a class="sourceLine" id="cb4-37" data-line-number="37"><span class="co">#&gt; 0.2678075 0.4525544 0.2796381</span></a>
 <a class="sourceLine" id="cb4-38" data-line-number="38"></a>
 <a class="sourceLine" id="cb4-39" data-line-number="39"><span class="co"># A plot object (ggplot) is available where each data-point is coloured by </span></a>
 <a class="sourceLine" id="cb4-40" data-line-number="40"><span class="co"># its generative mixture component. The vertical lines annontate the means of</span></a>
@@ -204,107 +228,197 @@
 <a class="sourceLine" id="cb4-42" data-line-number="42"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(dataset<span class="op">$</span>plot)</a></code></pre></div>
 <p><img src="a1_introduction_files/figure-html/unnamed-chunk-5-1.png" width="384"></p>
 </div>
-<div id="fitting-a-dataset" class="section level2">
-<h2 class="hasAnchor">
-<a href="#fitting-a-dataset" class="anchor"></a>Fitting a dataset</h2>
+<div id="fitting-a-dataset" class="section level1">
+<h1 class="hasAnchor">
+<a href="#fitting-a-dataset" class="anchor"></a>Fitting a dataset</h1>
 <p>Function <code>mobster_fit</code> fits a MOBSTER model.</p>
-<p>The function implements a model selection routine that by default scores models by their reICL (<em>reduced Integrative Classification Likelihood</em>) score, a variant to the popular BIC that uses the entropy of the latent variables of the mixture reICL is discussed in the main MOBSTER paper.</p>
-<p>This function has several parameters to customize the fitting procedure, and a set of special pre-parametrised runs that can be activated with parameter <code>auto_setup</code>. Here we use <code>auto_setup = "FAST"</code>, an automatic setup that provides usually faster runs; default parameters test more extensive types of fits.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">fit =<span class="st"> </span><span class="kw"><a href="../reference/mobster_fit.html">mobster_fit</a></span>(</a>
-<a class="sourceLine" id="cb5-2" data-line-number="2">  dataset<span class="op">$</span>data,    </a>
-<a class="sourceLine" id="cb5-3" data-line-number="3">  <span class="dt">auto_setup =</span> <span class="st">"FAST"</span></a>
-<a class="sourceLine" id="cb5-4" data-line-number="4">  )</a>
-<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt;  [ MOBSTER fit ]</span></a>
-<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="co">#&gt; ✔ Loaded input data, n = 5000.</span></a>
-<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="co">#&gt; ❯ n = 5000. Mixture with k = 1,2 Beta(s). Pareto tail: TRUE and FALSE. Output clusters with π &gt; 0.02 and n &gt; 10.</span></a>
-<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="co">#&gt; ! mobster automatic setup FAST for the analysis.</span></a>
-<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="co">#&gt; ❯ Scoring (without parallel) 2 x 2 x 2 = 8 models by reICL.</span></a>
-<a class="sourceLine" id="cb5-10" data-line-number="10"><span class="co">#&gt; ℹ MOBSTER fits completed in 14.7s.</span></a>
-<a class="sourceLine" id="cb5-11" data-line-number="11"><span class="co">#&gt; ── [ MOBSTER ] My MOBSTER model n = 5000 with k = 2 Beta(s) and a tail ───────────────────────────────────────────────────</span></a>
-<a class="sourceLine" id="cb5-12" data-line-number="12"><span class="co">#&gt; ● Clusters: π = 42% [C2], 31% [C1] and 27% [Tail], with π &gt; 0.</span></a>
-<a class="sourceLine" id="cb5-13" data-line-number="13"><span class="co">#&gt; ● Tail [n = 1262, 27%] with alpha = 1.4.</span></a>
-<a class="sourceLine" id="cb5-14" data-line-number="14"><span class="co">#&gt; ● Beta C1 [n = 1549, 31%] with mean = 0.8.</span></a>
-<a class="sourceLine" id="cb5-15" data-line-number="15"><span class="co">#&gt; ● Beta C2 [n = 2189, 42%] with mean = 0.44.</span></a>
-<a class="sourceLine" id="cb5-16" data-line-number="16"><span class="co">#&gt; ℹ Score(s): NLL = -1433.06; ICL = -2063.32 (-2572.53), H = 726.13 (216.93). Fit converged by MM in 69 steps.</span></a></code></pre></div>
-<p>A call of <code>mobster_fit</code> will return a list with:</p>
+<p>The function implements a model-selection routine that by default scores models by their <code>reICL</code> (<em>reduced Integrative Classification Likelihood</em>) score, a variant to the popular <code>BIC</code> that uses the entropy of the latent variables of the mixture. <code>reICL</code> is discussed in the main paper.</p>
+<p>This function has several parameters to customize the fitting procedure, and a set of special pre-parametrised runs that can be activated with parameter <code>auto_setup</code>. Here we use <code>auto_setup = "FAST"</code>, an automatic setup for a fast run; its parameters are accessible through an internal package function.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">mobster<span class="op">:::</span><span class="kw">template_parameters_fast_setup</span>()</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="co">#&gt; $K</span></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="co">#&gt; [1] 1 2</span></a>
+<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt; $samples</span></a>
+<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="co">#&gt; [1] 2</span></a>
+<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="co">#&gt; $init</span></a>
+<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="co">#&gt; [1] "random"</span></a>
+<a class="sourceLine" id="cb5-10" data-line-number="10"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-11" data-line-number="11"><span class="co">#&gt; $tail</span></a>
+<a class="sourceLine" id="cb5-12" data-line-number="12"><span class="co">#&gt; [1]  TRUE FALSE</span></a>
+<a class="sourceLine" id="cb5-13" data-line-number="13"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-14" data-line-number="14"><span class="co">#&gt; $epsilon</span></a>
+<a class="sourceLine" id="cb5-15" data-line-number="15"><span class="co">#&gt; [1] 1e-06</span></a>
+<a class="sourceLine" id="cb5-16" data-line-number="16"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-17" data-line-number="17"><span class="co">#&gt; $maxIter</span></a>
+<a class="sourceLine" id="cb5-18" data-line-number="18"><span class="co">#&gt; [1] 100</span></a>
+<a class="sourceLine" id="cb5-19" data-line-number="19"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-20" data-line-number="20"><span class="co">#&gt; $fit.type</span></a>
+<a class="sourceLine" id="cb5-21" data-line-number="21"><span class="co">#&gt; [1] "MM"</span></a>
+<a class="sourceLine" id="cb5-22" data-line-number="22"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-23" data-line-number="23"><span class="co">#&gt; $seed</span></a>
+<a class="sourceLine" id="cb5-24" data-line-number="24"><span class="co">#&gt; [1] 12345</span></a>
+<a class="sourceLine" id="cb5-25" data-line-number="25"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-26" data-line-number="26"><span class="co">#&gt; $model.selection</span></a>
+<a class="sourceLine" id="cb5-27" data-line-number="27"><span class="co">#&gt; [1] "reICL"</span></a>
+<a class="sourceLine" id="cb5-28" data-line-number="28"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-29" data-line-number="29"><span class="co">#&gt; $trace</span></a>
+<a class="sourceLine" id="cb5-30" data-line-number="30"><span class="co">#&gt; [1] FALSE</span></a>
+<a class="sourceLine" id="cb5-31" data-line-number="31"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-32" data-line-number="32"><span class="co">#&gt; $parallel</span></a>
+<a class="sourceLine" id="cb5-33" data-line-number="33"><span class="co">#&gt; [1] FALSE</span></a>
+<a class="sourceLine" id="cb5-34" data-line-number="34"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-35" data-line-number="35"><span class="co">#&gt; $pi_cutoff</span></a>
+<a class="sourceLine" id="cb5-36" data-line-number="36"><span class="co">#&gt; [1] 0.02</span></a>
+<a class="sourceLine" id="cb5-37" data-line-number="37"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-38" data-line-number="38"><span class="co">#&gt; $N_cutoff</span></a>
+<a class="sourceLine" id="cb5-39" data-line-number="39"><span class="co">#&gt; [1] 10</span></a></code></pre></div>
+<p>Compared to these, default parameters test more extensive types of fits (i.e., more clones, longer fits, higher number of replicates etc.). We usually use the fast parametrisation to obtain a first fit of the data and, if not satisfied, we run customised calls of <code>mobster_fit</code>.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="co"># Fast run with auto_setup = "FAST"</span></a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">fit =<span class="st"> </span>mobster<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/mobster/man/mobster_fit.html">mobster_fit</a></span>(</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">  dataset<span class="op">$</span>data,    </a>
+<a class="sourceLine" id="cb6-4" data-line-number="4">  <span class="dt">auto_setup =</span> <span class="st">"FAST"</span></a>
+<a class="sourceLine" id="cb6-5" data-line-number="5">  )</a>
+<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co">#&gt;  [ MOBSTER fit ]</span></a>
+<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#&gt; ✔ Loaded input data, n = 5000.</span></a>
+<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt; ❯ n = 5000. Mixture with k = 1,2 Beta(s). Pareto tail: TRUE and FALSE. Output clusters with π &gt; 0.02 and</span></a>
+<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co">#&gt; n &gt; 10.</span></a>
+<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="co">#&gt; ! mobster automatic setup FAST for the analysis.</span></a>
+<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="co">#&gt; ❯ Scoring (without parallel) 2 x 2 x 2 = 8 models by reICL.</span></a>
+<a class="sourceLine" id="cb6-12" data-line-number="12"><span class="co">#&gt; ℹ MOBSTER fits completed in 9.5s.</span></a>
+<a class="sourceLine" id="cb6-13" data-line-number="13"><span class="co">#&gt; ── [ MOBSTER ] My MOBSTER model n = 5000 with k = 2 Beta(s) without tail ─────────────────────────────────</span></a>
+<a class="sourceLine" id="cb6-14" data-line-number="14"><span class="co">#&gt; ● Clusters: π = 51% [C2] and 49% [C1], with π &gt; 0.</span></a>
+<a class="sourceLine" id="cb6-15" data-line-number="15"><span class="co">#&gt; ✖ No tail fit.</span></a>
+<a class="sourceLine" id="cb6-16" data-line-number="16"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb6-17" data-line-number="17"><span class="co">#&gt; ● Beta C1 [n = 2442, 49%] with mean = 0.57.</span></a>
+<a class="sourceLine" id="cb6-18" data-line-number="18"><span class="co">#&gt; ● Beta C2 [n = 2558, 51%] with mean = 0.1.</span></a>
+<a class="sourceLine" id="cb6-19" data-line-number="19"><span class="co">#&gt; ℹ Score(s): NLL = -2793.17; ICL = -5462.53 (-5462.53), H = 72.71 (72.71). Fit converged by MM in 21</span></a>
+<a class="sourceLine" id="cb6-20" data-line-number="20"><span class="co">#&gt; steps.</span></a></code></pre></div>
+<p>A call of <code>mobster_fit</code> will return a list with 3 elements:</p>
 <ul>
-<li>the best fit <code>fit$best</code>;</li>
+<li>the best fit <code>fit$best</code>, according to the selected scoring method;</li>
 <li>
-<code>fit$runs</code>, a list with the ranked fits; the object available in <code>best</code> matches the head of this list,;</li>
+<code>fit$runs</code>, a list with the ranked fits; <code>best</code> matches the head of this list;</li>
 <li>
 <code>fit$fits.table</code>, a table that summarises the scores for each one of the runs.</li>
 </ul>
 <p>Each fit object (<code>best</code> or any object stored in <code>runs</code>) is from the S3 class <code>dbpmm</code>.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="co"># Print the best model, as well as the first 3 models in the runs list</span></a>
-<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(fit<span class="op">$</span>best)</a>
-<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="co">#&gt; ── [ MOBSTER ] My MOBSTER model n = 5000 with k = 2 Beta(s) and a tail ───────────────────────────────────────────────────</span></a>
-<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="co">#&gt; ● Clusters: π = 42% [C2], 31% [C1] and 27% [Tail], with π &gt; 0.</span></a>
-<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="co">#&gt; ● Tail [n = 1262, 27%] with alpha = 1.4.</span></a>
-<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co">#&gt; ● Beta C1 [n = 1549, 31%] with mean = 0.8.</span></a>
-<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#&gt; ● Beta C2 [n = 2189, 42%] with mean = 0.44.</span></a>
-<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt; ℹ Score(s): NLL = -1433.06; ICL = -2063.32 (-2572.53), H = 726.13 (216.93). Fit converged by MM in 69 steps.</span></a>
-<a class="sourceLine" id="cb6-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="co"># Same as best</span></a>
-<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(fit<span class="op">$</span>runs[[<span class="dv">1</span>]]) </a>
-<a class="sourceLine" id="cb6-12" data-line-number="12"><span class="co">#&gt; ── [ MOBSTER ] My MOBSTER model n = 5000 with k = 2 Beta(s) and a tail ───────────────────────────────────────────────────</span></a>
-<a class="sourceLine" id="cb6-13" data-line-number="13"><span class="co">#&gt; ● Clusters: π = 42% [C2], 31% [C1] and 27% [Tail], with π &gt; 0.</span></a>
-<a class="sourceLine" id="cb6-14" data-line-number="14"><span class="co">#&gt; ● Tail [n = 1262, 27%] with alpha = 1.4.</span></a>
-<a class="sourceLine" id="cb6-15" data-line-number="15"><span class="co">#&gt; ● Beta C1 [n = 1549, 31%] with mean = 0.8.</span></a>
-<a class="sourceLine" id="cb6-16" data-line-number="16"><span class="co">#&gt; ● Beta C2 [n = 2189, 42%] with mean = 0.44.</span></a>
-<a class="sourceLine" id="cb6-17" data-line-number="17"><span class="co">#&gt; ℹ Score(s): NLL = -1433.06; ICL = -2063.32 (-2572.53), H = 726.13 (216.93). Fit converged by MM in 69 steps.</span></a>
-<a class="sourceLine" id="cb6-18" data-line-number="18"></a>
-<a class="sourceLine" id="cb6-19" data-line-number="19"><span class="co"># Second best fit</span></a>
-<a class="sourceLine" id="cb6-20" data-line-number="20"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(fit<span class="op">$</span>runs[[<span class="dv">2</span>]])</a>
-<a class="sourceLine" id="cb6-21" data-line-number="21"><span class="co">#&gt; ── [ MOBSTER ] My MOBSTER model n = 5000 with k = 1 Beta(s) and a tail ───────────────────────────────────────────────────</span></a>
-<a class="sourceLine" id="cb6-22" data-line-number="22"><span class="co">#&gt; ● Clusters: π = 80% [C1] and 20% [Tail], with π &gt; 0.</span></a>
-<a class="sourceLine" id="cb6-23" data-line-number="23"><span class="co">#&gt; ● Tail [n = 1016, 20%] with alpha = 1.9.</span></a>
-<a class="sourceLine" id="cb6-24" data-line-number="24"><span class="co">#&gt; ● Beta C1 [n = 3984, 80%] with mean = 0.56.</span></a>
-<a class="sourceLine" id="cb6-25" data-line-number="25"><span class="co">#&gt; ℹ Score(s): NLL = -880.03; ICL = -1045.85 (-1708.95), H = 663.11 (0). Fit converged by MM in 34 steps.</span></a>
-<a class="sourceLine" id="cb6-26" data-line-number="26"></a>
-<a class="sourceLine" id="cb6-27" data-line-number="27"><span class="co"># Third best fit</span></a>
-<a class="sourceLine" id="cb6-28" data-line-number="28"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(fit<span class="op">$</span>runs[[<span class="dv">3</span>]])</a>
-<a class="sourceLine" id="cb6-29" data-line-number="29"><span class="co">#&gt; ── [ MOBSTER ] My MOBSTER model n = 5000 with k = 1 Beta(s) without tail ─────────────────────────────────────────────────</span></a>
-<a class="sourceLine" id="cb6-30" data-line-number="30"><span class="co">#&gt; ● Clusters: π = 100% [C1], with π &gt; 0.</span></a>
-<a class="sourceLine" id="cb6-31" data-line-number="31"><span class="co">#&gt; ✖ No tail fit.</span></a>
-<a class="sourceLine" id="cb6-32" data-line-number="32"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb6-33" data-line-number="33"><span class="co">#&gt; ● Beta C1 [n = 5000, 100%] with mean = 0.47.</span></a>
-<a class="sourceLine" id="cb6-34" data-line-number="34"><span class="co">#&gt; ℹ Score(s): NLL = -138.11; ICL = -250.67 (-250.67), H = 0 (0). Fit interrupted by MM in 100 steps.</span></a></code></pre></div>
-<p>MOBSTER clusters can be plot as an histogram overlaid to the model density. By default MOBSTER names Beta clusters according to the decreasing order of their mean; so <code>C1</code> is always the label of the cluster with highest mean, etc. If the data are correct, this should represent the pool of clonal mutations in the analysed biopsy.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co"># Plot the best model</span></a>
-<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(fit<span class="op">$</span>best)</a></code></pre></div>
-<p><img src="a1_introduction_files/figure-html/unnamed-chunk-8-1.png" width="480"></p>
-<p>The basic plot shows, mirrored on the y-axis, the percentage of cumulative sum-of-squared-error (SSE) of the fit, and the caption annotates information about the run. A comparative plot between fits can be assembled using <a href="https://cran.r-project.org/web/packages/cowplot/vignettes/introduction.html">cowplot</a>.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">figure =<span class="st"> </span>cowplot<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/cowplot/man/plot_grid.html">plot_grid</a></span>(</a>
-<a class="sourceLine" id="cb8-2" data-line-number="2">  dataset<span class="op">$</span>plot, </a>
-<a class="sourceLine" id="cb8-3" data-line-number="3">  <span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(fit<span class="op">$</span>best), </a>
-<a class="sourceLine" id="cb8-4" data-line-number="4">  <span class="dt">ncol =</span> <span class="dv">2</span>,</a>
-<a class="sourceLine" id="cb8-5" data-line-number="5">  <span class="dt">align =</span> <span class="st">'h'</span>)</a>
-<a class="sourceLine" id="cb8-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb8-7" data-line-number="7"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(figure)</a></code></pre></div>
-<p><img src="a1_introduction_files/figure-html/unnamed-chunk-9-1.png" width="960"></p>
-<p>Hard clustering assignments can be accessed with function <code>Clusters</code>, and subset imposing a minimum cutoff to the reponsibilities of the mutations. The output tibble is a copy of the input, with the new <code>cluster</code> column (unassigned mutation with <code>NA</code>), plus a set of columns for the latent variables.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="co"># Assign mutations with at least 80% of probability mass to their maximum responsibility</span></a>
-<a class="sourceLine" id="cb9-2" data-line-number="2">clusters =<span class="st"> </span><span class="kw"><a href="../reference/Clusters.html">Clusters</a></span>(</a>
-<a class="sourceLine" id="cb9-3" data-line-number="3">  fit<span class="op">$</span>best, </a>
-<a class="sourceLine" id="cb9-4" data-line-number="4">  <span class="dt">cutoff_assignment =</span> <span class="fl">.8</span></a>
-<a class="sourceLine" id="cb9-5" data-line-number="5">  )</a>
-<a class="sourceLine" id="cb9-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(clusters)</a>
-<a class="sourceLine" id="cb9-8" data-line-number="8"><span class="co">#&gt; # A tibble: 5,000 x 5</span></a>
-<a class="sourceLine" id="cb9-9" data-line-number="9"><span class="co">#&gt;      VAF cluster    Tail    C1       C2</span></a>
-<a class="sourceLine" id="cb9-10" data-line-number="10"><span class="co">#&gt;    &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb9-11" data-line-number="11"><span class="co">#&gt;  1 0.848 C1      0.00638 0.994 1.89e- 7</span></a>
-<a class="sourceLine" id="cb9-12" data-line-number="12"><span class="co">#&gt;  2 0.774 C1      0.00897 0.991 1.38e- 4</span></a>
-<a class="sourceLine" id="cb9-13" data-line-number="13"><span class="co">#&gt;  3 0.829 C1      0.00651 0.993 1.41e- 6</span></a>
-<a class="sourceLine" id="cb9-14" data-line-number="14"><span class="co">#&gt;  4 0.641 &lt;NA&gt;    0.0444  0.723 2.33e- 1</span></a>
-<a class="sourceLine" id="cb9-15" data-line-number="15"><span class="co">#&gt;  5 0.916 C1      0.0114  0.989 1.02e-11</span></a>
-<a class="sourceLine" id="cb9-16" data-line-number="16"><span class="co">#&gt;  6 0.795 C1      0.00764 0.992 2.80e- 5</span></a>
-<a class="sourceLine" id="cb9-17" data-line-number="17"><span class="co">#&gt;  7 0.861 C1      0.00652 0.993 4.17e- 8</span></a>
-<a class="sourceLine" id="cb9-18" data-line-number="18"><span class="co">#&gt;  8 0.815 C1      0.00682 0.993 4.84e- 6</span></a>
-<a class="sourceLine" id="cb9-19" data-line-number="19"><span class="co">#&gt;  9 0.787 C1      0.00806 0.992 5.11e- 5</span></a>
-<a class="sourceLine" id="cb9-20" data-line-number="20"><span class="co">#&gt; 10 0.799 C1      0.00743 0.993 1.98e- 5</span></a>
-<a class="sourceLine" id="cb9-21" data-line-number="21"><span class="co">#&gt; # … with 4,990 more rows</span></a></code></pre></div>
-<p>Several functions can be used to <a href="https://github.com/caravagn/MOBSTER/docs/articles/plotting.html">plot the data</a>.s</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co"># Print the best model</span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(fit<span class="op">$</span>best)</a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">#&gt; ── [ MOBSTER ] My MOBSTER model n = 5000 with k = 2 Beta(s) without tail ─────────────────────────────────</span></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co">#&gt; ● Clusters: π = 51% [C2] and 49% [C1], with π &gt; 0.</span></a>
+<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co">#&gt; ✖ No tail fit.</span></a>
+<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">#&gt; ● Beta C1 [n = 2442, 49%] with mean = 0.57.</span></a>
+<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">#&gt; ● Beta C2 [n = 2558, 51%] with mean = 0.1.</span></a>
+<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">#&gt; ℹ Score(s): NLL = -2793.17; ICL = -5462.53 (-5462.53), H = 72.71 (72.71). Fit converged by MM in 21</span></a>
+<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">#&gt; steps.</span></a>
+<a class="sourceLine" id="cb7-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co"># Print top-3 models</span></a>
+<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(fit<span class="op">$</span>runs[[<span class="dv">1</span>]]) </a>
+<a class="sourceLine" id="cb7-14" data-line-number="14"><span class="co">#&gt; ── [ MOBSTER ] My MOBSTER model n = 5000 with k = 2 Beta(s) without tail ─────────────────────────────────</span></a>
+<a class="sourceLine" id="cb7-15" data-line-number="15"><span class="co">#&gt; ● Clusters: π = 51% [C2] and 49% [C1], with π &gt; 0.</span></a>
+<a class="sourceLine" id="cb7-16" data-line-number="16"><span class="co">#&gt; ✖ No tail fit.</span></a>
+<a class="sourceLine" id="cb7-17" data-line-number="17"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb7-18" data-line-number="18"><span class="co">#&gt; ● Beta C1 [n = 2442, 49%] with mean = 0.57.</span></a>
+<a class="sourceLine" id="cb7-19" data-line-number="19"><span class="co">#&gt; ● Beta C2 [n = 2558, 51%] with mean = 0.1.</span></a>
+<a class="sourceLine" id="cb7-20" data-line-number="20"><span class="co">#&gt; ℹ Score(s): NLL = -2793.17; ICL = -5462.53 (-5462.53), H = 72.71 (72.71). Fit converged by MM in 21</span></a>
+<a class="sourceLine" id="cb7-21" data-line-number="21"><span class="co">#&gt; steps.</span></a>
+<a class="sourceLine" id="cb7-22" data-line-number="22"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(fit<span class="op">$</span>runs[[<span class="dv">2</span>]])</a>
+<a class="sourceLine" id="cb7-23" data-line-number="23"><span class="co">#&gt; ── [ MOBSTER ] My MOBSTER model n = 5000 with k = 2 Beta(s) without tail ─────────────────────────────────</span></a>
+<a class="sourceLine" id="cb7-24" data-line-number="24"><span class="co">#&gt; ● Clusters: π = 51% [C2] and 49% [C1], with π &gt; 0.</span></a>
+<a class="sourceLine" id="cb7-25" data-line-number="25"><span class="co">#&gt; ✖ No tail fit.</span></a>
+<a class="sourceLine" id="cb7-26" data-line-number="26"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb7-27" data-line-number="27"><span class="co">#&gt; ● Beta C1 [n = 2442, 49%] with mean = 0.57.</span></a>
+<a class="sourceLine" id="cb7-28" data-line-number="28"><span class="co">#&gt; ● Beta C2 [n = 2558, 51%] with mean = 0.1.</span></a>
+<a class="sourceLine" id="cb7-29" data-line-number="29"><span class="co">#&gt; ℹ Score(s): NLL = -2793.17; ICL = -5462.52 (-5462.52), H = 72.71 (72.71). Fit converged by MM in 29</span></a>
+<a class="sourceLine" id="cb7-30" data-line-number="30"><span class="co">#&gt; steps.</span></a>
+<a class="sourceLine" id="cb7-31" data-line-number="31"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(fit<span class="op">$</span>runs[[<span class="dv">3</span>]])</a>
+<a class="sourceLine" id="cb7-32" data-line-number="32"><span class="co">#&gt; ── [ MOBSTER ] My MOBSTER model n = 5000 with k = 2 Beta(s) without tail ─────────────────────────────────</span></a>
+<a class="sourceLine" id="cb7-33" data-line-number="33"><span class="co">#&gt; ● Clusters: π = 51% [C2] and 49% [C1], with π &gt; 0.</span></a>
+<a class="sourceLine" id="cb7-34" data-line-number="34"><span class="co">#&gt; ✖ No tail fit.</span></a>
+<a class="sourceLine" id="cb7-35" data-line-number="35"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb7-36" data-line-number="36"><span class="co">#&gt; ● Beta C1 [n = 2440, 49%] with mean = 0.57.</span></a>
+<a class="sourceLine" id="cb7-37" data-line-number="37"><span class="co">#&gt; ● Beta C2 [n = 2560, 51%] with mean = 0.1.</span></a>
+<a class="sourceLine" id="cb7-38" data-line-number="38"><span class="co">#&gt; ℹ Score(s): NLL = -2786.85; ICL = -5451.79 (-5451.79), H = 70.81 (70.81). Fit converged by MM in 38</span></a>
+<a class="sourceLine" id="cb7-39" data-line-number="39"><span class="co">#&gt; steps.</span></a></code></pre></div>
+<p>Usually, one keeps working with the <code>best</code> model fit. From that it is possible to extract the results of the fit, and the clustering assignments. The output is a copy of the input data, with a column reporting the model’s latent variables (LVs) and the <code>cluster</code> assignment (<em>hard clustering</em>).</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="co"># All assignments</span></a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">mobster<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/mobster/man/Clusters.html">Clusters</a></span>(fit<span class="op">$</span>best)</a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="co">#&gt; # A tibble: 5,000 x 5</span></a>
+<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="co">#&gt;      VAF cluster  Tail    C1       C2</span></a>
+<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="co">#&gt;    &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb8-6" data-line-number="6"><span class="co">#&gt;  1 0.544 C1          0  1.00 7.15e- 7</span></a>
+<a class="sourceLine" id="cb8-7" data-line-number="7"><span class="co">#&gt;  2 0.495 C1          0  1.00 1.20e- 5</span></a>
+<a class="sourceLine" id="cb8-8" data-line-number="8"><span class="co">#&gt;  3 0.719 C1          0  1.00 4.63e-12</span></a>
+<a class="sourceLine" id="cb8-9" data-line-number="9"><span class="co">#&gt;  4 0.646 C1          0  1.00 1.13e- 9</span></a>
+<a class="sourceLine" id="cb8-10" data-line-number="10"><span class="co">#&gt;  5 0.616 C1          0  1.00 8.23e- 9</span></a>
+<a class="sourceLine" id="cb8-11" data-line-number="11"><span class="co">#&gt;  6 0.451 C1          0  1.00 1.37e- 4</span></a>
+<a class="sourceLine" id="cb8-12" data-line-number="12"><span class="co">#&gt;  7 0.480 C1          0  1.00 2.75e- 5</span></a>
+<a class="sourceLine" id="cb8-13" data-line-number="13"><span class="co">#&gt;  8 0.622 C1          0  1.00 5.78e- 9</span></a>
+<a class="sourceLine" id="cb8-14" data-line-number="14"><span class="co">#&gt;  9 0.747 C1          0  1.00 4.19e-13</span></a>
+<a class="sourceLine" id="cb8-15" data-line-number="15"><span class="co">#&gt; 10 0.624 C1          0  1.00 5.03e- 9</span></a>
+<a class="sourceLine" id="cb8-16" data-line-number="16"><span class="co">#&gt; # … with 4,990 more rows</span></a>
+<a class="sourceLine" id="cb8-17" data-line-number="17"></a>
+<a class="sourceLine" id="cb8-18" data-line-number="18"><span class="co"># Assignments with LVs probability above 85%</span></a>
+<a class="sourceLine" id="cb8-19" data-line-number="19">mobster<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/mobster/man/Clusters.html">Clusters</a></span>(fit<span class="op">$</span>best, <span class="dt">cutoff_assignment =</span> <span class="fl">0.85</span>)</a>
+<a class="sourceLine" id="cb8-20" data-line-number="20"><span class="co">#&gt; # A tibble: 5,000 x 5</span></a>
+<a class="sourceLine" id="cb8-21" data-line-number="21"><span class="co">#&gt;      VAF cluster  Tail    C1       C2</span></a>
+<a class="sourceLine" id="cb8-22" data-line-number="22"><span class="co">#&gt;    &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb8-23" data-line-number="23"><span class="co">#&gt;  1 0.544 C1          0  1.00 7.15e- 7</span></a>
+<a class="sourceLine" id="cb8-24" data-line-number="24"><span class="co">#&gt;  2 0.495 C1          0  1.00 1.20e- 5</span></a>
+<a class="sourceLine" id="cb8-25" data-line-number="25"><span class="co">#&gt;  3 0.719 C1          0  1.00 4.63e-12</span></a>
+<a class="sourceLine" id="cb8-26" data-line-number="26"><span class="co">#&gt;  4 0.646 C1          0  1.00 1.13e- 9</span></a>
+<a class="sourceLine" id="cb8-27" data-line-number="27"><span class="co">#&gt;  5 0.616 C1          0  1.00 8.23e- 9</span></a>
+<a class="sourceLine" id="cb8-28" data-line-number="28"><span class="co">#&gt;  6 0.451 C1          0  1.00 1.37e- 4</span></a>
+<a class="sourceLine" id="cb8-29" data-line-number="29"><span class="co">#&gt;  7 0.480 C1          0  1.00 2.75e- 5</span></a>
+<a class="sourceLine" id="cb8-30" data-line-number="30"><span class="co">#&gt;  8 0.622 C1          0  1.00 5.78e- 9</span></a>
+<a class="sourceLine" id="cb8-31" data-line-number="31"><span class="co">#&gt;  9 0.747 C1          0  1.00 4.19e-13</span></a>
+<a class="sourceLine" id="cb8-32" data-line-number="32"><span class="co">#&gt; 10 0.624 C1          0  1.00 5.03e- 9</span></a>
+<a class="sourceLine" id="cb8-33" data-line-number="33"><span class="co">#&gt; # … with 4,990 more rows</span></a></code></pre></div>
+<p>The second call imposes a cut to the assignments with less than 85% probability mass in the LVs.</p>
+<p>If you want to assign some new data to the fit model you can use function <code>Clusters_denovo</code>.</p>
+</div>
+<div id="basic-plots-of-a-fit" class="section level1">
+<h1 class="hasAnchor">
+<a href="#basic-plots-of-a-fit" class="anchor"></a>Basic plots of a fit</h1>
+<p>Clusters can be plot as an histogram with the model density (total and per mixture). By default, <code>mobster</code> names Beta clusters <code>C1</code>, <code>C2</code>, etc. according to the decreasing order of their mean; so <code>C1</code> is always the cluster with highest Beta mean, etc. If the data are diploid mutations, <code>C1</code> should represent clonal mutations.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="co"># Plot the best model</span></a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(fit<span class="op">$</span>best)</a>
+<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="co">#&gt; Warning: Unknown or uninitialised column: 'Scale'.</span></a>
+<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="co">#&gt; Warning: Unknown or uninitialised column: 'Shape'.</span></a>
+<a class="sourceLine" id="cb9-5" data-line-number="5"><span class="co">#&gt; Warning: Unknown or uninitialised column: 'Scale'.</span></a>
+<a class="sourceLine" id="cb9-6" data-line-number="6"><span class="co">#&gt; Warning: Unknown or uninitialised column: 'Shape'.</span></a>
+<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="co">#&gt; Warning: Unknown or uninitialised column: 'Scale'.</span></a>
+<a class="sourceLine" id="cb9-8" data-line-number="8"><span class="co">#&gt; Warning: Unknown or uninitialised column: 'Shape'.</span></a>
+<a class="sourceLine" id="cb9-9" data-line-number="9"><span class="co">#&gt; Warning: Unknown or uninitialised column: 'Scale'.</span></a>
+<a class="sourceLine" id="cb9-10" data-line-number="10"><span class="co">#&gt; Warning: Unknown or uninitialised column: 'Shape'.</span></a>
+<a class="sourceLine" id="cb9-11" data-line-number="11"><span class="co">#&gt; Warning: Unknown or uninitialised column: 'Scale'.</span></a>
+<a class="sourceLine" id="cb9-12" data-line-number="12"><span class="co">#&gt; Warning: Unknown or uninitialised column: 'Shape'.</span></a>
+<a class="sourceLine" id="cb9-13" data-line-number="13"><span class="co">#&gt; Warning: Unknown or uninitialised column: 'Scale'.</span></a>
+<a class="sourceLine" id="cb9-14" data-line-number="14"><span class="co">#&gt; Warning: Unknown or uninitialised column: 'Shape'.</span></a></code></pre></div>
+<p><img src="a1_introduction_files/figure-html/unnamed-chunk-10-1.png" width="480"></p>
+<p>A comparative plot between the fit and data is here assembled using <a href="https://cran.r-project.org/web/packages/cowplot/vignettes/introduction.html">cowplot</a>.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">figure =<span class="st"> </span>cowplot<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/cowplot/man/plot_grid.html">plot_grid</a></span>(</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">  dataset<span class="op">$</span>plot, </a>
+<a class="sourceLine" id="cb10-3" data-line-number="3">  <span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(fit<span class="op">$</span>best), </a>
+<a class="sourceLine" id="cb10-4" data-line-number="4">  <span class="dt">ncol =</span> <span class="dv">2</span>,</a>
+<a class="sourceLine" id="cb10-5" data-line-number="5">  <span class="dt">align =</span> <span class="st">'h'</span>)</a>
+<a class="sourceLine" id="cb10-6" data-line-number="6"><span class="co">#&gt; Warning: Unknown or uninitialised column: 'Scale'.</span></a>
+<a class="sourceLine" id="cb10-7" data-line-number="7"><span class="co">#&gt; Warning: Unknown or uninitialised column: 'Shape'.</span></a>
+<a class="sourceLine" id="cb10-8" data-line-number="8"><span class="co">#&gt; Warning: Unknown or uninitialised column: 'Scale'.</span></a>
+<a class="sourceLine" id="cb10-9" data-line-number="9"><span class="co">#&gt; Warning: Unknown or uninitialised column: 'Shape'.</span></a>
+<a class="sourceLine" id="cb10-10" data-line-number="10"><span class="co">#&gt; Warning: Unknown or uninitialised column: 'Scale'.</span></a>
+<a class="sourceLine" id="cb10-11" data-line-number="11"><span class="co">#&gt; Warning: Unknown or uninitialised column: 'Shape'.</span></a>
+<a class="sourceLine" id="cb10-12" data-line-number="12"><span class="co">#&gt; Warning: Unknown or uninitialised column: 'Scale'.</span></a>
+<a class="sourceLine" id="cb10-13" data-line-number="13"><span class="co">#&gt; Warning: Unknown or uninitialised column: 'Shape'.</span></a>
+<a class="sourceLine" id="cb10-14" data-line-number="14"><span class="co">#&gt; Warning: Unknown or uninitialised column: 'Scale'.</span></a>
+<a class="sourceLine" id="cb10-15" data-line-number="15"><span class="co">#&gt; Warning: Unknown or uninitialised column: 'Shape'.</span></a>
+<a class="sourceLine" id="cb10-16" data-line-number="16"><span class="co">#&gt; Warning: Unknown or uninitialised column: 'Scale'.</span></a>
+<a class="sourceLine" id="cb10-17" data-line-number="17"><span class="co">#&gt; Warning: Unknown or uninitialised column: 'Shape'.</span></a>
+<a class="sourceLine" id="cb10-18" data-line-number="18"></a>
+<a class="sourceLine" id="cb10-19" data-line-number="19"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(figure)</a></code></pre></div>
+<p><img src="a1_introduction_files/figure-html/unnamed-chunk-11-1.png" width="960"></p>
 </div>
   </div>
 
@@ -314,8 +428,14 @@
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#input-data">Input data</a></li>
+<li>
+<a href="#input-data-for-mobster">Input data for <code>mobster</code></a><ul class="nav nav-pills nav-stacked">
+<li><a href="#driver-annotations-in-the-data">Driver annotations in the data</a></li>
+      </ul>
+</li>
+      <li><a href="#generating-random-models-and-data">Generating random models and data</a></li>
       <li><a href="#fitting-a-dataset">Fitting a dataset</a></li>
+      <li><a href="#basic-plots-of-a-fit">Basic plots of a fit</a></li>
       </ul>
 </div>
       </div>

@@ -4,9 +4,15 @@
 \alias{dnds}
 \title{Run a dN/dS analysis on MOBSTER clusters.}
 \usage{
-dnds(x, mapping = NULL, gene_list = NULL, colors = c(Tail = "gray"),
-  refdb = "hg19", dndscv_plot = c("wall", "wmis", "wnon", "wspl",
-  "wtru"), ...)
+dnds(
+  x,
+  mapping = NULL,
+  gene_list = NULL,
+  colors = c(Tail = "gray"),
+  refdb = "hg19",
+  dndscv_plot = c("wall", "wmis", "wnon", "wspl", "wtru"),
+  ...
+)
 }
 \arguments{
 \item{x}{A MOBSTER fit object.}

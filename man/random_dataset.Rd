@@ -4,10 +4,18 @@
 \alias{random_dataset}
 \title{Generate a random MOBSTER model and data.}
 \usage{
-random_dataset(N = 5000, K_betas = 2, pi_tail_bounds = c(0.2, 0.4),
-  pi_min = 0.1, Betas_separation = 0.1, Beta_variance_scaling = 1000,
-  Beta_bounds = c(0.1, 0.9), shape_bounds = c(1, 1, 3), scale = 0.05,
-  seed = NULL)
+random_dataset(
+  N = 5000,
+  K_betas = 2,
+  pi_tail_bounds = c(0.2, 0.4),
+  pi_min = 0.1,
+  Betas_separation = 0.1,
+  Beta_variance_scaling = 1000,
+  Beta_bounds = c(0.1, 0.9),
+  shape_bounds = c(1, 1, 3),
+  scale = 0.05,
+  seed = NULL
+)
 }
 \arguments{
 \item{N}{Number of samples to generate (mutations).}

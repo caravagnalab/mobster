@@ -4,8 +4,12 @@
 \alias{plot_bootstrap_mixing_proportions}
 \title{Plot the boostrapped mixing proportions}
 \usage{
-plot_bootstrap_mixing_proportions(x, bootstrap_results,
-  bootstrap_statistics, colors = c(Tail = "gainsboro"))
+plot_bootstrap_mixing_proportions(
+  x,
+  bootstrap_results,
+  bootstrap_statistics,
+  colors = c(Tail = "gainsboro")
+)
 }
 \arguments{
 \item{x}{A MOBSTER fit.}

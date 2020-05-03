@@ -1,7 +1,7 @@
 ---
 title: "2. Plotting fits"
 author: "Giulio Caravagna"
-date: "January 2020"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 institute: "Institute for Cancer Research"
 email: "giulio.caravagna@icr.ac.uk"
 output: rmarkdown::github_document
@@ -25,135 +25,193 @@ library(tidyr)
 library(dplyr)
 ```
 
-This vignette describes the plotting functions available in [MOBSTER](https://github.com/caravagn/MOBSTER). 
+This vignette describes the plotting functions available in `mobster`. As an example, we use
+one of the available datasets where we annotate some random mutations as drivers.
 
 ```{r, fig.width=5, fig.height=4}
-# We load one fit available inside the package
-fit_example = mobster::PD4120a_breast_sample
+# Example data where we annotate 3 events as drivers
+example_data = Clusters(mobster::fit_example$best)
 
-# Print the best model
-print(fit_example$best)
+# Drivers annotation
+drivers_rows = c(2239, 3246, 3800)
+
+example_data$is_driver = FALSE
+example_data$driver_label = NA
+
+example_data$is_driver[drivers_rows] = TRUE
+example_data$driver_label[drivers_rows] = c("DR1", "DR2", "DR3")
+
+# Fit and print the data
+fit = mobster_fit(example_data, auto_setup = 'FAST')
+
+best_fit = fit$best
+print(best_fit)
 ```
 
-## Model plots
+# Model plots
+
+The plot reports some fit statistics, and shows the annotated drivers if any.
 
 ```{r, fig.width=5, fig.height=4}
-plot(fit_example$best)
+plot(best_fit)
 ```
 
-
-It is possible to annotate labels to this plot and map potential driver events. For each annotation one needs to provide a `label` and a `VAF` value, and the point will clustered according to the model parameters.
-
-In the example below we assume -- just for the sake of showing this plotting feature -- that exonic mutations in gene PIK3CA, SETD2 or FAM43A are mutations driving this tumour. We obtain their `VAF` values from the fit data. 
+One can hide the drivers setting `is_driver` to `FALSE`. 
 
 ```{r, fig.width=5, fig.height=4}
-best_model_data = fit_example$best$data %>% as_tibble
+copy_best_fit = best_fit 
+copy_best_fit$data$is_driver = FALSE 
 
-print(best_model_data)
-
-# subset the data of putative driver exonic mutations hitting 3 genes (example)
-best_model_data = best_model_data %>%
-  dplyr::filter(
-    gene %in% c("PIK3CA", "SETD2", "FAM43A") & region == 'exonic'
-  ) %>%
-  dplyr::rename(label = gene)
-
-plot(fit_example$best, annotation_extras = best_model_data)
+plot(copy_best_fit)
 ```
 
-The above plot is an example; the real analysis of this tumour reports driver copy number events that can be annotated maually.
-  
-```{r, fig.width=5, fig.height=4}
-manual = data.frame(
-  label = c("Chr13 loss", "Several \nChr loss"), 
-  VAF = c(.28, .16)
+It is possible to annotate further labels to this plot, providing just a VAF value and a `driver_label` value. Each annotation points to the VAF value on the x-axis, and on the corresponding mixture density value for the y-axis.
+
+```{r, fig.width=5, fig.height=4, warning = FALSE}
+plot(best_fit,
+     annotation_extras = 
+       data.frame(
+         VAF = .35, 
+         driver_label = "Something",
+         stringsAsFactors = FALSE)
+     )
+```
+
+Other visualisations can be obtained as follows
+```{r, fig.width=10, fig.height=8, warning = FALSE}
+ggpubr::ggarrange(
+  plot(best_fit, alpha = .3),                        # Histogram transparency
+  plot(best_fit, colors = c(`Tail` = 'darkorange')), # Tail color
+  plot(best_fit, cutoff_assignment = .95),           # Hide mutations based on latent variables (see below) 
+  plot(best_fit, secondary_axis = "SSE"),            # Add a mirrored y-axis with the % of SSE
+  ncol = 2,
+  nrow = 2
 )
-
-plot(fit_example$best, annotation_extras = manual)
 ```
 
-## Plot fit statistics
+# Fit statistics
 
-You can plot the latent variables, which determine *hard clustering* assignments of the input mutations. 
+You can plot the latent variables, which are used to determine *hard clustering* assignments of the input mutations. A `cutoff_assignment` determines a cut to prioritize assignments above the hard clustering assignments probability.
 
-```{r, fig.width=2.5, fig.height=5}
-plot_latent_variables(fit_example$best, cutoff_assignment = .8)
+```{r, fig.width=5, fig.height=5}
+ggpubr::ggarrange(
+  mobster::plot_latent_variables(best_fit, cutoff_assignment = 0),
+  mobster::plot_latent_variables(best_fit, cutoff_assignment = .8),
+  ncol = 2,
+  nrow = 1
+)
 ```
 
-You can plot the barplot of the mixing proportions, using the same colour scheme for the fit (here, default).
+You can plot a barplot of the mixing proportions, using the same colour scheme for the fit (here, default). The barplot annotates a dashed line by default at 2%.
 
 ```{r, fig.width=3, fig.height=3}
-plot_mixing_proportions(fit_example$best)
+plot_mixing_proportions(best_fit)
 ```
 
-The negative log-likelihood of the fit can be plot against the iteration steps, so to check the the trend is decreasing.
+The negative log-likelihood `NLL` of the fit can be plot against the iteration steps, so to check that the trend is decreasing over time.
 ```{r, fig.width=3, fig.height=3}
-plot_NLL(fit_example$best)
+plot_NLL(best_fit)
 ```
 
-A contributor to the NLL is the entropy of the mixture, which can be visualized along with  the reduced entropy, which is used by reICL.
+A contributor to the `NLL` is the entropy of the mixture, which can be visualized along with the reduced entropy, which is used by `reICL`.
 ```{r, fig.width=3, fig.height=3}
-plot_entropy(fit_example$best)
+plot_entropy(best_fit)
 ```
 
+# Inspecting alternative fits
 
-## Inspecting alternative fits
-
-Alternative models are returned function `mobster_fit`, and can be easly visualized.
-
+Alternative models are returned by function `mobster_fit`, and can be easly visualized; the table reporting the scores is a good place to start investigating alternative fits to the data.
 
 ```{r, fig.width=15, fig.height=4, message=FALSE, warning=FALSE}
-require(ggpubr)
-
-# Figure assembly
-figure = ggarrange(
-  plot(fit_example$runs[[1]]),
-  plot(fit_example$runs[[2]]),
-  plot(fit_example$runs[[3]]),
-  ncol = 3, nrow = 1
-)
-
-print(figure)
+print(fit$fits.table)
 ```
-The table reportin the scores can be visualised, and everal plots are available to inspect model selection.
+
+Top three fits, plot in-line.
 ```{r, fig.width=15, fig.height=4, message=FALSE, warning=FALSE}
-print(fit_example$fits.table) %>% as_tibble()
+ggpubr::ggarrange(
+  plot(fit$runs[[1]]),
+  plot(fit$runs[[2]]),
+  plot(fit$runs[[3]]),
+  ncol = 3, 
+  nrow = 1
+)
 ```
 
-One can plot of the sum of squared error (SSE) between the fit density and the data (binned with bins of size 0.01), for several solutions at once. This measure can represent a sort of goodness of fit statistics.
+The sum of squared error (SSE) between the fit density and the data (binned with bins of size `0.01`), can be plot to compare multiple fits. This measure is a sort of "goodness of fit" statistics.
 
 ```{r, fig.width=6, fig.height=3}
 # Goodness of fit (SSE), for the top 3 fits.
-plot_gofit(fit_example, TOP = 3)
+plot_gofit(fit, TOP = 3)
 ```
 
-The scores can also be compared graphically. Running `plot_fit_scores` all the computed scoring functions (BIC, AIC, ICL and reICL) are shown, which helps understanding if the best model with the default score (reICL) is the best also according to the other scores. In this graphics the red dot represents the best model according to each score.
+The scores for model selection can also be compared graphically. 
+
 ```{r, fig.width=4, fig.height=4}
-plot_fit_scores(fit_example)
+plot_fit_scores(fit)
 ```
 
-## Model selection report
+In the above plot, all the computed scoring functions (`BIC`, `AIC`, `ICL` and `reICL`) are shown. This plot can be used to quickly grasp the best model with, for instance, the default score (`reICL`) is also the best for other scores. In this graphics the red dot represents the best model according to each possible score.
 
-All functions can be wrapped by a call to `plot_model_selection` which plots the above summary statistics and the fits for each one of a set of `TOP` models.
+# Model-selection report
+
+A general model-selection report assembles most of the above graphics.
+
 ```{r, fig.width=9, fig.height=9, message=FALSE, warning=FALSE}
-plot_model_selection(fit_example, TOP = 5)
+plot_model_selection(fit, TOP = 5)
 ```
 
-## Plotting fit animation
+# Fit animation
 
+It seems useless, but if you want you can animate `mobster` fits using [plotly](https://plotly.com/r/).
 
-```{r, message=F, warning=F}
-data(fit_example)
+```{r, message=F, warning=F, eval=TRUE}
+example_data$is_driver = FALSE
 
-# Get the model we want, use trace = TRUE
-model = mobster_fit(
-  fit_example$best$data, 
+# Get a custom model using trace = TRUE
+animation_model = mobster_fit(
+  example_data, 
   parallel =  FALSE, 
   samples = 3,
   init = 'random',
   trace = TRUE,
   K = 2,
-  tail = T)
+  tail = TRUE)$best
 
-fit_animation(model$best, lib = 'plotly')
+# Prepare trace, and retain every 5% of the fitting steps
+trace = split(animation_model$trace, f = animation_model$trace$step)
+steps = seq(1, length(trace), round(0.05 * length(trace)))
+  
+# Compute a density per step, using the template_density internal function
+trace_points = lapply(steps, function(w, x) {
+  new.x = x
+  new.x$Clusters = trace[[w]]
+  
+  # Hidden function (:::)
+  points = mobster:::template_density(
+    new.x,
+    x.axis = seq(0, 1, 0.01),
+    binwidth = 0.01,
+    reduce = TRUE
+  )
+  points$step = w
+  
+  points
+},
+x = animation_model)
+  
+trace_points = Reduce(rbind, trace_points)
+  
+# Use plotly to create a ShinyApp
+require(plotly)
+    
+trace_points %>%
+  plot_ly(
+    x = ~ x,
+    y = ~ y,
+    frame = ~ step,
+    color = ~ cluster,
+    type = 'scatter',
+    mode = 'markers',
+    showlegend = TRUE
+  )
 ```

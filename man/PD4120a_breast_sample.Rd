@@ -4,7 +4,9 @@
 \name{PD4120a_breast_sample}
 \alias{PD4120a_breast_sample}
 \title{MOBSTER fit for the PD4120a breast sample.}
-\format{Data from a MOBSTER fit.}
+\format{
+Data from a MOBSTER fit.
+}
 \usage{
 data(PD4120a_breast_sample)
 }

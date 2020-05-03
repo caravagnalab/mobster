@@ -1,5 +1,5 @@
 #' Generate a random MOBSTER model and data.
-#' 
+#'
 #' @description Generate a random MOBSTER model, its data and creates a plot for it.
 #'
 #' @param N Number of samples to generate (mutations).
@@ -16,14 +16,14 @@
 #' @param seed The seed to fix the process, default is 123.
 #'
 #' @return A list with the dataset in a tibble, the model parameters and a plot the data.
-#' 
+#'
 #' @export
 #'
 #' @examples
 #' x = random_dataset()
 #' print(x)
-random_dataset = function(N = 5000, 
-                          K_betas = 2, 
+random_dataset = function(N = 5000,
+                          K_betas = 2,
                           pi_tail_bounds = c(.2, .4),
                           pi_min = 0.1,
                           Betas_separation = 0.1,
@@ -33,43 +33,48 @@ random_dataset = function(N = 5000,
                           scale = 0.05,
                           seed = NULL)
 {
-  require(MCMCpack)
+  # require(MCMCpack)
   
   set.seed(seed)
   
   Bt = paste0('C', 1:K_betas)
   
   # Pi's
-  repeat{
-    pi = as.vector(MCMCpack::rdirichlet(1, rep(1, K_betas + 1)))
+  repeat {
+    # Avoid to import MCMCpack just for this..
+    # pi = as.vector(MCMCpack::rdirichlet(1, rep(1, K_betas + 1)))
+    pi = runif(K_betas + 1)
+    pi = pi / sum(pi)
+    
     names(pi) = c('Tail', Bt)
-    if(
-      pi['Tail'] > pi_tail_bounds[1] & 
-      pi['Tail'] < pi_tail_bounds[2] &
-      all(pi > pi_min)
-      ) break
+    
+    if (pi['Tail'] > pi_tail_bounds[1] &
+        pi['Tail'] < pi_tail_bounds[2] &
+        all(pi > pi_min))
+      break
   }
   
   # pio::pioStr("Mixing proportions", '\n')
   # print(pi)
   
-
+  
   # Betas
-  repeat{
+  repeat {
     means = runif(K_betas)
-    vars = runif(K_betas)/Beta_variance_scaling
-
-    separations = abs(apply(expand.grid(means, means), 1, diff)) 
+    vars = runif(K_betas) / Beta_variance_scaling
+    
+    separations = abs(apply(expand.grid(means, means), 1, diff))
     separations = separations[separations > 0]
-                     
-    if(all(separations > Betas_separation) & 
-       min(means) > Beta_bounds[1] &
-       max(means) < Beta_bounds[2]
-       ) break;
-  }  
+    
+    if (all(separations > Betas_separation) &
+        min(means) > Beta_bounds[1] &
+        max(means) < Beta_bounds[2])
+      break
+    
+  }
   
   a = b = NULL
-  for(be in 1:K_betas)  {
+  for (be in 1:K_betas)  {
     ab = mobster:::.estBetaParams(means[be], vars[be])
     a = c(a, ab$a)
     b = c(b, ab$b)
@@ -81,7 +86,7 @@ random_dataset = function(N = 5000,
   # print(vars)
   
   shape = runif(1, shape_bounds[1], shape_bounds[2])
-
+  
   # pio::pioStr("Tail (shape and scale)", '\n')
   # print(shape)
   # print(scale)
@@ -91,27 +96,34 @@ random_dataset = function(N = 5000,
   
   Nk = round(N * pi)
   ids_tail = rep('Tail', Nk['Tail'])
-  ids_B = sapply(Bt, function(x) rep(x, Nk[x]))
+  ids_B = sapply(Bt, function(x)
+    rep(x, Nk[x]))
   # ids_B = Reduce(c, ids_B)
   
   ids = c(unlist(ids_B), ids_tail)[1:N]
-    
-  plot = ggplot(data.frame(x = samples), aes(x, fill = ids)) + 
+  
+  plot = ggplot(data.frame(x = samples), aes(x, fill = ids)) +
     geom_histogram(binwidth = 0.01) +
     geom_vline(xintercept = means) +
-    labs(
-      title = 'MOBSTER synthetic dataset',
-      subtitle = paste0('N = ', N)
-      ) +
+    labs(title = 'MOBSTER synthetic dataset',
+         subtitle = paste0('N = ', N)) +
     my_ggplot_theme() +
     guides(fill = guide_legend('Component'))
-
-  input = data.frame(
-    VAF = samples,
-    cluster = ids,
-    stringsAsFactors = FALSE
-  ) %>% as_tibble()
-  input = input[!is.na(input$cluster), ]
- 
-  return(list(data = input, model = list(a = a, b = b, shape = shape, scale = scale, pi = pi), plot = plot)) 
+  
+  input = data.frame(VAF = samples,
+                     cluster = ids,
+                     stringsAsFactors = FALSE) %>% as_tibble()
+  input = input[!is.na(input$cluster),]
+  
+  return(list(
+    data = input,
+    model = list(
+      a = a,
+      b = b,
+      shape = shape,
+      scale = scale,
+      pi = pi
+    ),
+    plot = plot
+  ))
 }

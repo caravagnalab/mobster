@@ -1,7 +1,7 @@
 ---
 title: "7. Visualizing subclonal expansions"
 author: "Giulio Caravagna and Marc Williams"
-date: "February 2019"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 institute: "Institute for Cancer Research"
 email: "giulio.caravagna@icr.ac.uk"
 output: rmarkdown::github_document
@@ -79,7 +79,7 @@ ani = df %>%
     subtitle = 'Tumour doublings (clock): t = {closest_state}'
     ) +
   ggthemes::scale_fill_ptol() +
-  CNAqc:::my_ggplot_theme() 
+  mobster:::my_ggplot_theme() 
 
   gganimate::animate(ani,
                    width = 480,

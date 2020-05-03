@@ -25,7 +25,6 @@ Imports:
     tidyverse,
     pio,
     ggpubr,
-    ggrepel,
     dplyr,
     easypar,
     clisymbols,

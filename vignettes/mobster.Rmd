@@ -1,7 +1,7 @@
 ---
 title: "mobster"
 author: "Giulio Caravagna"
-date: "January 2020"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 institute: "Institute for Cancer Research"
 email: "giulio.caravagna@icr.ac.uk"
 opengraph:
@@ -26,7 +26,6 @@ knitr::opts_chunk$set(
 
 ```{r, include = FALSE, warning=FALSE, message=FALSE, echo=F}
 require(dplyr)
-require(CNAqc)
 
 load('simulationdata.Rdata')
 
@@ -49,7 +48,7 @@ Muller_df <- ggmuller::get_Muller_df(data.frame(Parent = 'Ancestral', Identity =
 ```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE,message=FALSE}
 cowplot::plot_grid(
   ggmuller::Muller_pop_plot(Muller_df) + 
-    CNAqc:::my_ggplot_theme() +
+    mobster:::my_ggplot_theme() +
     guides(fill = guide_legend('Clone')) +
     labs(title = 'Population size (simulation)', subtitle = "Muller plot (ggmuller)") +
     scale_fill_manual(values = alpha(brewer.pal(2, "Set1"), alpha = .7)) +

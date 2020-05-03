@@ -40,7 +40,7 @@ plot.dbpmm = function(x,
   is_mobster_fit(x)
   
   binwidth = 0.01
-  histogram.main = 'MOBSTER fit'
+  histogram.main = ifelse(is.null(x$description), 'MOBSTER fit', x$description)
   
   # Prepare variables
   domain = seq(0, 1, binwidth)
@@ -223,7 +223,7 @@ plot.dbpmm = function(x,
   # Annotate mixting proportions
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
   pi = sort(pi)
-  pi = paste0(names(pi), ' ', round(pi * 100, 2), '%', collapse = ', ')
+  pi = paste0(names(pi), ' ', round(pi * 100, 1), '%', collapse = ', ')
   
   hist_pl = hist_pl +
     labs(
@@ -233,41 +233,10 @@ plot.dbpmm = function(x,
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
   # Custom coloring
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-  # TODO
-  
-  
-  # # Annotation of input entries
-  # if(!is.null(annotate) & all(c("VAF", 'label') %in% colnames(annotate)))
-  # {
-  #   # Position the point at coord x = VAF and y = density
-  #   m = max(densities$y, na.rm = TRUE)
-  #
-  #   annotate$y = round(annotate$VAF/binwidth)
-  #   annotate$y = densities$y[annotate$y] + m * 0.02
-  #
-  #   hist_pl = hist_pl +
-  #     geom_label_repel(data = annotate,
-  #                      aes(
-  #                        x = VAF,
-  #                        y = y,
-  #                        label = label,
-  #                        color = factor(cluster)
-  #                        # fill = factor(cluster)
-  #                      ),
-  #                      size = 1.5 * cex,
-  #                      inherit.aes = FALSE,
-  #                      box.padding = 0.95,
-  #                      segment.size = .2 * cex, force = 1) +
-  #     geom_point(data = annotate, aes(x = VAF, y = y,  color = factor(cluster)),
-  #                size = .3 * cex, alpha = 1,
-  #                inherit.aes = FALSE)
-  # }
-  #
-  
   pl = mobster:::add_fill_color_pl(x, hist_pl, colors)
   
   # The plot allows to annotate some extra events etc.
-  pl = add_extra_plot_annotations(x, annotation_extras, base_plot = pl)
+  pl = mobster:::add_extra_plot_annotations(x, annotation_extras, base_plot = pl)
     
 
   return(pl)

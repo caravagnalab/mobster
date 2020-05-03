@@ -4,7 +4,9 @@
 \name{fit_example}
 \alias{fit_example}
 \title{Example MOBSTER fit.}
-\format{Data from an example MOBSTER fit.}
+\format{
+Data from an example MOBSTER fit.
+}
 \usage{
 data(fit_example)
 }
