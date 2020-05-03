@@ -112,25 +112,25 @@ $$1+s=\lambda h / \lambda s$$" />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/CloneTrees.html">6. Clone trees</a>
+      <a href="../articles/a1_introduction.html">1. Introduction</a>
     </li>
     <li>
-      <a href="../articles/Example_tumour_simulation.html">Visualizing subclonal expansions</a>
+      <a href="../articles/a2_plotting.html">2. Plotting fits</a>
     </li>
     <li>
-      <a href="../articles/bootstrap.html">3. Bootstrap confidence estimation</a>
+      <a href="../articles/a3_bootstrap.html">3. Confidence estimation by the bootstrap</a>
     </li>
     <li>
-      <a href="../articles/dnds.html">5. dN/dS statisticss</a>
+      <a href="../articles/a4_popgen.html">4. Population Genetics statistics</a>
     </li>
     <li>
-      <a href="../articles/introduction.html">1. Introduction</a>
+      <a href="../articles/a5_dnds.html">5. dN/dS statistics</a>
     </li>
     <li>
-      <a href="../articles/plotting.html">2. Plotting fits</a>
+      <a href="../articles/a6_CloneTrees.html">6. Clone trees from clusters</a>
     </li>
     <li>
-      <a href="../articles/popgen.html">4. Population Genetics statistics</a>
+      <a href="../articles/a7_Example_tumour_simulation.html">7. Visualizing subclonal expansions</a>
     </li>
   </ul>
 </li>
@@ -139,7 +139,12 @@ $$1+s=\lambda h / \lambda s$$" />
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/caravagn/mobster">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -154,7 +159,7 @@ $$1+s=\lambda h / \lambda s$$" />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Extract evolutionary parameters from a MOBSTER fit</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/caravagn/mobster/blob/master/R/evodynamics.R'><code>R/evodynamics.R</code></a></small>
     <div class="hidden name"><code>evolutionary_parameters.Rd</code></div>
     </div>
 
@@ -171,8 +176,14 @@ populations (\(\lambda h\)) vs subclone (\(\lambda s\)):
 $$1+s=\lambda h / \lambda s$$</p>
     </div>
 
-    <pre class="usage"><span class='fu'>evolutionary_parameters</span>(<span class='no'>x</span>, <span class='kw'>Nmax</span> <span class='kw'>=</span> <span class='fl'>10</span>^<span class='fl'>10</span>, <span class='kw'>lq</span> <span class='kw'>=</span> <span class='fl'>0.1</span>, <span class='kw'>uq</span> <span class='kw'>=</span> <span class='fl'>0.9</span>,
-  <span class='kw'>ploidy</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>ncells</span> <span class='kw'>=</span> <span class='fl'>2</span>)</pre>
+    <pre class="usage"><span class='fu'>evolutionary_parameters</span>(
+  <span class='no'>x</span>,
+  <span class='kw'>Nmax</span> <span class='kw'>=</span> <span class='fl'>10</span>^<span class='fl'>10</span>,
+  <span class='kw'>lq</span> <span class='kw'>=</span> <span class='fl'>0.1</span>,
+  <span class='kw'>uq</span> <span class='kw'>=</span> <span class='fl'>0.9</span>,
+  <span class='kw'>ploidy</span> <span class='kw'>=</span> <span class='fl'>2</span>,
+  <span class='kw'>ncells</span> <span class='kw'>=</span> <span class='fl'>2</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -209,10 +220,7 @@ $$1+s=\lambda h / \lambda s$$</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>'fit_example'</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'mobster'</span>)
-<span class='fu'>evolutionary_parameters</span>(<span class='no'>fit_example</span>)</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 1 x 7</span><span>
-#&gt;      mu exponent  time subclonefrequency subclonemutations cluster     s
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>             </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>             </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span>  73.5     2.25  5.98             0.298              695. C2      0.177</div></span></pre>
+<span class='fu'>evolutionary_parameters</span>(<span class='no'>fit_example</span>)</div><div class='output co'>#&gt; <span class='error'>Error in dplyr::filter(fit$best$data, cluster == "Tail") %&gt;% dplyr::filter(VAF &lt;     quantile(VAF, uq) &amp; VAF &gt; quantile(VAF, lq)) %&gt;% dplyr::pull(VAF): could not find function "%&gt;%"</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

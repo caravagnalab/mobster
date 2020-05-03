@@ -25,8 +25,8 @@ plot_latent_variables = function(x, cutoff_assignment = 0)
   is_mobster_fit(x)
 
   # assignments with LV
-  assignments = Clusters(x, cutoff_assignment) %>%
-    arrange(cluster)
+  assignments = mobster::Clusters(x, cutoff_assignment) %>%
+    dplyr::arrange(cluster)
   
   clusters_names = names(x$pi)
   
@@ -43,6 +43,20 @@ plot_latent_variables = function(x, cutoff_assignment = 0)
   
   colnames(lv) = c('Point', "Cluster", "Value")
   
+  # TODO If there are drivers, we add the label
+  # if(mobster:::has_drivers_annotated(x))
+  # {
+  #   drv_points = which(x$data$is_driver, arr.ind = TRUE)
+  #   
+  #   if(length(drv_points) > 0)
+  #   {
+  #     lv = lv %>%
+  #       dplyr::mutate(
+  #         label = ifelse(Point %in% drv_points, x$data$driver_label[Point], NA)
+  #       )
+  #   }
+  # }
+  
 
   ggplot(lv, aes(x = Cluster, y = Point, fill = Value)) +
     geom_raster() +
@@ -52,7 +66,7 @@ plot_latent_variables = function(x, cutoff_assignment = 0)
     labs(
       title = bquote("Latent variables"),
       subtitle = bquote(
-        'Showing' ~ z['nk']  ~' > ' * .(cutoff_assignment) ~ ': n =' ~.(n) ~" NAs ("* .(p) *'%)'),
+        z['nk']  ~' > ' * .(cutoff_assignment) ~ ': n =' ~.(n) ~" NAs ("* .(p) *'%)'),
       y = paste0("Points (n =", x$N, ')')
     )
 }

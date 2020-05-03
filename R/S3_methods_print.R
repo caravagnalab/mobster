@@ -97,7 +97,7 @@ print.dbpmm = function(x, ...)
     dplyr::filter(cluster != 'Tail', type == 'Mean' |
                     type == 'Mixing proportion') %>%
     dplyr::select(-init.value) %>%
-    spread(type, fit.value)
+    tidyr::spread(type, fit.value)
   
   B.comp$`Mixing proportion` = round(B.comp$`Mixing proportion`, 2) * 100
   B.comp$Mean = round(B.comp$Mean, 2)
@@ -113,4 +113,17 @@ print.dbpmm = function(x, ...)
   # cat('\n')
   xs = round(x$scores, 2)
   mobster:::m_inf('Score(s): NLL = {.value {xs["NLL"]}}; ICL = {.value {xs["ICL"]}} ({.value {xs["reICL"]}}), H = {.value {xs["entropy"]}} ({.value {xs["reduced.entropy"]}}). Fit {.value {ifelse(x$status, crayon::green("converged"), crayon::red("interrupted"))}} by {.field {x$fit.type}} in {.value {length(x$all.NLL)}} steps.') %>% cli::cli_text()
+  
+  if(has_drivers_annotated(x))
+  {
+    drv_list = x$data %>%
+      dplyr::filter(is_driver) 
+    
+    if(nrow(drv_list) > 0)
+    {
+      mobster:::m_inf('The fit object model contains also drivers annotated.') %>% cli::cli_text()
+      pio::pioDisp(drv_list)
+    }
+  }
+  
 }

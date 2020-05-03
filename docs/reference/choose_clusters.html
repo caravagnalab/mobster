@@ -108,25 +108,25 @@ mixing proportions (all mutations will be still assigned after clusters' removal
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/CloneTrees.html">6. Clone trees</a>
+      <a href="../articles/a1_introduction.html">1. Introduction</a>
     </li>
     <li>
-      <a href="../articles/Example_tumour_simulation.html">Visualizing subclonal expansions</a>
+      <a href="../articles/a2_plotting.html">2. Plotting fits</a>
     </li>
     <li>
-      <a href="../articles/bootstrap.html">3. Bootstrap confidence estimation</a>
+      <a href="../articles/a3_bootstrap.html">3. Confidence estimation by the bootstrap</a>
     </li>
     <li>
-      <a href="../articles/dnds.html">5. dN/dS statisticss</a>
+      <a href="../articles/a4_popgen.html">4. Population Genetics statistics</a>
     </li>
     <li>
-      <a href="../articles/introduction.html">1. Introduction</a>
+      <a href="../articles/a5_dnds.html">5. dN/dS statistics</a>
     </li>
     <li>
-      <a href="../articles/plotting.html">2. Plotting fits</a>
+      <a href="../articles/a6_CloneTrees.html">6. Clone trees from clusters</a>
     </li>
     <li>
-      <a href="../articles/popgen.html">4. Population Genetics statistics</a>
+      <a href="../articles/a7_Example_tumour_simulation.html">7. Visualizing subclonal expansions</a>
     </li>
   </ul>
 </li>
@@ -135,7 +135,12 @@ mixing proportions (all mutations will be still assigned after clusters' removal
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/caravagn/mobster">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -150,7 +155,7 @@ mixing proportions (all mutations will be still assigned after clusters' removal
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Filter MOBSTER output clusters.</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/caravagn/mobster/blob/master/R/choose_clusters.R'><code>R/choose_clusters.R</code></a></small>
     <div class="hidden name"><code>choose_clusters.Rd</code></div>
     </div>
 
@@ -195,9 +200,9 @@ at least <code>N_cutoff</code>. If no such cluster exists an error is generated.
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>'fit_example'</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'mobster'</span>)
 
 <span class='co'># Does not change anything (no filter triggered)</span>
-<span class='fu'>choose_clusters</span>(<span class='no'>fit_example</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; <span class='error'>Error in spread(., key = type, value = fit.value): could not find function "spread"</span></div><div class='input'>
+<span class='fu'>choose_clusters</span>(<span class='no'>fit_example</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; <span class='error'>Error in x$Clusters %&gt;% dplyr::filter(type == "Mixing proportion") %&gt;%     dplyr::select(-init.value) %&gt;% tidyr::spread(key = type,     value = fit.value): could not find function "%&gt;%"</span></div><div class='input'>
 <span class='co'># Remove one Beta component because it has less than 100 points (renders the fit very poor)</span>
-<span class='fu'>choose_clusters</span>(<span class='no'>fit_example</span>$<span class='no'>best</span>, <span class='kw'>N_cutoff</span> <span class='kw'>=</span> <span class='fl'>100</span>)</div><div class='output co'>#&gt; <span class='error'>Error in spread(., key = type, value = fit.value): could not find function "spread"</span></div></pre>
+<span class='fu'>choose_clusters</span>(<span class='no'>fit_example</span>$<span class='no'>best</span>, <span class='kw'>N_cutoff</span> <span class='kw'>=</span> <span class='fl'>100</span>)</div><div class='output co'>#&gt; <span class='error'>Error in x$Clusters %&gt;% dplyr::filter(type == "Mixing proportion") %&gt;%     dplyr::select(-init.value) %&gt;% tidyr::spread(key = type,     value = fit.value): could not find function "%&gt;%"</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

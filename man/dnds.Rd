@@ -4,9 +4,15 @@
 \alias{dnds}
 \title{Run a dN/dS analysis on MOBSTER clusters.}
 \usage{
-dnds(x, mapping = NULL, gene_list = NULL, colors = c(Tail = "gray"),
-  refdb = "hg19", dndscv_plot = c("wall", "wmis", "wnon", "wspl",
-  "wtru"), ...)
+dnds(
+  x,
+  mapping = NULL,
+  gene_list = NULL,
+  colors = c(Tail = "gray"),
+  refdb = "hg19",
+  dndscv_plot = c("wall", "wmis", "wnon", "wspl", "wtru"),
+  ...
+)
 }
 \arguments{
 \item{x}{A MOBSTER fit object.}
@@ -44,13 +50,9 @@ the best fitting MOBSTER model.
 \examples{
 
 # Example run with real data
-data('PD4120a_breast_sample', package = 'mobster')
+data('LUFF76_lung_sample', package = 'mobster')
 
-clusters = Clusters(PD4120a_breast_sample$best)
+clusters = Clusters(LUFF76_lung_sample$best)
 
-dnds_stats = dnds(
-  clusters,
-  mapping = c(`C1` = 'Non-tail', `C2` = 'Non-tail', `C3` = 'Non-tail', `Tail` = 'Tail'),
-  gene_list = NULL
-)
+dnds_stats = dnds(clusters, gene_list = NULL)
 }

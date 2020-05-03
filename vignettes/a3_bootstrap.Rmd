@@ -1,7 +1,7 @@
 ---
-title: "3. Bootstrap confidence estimation"
+title: "3. Confidence estimation by the bootstrap"
 author: "Giulio Caravagna"
-date: "January 2020"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 institute: "Institute for Cancer Research"
 email: "giulio.caravagna@icr.ac.uk"
 output: rmarkdown::github_document
@@ -24,10 +24,11 @@ library(tidyr)
 library(dplyr)
 ```
 
+
+# Bootstrapping a model
+
 This vignette describes how to compute the *bootstrap* confidence of a MOBSTER model.
 
-
-## Bootstrapping a model
 
 Both *parametric* and *nonparametric* bootstrap options are available: the former samples data from the model, the latter re-samples the data (with repetitions). Statistics are bootstrap estimates (averages) of the bootstrap fits. In both cases a model bootstrap probability can be computed, as well as the probability of clustering together any two mutations.
 
@@ -81,7 +82,8 @@ Errors of each run are available, if any.
 print(bootstrap_results$errors)
 ```
 
-## Bootstrap statistics
+
+# Bootstrap statistics
 
 Bootstrap statistics can be computed with `bootstrapped_statistics`. 
 
@@ -96,7 +98,7 @@ bootstrap_statistics = bootstrapped_statistics(
   )
 ```
 
-## Visualising bootstrap results
+# Visualising bootstrap results
 
 Object `bootstrap_statistics` contains tibbles that can be plot with specific `mobster` functions.
 ```{r, fig.width=2, fig.height=3}

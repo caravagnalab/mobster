@@ -103,25 +103,25 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/CloneTrees.html">6. Clone trees</a>
+      <a href="../articles/a1_introduction.html">1. Introduction</a>
     </li>
     <li>
-      <a href="../articles/Example_tumour_simulation.html">Visualizing subclonal expansions</a>
+      <a href="../articles/a2_plotting.html">2. Plotting fits</a>
     </li>
     <li>
-      <a href="../articles/bootstrap.html">3. Bootstrap confidence estimation</a>
+      <a href="../articles/a3_bootstrap.html">3. Confidence estimation by the bootstrap</a>
     </li>
     <li>
-      <a href="../articles/dnds.html">5. dN/dS statisticss</a>
+      <a href="../articles/a4_popgen.html">4. Population Genetics statistics</a>
     </li>
     <li>
-      <a href="../articles/introduction.html">1. Introduction</a>
+      <a href="../articles/a5_dnds.html">5. dN/dS statistics</a>
     </li>
     <li>
-      <a href="../articles/plotting.html">2. Plotting fits</a>
+      <a href="../articles/a6_CloneTrees.html">6. Clone trees from clusters</a>
     </li>
     <li>
-      <a href="../articles/popgen.html">4. Population Genetics statistics</a>
+      <a href="../articles/a7_Example_tumour_simulation.html">7. Visualizing subclonal expansions</a>
     </li>
   </ul>
 </li>
@@ -130,7 +130,12 @@
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/caravagn/mobster">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -145,7 +150,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Generate a random MOBSTER model and data.</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/caravagn/mobster/blob/master/R/random_dataset.R'><code>R/random_dataset.R</code></a></small>
     <div class="hidden name"><code>random_dataset.Rd</code></div>
     </div>
 
@@ -153,10 +158,18 @@
     <p>Generate a random MOBSTER model, its data and creates a plot for it.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>random_dataset</span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>5000</span>, <span class='kw'>K_betas</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>pi_tail_bounds</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.2</span>, <span class='fl'>0.4</span>),
-  <span class='kw'>pi_min</span> <span class='kw'>=</span> <span class='fl'>0.1</span>, <span class='kw'>Betas_separation</span> <span class='kw'>=</span> <span class='fl'>0.1</span>, <span class='kw'>Beta_variance_scaling</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
-  <span class='kw'>Beta_bounds</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.1</span>, <span class='fl'>0.9</span>), <span class='kw'>shape_bounds</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>3</span>), <span class='kw'>scale</span> <span class='kw'>=</span> <span class='fl'>0.05</span>,
-  <span class='kw'>seed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>random_dataset</span>(
+  <span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>5000</span>,
+  <span class='kw'>K_betas</span> <span class='kw'>=</span> <span class='fl'>2</span>,
+  <span class='kw'>pi_tail_bounds</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.2</span>, <span class='fl'>0.4</span>),
+  <span class='kw'>pi_min</span> <span class='kw'>=</span> <span class='fl'>0.1</span>,
+  <span class='kw'>Betas_separation</span> <span class='kw'>=</span> <span class='fl'>0.1</span>,
+  <span class='kw'>Beta_variance_scaling</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
+  <span class='kw'>Beta_bounds</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.1</span>, <span class='fl'>0.9</span>),
+  <span class='kw'>shape_bounds</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>3</span>),
+  <span class='kw'>scale</span> <span class='kw'>=</span> <span class='fl'>0.05</span>,
+  <span class='kw'>seed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -215,26 +228,26 @@ compared to a putative Binomial generative model).</p></td>
 #&gt; <span style='color: #555555;'># A tibble: 5,000 x 2</span><span>
 #&gt;      VAF cluster
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  
-#&gt; </span><span style='color: #555555;'> 1</span><span> 0.896 C1     
-#&gt; </span><span style='color: #555555;'> 2</span><span> 0.910 C1     
-#&gt; </span><span style='color: #555555;'> 3</span><span> 0.894 C1     
-#&gt; </span><span style='color: #555555;'> 4</span><span> 0.904 C1     
-#&gt; </span><span style='color: #555555;'> 5</span><span> 0.921 C1     
-#&gt; </span><span style='color: #555555;'> 6</span><span> 0.897 C1     
-#&gt; </span><span style='color: #555555;'> 7</span><span> 0.941 C1     
-#&gt; </span><span style='color: #555555;'> 8</span><span> 0.915 C1     
-#&gt; </span><span style='color: #555555;'> 9</span><span> 0.886 C1     
-#&gt; </span><span style='color: #555555;'>10</span><span> 0.903 C1     
+#&gt; </span><span style='color: #555555;'> 1</span><span> 0.389 C1     
+#&gt; </span><span style='color: #555555;'> 2</span><span> 0.367 C1     
+#&gt; </span><span style='color: #555555;'> 3</span><span> 0.398 C1     
+#&gt; </span><span style='color: #555555;'> 4</span><span> 0.403 C1     
+#&gt; </span><span style='color: #555555;'> 5</span><span> 0.384 C1     
+#&gt; </span><span style='color: #555555;'> 6</span><span> 0.412 C1     
+#&gt; </span><span style='color: #555555;'> 7</span><span> 0.375 C1     
+#&gt; </span><span style='color: #555555;'> 8</span><span> 0.374 C1     
+#&gt; </span><span style='color: #555555;'> 9</span><span> 0.382 C1     
+#&gt; </span><span style='color: #555555;'>10</span><span> 0.398 C1     
 #&gt; </span><span style='color: #555555;'># … with 4,990 more rows</span><span>
 #&gt; 
 #&gt; $model
 #&gt; $model$a
 #&gt;       C1       C2 
-#&gt; 179.0661 148.5545 
+#&gt; 369.7157 142.6486 
 #&gt; 
 #&gt; $model$b
 #&gt;       C1       C2 
-#&gt; 20.82667 94.05500 
+#&gt; 584.8381 124.1241 
 #&gt; 
 #&gt; $model$shape
 #&gt; [1] 1
@@ -244,7 +257,7 @@ compared to a putative Binomial generative model).</p></td>
 #&gt; 
 #&gt; $model$pi
 #&gt;      Tail        C1        C2 
-#&gt; 0.2211913 0.2410249 0.5377837 
+#&gt; 0.2409544 0.3845885 0.3744571 
 #&gt; 
 #&gt; 
 #&gt; $plot</div><div class='img'><img src='random_dataset-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; </div></span></pre>

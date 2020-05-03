@@ -20,12 +20,12 @@ to_string = function(x)
   
   vcz = function(w){
     lblt = w
-    w = x$Clusters %>% filter(type == w)
+    w = x$Clusters %>% dplyr::filter(type == w)
     if(nrow(w) == 0) return(NA)
     
     pio:::nmfy(
-      paste0(lblt, '.', w  %>% pull(cluster)),
-      w %>% pull(fit.value)
+      paste0(lblt, '.', w  %>% dplyr::pull(cluster)),
+      w %>% dplyr::pull(fit.value)
     )
   }
   
@@ -84,7 +84,7 @@ to_string = function(x)
   ranged_sse = sapply(1:10, function(w){
     l = (w - 1) * 0.1
     r = w * 0.1
-    v = sum(sse %>% filter(x < r, x >= l) %>% pull(y))
+    v = sum(sse %>% dplyr::filter(x < r, x >= l) %>% dplyr::pull(y))
     names(v) = paste0('sse_', l, '_', r)
     v
   })
@@ -94,7 +94,7 @@ to_string = function(x)
     t(data.frame(ranged_sse))
   )
   
-  values = bind_cols(values, ssedf)
+  values = dplyr::bind_cols(values, ssedf)
   
   # Per cluster error measure
   # densities = per_cluster_err(x)
@@ -114,7 +114,7 @@ per_cluster_err = function(x)
   
   # Hard assignments from the model
   domain = mobster::Clusters_denovo(x, data.frame(VAF = x_domain)) %>%
-    select(cluster)
+    dplyr::select(cluster)
   
   # Density of each mixture component in the domain
   densities = mobster:::template_density(
@@ -122,8 +122,8 @@ per_cluster_err = function(x)
     x.axis = x_domain,
     binwidth = binning,
     reduce = TRUE) %>%
-    spread(cluster, y) %>%
-    as_tibble()
+    tidyr::spread(cluster, y) %>%
+    tibble::as_tibble()
   
   densities$cluster = domain$cluster
   
@@ -135,8 +135,8 @@ per_cluster_err = function(x)
   empirical = data.frame(x = x_domain, e = empirical) %>% as_tibble()
   
   densities = densities %>%
-    left_join(empirical, by = 'x') %>%
-    filter(x >= min(!!x$data$VAF))
+    dplyr::left_join(empirical, by = 'x') %>%
+    dplyr::filter(x >= min(!!x$data$VAF))
   
   densities$M = NA
   for(j in 1:nrow(densities)) densities$M[j] = unlist(densities[j, densities$cluster[j]])

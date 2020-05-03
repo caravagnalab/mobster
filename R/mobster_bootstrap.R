@@ -86,7 +86,7 @@ mobster_bootstrap = function(x,
                   ...)$best
     },
     PARAMS = resamples,
-    packages = c("crayon", "mobster"),
+    packages = c("dplyr", "tidyr", "mobster"),
     export = ls(globalenv(), all.names = TRUE),
     cores.ratio = cores.ratio,
     parallel = TRUE,

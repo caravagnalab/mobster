@@ -14,7 +14,7 @@
   bsamp = function(m = runif(1)) {
     repeat{
       v = runif(n = 1, min = 0.0001, max = 0.01)
-      p = c(.estBetaParams(m, v), mean=m, var=v)
+      p = c(mobster:::.estBetaParams(m, v), mean=m, var=v)
       if(all(p > 0)) return(p)
     }
   }
@@ -48,7 +48,7 @@
     h = hist(X, breaks = seq(0, 1, 0.01), plot = FALSE)
 
     # Detect peaks
-    peaks = .find_peaks(h$density, 1)
+    peaks = mobster:::.find_peaks(h$density, 1)
     x.peaks = (peaks * 0.01)
 
     # store only peaks above 0.1
@@ -98,7 +98,7 @@
   {
     shape = runif(1, min = pareto.shape$min.val, max = pareto.shape$max.val)
     scale = min(X) - 1e-9
-    mv = .MeanVarPareto(shape, scale)
+    mv = mobster:::.MeanVarPareto(shape, scale)
 
     Pareto = tibble::tribble(
       ~cluster, ~type, ~fit.value, ~init.value,
@@ -240,9 +240,9 @@
   if(init) x$Clusters$fit.value = x$Clusters$init.value
   
   x$Clusters %>%
-    filter(cluster != 'Tail', type == 'a' | type == 'b') %>%
-    select(-init.value) %>%
-    spread(key = type, value = fit.value)
+    dplyr::filter(cluster != 'Tail', type == 'a' | type == 'b') %>%
+    dplyr::select(-init.value) %>%
+    tidyr::spread(key = type, value = fit.value)
 }
 
 # Extract Pareto parameters
@@ -251,9 +251,9 @@
   if(init) x$Clusters$fit.value = x$Clusters$init.value
   
   x$Clusters %>%
-    filter(cluster == 'Tail', type == 'Shape' | type == 'Scale') %>%
-    select(-init.value) %>%
-    spread(key = type, value = fit.value)
+    dplyr::filter(cluster == 'Tail', type == 'Shape' | type == 'Scale') %>%
+    dplyr::select(-init.value) %>%
+    tidyr::spread(key = type, value = fit.value)
 }
 
 # Extract mixing proportions parameters
@@ -262,9 +262,9 @@
   if(init) x$Clusters$fit.value = x$Clusters$init.value
   
   v = x$Clusters %>%
-    filter(type == 'Mixing proportion') %>%
-    select(-init.value) %>%
-    spread(key = type, value = fit.value)
+    dplyr::filter(type == 'Mixing proportion') %>%
+    dplyr::select(-init.value) %>%
+    tidyr::spread(key = type, value = fit.value)
   
   # pi = v$`Mixing proportion`
   # names(pi) = v$cluster
@@ -299,7 +299,7 @@
   
   
   fit$Clusters = fit$Clusters %>%
-    mutate(
+    dplyr::mutate(
       fit.value = 
         ifelse(
           (cluster %in% names.BetaC) & (type == 'a'), 
@@ -309,7 +309,7 @@
     )
   
   fit$Clusters = fit$Clusters %>%
-    mutate(
+    dplyr::mutate(
       fit.value = 
         ifelse(
           (cluster %in% names.BetaC) & (type == 'b'), 
@@ -322,7 +322,7 @@
   
   for (s in names.BetaC)
   {
-    mv = .MeanVarBeta(a[s], b[s])
+    mv = mobster:::.MeanVarBeta(a[s], b[s])
     
     # fit$Clusters[
     #   fit$Clusters$cluster == s & fit$Clusters$type == 'Mean',
@@ -335,7 +335,7 @@
     #   ] =  mv$var
     
     fit$Clusters = fit$Clusters %>%
-      mutate(
+      dplyr::mutate(
         fit.value = 
           ifelse(
             (cluster == s) & (type == 'Mean'), 
@@ -345,7 +345,7 @@
       )
     
     fit$Clusters = fit$Clusters %>%
-      mutate(
+      dplyr::mutate(
         fit.value = 
           ifelse(
             (cluster %in% s) & (type == 'Variance'), 
@@ -363,7 +363,7 @@
 {
   if(!fit$fit.tail) return(fit)
   
-  mv = .MeanVarPareto(shape, scale)
+  mv = mobster:::.MeanVarPareto(shape, scale)
   
   fit$Clusters[
     fit$Clusters$cluster == 'Tail' & fit$Clusters$type == 'Shape',
@@ -398,7 +398,7 @@
   #   ] =  pi
   
   fit$Clusters = fit$Clusters %>%
-    mutate(
+    dplyr::mutate(
       fit.value = ifelse(
         type == 'Mixing proportion', 
         pi[cluster],

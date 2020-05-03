@@ -64,25 +64,25 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/CloneTrees.html">Computing clone trees from mobster fits</a>
+      <a href="../articles/a1_introduction.html">1. Introduction</a>
     </li>
     <li>
-      <a href="../articles/Example_tumour_simulation.html">Visualizing subclonal expansions</a>
+      <a href="../articles/a2_plotting.html">2. Plotting fits</a>
     </li>
     <li>
-      <a href="../articles/bootstrap.html">Confidence estimation via the bootstrap</a>
+      <a href="../articles/a3_bootstrap.html">3. Confidence estimation by the bootstrap</a>
     </li>
     <li>
-      <a href="../articles/dnds.html">dN/dS statistics for mobster fits</a>
+      <a href="../articles/a4_popgen.html">4. Population Genetics statistics</a>
     </li>
     <li>
-      <a href="../articles/introduction.html">Introduction</a>
+      <a href="../articles/a5_dnds.html">5. dN/dS statistics</a>
     </li>
     <li>
-      <a href="../articles/plotting.html">Plotting mobster fits</a>
+      <a href="../articles/a6_CloneTrees.html">6. Clone trees from clusters</a>
     </li>
     <li>
-      <a href="../articles/popgen.html">Population Genetics statistics for mobster fits</a>
+      <a href="../articles/a7_Example_tumour_simulation.html">7. Visualizing subclonal expansions</a>
     </li>
   </ul>
 </li>
@@ -90,7 +90,14 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/caravagn/mobster">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 <!--/.nav-collapse -->
   </div>
@@ -106,15 +113,19 @@
       <h1>mobster</h1>
                         <h4 class="author">Giulio Caravagna</h4>
             
-            <h4 class="date">January 2020</h4>
+            <h4 class="date">03 May, 2020</h4>
       
-      
+      <small class="dont-index">Source: <a href="https://github.com/caravagn/mobster/blob/master/vignettes/mobster.Rmd"><code>vignettes/mobster.Rmd</code></a></small>
       <div class="hidden name"><code>mobster.Rmd</code></div>
 
     </div>
 
     
     
+<center>
+<a href="https://caravagn.github.io/mobster"><img src="https://caravagn.github.io/mobster/reference/figures/logo.png" width="77px" height="91px"></a>
+</center>
+<p><br></p>
 <p><code>mobster</code> implements a Dirichlet finite mixture model to detect ongoing positive subclonal selection from cancer genome sequencing data. The algorithm works best with high-resolution whole-genome sequencing data (e.g., WGS <code>&gt;100x</code>). The models performs a deconvolution of the site/ allele frequency spectrum of mutation data (the <em>signal</em>), and looks for models with <code>k+1</code> mixture components to fit the data (<code>k</code> subclones).</p>
 <p><img src="mobster_files/figure-html/unnamed-chunk-3-1.png" width="768"></p>
 <p>The plot shows the fit (right) of a simulated subclonal expansion (left, Muller plot with <a href="https://cran.r-project.org/web/packages/ggmuller/vignettes/ggmuller.html">ggmuller</a>); <code>C2</code>, the subclone at <code>~30%</code> allelic frequency is outgrowing an ancestral clonal population <code>C1</code>, at <code>~50%</code> allelic frequency (heterozygous mutations). Their dynamics are consistent with what we <a href="https://caravagn.github.io/mobster/articles/Example_tumour_simulation.html">expect from the interplay of positive selection between clones and neutral evolution within each clone</a>.</p>
@@ -128,30 +139,11 @@
 <p><code>mobster</code> fits can be computed via <em>moment-matching</em> (default) or <em>maximum-likelihood</em>, the former being much faster Model selection for the number of components can be done with multiple likelihood-based scores such as the BIC, and its entropy-based extensions ICL and reICL, a new variation to ICL with reduced-entropy.</p>
 <p>S3 objects are defined to perform easy visualization of the data and aid comparison of different fits; <em>parametric</em> and <em>non-parametric bootstrap</em> routines are also available to assess the confidence of each parameter (bootstrap quantiles) and the model (overall model frequency).</p>
 <p>This is a <em>model-based</em> approach to analyse cancer data, meaning that a power law tail is used to integrate evolutionary dynamics in this traditional clustering problem. Results from <code>mobster</code> deconvolution can be used to reconstruct the clonal architecture of a tumour (<em>subclonal deconvolution</em>) and identify patterns of functional heterogeneity (subclones under positive selection).</p>
-<div id="available-vignettes" class="section level2">
-<h2 class="hasAnchor">
-<a href="#available-vignettes" class="anchor"></a>Available vignettes</h2>
-<p>We suggest you to <a href="https://caravagn.github.io/mobster/articles/introduction.html">read about some example data</a> and then <a href="https://caravagn.github.io/mobster/articles/plotting.html">move on to plot the fits</a> of your analysis.</p>
-<p>That is the basics, but if you want to do more you can use your fits to <a href="https://caravagn.github.io/mobster/articles/dnds.html">compute dN/dS statistics</a> from the clusters, or <a href="https://caravagn.github.io/mobster/articles/popgen.html">extract Population Genetics parameters</a> of tumour growth. You should also <a href="https://caravagn.github.io/mobster/articles/bootstrap.html">assess the confidence of your estimates</a> via the bootstrap.</p>
-<p>If you are confident about your clusters, you can <a href="https://caravagn.github.io/mobster/articles/CloneTrees.html">compute the clone trees</a> that fit your MOBSTER analysis.</p>
-<p>For a real case study with <code>mobster</code>, check the <a href="https://caravagn.github.io/">Supplementary Data</a> released with our paper.</p>
-<p>Check out also the <a href="https://caravagn.github.io/evoverse"><code>evoverse</code> pipelines</a> that use <code>mobster</code>.</p>
-<center>
-<a href="https://caravagn.github.io/mobster"><img src="https://caravagn.github.io/mobster/reference/figures/logo.png" width="77px" height="91px"></a> <a href="https://caravagn.github.io/evoverse"><img src="https://caravagn.github.io/evoverse/reference/figures/logo.png" width="77px" height="91px"></a>
-</center>
-<p><br></p>
-</div>
+<p>A number of <a href="https://caravagn.github.io/mobster/articles/">vignettes</a> are available to help you using <code>mobster</code>; for a set of real case studies check out the Supplementary Data repository hosted at the <a href="https://github.com/sottorivalab">Sottoriva Lab Github page</a></p>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
 
-        <div id="tocnav">
-      <h2 class="hasAnchor">
-<a href="#tocnav" class="anchor"></a>Contents</h2>
-      <ul class="nav nav-pills nav-stacked">
-<li><a href="#available-vignettes">Available vignettes</a></li>
-      </ul>
-</div>
       </div>
 
 </div>

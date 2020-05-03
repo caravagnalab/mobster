@@ -29,15 +29,11 @@
 #' @examples
 #' 
 #' # Example run with real data
-#' data('PD4120a_breast_sample', package = 'mobster')
+#' data('LUFF76_lung_sample', package = 'mobster')
 #' 
-#' clusters = Clusters(PD4120a_breast_sample$best)
+#' clusters = Clusters(LUFF76_lung_sample$best)
 #' 
-#' dnds_stats = dnds(
-#'   clusters,
-#'   mapping = c(`C1` = 'Non-tail', `C2` = 'Non-tail', `C3` = 'Non-tail', `Tail` = 'Tail'),
-#'   gene_list = NULL
-#' )
+#' dnds_stats = dnds(clusters, gene_list = NULL)
 dnds <- function(x,
                  mapping = NULL,
                  gene_list = NULL,
@@ -48,7 +44,7 @@ dnds <- function(x,
 )
 {
   # Check(s): dndscv installationand mobster fit
-  crash_ifnotinstalled(c('dndscv'))
+  mobster:::crash_ifnotinstalled(c('dndscv'))
   
   if(!is.data.frame(x))
   {
@@ -60,8 +56,8 @@ dnds <- function(x,
   dnds_input = mobster:::get_dnds_input(x, mapping, refdb, gene_list)
   clusters = unique(dnds_input$dnds_group)
   
-  pio::pioTit("Running dndscv")
-  
+  cli::cli_h1("Running dndscv")
+
   result_fit = mobster:::wrapper_dndsfit(clusters = dnds_input,
                                groups = clusters,
                                gene_list,
@@ -69,10 +65,8 @@ dnds <- function(x,
                                refdb = refdb,
                                ...)
   
-  pio::pioStr("Results:", paste0(dndscv_plot, collapse = ', '), '\n')
+  cli::cli_rule(left = "dndscv results", right = paste0(dndscv_plot, collapse = ', '))
   pio::pioDisp(result_fit$dndstable %>% filter(name %in% dndscv_plot))
-  
-  pio::pioStr("Generating ouptut plot", '\n')
   
   plot_results = mobster:::wrapper_plot(
     result_fit,

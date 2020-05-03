@@ -70,16 +70,16 @@
       <a href="../articles/a2_plotting.html">2. Plotting fits</a>
     </li>
     <li>
-      <a href="../articles/a3_bootstrap.html">3. Bootstrap confidence estimation</a>
+      <a href="../articles/a3_bootstrap.html">3. Confidence estimation by the bootstrap</a>
     </li>
     <li>
       <a href="../articles/a4_popgen.html">4. Population Genetics statistics</a>
     </li>
     <li>
-      <a href="../articles/a5_dnds.html">5. dN/dS statisticss</a>
+      <a href="../articles/a5_dnds.html">5. dN/dS statistics</a>
     </li>
     <li>
-      <a href="../articles/a6_CloneTrees.html">6. Clone trees</a>
+      <a href="../articles/a6_CloneTrees.html">6. Clone trees from clusters</a>
     </li>
     <li>
       <a href="../articles/a7_Example_tumour_simulation.html">7. Visualizing subclonal expansions</a>
@@ -113,7 +113,7 @@
       <h1>7. Visualizing subclonal expansions</h1>
                         <h4 class="author">Giulio Caravagna and Marc Williams</h4>
             
-            <h4 class="date">February 2019</h4>
+            <h4 class="date">03 May, 2020</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/caravagn/mobster/blob/master/vignettes/a7_Example_tumour_simulation.Rmd"><code>vignettes/a7_Example_tumour_simulation.Rmd</code></a></small>
       <div class="hidden name"><code>a7_Example_tumour_simulation.Rmd</code></div>
@@ -186,7 +186,7 @@
 <a class="sourceLine" id="cb2-15" data-line-number="15">    <span class="dt">subtitle =</span> <span class="st">'Tumour doublings (clock): t = {closest_state}'</span></a>
 <a class="sourceLine" id="cb2-16" data-line-number="16">    ) <span class="op">+</span></a>
 <a class="sourceLine" id="cb2-17" data-line-number="17"><span class="st">  </span>ggthemes<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ggthemes/man/scale_ptol.html">scale_fill_ptol</a></span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb2-18" data-line-number="18"><span class="st">  </span>CNAqc<span class="op">:::</span><span class="kw">my_ggplot_theme</span>() </a>
+<a class="sourceLine" id="cb2-18" data-line-number="18"><span class="st">  </span>mobster<span class="op">:::</span><span class="kw">my_ggplot_theme</span>() </a>
 <a class="sourceLine" id="cb2-19" data-line-number="19"></a>
 <a class="sourceLine" id="cb2-20" data-line-number="20">  gganimate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/gganimate/man/animate.html">animate</a></span>(ani,</a>
 <a class="sourceLine" id="cb2-21" data-line-number="21">                   <span class="dt">width =</span> <span class="dv">480</span>,</a>
@@ -234,46 +234,50 @@
 <a class="sourceLine" id="cb4-15" data-line-number="15">initiation =<span class="st"> </span><span class="kw">snap</span>(<span class="dt">data =</span> df.steps, <span class="dt">t =</span> <span class="dv">5</span>, <span class="dt">K =</span> <span class="dv">1</span>, <span class="dt">samples =</span> <span class="dv">1</span>, <span class="dt">parallel =</span> <span class="ot">FALSE</span>)</a>
 <a class="sourceLine" id="cb4-16" data-line-number="16"><span class="co">#&gt;  [ MOBSTER fit ]</span></a>
 <a class="sourceLine" id="cb4-17" data-line-number="17"><span class="co">#&gt; ✔ Loaded input data, n = 2151.</span></a>
-<a class="sourceLine" id="cb4-18" data-line-number="18"><span class="co">#&gt; ❯ n = 2151. Mixture with k = 1 Beta(s). Pareto tail: TRUE and FALSE. Output clusters with π &gt; 0.02 and n &gt; 10.</span></a>
-<a class="sourceLine" id="cb4-19" data-line-number="19"><span class="co">#&gt; ❯ Custom fit by Moments-matching in up to 250 steps, with ε = 1e-10 and peaks initialisation.</span></a>
-<a class="sourceLine" id="cb4-20" data-line-number="20"><span class="co">#&gt; ❯ Scoring (without parallel) 1 x 1 x 2 = 2 models by reICL.</span></a>
-<a class="sourceLine" id="cb4-21" data-line-number="21"><span class="co">#&gt; ℹ MOBSTER fits completed in 766ms.</span></a>
-<a class="sourceLine" id="cb4-22" data-line-number="22"><span class="co">#&gt; ── [ MOBSTER ] t_0 = 3 n = 2151 with k = 1 Beta(s) and a tail ────────────────────────────────────────────────────────────</span></a>
-<a class="sourceLine" id="cb4-23" data-line-number="23"><span class="co">#&gt; ● Clusters: π = 56% [Tail] and 44% [C1], with π &gt; 0.</span></a>
-<a class="sourceLine" id="cb4-24" data-line-number="24"><span class="co">#&gt; ● Tail [n = 1156, 56%] with alpha = 1.2.</span></a>
-<a class="sourceLine" id="cb4-25" data-line-number="25"><span class="co">#&gt; ● Beta C1 [n = 995, 44%] with mean = 0.5.</span></a>
-<a class="sourceLine" id="cb4-26" data-line-number="26"><span class="co">#&gt; ℹ Score(s): NLL = -1885.56; ICL = -3543.5 (-3725.09), H = 181.58 (0). Fit converged by MM in 21 steps.</span></a>
-<a class="sourceLine" id="cb4-27" data-line-number="27"></a>
-<a class="sourceLine" id="cb4-28" data-line-number="28"><span class="co"># Ongoing subclonal expansion (polyclonal)</span></a>
-<a class="sourceLine" id="cb4-29" data-line-number="29">selection =<span class="st">  </span><span class="kw">snap</span>(<span class="dt">data =</span> df.steps, <span class="dt">t =</span> <span class="dv">34</span>, <span class="dt">K =</span> <span class="dv">2</span>, <span class="dt">samples =</span> <span class="dv">1</span>, <span class="dt">parallel =</span> <span class="ot">FALSE</span>) </a>
-<a class="sourceLine" id="cb4-30" data-line-number="30"><span class="co">#&gt;  [ MOBSTER fit ]</span></a>
-<a class="sourceLine" id="cb4-31" data-line-number="31"><span class="co">#&gt; ✔ Loaded input data, n = 3449.</span></a>
-<a class="sourceLine" id="cb4-32" data-line-number="32"><span class="co">#&gt; ❯ n = 3449. Mixture with k = 2 Beta(s). Pareto tail: TRUE and FALSE. Output clusters with π &gt; 0.02 and n &gt; 10.</span></a>
-<a class="sourceLine" id="cb4-33" data-line-number="33"><span class="co">#&gt; ❯ Custom fit by Moments-matching in up to 250 steps, with ε = 1e-10 and peaks initialisation.</span></a>
-<a class="sourceLine" id="cb4-34" data-line-number="34"><span class="co">#&gt; ❯ Scoring (without parallel) 1 x 1 x 2 = 2 models by reICL.</span></a>
-<a class="sourceLine" id="cb4-35" data-line-number="35"><span class="co">#&gt; ℹ MOBSTER fits completed in 14s.</span></a>
-<a class="sourceLine" id="cb4-36" data-line-number="36"><span class="co">#&gt; ── [ MOBSTER ] t_0 = 17.5 n = 3449 with k = 2 Beta(s) and a tail ─────────────────────────────────────────────────────────</span></a>
-<a class="sourceLine" id="cb4-37" data-line-number="37"><span class="co">#&gt; ● Clusters: π = 49% [C2], 26% [Tail] and 25% [C1], with π &gt; 0.</span></a>
-<a class="sourceLine" id="cb4-38" data-line-number="38"><span class="co">#&gt; ● Tail [n = 805, 26%] with alpha = 1.2.</span></a>
-<a class="sourceLine" id="cb4-39" data-line-number="39"><span class="co">#&gt; ● Beta C1 [n = 967, 25%] with mean = 0.51.</span></a>
-<a class="sourceLine" id="cb4-40" data-line-number="40"><span class="co">#&gt; ● Beta C2 [n = 1677, 49%] with mean = 0.33.</span></a>
-<a class="sourceLine" id="cb4-41" data-line-number="41"><span class="co">#&gt; ℹ Score(s): NLL = -2141.73; ICL = -3177.64 (-3783.57), H = 1032.51 (426.58). Fit interrupted by MM in 250 steps.</span></a>
-<a class="sourceLine" id="cb4-42" data-line-number="42"></a>
-<a class="sourceLine" id="cb4-43" data-line-number="43"><span class="co"># Sweeped clone (monoclonal)</span></a>
-<a class="sourceLine" id="cb4-44" data-line-number="44">sweep =<span class="st">  </span><span class="kw">snap</span>(<span class="dt">data =</span> df.steps, <span class="dt">t =</span> <span class="kw"><a href="https://rdrr.io/r/base/length.html">length</a></span>(df.steps), <span class="dt">K =</span> <span class="dv">1</span>, <span class="dt">samples =</span> <span class="dv">1</span>, <span class="dt">parallel =</span> <span class="ot">FALSE</span>) </a>
-<a class="sourceLine" id="cb4-45" data-line-number="45"><span class="co">#&gt;  [ MOBSTER fit ]</span></a>
-<a class="sourceLine" id="cb4-46" data-line-number="46"><span class="co">#&gt; ✔ Loaded input data, n = 4001.</span></a>
-<a class="sourceLine" id="cb4-47" data-line-number="47"><span class="co">#&gt; ❯ n = 4001. Mixture with k = 1 Beta(s). Pareto tail: TRUE and FALSE. Output clusters with π &gt; 0.02 and n &gt; 10.</span></a>
-<a class="sourceLine" id="cb4-48" data-line-number="48"><span class="co">#&gt; ❯ Custom fit by Moments-matching in up to 250 steps, with ε = 1e-10 and peaks initialisation.</span></a>
-<a class="sourceLine" id="cb4-49" data-line-number="49"><span class="co">#&gt; ❯ Scoring (without parallel) 1 x 1 x 2 = 2 models by reICL.</span></a>
-<a class="sourceLine" id="cb4-50" data-line-number="50"><span class="co">#&gt; ℹ MOBSTER fits completed in 1s.</span></a>
-<a class="sourceLine" id="cb4-51" data-line-number="51"><span class="co">#&gt; ── [ MOBSTER ] t_0 = 23 n = 4001 with k = 1 Beta(s) and a tail ───────────────────────────────────────────────────────────</span></a>
-<a class="sourceLine" id="cb4-52" data-line-number="52"><span class="co">#&gt; ● Clusters: π = 60% [C1] and 40% [Tail], with π &gt; 0.</span></a>
-<a class="sourceLine" id="cb4-53" data-line-number="53"><span class="co">#&gt; ● Tail [n = 1530, 40%] with alpha = 1.1.</span></a>
-<a class="sourceLine" id="cb4-54" data-line-number="54"><span class="co">#&gt; ● Beta C1 [n = 2471, 60%] with mean = 0.49.</span></a>
-<a class="sourceLine" id="cb4-55" data-line-number="55"><span class="co">#&gt; ℹ Score(s): NLL = -3417.33; ICL = -6427.2 (-6784.89), H = 357.69 (0). Fit converged by MM in 28 steps.</span></a>
-<a class="sourceLine" id="cb4-56" data-line-number="56"></a>
-<a class="sourceLine" id="cb4-57" data-line-number="57">cowplot<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/cowplot/man/plot_grid.html">plot_grid</a></span>(initiation<span class="op">$</span>plot, selection<span class="op">$</span>plot, sweep<span class="op">$</span>plot, <span class="dt">nrow =</span> <span class="dv">1</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb4-18" data-line-number="18"><span class="co">#&gt; ❯ n = 2151. Mixture with k = 1 Beta(s). Pareto tail: TRUE and FALSE. Output clusters with π &gt; 0.02 and</span></a>
+<a class="sourceLine" id="cb4-19" data-line-number="19"><span class="co">#&gt; n &gt; 10.</span></a>
+<a class="sourceLine" id="cb4-20" data-line-number="20"><span class="co">#&gt; ❯ Custom fit by Moments-matching in up to 250 steps, with ε = 1e-10 and peaks initialisation.</span></a>
+<a class="sourceLine" id="cb4-21" data-line-number="21"><span class="co">#&gt; ❯ Scoring (without parallel) 1 x 1 x 2 = 2 models by reICL.</span></a>
+<a class="sourceLine" id="cb4-22" data-line-number="22"><span class="co">#&gt; ℹ MOBSTER fits completed in 501ms.</span></a>
+<a class="sourceLine" id="cb4-23" data-line-number="23"><span class="co">#&gt; ── [ MOBSTER ] t_0 = 3 n = 2151 with k = 1 Beta(s) and a tail ──────────────────────────────────────────</span></a>
+<a class="sourceLine" id="cb4-24" data-line-number="24"><span class="co">#&gt; ● Clusters: π = 56% [Tail] and 44% [C1], with π &gt; 0.</span></a>
+<a class="sourceLine" id="cb4-25" data-line-number="25"><span class="co">#&gt; ● Tail [n = 1156, 56%] with alpha = 1.2.</span></a>
+<a class="sourceLine" id="cb4-26" data-line-number="26"><span class="co">#&gt; ● Beta C1 [n = 995, 44%] with mean = 0.5.</span></a>
+<a class="sourceLine" id="cb4-27" data-line-number="27"><span class="co">#&gt; ℹ Score(s): NLL = -1885.56; ICL = -3543.5 (-3725.09), H = 181.58 (0). Fit converged by MM in 21 steps.</span></a>
+<a class="sourceLine" id="cb4-28" data-line-number="28"></a>
+<a class="sourceLine" id="cb4-29" data-line-number="29"><span class="co"># Ongoing subclonal expansion (polyclonal)</span></a>
+<a class="sourceLine" id="cb4-30" data-line-number="30">selection =<span class="st">  </span><span class="kw">snap</span>(<span class="dt">data =</span> df.steps, <span class="dt">t =</span> <span class="dv">34</span>, <span class="dt">K =</span> <span class="dv">2</span>, <span class="dt">samples =</span> <span class="dv">1</span>, <span class="dt">parallel =</span> <span class="ot">FALSE</span>) </a>
+<a class="sourceLine" id="cb4-31" data-line-number="31"><span class="co">#&gt;  [ MOBSTER fit ]</span></a>
+<a class="sourceLine" id="cb4-32" data-line-number="32"><span class="co">#&gt; ✔ Loaded input data, n = 3449.</span></a>
+<a class="sourceLine" id="cb4-33" data-line-number="33"><span class="co">#&gt; ❯ n = 3449. Mixture with k = 2 Beta(s). Pareto tail: TRUE and FALSE. Output clusters with π &gt; 0.02 and</span></a>
+<a class="sourceLine" id="cb4-34" data-line-number="34"><span class="co">#&gt; n &gt; 10.</span></a>
+<a class="sourceLine" id="cb4-35" data-line-number="35"><span class="co">#&gt; ❯ Custom fit by Moments-matching in up to 250 steps, with ε = 1e-10 and peaks initialisation.</span></a>
+<a class="sourceLine" id="cb4-36" data-line-number="36"><span class="co">#&gt; ❯ Scoring (without parallel) 1 x 1 x 2 = 2 models by reICL.</span></a>
+<a class="sourceLine" id="cb4-37" data-line-number="37"><span class="co">#&gt; ℹ MOBSTER fits completed in 9.2s.</span></a>
+<a class="sourceLine" id="cb4-38" data-line-number="38"><span class="co">#&gt; ── [ MOBSTER ] t_0 = 17.5 n = 3449 with k = 2 Beta(s) and a tail ───────────────────────────────────────</span></a>
+<a class="sourceLine" id="cb4-39" data-line-number="39"><span class="co">#&gt; ● Clusters: π = 49% [C2], 26% [Tail] and 25% [C1], with π &gt; 0.</span></a>
+<a class="sourceLine" id="cb4-40" data-line-number="40"><span class="co">#&gt; ● Tail [n = 805, 26%] with alpha = 1.2.</span></a>
+<a class="sourceLine" id="cb4-41" data-line-number="41"><span class="co">#&gt; ● Beta C1 [n = 967, 25%] with mean = 0.51.</span></a>
+<a class="sourceLine" id="cb4-42" data-line-number="42"><span class="co">#&gt; ● Beta C2 [n = 1677, 49%] with mean = 0.33.</span></a>
+<a class="sourceLine" id="cb4-43" data-line-number="43"><span class="co">#&gt; ℹ Score(s): NLL = -2141.73; ICL = -3177.64 (-3783.57), H = 1032.51 (426.58). Fit interrupted by MM in</span></a>
+<a class="sourceLine" id="cb4-44" data-line-number="44"><span class="co">#&gt; 250 steps.</span></a>
+<a class="sourceLine" id="cb4-45" data-line-number="45"></a>
+<a class="sourceLine" id="cb4-46" data-line-number="46"><span class="co"># Sweeped clone (monoclonal)</span></a>
+<a class="sourceLine" id="cb4-47" data-line-number="47">sweep =<span class="st">  </span><span class="kw">snap</span>(<span class="dt">data =</span> df.steps, <span class="dt">t =</span> <span class="kw"><a href="https://rdrr.io/r/base/length.html">length</a></span>(df.steps), <span class="dt">K =</span> <span class="dv">1</span>, <span class="dt">samples =</span> <span class="dv">1</span>, <span class="dt">parallel =</span> <span class="ot">FALSE</span>) </a>
+<a class="sourceLine" id="cb4-48" data-line-number="48"><span class="co">#&gt;  [ MOBSTER fit ]</span></a>
+<a class="sourceLine" id="cb4-49" data-line-number="49"><span class="co">#&gt; ✔ Loaded input data, n = 4001.</span></a>
+<a class="sourceLine" id="cb4-50" data-line-number="50"><span class="co">#&gt; ❯ n = 4001. Mixture with k = 1 Beta(s). Pareto tail: TRUE and FALSE. Output clusters with π &gt; 0.02 and</span></a>
+<a class="sourceLine" id="cb4-51" data-line-number="51"><span class="co">#&gt; n &gt; 10.</span></a>
+<a class="sourceLine" id="cb4-52" data-line-number="52"><span class="co">#&gt; ❯ Custom fit by Moments-matching in up to 250 steps, with ε = 1e-10 and peaks initialisation.</span></a>
+<a class="sourceLine" id="cb4-53" data-line-number="53"><span class="co">#&gt; ❯ Scoring (without parallel) 1 x 1 x 2 = 2 models by reICL.</span></a>
+<a class="sourceLine" id="cb4-54" data-line-number="54"><span class="co">#&gt; ℹ MOBSTER fits completed in 861ms.</span></a>
+<a class="sourceLine" id="cb4-55" data-line-number="55"><span class="co">#&gt; ── [ MOBSTER ] t_0 = 23 n = 4001 with k = 1 Beta(s) and a tail ─────────────────────────────────────────</span></a>
+<a class="sourceLine" id="cb4-56" data-line-number="56"><span class="co">#&gt; ● Clusters: π = 60% [C1] and 40% [Tail], with π &gt; 0.</span></a>
+<a class="sourceLine" id="cb4-57" data-line-number="57"><span class="co">#&gt; ● Tail [n = 1530, 40%] with alpha = 1.1.</span></a>
+<a class="sourceLine" id="cb4-58" data-line-number="58"><span class="co">#&gt; ● Beta C1 [n = 2471, 60%] with mean = 0.49.</span></a>
+<a class="sourceLine" id="cb4-59" data-line-number="59"><span class="co">#&gt; ℹ Score(s): NLL = -3417.33; ICL = -6427.2 (-6784.89), H = 357.69 (0). Fit converged by MM in 28 steps.</span></a>
+<a class="sourceLine" id="cb4-60" data-line-number="60"></a>
+<a class="sourceLine" id="cb4-61" data-line-number="61">cowplot<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/cowplot/man/plot_grid.html">plot_grid</a></span>(initiation<span class="op">$</span>plot, selection<span class="op">$</span>plot, sweep<span class="op">$</span>plot, <span class="dt">nrow =</span> <span class="dv">1</span>)</a></code></pre></div>
 <p><img src="a7_Example_tumour_simulation_files/figure-html/unnamed-chunk-5-1.png" width="960"></p>
 <p>Notice that the tail at the end of the simulation is now mostly dominated by the progeny of the most recent clone, and the amount of mutations in the tail and the clonal cluster is balanced as in the beginning of the simulation. This because in this simulation the mutation rate of the tumour is the same across all simulated clones.</p>
 </div>

@@ -4,13 +4,18 @@
 \name{fit_example}
 \alias{fit_example}
 \title{Example MOBSTER fit.}
-\format{Data from an example MOBSTER fit.}
+\format{
+Output from `mobster_fit`.
+}
 \usage{
 data(fit_example)
 }
 \description{
-Data from an example MOBSTER fit. This is a list returned by the fitting
-algorithm, which contains the best fit, the top runs and a table summarising the fit scores.
+Data from an example MOBSTER fit; this object is the
+result of running `mobster_fit` function on the input dat.a
+The ouput is a list which contains the best fit, the top runs and 
+a table summarising the fit scores. The input data has been simulated
+with a stochastic branching process model.
 }
 \examples{
 data(fit_example)

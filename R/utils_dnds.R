@@ -16,9 +16,7 @@ get_dnds_input = function(x, mapping, refdb, gene_list)
   if (!('sample' %in% colnames(x)))
   {
     message(
-      "Missing sample column.\n" ,
-      "> Assuming these are mutations from a single patient, adding dummy sample id.\n",
-      "> If this is not the case, label each mutation with a sample id."
+      "Missing 'sample' column, assuming mutations from a single patient (adding a sample label otherwise)."
     )
     
     x <- x %>%
@@ -29,20 +27,29 @@ get_dnds_input = function(x, mapping, refdb, gene_list)
     x <- x %>%
       dplyr::select(sample, chr, from, ref, alt, everything())
   
+  ngrp = ifelse(
+    all(is.null(mapping)),
+    "'by cluster'",
+    length(unique(mapping))
+  )
   
-  pio::pioStr("\n  Mutations ", nrow(x))
-  pio::pioStr("\n      Genes ", length(gene_list))
-  pio::pioStr("\n   Clusters ", length(unique(x$cluster)))
-  pio::pioStr("\n    Samples ", length(unique(x$sample)))
-  pio::pioStr("\nDnds groups ", length(unique(mapping)), '\n')
+  gl = ifelse(
+    all(is.null(gene_list)),
+    "no genes (default dndscv)",
+    paste0(length(gene_list), " genes (custom list)")
+  )
   
-  # pio::pioDisp(x)
+  nm = nrow(x)
+  ns = length(unique(x$sample))
+  
+  cli::cli_alert_info(
+      "{.value {nm}} mutations; {.field {ngrp}} groups in {.value {ns}} samples, with {.field {gl}}."
+    )
   
   # Checkings for the reference
   if (refdb == "hg19") {
     message(
-      "[refdb = hg19] \n" ,
-      "> Removing chr from chromosome names for hg19 reference compatability\n"
+      "[refdb = hg19] Removing chr from chromosome names for hg19 reference compatability"
     )
     
     x$chr <- gsub(pattern = 'chr', replacement = '', x$chr)
@@ -50,12 +57,12 @@ get_dnds_input = function(x, mapping, refdb, gene_list)
   
   clusters = unique(x$cluster)
   
-  pio::pioStr("Mapping clusters to dnds_groups\n")
+  # pio::pioStr("Mapping clusters to dnds_groups\n")
   
   # Special mapping: identity
   if (all(is.null(mapping)))
   {
-    message("[mapping = NULL]\n", "> Creating mapping by cluster.")
+    # message("[mapping = NULL]\n", "> Creating mapping by cluster.")
     
     mapping = pio:::nmfy(clusters, clusters)
   }
@@ -89,8 +96,8 @@ wrapper_dndsfit = function(clusters, groups, gene_list, mode, refdb, ...)
   dndsoutputs = NULL
   for (i in groups)
   {
-    pio::pioStr("\ndndscv @ dnds_group ", i, '\n')
-    
+    cli::cli_h3(paste0("Group ", i))
+
     dndsout = NULL
     tryCatch({
       dndsout <- clusters %>%
@@ -100,9 +107,9 @@ wrapper_dndsfit = function(clusters, groups, gene_list, mode, refdb, ...)
     error = function(e)
     {
       # Intercepted error
-      cat(crayon::red('BEGIN Intercepted error from dndscv\n'))
-      message(e)
-      cat(crayon::red('\n'))
+      cat(crayon::red('dndscv error\n'))
+      cat(crayon::blue(e))
+      cat("\n")
       
       dndsout = NULL
     })

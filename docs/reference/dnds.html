@@ -105,25 +105,25 @@ the best fitting MOBSTER model." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/CloneTrees.html">6. Clone trees</a>
+      <a href="../articles/a1_introduction.html">1. Introduction</a>
     </li>
     <li>
-      <a href="../articles/Example_tumour_simulation.html">Visualizing subclonal expansions</a>
+      <a href="../articles/a2_plotting.html">2. Plotting fits</a>
     </li>
     <li>
-      <a href="../articles/bootstrap.html">3. Bootstrap confidence estimation</a>
+      <a href="../articles/a3_bootstrap.html">3. Confidence estimation by the bootstrap</a>
     </li>
     <li>
-      <a href="../articles/dnds.html">5. dN/dS statisticss</a>
+      <a href="../articles/a4_popgen.html">4. Population Genetics statistics</a>
     </li>
     <li>
-      <a href="../articles/introduction.html">1. Introduction</a>
+      <a href="../articles/a5_dnds.html">5. dN/dS statistics</a>
     </li>
     <li>
-      <a href="../articles/plotting.html">2. Plotting fits</a>
+      <a href="../articles/a6_CloneTrees.html">6. Clone trees from clusters</a>
     </li>
     <li>
-      <a href="../articles/popgen.html">4. Population Genetics statistics</a>
+      <a href="../articles/a7_Example_tumour_simulation.html">7. Visualizing subclonal expansions</a>
     </li>
   </ul>
 </li>
@@ -132,7 +132,12 @@ the best fitting MOBSTER model." />
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/caravagn/mobster">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -147,7 +152,7 @@ the best fitting MOBSTER model." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Run a dN/dS analysis on MOBSTER clusters.</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/caravagn/mobster/blob/master/R/dnds.R'><code>R/dnds.R</code></a></small>
     <div class="hidden name"><code>dnds.Rd</code></div>
     </div>
 
@@ -157,9 +162,15 @@ values per cluster. It computes global dN/dS and per gene dN/dS values and makes
 the best fitting MOBSTER model.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>dnds</span>(<span class='no'>x</span>, <span class='kw'>mapping</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>gene_list</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>colors</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>Tail</span> <span class='kw'>=</span> <span class='st'>"gray"</span>),
-  <span class='kw'>refdb</span> <span class='kw'>=</span> <span class='st'>"hg19"</span>, <span class='kw'>dndscv_plot</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"wall"</span>, <span class='st'>"wmis"</span>, <span class='st'>"wnon"</span>, <span class='st'>"wspl"</span>,
-  <span class='st'>"wtru"</span>), <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>dnds</span>(
+  <span class='no'>x</span>,
+  <span class='kw'>mapping</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>gene_list</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>colors</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>Tail</span> <span class='kw'>=</span> <span class='st'>"gray"</span>),
+  <span class='kw'>refdb</span> <span class='kw'>=</span> <span class='st'>"hg19"</span>,
+  <span class='kw'>dndscv_plot</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"wall"</span>, <span class='st'>"wmis"</span>, <span class='st'>"wnon"</span>, <span class='st'>"wspl"</span>, <span class='st'>"wtru"</span>),
+  <span class='no'>...</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -211,14 +222,10 @@ by package <code>dndscv</code>, together with a <code>ggplot</code> plot for the
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'># Example run with real data</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>'PD4120a_breast_sample'</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'mobster'</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>'LUFF76_lung_sample'</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'mobster'</span>)
 
-<span class='no'>clusters</span> <span class='kw'>=</span> <span class='fu'><a href='Clusters.html'>Clusters</a></span>(<span class='no'>PD4120a_breast_sample</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; <span class='error'>Error in spread(., key = type, value = fit.value): could not find function "spread"</span></div><div class='input'>
-<span class='no'>dnds_stats</span> <span class='kw'>=</span> <span class='fu'>dnds</span>(
-  <span class='no'>clusters</span>,
-  <span class='kw'>mapping</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>`C1`</span> <span class='kw'>=</span> <span class='st'>'Non-tail'</span>, <span class='kw'>`C2`</span> <span class='kw'>=</span> <span class='st'>'Non-tail'</span>, <span class='kw'>`C3`</span> <span class='kw'>=</span> <span class='st'>'Non-tail'</span>, <span class='kw'>`Tail`</span> <span class='kw'>=</span> <span class='st'>'Tail'</span>),
-  <span class='kw'>gene_list</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
-)</div><div class='output co'>#&gt; <span class='error'>Error in is.data.frame(x): object 'clusters' not found</span></div></pre>
+<span class='no'>clusters</span> <span class='kw'>=</span> <span class='fu'><a href='Clusters.html'>Clusters</a></span>(<span class='no'>LUFF76_lung_sample</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; <span class='error'>Error in x$Clusters %&gt;% dplyr::filter(cluster != "Tail", type == "a" |     type == "b") %&gt;% dplyr::select(-init.value) %&gt;% tidyr::spread(key = type,     value = fit.value): could not find function "%&gt;%"</span></div><div class='input'>
+<span class='no'>dnds_stats</span> <span class='kw'>=</span> <span class='fu'>dnds</span>(<span class='no'>clusters</span>, <span class='kw'>gene_list</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</div><div class='output co'>#&gt; <span class='error'>Error in is.data.frame(x): object 'clusters' not found</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

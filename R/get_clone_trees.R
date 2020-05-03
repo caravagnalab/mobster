@@ -52,10 +52,10 @@
 #' ctree::plot_clone_size(trees[[1]])
 get_clone_trees = function(x, ...)
 {
-  if(!all(c('driver', 'gene') %in% colnames(x$data)))
-    stop("Your data should have a logical 'driver' and 'gene' column to annotate driver events, cannot build a ctree otherwise.")
-  
   mobster:::is_mobster_fit(x)
+  
+  if(!mobster:::has_drivers_annotated(x))
+    stop("Your data should have driver events annotated, cannot use 'ctree' otherwise.")
   
   # Patient ID
   patientID = ifelse(is.null(x$description), "MOBSTER dataset", x$description)
@@ -76,9 +76,12 @@ get_clone_trees = function(x, ...)
   
   # Detect presence/ absence of drivers
   drivers_collapse = x$data %>%
-    dplyr::filter(driver) %>%
+    dplyr::filter(is_driver) %>%
     pull(cluster) %>%
     unique
+  
+  if(length(drivers_collapse) == 0) 
+    stop("Your data should have driver events annotated, cannot use 'ctree' otherwise.")
   
   cluster_table$is.driver = FALSE
   cluster_table$is.driver[which(cluster_table$cluster %in% drivers_collapse)] = TRUE
@@ -86,8 +89,8 @@ get_clone_trees = function(x, ...)
   # Create drivers table
   drivers_table = x$data %>%
     as_tibble() %>%
-    dplyr::filter(driver) %>%
-    dplyr::rename(variantID = gene, is.driver = driver) %>%
+    dplyr::filter(is_driver) %>%
+    dplyr::rename(variantID = driver_label, is.driver = is_driver) %>%
     dplyr::mutate(patientID = patientID, R1 = VAF) 
   
   drivers_table$is.clonal = FALSE

@@ -40,7 +40,7 @@ plot.dbpmm = function(x,
   is_mobster_fit(x)
   
   binwidth = 0.01
-  histogram.main = 'MOBSTER fit'
+  histogram.main = ifelse(is.null(x$description), 'MOBSTER fit', x$description)
   
   # Prepare variables
   domain = seq(0, 1, binwidth)
@@ -189,32 +189,32 @@ plot.dbpmm = function(x,
         scale_y_continuous(sec.axis = sec_axis( ~ . / m * 100, name = "SSE [cumulative %]"))
     }
     
-    if(secondary_axis == "N")
-    {
-      xbins = hist(x$data$VAF, breaks = domain, plot = F)$counts
-      xcumc = cumsum(xbins)
-      
-      brk = seq(0, x$N, by = x$N/4)
-
-      # hist_pl = 
-        hist_pl +
-        geom_line(
-          data =  data.frame(x = domain[-1], y = (xcumc/x$N) * m),
-          aes(y = y, x = x),
-          color = 'darkgray',
-          alpha = 1,
-          size = .2,
-          linetype = 'dashed',
-          inherit.aes = FALSE
-        ) +
-        scale_y_continuous(
-          sec.axis = sec_axis( ~ . , 
-                               name = "Counts (n)", 
-                               breaks = brk / x$N * m,
-                               labels = brk
-                               )
-          )
-    }
+    # if(secondary_axis == "N")
+    # {
+    #   xbins = hist(x$data$VAF, breaks = domain, plot = F)$counts
+    #   xcumc = cumsum(xbins)
+    #   
+    #   brk = seq(0, x$N, by = x$N/4)
+    # 
+    #   # hist_pl = 
+    #     hist_pl +
+    #     geom_line(
+    #       data =  data.frame(x = domain[-1], y = (xcumc/x$N) * m),
+    #       aes(y = y, x = x),
+    #       color = 'darkgray',
+    #       alpha = 1,
+    #       size = .2,
+    #       linetype = 'dashed',
+    #       inherit.aes = FALSE
+    #     ) +
+    #     scale_y_continuous(
+    #       sec.axis = sec_axis( ~ . , 
+    #                            name = "Counts (n)", 
+    #                            breaks = brk / x$N * m,
+    #                            labels = brk
+    #                            )
+    #       )
+    # }
     
   }
   
@@ -223,7 +223,7 @@ plot.dbpmm = function(x,
   # Annotate mixting proportions
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
   pi = sort(pi)
-  pi = paste0(names(pi), ' ', round(pi * 100, 2), '%', collapse = ', ')
+  pi = paste0(names(pi), ' ', round(pi * 100, 1), '%', collapse = ', ')
   
   hist_pl = hist_pl +
     labs(
@@ -233,74 +233,11 @@ plot.dbpmm = function(x,
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
   # Custom coloring
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-  # TODO
+  pl = mobster:::add_fill_color_pl(x, hist_pl, colors)
   
-  
-  # # Annotation of input entries
-  # if(!is.null(annotate) & all(c("VAF", 'label') %in% colnames(annotate)))
-  # {
-  #   # Position the point at coord x = VAF and y = density
-  #   m = max(densities$y, na.rm = TRUE)
-  #
-  #   annotate$y = round(annotate$VAF/binwidth)
-  #   annotate$y = densities$y[annotate$y] + m * 0.02
-  #
-  #   hist_pl = hist_pl +
-  #     geom_label_repel(data = annotate,
-  #                      aes(
-  #                        x = VAF,
-  #                        y = y,
-  #                        label = label,
-  #                        color = factor(cluster)
-  #                        # fill = factor(cluster)
-  #                      ),
-  #                      size = 1.5 * cex,
-  #                      inherit.aes = FALSE,
-  #                      box.padding = 0.95,
-  #                      segment.size = .2 * cex, force = 1) +
-  #     geom_point(data = annotate, aes(x = VAF, y = y,  color = factor(cluster)),
-  #                size = .3 * cex, alpha = 1,
-  #                inherit.aes = FALSE)
-  # }
-  #
-  
-  pl = add_fill_color_pl(x, hist_pl, colors)
-  
-  if(!is.null(annotation_extras))
-  {
-    points_df = mobster::Clusters_denovo(x, annotation_extras)
-    points_df$density = sapply(
-      points_df$VAF, 
-      function(v){
-        
-        mobster:::template_density(x,
-                                   x.axis = v,
-                                   binwidth = binwidth,
-                                   reduce = TRUE) %>%
-          dplyr::summarise(d = sum(y)) %>%
-          pull(d)
-      })
+  # The plot allows to annotate some extra events etc.
+  pl = mobster:::add_extra_plot_annotations(x, annotation_extras, base_plot = pl)
     
-    nudge = max(points_df$density)/5
-    
-    pl = pl + 
-      geom_point(
-        data = points_df, 
-        aes(x = VAF, y = density), 
-        show.legend = F
-      ) +
-      ggrepel::geom_label_repel(
-        data = points_df, 
-        aes(x = VAF, y = density, label = label),
-        nudge_y = nudge,
-        nudge_x = nudge,
-        direction = 'x', 
-        angle = 45,
-        vjust = 0,
-        segment.size = 0.2,   
-        show.legend = F
-      ) 
-  }
 
   return(pl)
 }

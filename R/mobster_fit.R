@@ -105,7 +105,7 @@ mobster_fit = function(x,
   if (!is.null(auto_setup))
   {
     # Get the parameters, checks they are known, throws errors.
-    template = auto_setup(auto_setup)
+    template = mobster:::auto_setup(auto_setup)
     
     K = template$K
     samples = template$samples
@@ -181,14 +181,14 @@ mobster_fit = function(x,
                     ))
   
   runs = easypar::run(
-    FUN = .dbpmm.EM,
+    FUN = mobster:::.dbpmm.EM,
     PARAMS = inputs,
-    # packages = c("crayon", "pio", "tidyverse"),
+    packages = c("dplyr", 'tidyr', "mobster"), # Required for pipes and other functions
     export = ls(globalenv(), all.names = TRUE),
     cores.ratio = .8,
     parallel = parallel,
     cache = NULL,
-    filter_errors = TRUE # Error moanagment is inside easypar
+    filter_errors = TRUE # Error managment is inside easypar
   )
   
   # Should not happen
