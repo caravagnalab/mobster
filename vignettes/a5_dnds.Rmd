@@ -1,5 +1,5 @@
 ---
-title: "5. Clone-specific dN/dS statistics"
+title: "5. dN/dS statistics"
 author: "Giulio Caravagna"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 institute: "Institute for Cancer Research"
@@ -27,9 +27,17 @@ library(dplyr)
 
 # Computing dnds values
 
-dN/dS values are provided by  the [dndscv](https://github.com/im3sanger/dndscv/) R package, discussed in (Martincorena, et al. *"Universal patterns of selection in cancer and somatic tissues"*, Cell 171.5 (2017): 1029-1041; [PMID 29056346](https://www.ncbi.nlm.nih.gov/pubmed/29056346)).
+`mobster` interfaces with the [dndscv](https://github.com/im3sanger/dndscv/) R package to compute dN/dS values from its output clusters. The method implemented in `dndscv` is described in _Martincorena, et al._ *"Universal patterns of selection in cancer and somatic tissues"*, Cell 171.5 (2017): 1029-1041; [PMID 29056346](https://www.ncbi.nlm.nih.gov/pubmed/29056346)).
 
-To compute dN/dS values annotated mutations must have genomic coordinates: chromosome location `chrom`, position `from`, reference alleles `alt` and `ref`. We show this analysis with the fits for the `PD4120a` breast cancer sample dataset.
+**Requirements.** In order to be able to compute dN/dS values mutations data must store their _genomic coordinates_: 
+
+* chromosome location `chrom`, 
+* position `from`, 
+* reference alleles `alt` and `ref`. 
+
+Besides, it is important to know what is the reference genome used to align the genome; this information will be used by `dndscv` to annotate input mutations.
+
+We show this analysis with the fits for one of the lung samples available in the package.
 
 ```{r, fig.width=5, fig.height=4}
 fit = mobster::LUFF76_lung_sample
@@ -49,18 +57,30 @@ print(clusters)
 The available clusters are `C1` and `Tail`; `C1` is the clonal cluster. We compute dN/dS with the default parameters.
 
 ```{r, fig.width=3, fig.height=3, warning=FALSE}
-# Run with this grouping and default gene list
+# Run by cluster and default gene list
 dnds_stats = dnds(
   clusters,
   gene_list = NULL
 )
 ```
 
-The statistics can  be computed for a custom grouping of the actual clusters. Here it does not make much difference because we have only the clonal cluster, and the tail; but if we had one subclone `C2` we could have pooled together the mutations in the clones via `mapping = c(`C1` = 'Non-tail', `C2` = 'Non-tail', `Tail` = 'Tail')`.
+The statistics can  be computed for a custom grouping of the clusters. Here it does not make much difference because we have only the clonal cluster, and the tail; but if we had one subclone `C2` we could have pooled together the mutations in the clones using 
+```{r, eval=FALSE}
+# Not run here
+dnds_stats = dnds(
+  clusters,
+  mapping = c(`C1` = 'Non-tail', `C2` = 'Non-tail', `Tail` = 'Tail'),
+  gene_list = NULL
+)
+```
 
-In the above analysis we have run `dndscv` using the default gene list (`gene_list = NULL`).  Notice that the tool gave an error when run on clonal mutations, meaning that not enough substitutions were available to compute dN/dS.
+In the above analysis we have run `dndscv` using the default gene list (`gene_list = NULL`).  Notice that errors raised by `dndscv` are intercepted by `mobster`; some of this errors might originate from a dataset with not enough substitutions to compute dN/dS.
 
-The call returned the table computed by `dndscv`, and a `ggplot` plot; in the tables, column `dnds_group` labels the group.
+The call returns:
+
+* the table computed by `dndscv`, where column `dnds_group` labels the group.
+* a `ggplot` plot of the point estimates and the confidence interval; 
+
 ```{r, fig.width=9, fig.height=3, warning=FALSE}
 # Summary statistics
 print(dnds_stats$dnds_summary)
@@ -76,9 +96,7 @@ The default plot contains results obtained from all substitution models availabl
 
 # Using custom genes lists
 
-A custom list of genes can be supplied in the call to `dnds()` as the variable `genes_list`.
-
-MOBSTER provides 4 lists of interests for this type of computation:
+A custom list of genes can be supplied in the call to `dnds` as the variable `genes_list`; the package provides 4 lists of interests for this type of computation:
 
 * a list of driver genes compiled in `Martincorena et al. Cell 171.5 (2017): 1029-1041.`;
 * a list of driver genes compiled in `Tarabichi, et al. Nature Genetics 50.12 (2018): 1630.`;
@@ -95,7 +113,7 @@ data('cancer_genes_dnds', package = 'mobster')
 print(lapply(cancer_genes_dnds, head))
 ```
 
-A custom gene list can be used. Beware that with data of a single patient there are might be few, or no substitutions to compute dnds values
+A custom gene list can be used as follows.
 ```{r, eval=FALSE}
 # Not run here
 dnds_stats = dnds(
@@ -110,7 +128,7 @@ dnds_stats = dnds(
 The input format of the `dnds` function allows to pool data from several fits at once. We pool data from the 2 datasets available in the package.
 
 ```{r}
-# Lung and breast samples
+# 2 lung samples
 data('LU4_lung_sample', package = 'mobster')
 data('LUFF76_lung_sample', package = 'mobster')
 ```
@@ -123,12 +141,11 @@ dnds_multi = dnds(
     Clusters(LU4_lung_sample$best) %>% select(chr, from, ref, alt, cluster) %>% mutate(sample = 'LU4'),
     Clusters(LUFF76_lung_sample$best) %>% select(chr, from, ref, alt, cluster) %>% mutate(sample = 'LUFF76')
   ),
-  mapping = c(
-    `C1` = 'Non-tail',  # Pool together all clonal mutations
-    `Tail` = 'Tail'     # Pool together all tail mutations
-  ),
+  mapping = c(`C1` = 'Non-tail',  # Pool together all clonal mutations
+              `Tail` = 'Tail'     # Pool together all tail mutations),
+  )
 )
 
-print(dnds_multi$plot)
+print(dnds_multi)
 ```
 

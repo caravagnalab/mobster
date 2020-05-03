@@ -1,13 +1,16 @@
 #' Example MOBSTER fit.
 #'
-#' @description Data from an example MOBSTER fit. This is a list returned by the fitting
-#' algorithm, which contains the best fit, the top runs and a table summarising the fit scores.
-#'
+#' @description Data from an example MOBSTER fit; this object is the
+#' result of running `mobster_fit` function on the input dat.a
+#' The ouput is a list which contains the best fit, the top runs and 
+#' a table summarising the fit scores. The input data has been simulated
+#' with a stochastic branching process model.
+#' 
 #' @docType data
 #'
 #' @usage data(fit_example)
 #'
-#' @format Data from an example MOBSTER fit.
+#' @format Output from `mobster_fit`.
 #'
 #' @keywords datasets
 #'
@@ -47,37 +50,20 @@
 #' print(lapply(cancer_genes_dnds, head))
 "cancer_genes_dnds"
 
-#' MOBSTER fit for the PD4120a breast sample.
-#'
-#' @description MOBSTER fit for the PD4120a breast sample; this object is the
-#' result of running `mobster_fit` function on the input data described in the 
-#' main MOBSTER paper.
-#'
-#' @docType data
-#'
-#' @usage data(PD4120a_breast_sample)
-#'
-#' @format Data from a MOBSTER fit.
-#'
-#' @keywords datasets
-#'
-#' @examples
-#' data(PD4120a_breast_sample, package = 'mobster')
-#' print(PD4120a_breast_sample$best)
-#' plot(PD4120a_breast_sample$best)
-"PD4120a_breast_sample"
 
-#' MOBSTER fit for the PD4120a breast sample.
+#' MOBSTER fit for the LUFF76 lung sample.
 #'
 #' @description MOBSTER fit for the LUFF76 lung sample; this object is the
 #' result of running `mobster_fit` function on the input data described in the 
-#' main MOBSTER paper.
+#' main MOBSTER paper. The data consists of diploid mutations for the 
+#' sample available at the Comprehensive Omics Archive of Lung Adenocarcinoma
+#' (http://genome.kaist.ac.kr/).
 #'
 #' @docType data
 #'
 #' @usage data(LUFF76_lung_sample)
 #'
-#' @format Data from a MOBSTER fit.
+#' @format Output from `mobster_fit`.
 #'
 #' @keywords datasets
 #'
@@ -92,13 +78,15 @@
 #'
 #' @description MOBSTER fit for the LU4 lung sample; this object is the
 #' result of running `mobster_fit` function on the input data described in the 
-#' main MOBSTER paper.
+#' main MOBSTER paper. The data consists of diploid mutations for the 
+#' sample available at the Comprehensive Omics Archive of Lung Adenocarcinoma
+#' (http://genome.kaist.ac.kr/).
 #'
 #' @docType data
 #'
 #' @usage data(LU4_lung_sample)
 #'
-#' @format Data from a MOBSTER fit.
+#' @format Output from `mobster_fit`.
 #'
 #' @keywords datasets
 #'

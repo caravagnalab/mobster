@@ -104,25 +104,25 @@ goodness of fit. For the TOP available solutions the SSE trace is shown." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/CloneTrees.html">6. Clone trees</a>
+      <a href="../articles/a1_introduction.html">1. Introduction</a>
     </li>
     <li>
-      <a href="../articles/Example_tumour_simulation.html">Visualizing subclonal expansions</a>
+      <a href="../articles/a2_plotting.html">2. Plotting fits</a>
     </li>
     <li>
-      <a href="../articles/bootstrap.html">3. Bootstrap confidence estimation</a>
+      <a href="../articles/a3_bootstrap.html">3. Confidence estimation by the bootstrap</a>
     </li>
     <li>
-      <a href="../articles/dnds.html">5. dN/dS statisticss</a>
+      <a href="../articles/a4_popgen.html">4. Population Genetics statistics</a>
     </li>
     <li>
-      <a href="../articles/introduction.html">1. Introduction</a>
+      <a href="../articles/a5_dnds.html">5. dN/dS statistics</a>
     </li>
     <li>
-      <a href="../articles/plotting.html">2. Plotting fits</a>
+      <a href="../articles/a6_CloneTrees.html">6. Clone trees from clusters</a>
     </li>
     <li>
-      <a href="../articles/popgen.html">4. Population Genetics statistics</a>
+      <a href="../articles/a7_Example_tumour_simulation.html">7. Visualizing subclonal expansions</a>
     </li>
   </ul>
 </li>
@@ -131,7 +131,12 @@ goodness of fit. For the TOP available solutions the SSE trace is shown." />
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/caravagn/mobster">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -146,7 +151,7 @@ goodness of fit. For the TOP available solutions the SSE trace is shown." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Plot the goodness of fit.</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/caravagn/mobster/blob/master/R/plot_gofit.R'><code>R/plot_gofit.R</code></a></small>
     <div class="hidden name"><code>plot_gofit.Rd</code></div>
     </div>
 
@@ -166,8 +171,7 @@ goodness of fit. For the <code>TOP</code> available solutions the SSE trace is s
     </tr>
     <tr>
       <th>TOP</th>
-      <td><p>The top set of fits to use, if more than the one available
-only the ones in <code>x</code> are used.</p></td>
+      <td><p>The first <code>TOP</code> fits are used.</p></td>
     </tr>
     <tr>
       <th>nx</th>
@@ -176,10 +180,6 @@ only the ones in <code>x</code> are used.</p></td>
     <tr>
       <th>ny</th>
       <td><p>Rows in the matrix layout.</p></td>
-    </tr>
-    <tr>
-      <th>TOP</th>
-      <td><p>The first <code>TOP</code> fits are used.</p></td>
     </tr>
     </table>
 

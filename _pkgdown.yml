@@ -22,7 +22,7 @@ authors:
 
 reference:
 - title: Available data
-  desc:  Data and fits released with the package
+  desc:  Data released with the package
   contents:
   - fit_example
   - LU4_lung_sample 
@@ -31,7 +31,7 @@ reference:
   - cancer_genes_dnds
 
 - title: Fitting functions
-  desc:  Functions to cluster the data, extract the results, and use the density of a `mobster` fit to generated datasets.
+  desc:  Functions to cluster the data; density of a `mobster` fit and sampling functions.
   contents:
   - mobster_fit
   - choose_clusters
@@ -43,14 +43,14 @@ reference:
   - to_string
 
 - title: S3 functions
-  desc:  Mobster S3 object.
+  desc: The `mobster` S3 object.
   contents:
   - print.dbpmm
   - summary.dbpmm
   - plot.dbpmm
   
 - title: Plotting functions
-  desc:  These functions can be used to plot data, fits and clusters from a REVOLVER cohort object.
+  desc:  These functions can be used to plot data and `mobster` fits.
   contents:
   - plot_NLL
   - plot_entropy
@@ -63,7 +63,7 @@ reference:
   
   
 - title: Bootstrap functions
-  desc:  Bootstrap function for `mobster` fits.
+  desc:  Bootstrap functions for `mobster` fits, and plotting functions.
   contents:
   - mobster_bootstrap
   - bootstrapped_statistics
@@ -79,7 +79,6 @@ reference:
   contents:
   - dnds
   - evolutionary_parameters
-  - fit_animation
   - get_clone_trees
 
 

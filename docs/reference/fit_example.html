@@ -43,8 +43,11 @@
 
 
 <meta property="og:title" content="Example MOBSTER fit. — fit_example" />
-<meta property="og:description" content="Data from an example MOBSTER fit. This is a list returned by the fitting
-algorithm, which contains the best fit, the top runs and a table summarising the fit scores." />
+<meta property="og:description" content="Data from an example MOBSTER fit; this object is the
+result of running `mobster_fit` function on the input dat.a
+The ouput is a list which contains the best fit, the top runs and 
+a table summarising the fit scores. The input data has been simulated
+with a stochastic branching process model." />
 <meta property="og:image" content="caravagn.github.io/mobster/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -104,25 +107,25 @@ algorithm, which contains the best fit, the top runs and a table summarising the
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/CloneTrees.html">6. Clone trees</a>
+      <a href="../articles/a1_introduction.html">1. Introduction</a>
     </li>
     <li>
-      <a href="../articles/Example_tumour_simulation.html">Visualizing subclonal expansions</a>
+      <a href="../articles/a2_plotting.html">2. Plotting fits</a>
     </li>
     <li>
-      <a href="../articles/bootstrap.html">3. Bootstrap confidence estimation</a>
+      <a href="../articles/a3_bootstrap.html">3. Confidence estimation by the bootstrap</a>
     </li>
     <li>
-      <a href="../articles/dnds.html">5. dN/dS statisticss</a>
+      <a href="../articles/a4_popgen.html">4. Population Genetics statistics</a>
     </li>
     <li>
-      <a href="../articles/introduction.html">1. Introduction</a>
+      <a href="../articles/a5_dnds.html">5. dN/dS statistics</a>
     </li>
     <li>
-      <a href="../articles/plotting.html">2. Plotting fits</a>
+      <a href="../articles/a6_CloneTrees.html">6. Clone trees from clusters</a>
     </li>
     <li>
-      <a href="../articles/popgen.html">4. Population Genetics statistics</a>
+      <a href="../articles/a7_Example_tumour_simulation.html">7. Visualizing subclonal expansions</a>
     </li>
   </ul>
 </li>
@@ -131,7 +134,12 @@ algorithm, which contains the best fit, the top runs and a table summarising the
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/caravagn/mobster">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -146,13 +154,16 @@ algorithm, which contains the best fit, the top runs and a table summarising the
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Example MOBSTER fit.</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/caravagn/mobster/blob/master/R/data.R'><code>R/data.R</code></a></small>
     <div class="hidden name"><code>fit_example.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Data from an example MOBSTER fit. This is a list returned by the fitting
-algorithm, which contains the best fit, the top runs and a table summarising the fit scores.</p>
+    <p>Data from an example MOBSTER fit; this object is the
+result of running `mobster_fit` function on the input dat.a
+The ouput is a list which contains the best fit, the top runs and 
+a table summarising the fit scores. The input data has been simulated
+with a stochastic branching process model.</p>
     </div>
 
     <pre class="usage"><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>fit_example</span>)</pre>
@@ -160,11 +171,11 @@ algorithm, which contains the best fit, the top runs and a table summarising the
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>Data from an example MOBSTER fit.</p>
+    <p>Output from `mobster_fit`.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>fit_example</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>fit_example</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; <span class='message'>── <span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] My MOBSTER model</span><span> n = 5000 with </span><span style='color: #00BB00;'>k = 2</span><span> Beta(s) </span><span style='color: #00BB00;'>and a tail</span><span> ───────────────────────────────────────────────────</span></div><div class='output co'>#&gt; <span class='error'>Error in pull(., fit.value): could not find function "pull"</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>fit_example</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; <span class='error'>Error in spread(., key = type, value = fit.value): could not find function "spread"</span></div></span></pre>
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>fit_example</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; <span class='message'>── <span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] My MOBSTER model</span><span> n = 5000 with </span><span style='color: #00BB00;'>k = 2</span><span> Beta(s) </span><span style='color: #00BB00;'>and a tail</span><span> ─────────────────────────────────</span></div><div class='output co'>#&gt; <span class='error'>Error in x$Clusters %&gt;% dplyr::select(-init.value) %&gt;% dplyr::filter(type ==     "Mixing proportion") %&gt;% dplyr::mutate(fit.value = formatC(fit.value,     digits = 2)): could not find function "%&gt;%"</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>fit_example</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; <span class='error'>Error in x$Clusters %&gt;% dplyr::filter(type == "Mixing proportion") %&gt;%     dplyr::select(-init.value) %&gt;% tidyr::spread(key = type,     value = fit.value): could not find function "%&gt;%"</span></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

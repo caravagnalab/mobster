@@ -22,18 +22,30 @@ knitr::opts_chunk$set(
 )
 ```
 
+<center>
+<a href="https://caravagn.github.io/mobster"><img src="https://caravagn.github.io/mobster/reference/figures/logo.png" width=77px height=91px></img></a>
+</center>
+<br>
+
 `mobster` implements a Dirichlet finite mixture model to detect ongoing positive subclonal selection from cancer genome sequencing data. The algorithm works best with high-resolution whole-genome sequencing data  (e.g., WGS `>100x`). The models performs a deconvolution of the site/ allele frequency spectrum of mutation data (the _signal_), and looks for models with `k+1` mixture components to fit the data (`k` subclones).
 
 ```{r, include = FALSE, warning=FALSE, message=FALSE, echo=F}
 require(dplyr)
+require(tidyr)
+require(ggplot2)
+require(RColorBrewer)
 
+# Marc's simulation
 load('simulationdata.Rdata')
 
-# Fit
-x = mobster::random_dataset(seed = 123, Beta_variance_scaling = 100, N = 2000)
-x$data$VAF = (x$data$VAF / max(x$data$VAF)) / 1.6
-x = mobster::mobster_fit(x$data, auto_setup = 'FAST')
-
+# Fit at generation 17
+inp = df %>% filter(d == 17, VAF > 0.05)
+x = mobster::mobster_fit(inp, 
+                         K = 2, 
+                         tail = T, 
+                         samples = 1, 
+                         parallel = F, 
+                         seed = 123, description = "MOBSTER fit")
 
 library(ggmuller)
 
@@ -52,7 +64,7 @@ cowplot::plot_grid(
     guides(fill = guide_legend('Clone')) +
     labs(title = 'Population size (simulation)', subtitle = "Muller plot (ggmuller)") +
     scale_fill_manual(values = alpha(brewer.pal(2, "Set1"), alpha = .7)) +
-    geom_vline(xintercept = 16, linetype = 'dashed', size = .3),
+    geom_vline(xintercept = 17, linetype = 'dashed', size = .3),
   mobster::plot.dbpmm(x$best) + labs(caption = NULL)
 )
 ```
@@ -70,21 +82,6 @@ S3 objects are defined to perform easy visualization of the data and aid compari
 
 This is a _model-based_ approach to analyse cancer data, meaning that a power law tail is used to integrate evolutionary dynamics in this traditional clustering problem. Results from `mobster` deconvolution can be used to reconstruct the clonal architecture of a tumour (_subclonal deconvolution_) and identify patterns of functional heterogeneity (subclones under positive selection). 
 
-Available vignettes
--------
+A number of [vignettes](https://caravagn.github.io/mobster/articles/) are available to help you using `mobster`; for a set of real case studies check out the Supplementary Data repository hosted at the [Sottoriva Lab Github page](https://github.com/sottorivalab)
 
-We suggest you to [read about some example data](https://caravagn.github.io/mobster/articles/introduction.html) and then [move on to plot the fits](https://caravagn.github.io/mobster/articles/plotting.html) of your analysis. 
 
-That is the basics, but if you want to do more you can use your fits to [compute dN/dS statistics](https://caravagn.github.io/mobster/articles/dnds.html) from the clusters, or [extract Population Genetics parameters](https://caravagn.github.io/mobster/articles/popgen.html) of tumour growth. You should also [assess the confidence of your estimates](https://caravagn.github.io/mobster/articles/bootstrap.html) via the bootstrap. 
-
-If you are confident about your clusters, you can [compute the clone trees](https://caravagn.github.io/mobster/articles/CloneTrees.html) that fit your MOBSTER analysis.
-
-For a real case study with `mobster`, check the [Supplementary Data ](https://caravagn.github.io/) released with our paper. 
-
-Check out also the [`evoverse` pipelines](https://caravagn.github.io/evoverse) that use `mobster`.
-
-<center>
-<a href="https://caravagn.github.io/mobster"><img src="https://caravagn.github.io/mobster/reference/figures/logo.png" width=77px height=91px></img></a>
-<a href="https://caravagn.github.io/evoverse"><img src="https://caravagn.github.io/evoverse/reference/figures/logo.png" width=77px height=91px></img></a>
-</center>
-<br>

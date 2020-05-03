@@ -103,25 +103,25 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/CloneTrees.html">6. Clone trees</a>
+      <a href="../articles/a1_introduction.html">1. Introduction</a>
     </li>
     <li>
-      <a href="../articles/Example_tumour_simulation.html">Visualizing subclonal expansions</a>
+      <a href="../articles/a2_plotting.html">2. Plotting fits</a>
     </li>
     <li>
-      <a href="../articles/bootstrap.html">3. Bootstrap confidence estimation</a>
+      <a href="../articles/a3_bootstrap.html">3. Confidence estimation by the bootstrap</a>
     </li>
     <li>
-      <a href="../articles/dnds.html">5. dN/dS statisticss</a>
+      <a href="../articles/a4_popgen.html">4. Population Genetics statistics</a>
     </li>
     <li>
-      <a href="../articles/introduction.html">1. Introduction</a>
+      <a href="../articles/a5_dnds.html">5. dN/dS statistics</a>
     </li>
     <li>
-      <a href="../articles/plotting.html">2. Plotting fits</a>
+      <a href="../articles/a6_CloneTrees.html">6. Clone trees from clusters</a>
     </li>
     <li>
-      <a href="../articles/popgen.html">4. Population Genetics statistics</a>
+      <a href="../articles/a7_Example_tumour_simulation.html">7. Visualizing subclonal expansions</a>
     </li>
   </ul>
 </li>
@@ -130,7 +130,12 @@
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/caravagn/mobster">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -145,7 +150,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Summaries for an object of class <code>'dbpmm'</code> is like a print.</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/caravagn/mobster/blob/master/R/S3_methods_print.R'><code>R/S3_methods_print.R</code></a></small>
     <div class="hidden name"><code>print.dbpmm.Rd</code></div>
     </div>
 
@@ -175,7 +180,8 @@
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>fit_example</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>fit_example</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; <span class='message'>── <span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] My MOBSTER model</span><span> n = 5000 with </span><span style='color: #00BB00;'>k = 2</span><span> Beta(s) </span><span style='color: #00BB00;'>and a tail</span><span> ───────────────────────────────────────────────────</span></div><div class='output co'>#&gt; <span class='message'>● Clusters: π = 55% [</span><span style='color: #BBBB00;'>C1</span><span>], 31% [</span><span style='color: #BBBB00;'>Tail</span><span>] and 14% [</span><span style='color: #BBBB00;'>C2</span><span>], with π &gt; 0.</span></div><div class='output co'>#&gt; <span class='message'>● Tail [n = 1370, 31%] with alpha = 1.2.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C1</span><span> [n = 2784, 55%] with mean = 0.48.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C2</span><span> [n = 846, 14%] with mean = 0.15.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBBBB;'>ℹ</span><span> Score(s): NLL = -5671.5; ICL = -10359.09 (-11266.35), H = 907.26 (0). Fit </span><span style='color: #00BB00;'>converged</span><span> by </span><span style='color: #00BB00;'>MM</span><span> in 75 steps.</span></div></span></pre>
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>fit_example</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; <span class='message'>── <span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] My MOBSTER model</span><span> n = 5000 with </span><span style='color: #00BB00;'>k = 2</span><span> Beta(s) </span><span style='color: #00BB00;'>and a tail</span><span> ─────────────────────────────────</span></div><div class='output co'>#&gt; <span class='message'>● Clusters: π = 55% [</span><span style='color: #BBBB00;'>C1</span><span>], 31% [</span><span style='color: #BBBB00;'>Tail</span><span>] and 14% [</span><span style='color: #BBBB00;'>C2</span><span>], with π &gt; 0.</span></div><div class='output co'>#&gt; <span class='message'>● Tail [n = 1370, 31%] with alpha = 1.2.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C1</span><span> [n = 2784, 55%] with mean = 0.48.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C2</span><span> [n = 846, 14%] with mean = 0.15.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBBBB;'>ℹ</span><span> Score(s): NLL = -5671.5; ICL = -10359.09 (-11266.35), H = 907.26 (0). Fit </span><span style='color: #00BB00;'>converged</span><span> by </span><span style='color: #00BB00;'>MM</span><span> in 75</span>
+#&gt; <span class='message'>steps.</span></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

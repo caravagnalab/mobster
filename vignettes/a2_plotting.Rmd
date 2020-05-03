@@ -29,10 +29,10 @@ This vignette describes the plotting functions available in `mobster`. As an exa
 one of the available datasets where we annotate some random mutations as drivers.
 
 ```{r, fig.width=5, fig.height=4}
-# Example data where we annotate 3 events as drivers
+# Example data where we have 3 events as drivers
 example_data = Clusters(mobster::fit_example$best)
 
-# Drivers annotation
+# Drivers annotation (we selected this entries to have nice plots)
 drivers_rows = c(2239, 3246, 3800)
 
 example_data$is_driver = FALSE
@@ -91,13 +91,15 @@ ggpubr::ggarrange(
 
 # Fit statistics
 
-You can plot the latent variables, which are used to determine *hard clustering* assignments of the input mutations. A `cutoff_assignment` determines a cut to prioritize assignments above the hard clustering assignments probability.
+You can plot the latent variables, which are used to determine *hard clustering* assignments of the input mutations. A `cutoff_assignment` determines a cut to prioritize assignments above the hard clustering assignments probability. Non-assignable mutations (`NA` values) are on top of the heatmap.
 
-```{r, fig.width=5, fig.height=5}
+```{r, fig.width=10, fig.height=5}
 ggpubr::ggarrange(
   mobster::plot_latent_variables(best_fit, cutoff_assignment = 0),
-  mobster::plot_latent_variables(best_fit, cutoff_assignment = .8),
-  ncol = 2,
+  mobster::plot_latent_variables(best_fit, cutoff_assignment = 0.4),
+  mobster::plot_latent_variables(best_fit, cutoff_assignment = 0.8),
+  mobster::plot_latent_variables(best_fit, cutoff_assignment = 0.97),
+  ncol = 4,
   nrow = 1
 )
 ```

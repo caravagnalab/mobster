@@ -108,25 +108,25 @@ of the mixture." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/CloneTrees.html">6. Clone trees</a>
+      <a href="../articles/a1_introduction.html">1. Introduction</a>
     </li>
     <li>
-      <a href="../articles/Example_tumour_simulation.html">Visualizing subclonal expansions</a>
+      <a href="../articles/a2_plotting.html">2. Plotting fits</a>
     </li>
     <li>
-      <a href="../articles/bootstrap.html">3. Bootstrap confidence estimation</a>
+      <a href="../articles/a3_bootstrap.html">3. Confidence estimation by the bootstrap</a>
     </li>
     <li>
-      <a href="../articles/dnds.html">5. dN/dS statisticss</a>
+      <a href="../articles/a4_popgen.html">4. Population Genetics statistics</a>
     </li>
     <li>
-      <a href="../articles/introduction.html">1. Introduction</a>
+      <a href="../articles/a5_dnds.html">5. dN/dS statistics</a>
     </li>
     <li>
-      <a href="../articles/plotting.html">2. Plotting fits</a>
+      <a href="../articles/a6_CloneTrees.html">6. Clone trees from clusters</a>
     </li>
     <li>
-      <a href="../articles/popgen.html">4. Population Genetics statistics</a>
+      <a href="../articles/a7_Example_tumour_simulation.html">7. Visualizing subclonal expansions</a>
     </li>
   </ul>
 </li>
@@ -135,7 +135,12 @@ of the mixture." />
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/caravagn/mobster">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -150,7 +155,7 @@ of the mixture." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Density function for MOBSTER.</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/caravagn/mobster/blob/master/R/density.R'><code>R/density.R</code></a></small>
     <div class="hidden name"><code>ddbpmm.Rd</code></div>
     </div>
 
@@ -163,8 +168,17 @@ function can also compute the density only for a subset of components
 of the mixture.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ddbpmm</span>(<span class='no'>x</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>components</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='no'>x</span>$<span class='no'>K</span>, <span class='kw'>a</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>b</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>pi</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>scale</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>log</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>ddbpmm</span>(
+  <span class='no'>x</span>,
+  <span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>components</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='no'>x</span>$<span class='no'>K</span>,
+  <span class='kw'>a</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>b</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>pi</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>scale</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>log</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -224,9 +238,9 @@ used during fit one needs to use <code>log = TRUE</code> and change sign.</p>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>'fit_example'</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'mobster'</span>)
 
 <span class='co'># Use the full mixture, and its internal data</span>
-<span class='fu'>ddbpmm</span>(<span class='no'>fit_example</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; <span class='error'>Error in spread(., key = type, value = fit.value): could not find function "spread"</span></div><div class='input'>
+<span class='fu'>ddbpmm</span>(<span class='no'>fit_example</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; <span class='error'>Error in x$Clusters %&gt;% dplyr::filter(cluster == "Tail", type == "Shape" |     type == "Scale") %&gt;% dplyr::select(-init.value) %&gt;% tidyr::spread(key = type,     value = fit.value): could not find function "%&gt;%"</span></div><div class='input'>
 <span class='co'># Use only some of the mixture components, and pass some data</span>
-<span class='fu'>ddbpmm</span>(<span class='no'>fit_example</span>$<span class='no'>best</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='fl'>.4</span>, <span class='kw'>components</span> <span class='kw'>=</span> <span class='fl'>1</span>)</div><div class='output co'>#&gt; <span class='error'>Error in spread(., key = type, value = fit.value): could not find function "spread"</span></div><div class='input'>
+<span class='fu'>ddbpmm</span>(<span class='no'>fit_example</span>$<span class='no'>best</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='fl'>.4</span>, <span class='kw'>components</span> <span class='kw'>=</span> <span class='fl'>1</span>)</div><div class='output co'>#&gt; <span class='error'>Error in x$Clusters %&gt;% dplyr::filter(cluster == "Tail", type == "Shape" |     type == "Scale") %&gt;% dplyr::select(-init.value) %&gt;% tidyr::spread(key = type,     value = fit.value): could not find function "%&gt;%"</span></div><div class='input'>
 <span class='co'># An internal function to get f(x) with x the [0,1] range.</span>
 <span class='fu'>ggplot</span>(<span class='kw pkg'>mobster</span><span class='kw ns'>:::</span><span class='fu'>template_density</span>(<span class='no'>fit_example</span>$<span class='no'>best</span>, <span class='kw'>reduce</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>),
        <span class='fu'>aes</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='no'>x</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='no'>y</span>, <span class='kw'>color</span> <span class='kw'>=</span> <span class='no'>cluster</span>)) + <span class='fu'>geom_line</span>()</div><div class='output co'>#&gt; <span class='error'>Error in ggplot(mobster:::template_density(fit_example$best, reduce = TRUE),     aes(x = x, y = y, color = cluster)): could not find function "ggplot"</span></div></pre>

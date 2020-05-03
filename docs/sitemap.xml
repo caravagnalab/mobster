@@ -16,9 +16,6 @@
     <loc>caravagn.github.io/mobster/reference/LUFF76_lung_sample.html</loc>
   </url>
   <url>
-    <loc>caravagn.github.io/mobster/reference/PD4120a_breast_sample.html</loc>
-  </url>
-  <url>
     <loc>caravagn.github.io/mobster/reference/bootstrapped_statistics.html</loc>
   </url>
   <url>
@@ -37,13 +34,13 @@
     <loc>caravagn.github.io/mobster/reference/evolutionary_parameters.html</loc>
   </url>
   <url>
-    <loc>caravagn.github.io/mobster/reference/fit_animation.html</loc>
-  </url>
-  <url>
     <loc>caravagn.github.io/mobster/reference/fit_example.html</loc>
   </url>
   <url>
     <loc>caravagn.github.io/mobster/reference/get_clone_trees.html</loc>
+  </url>
+  <url>
+    <loc>caravagn.github.io/mobster/reference/load_vcf.html</loc>
   </url>
   <url>
     <loc>caravagn.github.io/mobster/reference/mobster_bootstrap.html</loc>

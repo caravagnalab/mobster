@@ -45,7 +45,9 @@
 <meta property="og:title" content="MOBSTER fit for the LU4 lung sample. — LU4_lung_sample" />
 <meta property="og:description" content="MOBSTER fit for the LU4 lung sample; this object is the
 result of running `mobster_fit` function on the input data described in the 
-main MOBSTER paper." />
+main MOBSTER paper. The data consists of diploid mutations for the 
+sample available at the Comprehensive Omics Archive of Lung Adenocarcinoma
+(http://genome.kaist.ac.kr/)." />
 <meta property="og:image" content="caravagn.github.io/mobster/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -105,25 +107,25 @@ main MOBSTER paper." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/CloneTrees.html">6. Clone trees</a>
+      <a href="../articles/a1_introduction.html">1. Introduction</a>
     </li>
     <li>
-      <a href="../articles/Example_tumour_simulation.html">Visualizing subclonal expansions</a>
+      <a href="../articles/a2_plotting.html">2. Plotting fits</a>
     </li>
     <li>
-      <a href="../articles/bootstrap.html">3. Bootstrap confidence estimation</a>
+      <a href="../articles/a3_bootstrap.html">3. Confidence estimation by the bootstrap</a>
     </li>
     <li>
-      <a href="../articles/dnds.html">5. dN/dS statisticss</a>
+      <a href="../articles/a4_popgen.html">4. Population Genetics statistics</a>
     </li>
     <li>
-      <a href="../articles/introduction.html">1. Introduction</a>
+      <a href="../articles/a5_dnds.html">5. dN/dS statistics</a>
     </li>
     <li>
-      <a href="../articles/plotting.html">2. Plotting fits</a>
+      <a href="../articles/a6_CloneTrees.html">6. Clone trees from clusters</a>
     </li>
     <li>
-      <a href="../articles/popgen.html">4. Population Genetics statistics</a>
+      <a href="../articles/a7_Example_tumour_simulation.html">7. Visualizing subclonal expansions</a>
     </li>
   </ul>
 </li>
@@ -132,7 +134,12 @@ main MOBSTER paper." />
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/caravagn/mobster">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -147,14 +154,16 @@ main MOBSTER paper." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>MOBSTER fit for the LU4 lung sample.</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/caravagn/mobster/blob/master/R/data.R'><code>R/data.R</code></a></small>
     <div class="hidden name"><code>LU4_lung_sample.Rd</code></div>
     </div>
 
     <div class="ref-description">
     <p>MOBSTER fit for the LU4 lung sample; this object is the
 result of running `mobster_fit` function on the input data described in the 
-main MOBSTER paper.</p>
+main MOBSTER paper. The data consists of diploid mutations for the 
+sample available at the Comprehensive Omics Archive of Lung Adenocarcinoma
+(http://genome.kaist.ac.kr/).</p>
     </div>
 
     <pre class="usage"><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>LU4_lung_sample</span>)</pre>
@@ -162,11 +171,11 @@ main MOBSTER paper.</p>
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>Data from a MOBSTER fit.</p>
+    <p>Output from `mobster_fit`.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>LU4_lung_sample</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'mobster'</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>LU4_lung_sample</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; <span class='message'>── <span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] </span><span> n = 1282 with </span><span style='color: #00BB00;'>k = 1</span><span> Beta(s) </span><span style='color: #00BB00;'>and a tail</span><span> ───────────────────────────────────────────────────────────────────</span></div><div class='output co'>#&gt; <span class='error'>Error in pull(., fit.value): could not find function "pull"</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>LU4_lung_sample</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; <span class='error'>Error in spread(., key = type, value = fit.value): could not find function "spread"</span></div></span></pre>
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>LU4_lung_sample</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; <span class='message'>── <span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] </span><span> n = 1282 with </span><span style='color: #00BB00;'>k = 1</span><span> Beta(s) </span><span style='color: #00BB00;'>and a tail</span><span> ─────────────────────────────────────────────────</span></div><div class='output co'>#&gt; <span class='error'>Error in x$Clusters %&gt;% dplyr::select(-init.value) %&gt;% dplyr::filter(type ==     "Mixing proportion") %&gt;% dplyr::mutate(fit.value = formatC(fit.value,     digits = 2)): could not find function "%&gt;%"</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>LU4_lung_sample</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; <span class='error'>Error in x$Clusters %&gt;% dplyr::filter(type == "Mixing proportion") %&gt;%     dplyr::select(-init.value) %&gt;% tidyr::spread(key = type,     value = fit.value): could not find function "%&gt;%"</span></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

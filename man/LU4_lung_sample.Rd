@@ -5,7 +5,7 @@
 \alias{LU4_lung_sample}
 \title{MOBSTER fit for the LU4 lung sample.}
 \format{
-Data from a MOBSTER fit.
+Output from `mobster_fit`.
 }
 \usage{
 data(LU4_lung_sample)
@@ -13,7 +13,9 @@ data(LU4_lung_sample)
 \description{
 MOBSTER fit for the LU4 lung sample; this object is the
 result of running `mobster_fit` function on the input data described in the 
-main MOBSTER paper.
+main MOBSTER paper. The data consists of diploid mutations for the 
+sample available at the Comprehensive Omics Archive of Lung Adenocarcinoma
+(http://genome.kaist.ac.kr/).
 }
 \examples{
 data(LU4_lung_sample, package = 'mobster')

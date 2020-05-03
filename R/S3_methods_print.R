@@ -97,7 +97,7 @@ print.dbpmm = function(x, ...)
     dplyr::filter(cluster != 'Tail', type == 'Mean' |
                     type == 'Mixing proportion') %>%
     dplyr::select(-init.value) %>%
-    spread(type, fit.value)
+    tidyr::spread(type, fit.value)
   
   B.comp$`Mixing proportion` = round(B.comp$`Mixing proportion`, 2) * 100
   B.comp$Mean = round(B.comp$Mean, 2)
