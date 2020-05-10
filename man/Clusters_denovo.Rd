@@ -24,6 +24,7 @@ which cluster has the highest density for each observation, and the cluster
 label is computed accordingly.
 }
 \examples{
+library(ggplot2)
 data('fit_example', package = 'mobster')
 
 # Generate some randome numbers and assign them to the most likely mixture component

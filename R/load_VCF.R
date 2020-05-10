@@ -61,7 +61,7 @@ load_vcf = function(file,
   genotype_tidy = vcfR::extract_gt_tidy(vcf_file, verbose = FALSE)
   
   all_data = dplyr::full_join(info_tidy, genotype_tidy, by = 'Key')
-  all_data = cbind(vcf_file@fix, all_data) %>% dplyr::as_tibble()
+  all_data = cbind(vcf_file@fix, all_data) %>% tibble::as_tibble()
   
   cn = colnames(all_data) 
   

@@ -33,6 +33,7 @@
 #' @importFrom  sads dpareto
 #'
 #' @examples 
+#' library(ggplot2)
 #' data('fit_example', package = 'mobster')
 #' 
 #' # Use the full mixture, and its internal data
@@ -197,6 +198,7 @@ template_density = function(x,
 #' @export
 #'
 #' @examples
+#' library(ggplot2)
 #' # 1 Beta component at 0.5 mean (symmetrical Beta)
 #' a = b = 50
 #' names(a) = names(b) = "C1"

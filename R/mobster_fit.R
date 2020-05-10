@@ -49,6 +49,11 @@
 #' @return A list of all fits computed (objects of class \code{dbpmm}), the best fit, a table with the results of the fits and a
 #' variable that specify which score has been used for model selection.
 #'
+#' @importFrom dplyr filter mutate select arrange desc pull row_number group_by
+#' @importFrom dplyr summarise bind_cols rename bind_rows left_join distinct
+#' @importFrom dplyr ungroup full_join
+#' @importFrom tidyr spread gather tibble tribble as_tibble
+#' @importFrom magrittr %>%
 #' @export
 #
 #' @examples
