@@ -46,8 +46,6 @@ Suggests: knitr,
     webshot,
     ggmuller,
     png,
-    gifski,
-    magick,
     plotly
 Remotes:
     caravagn/easypar,
