@@ -4,18 +4,6 @@
     <loc>caravagn.github.io/mobster/index.html</loc>
   </url>
   <url>
-    <loc>caravagn.github.io/mobster/reference/Clusters.html</loc>
-  </url>
-  <url>
-    <loc>caravagn.github.io/mobster/reference/Clusters_denovo.html</loc>
-  </url>
-  <url>
-    <loc>caravagn.github.io/mobster/reference/LU4_lung_sample.html</loc>
-  </url>
-  <url>
-    <loc>caravagn.github.io/mobster/reference/LUFF76_lung_sample.html</loc>
-  </url>
-  <url>
     <loc>caravagn.github.io/mobster/reference/bootstrapped_statistics.html</loc>
   </url>
   <url>
@@ -23,6 +11,12 @@
   </url>
   <url>
     <loc>caravagn.github.io/mobster/reference/choose_clusters.html</loc>
+  </url>
+  <url>
+    <loc>caravagn.github.io/mobster/reference/Clusters.html</loc>
+  </url>
+  <url>
+    <loc>caravagn.github.io/mobster/reference/Clusters_denovo.html</loc>
   </url>
   <url>
     <loc>caravagn.github.io/mobster/reference/ddbpmm.html</loc>
@@ -43,6 +37,12 @@
     <loc>caravagn.github.io/mobster/reference/load_vcf.html</loc>
   </url>
   <url>
+    <loc>caravagn.github.io/mobster/reference/LU4_lung_sample.html</loc>
+  </url>
+  <url>
+    <loc>caravagn.github.io/mobster/reference/LUFF76_lung_sample.html</loc>
+  </url>
+  <url>
     <loc>caravagn.github.io/mobster/reference/mobster_bootstrap.html</loc>
   </url>
   <url>
@@ -50,9 +50,6 @@
   </url>
   <url>
     <loc>caravagn.github.io/mobster/reference/plot.dbpmm.html</loc>
-  </url>
-  <url>
-    <loc>caravagn.github.io/mobster/reference/plot_NLL.html</loc>
   </url>
   <url>
     <loc>caravagn.github.io/mobster/reference/plot_bootstrap_Beta.html</loc>
@@ -89,6 +86,9 @@
   </url>
   <url>
     <loc>caravagn.github.io/mobster/reference/plot_model_selection.html</loc>
+  </url>
+  <url>
+    <loc>caravagn.github.io/mobster/reference/plot_NLL.html</loc>
   </url>
   <url>
     <loc>caravagn.github.io/mobster/reference/print.dbpmm.html</loc>

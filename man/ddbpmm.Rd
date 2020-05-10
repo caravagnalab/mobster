@@ -56,6 +56,7 @@ function can also compute the density only for a subset of components
 of the mixture.
 }
 \examples{
+library(ggplot2)
 data('fit_example', package = 'mobster')
 
 # Use the full mixture, and its internal data

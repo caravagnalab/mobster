@@ -146,6 +146,6 @@ dnds_multi = dnds(
   )
 )
 
-print(dnds_multi)
+print(dnds_multi$plot)
 ```
 

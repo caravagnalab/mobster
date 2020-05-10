@@ -16,10 +16,12 @@
 #' @param ... 
 #'
 #' @return A ggplot object for the plot.
-#' @export
 #'
 #' @import sads
 #' @import ggplot2
+#' 
+#' @exportS3Method plot dbpmm
+#' @export
 #'
 #' @examples 
 #' data(fit_example)

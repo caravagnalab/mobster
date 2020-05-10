@@ -48,6 +48,7 @@ model, or from a custom mixture. The principle is the same of function
 \code{\link{ddbpmm}}.
 }
 \examples{
+library(ggplot2)
 # 1 Beta component at 0.5 mean (symmetrical Beta)
 a = b = 50
 names(a) = names(b) = "C1"

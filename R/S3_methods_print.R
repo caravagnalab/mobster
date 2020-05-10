@@ -1,16 +1,16 @@
 #' Summary for an object of class \code{'dbpmm'} is a print.
 #'
-#' @param x An obj of class \code{'dbpmm'}.
+#' @param object An obj of class \code{'dbpmm'}.
 #' @param ...
 #'
 #' @return See \code{\link{print}}.
-#' @export
+#' @exportS3Method summary dbpmm
 #'
 #' @examples
 #' data(fit_example)
 #' summary(fit_example$best)
-summary.dbpmm = function(x, ...) {
-  print.dbpmm(x, ...)
+summary.dbpmm = function(object, ...) {
+  print.dbpmm(object, ...)
 }
 
 #' Summaries for an object of class \code{'dbpmm'} is like a print.
@@ -19,8 +19,8 @@ summary.dbpmm = function(x, ...) {
 #' @param ...
 #'
 #' @return nothing.
-#' @export
-#' @import crayon
+#' @exportS3Method print dbpmm
+#' @importFrom crayon white red green yellow black bgYellow blue bold
 #' @importFrom cli cli_rule cli_text
 #' @importFrom clisymbols symbol
 #'

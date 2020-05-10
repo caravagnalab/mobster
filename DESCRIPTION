@@ -1,7 +1,8 @@
 Package: mobster
 Type: Package
 Title: MOBSTER - Model-based tumour subclonal deconvolution
-Version: 0.1.0
+Version: 0.1.1
+Date: 2020-04-29
 Author: Giulio Caravagna
 Maintainer: Giulio Caravagna <gcaravagn@gmail.com>
 Authors@R: c(
@@ -14,9 +15,11 @@ Description: MOBSTER is a package that implements a statistical model for tumour
   model implemented is a parametric (finite) mixture with multiple Beta components, and one Pareto power 
   law tail. Beta components capture mutations that rise up in frequency by positive selection, and the 
   Pareto tail models alleles resulting from neutral, intra-clone, evolutionary dynamics.
-License: GPL
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
+Depends:
+    R (>= 3.6.0),
 Imports: 
     sads,
     crayon,
@@ -32,7 +35,9 @@ Imports:
     dndscv,
     cli,
     tidyr,
-    magrittr
+    magrittr,
+    vcfR,
+    cowplot
 RoxygenNote: 7.1.0
 Suggests: knitr,
     rmarkdown,
@@ -41,8 +46,7 @@ Suggests: knitr,
     webshot,
     ggmuller,
     png,
-    gifski,
-    magick
+    plotly
 Remotes:
     caravagn/easypar,
     caravagn/pio,

@@ -10,6 +10,8 @@
 #'
 #' @return A complex figure with all plots arranged using both
 #' \code{ggpubr} and \code{cowplot}.
+#' 
+#' @importFrom cowplot plot_grid
 #'
 #' @export
 #'
