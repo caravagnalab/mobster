@@ -4,6 +4,7 @@ author: "Giulio Caravagna"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 institute: "Institute for Cancer Research"
 email: "giulio.caravagna@icr.ac.uk"
+always_allow_html: true
 output: rmarkdown::github_document
 vignette: >
   %\VignetteIndexEntry{3}
