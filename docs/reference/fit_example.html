@@ -84,7 +84,7 @@ with a stochastic branching process model." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mobster</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
       </span>
     </div>
 
@@ -178,7 +178,8 @@ with a stochastic branching process model.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>fit_example</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>fit_example</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; <span class='message'>-- [ MOBSTER ] My MOBSTER model n = 5000 with k = 2 Beta(s) and a tail ---------</span></div><div class='output co'>#&gt; <span class='error'>Error in x$Clusters %&gt;% dplyr::select(-init.value) %&gt;% dplyr::filter(type ==     "Mixing proportion") %&gt;% dplyr::mutate(fit.value = formatC(fit.value,     digits = 2)): could not find function "%&gt;%"</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>fit_example</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; <span class='error'>Error in x$Clusters %&gt;% dplyr::filter(type == "Mixing proportion") %&gt;%     dplyr::select(-init.value) %&gt;% tidyr::spread(key = type,     value = fit.value): could not find function "%&gt;%"</span></div></pre>
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>fit_example</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; <span class='message'>-- [ MOBSTER ] My MOBSTER model n = 5000 with k = 2 Beta(s) and a tail ---------</span></div><div class='output co'>#&gt; <span class='message'>* Clusters: p = 55% [C1], 31% [Tail], and 14% [C2], with p &gt; 0.</span></div><div class='output co'>#&gt; <span class='message'>* Tail [n = 1370, 31%] with alpha = 1.2.</span></div><div class='output co'>#&gt; <span class='message'>* Beta C1 [n = 2784, 55%] with mean = 0.48.</span></div><div class='output co'>#&gt; <span class='message'>* Beta C2 [n = 846, 14%] with mean = 0.15.</span></div><div class='output co'>#&gt; <span class='message'>i Score(s): NLL = -5671.5; ICL = -10359.09 (-11266.35), H = 907.26 (0). Fit</span>
+#&gt; <span class='message'>converged by MM in 75 steps.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>fit_example</span>$<span class='no'>best</span>)</div><div class='img'><img src='fit_example-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

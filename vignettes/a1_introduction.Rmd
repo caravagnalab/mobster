@@ -5,6 +5,7 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 institute: "Institute for Cancer Research"
 email: "giulio.caravagna@icr.ac.uk"
 output: rmarkdown::github_document
+always_allow_html: true
 vignette: >
   %\VignetteIndexEntry{1}
   %\VignetteEngine{knitr::rmarkdown}

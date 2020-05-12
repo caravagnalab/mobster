@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mobster</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
       </span>
     </div>
 
@@ -113,7 +113,7 @@
       <h1 data-toc-skip>5. dN/dS statistics</h1>
                         <h4 class="author">Giulio Caravagna</h4>
             
-            <h4 class="date">10 mai, 2020</h4>
+            <h4 class="date">11 mai, 2020</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/caravagn/mobstervignettes/a5_dnds.Rmd"><code>vignettes/a5_dnds.Rmd</code></a></small>
       <div class="hidden name"><code>a5_dnds.Rmd</code></div>
@@ -299,8 +299,8 @@
 <p>We pool the data selecting the required columns.</p>
 <div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">dnds_multi</span> <span class="kw">=</span> <span class="fu"><a href="../reference/dnds.html">dnds</a></span>(
   <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(
-    <span class="fu"><a href="../reference/Clusters.html">Clusters</a></span>(<span class="no">LU4_lung_sample</span>$<span class="no">best</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">chr</span>, <span class="no">from</span>, <span class="no">ref</span>, <span class="no">alt</span>, <span class="no">cluster</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">sample</span> <span class="kw">=</span> <span class="st">'LU4'</span>),
-    <span class="fu"><a href="../reference/Clusters.html">Clusters</a></span>(<span class="no">LUFF76_lung_sample</span>$<span class="no">best</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">chr</span>, <span class="no">from</span>, <span class="no">ref</span>, <span class="no">alt</span>, <span class="no">cluster</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">sample</span> <span class="kw">=</span> <span class="st">'LUFF76'</span>)
+    <span class="fu"><a href="../reference/Clusters.html">Clusters</a></span>(<span class="no">LU4_lung_sample</span>$<span class="no">best</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/pkg/dplyr/man/select.html">select</a></span>(<span class="no">chr</span>, <span class="no">from</span>, <span class="no">ref</span>, <span class="no">alt</span>, <span class="no">cluster</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/pkg/dplyr/man/mutate.html">mutate</a></span>(<span class="kw">sample</span> <span class="kw">=</span> <span class="st">'LU4'</span>),
+    <span class="fu"><a href="../reference/Clusters.html">Clusters</a></span>(<span class="no">LUFF76_lung_sample</span>$<span class="no">best</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/pkg/dplyr/man/select.html">select</a></span>(<span class="no">chr</span>, <span class="no">from</span>, <span class="no">ref</span>, <span class="no">alt</span>, <span class="no">cluster</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/pkg/dplyr/man/mutate.html">mutate</a></span>(<span class="kw">sample</span> <span class="kw">=</span> <span class="st">'LUFF76'</span>)
   ),
   <span class="kw">mapping</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">`C1`</span> <span class="kw">=</span> <span class="st">'Non-tail'</span>,  <span class="co"># Pool together all clonal mutations</span>
               <span class="kw">`Tail`</span> <span class="kw">=</span> <span class="st">'Tail'</span>     <span class="co"># Pool together all tail mutations),</span>

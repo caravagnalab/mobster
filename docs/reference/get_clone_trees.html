@@ -91,7 +91,7 @@ on the input clustering results x." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mobster</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
       </span>
     </div>
 
@@ -224,7 +224,7 @@ affect the sampling of the trees.</p></td>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'>    intersect, setdiff, setequal, union</span></div><div class='input'><span class='no'>genes_list</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'ARHGAP31'</span>, <span class='st'>'ABCC5'</span>, <span class='st'>'SETD2'</span>)
 <span class='no'>x</span>$<span class='no'>data</span> <span class='kw'>=</span> <span class='no'>x</span>$<span class='no'>data</span> <span class='kw'>%&gt;%</span>
-  <span class='kw pkg'>dplyr</span><span class='kw ns'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(
+  <span class='kw pkg'>dplyr</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/dplyr/man/mutate.html'>mutate</a></span>(
     <span class='kw'>driver</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span>(<span class='no'>region</span> <span class='kw'>==</span> <span class='st'>'exonic'</span> <span class='kw'>&amp;</span> <span class='no'>gene</span> <span class='kw'>%in%</span> <span class='no'>genes_list</span>, <span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>)
     )
 

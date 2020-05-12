@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mobster</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
       </span>
     </div>
 
@@ -113,7 +113,7 @@
       <h1 data-toc-skip>7. Visualizing subclonal expansions</h1>
                         <h4 class="author">Giulio Caravagna and Marc Williams</h4>
             
-            <h4 class="date">10 mai, 2020</h4>
+            <h4 class="date">11 mai, 2020</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/caravagn/mobstervignettes/a7_Example_tumour_simulation.Rmd"><code>vignettes/a7_Example_tumour_simulation.Rmd</code></a></small>
       <div class="hidden name"><code>a7_Example_tumour_simulation.Rmd</code></div>
@@ -149,9 +149,9 @@
 <span class="no">t_integers</span> <span class="kw">=</span> <span class="no">df</span>$<span class="no">d</span> <span class="kw">%&gt;%</span>  <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>() <span class="kw">%&gt;%</span> <span class="no">unique</span> <span class="kw">%&gt;%</span> <span class="no">sort</span>
 
 <span class="no">df</span> <span class="kw">=</span> <span class="no">df</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">as_tibble</a></span>() <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">d</span> <span class="kw">%in%</span> <span class="no">t_integers</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">cloneid</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="no">cloneid</span>))
+  <span class="fu"><a href="https://rdrr.io/pkg/dplyr/man/reexports.html">as_tibble</a></span>() <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/dplyr/man/filter.html">filter</a></span>(<span class="no">d</span> <span class="kw">%in%</span> <span class="no">t_integers</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/dplyr/man/mutate.html">mutate</a></span>(<span class="kw">cloneid</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="no">cloneid</span>))
 
 <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">df</span> <span class="kw">%&gt;%</span> <span class="no">as_tibble</span>)
 <span class="co">#&gt; # A tibble: 70,474 x 6</span>
@@ -170,8 +170,8 @@
 <span class="co">#&gt; # ... with 70,464 more rows</span></pre></body></html></div>
 <p>We first use <code>gganimate</code> to create a GIF of the simulated data.</p>
 <div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">ani</span> <span class="kw">=</span> <span class="no">df</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">as_tibble</a></span>()  <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">cloneid</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="no">cloneid</span>)) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/dplyr/man/reexports.html">as_tibble</a></span>()  <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/dplyr/man/mutate.html">mutate</a></span>(<span class="kw">cloneid</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="no">cloneid</span>)) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/ggplot.html">ggplot</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">VAF</span>, <span class="kw">fill</span> <span class="kw">=</span> <span class="no">cloneid</span>)) +
   <span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/geom_histogram.html">geom_histogram</a></span>(<span class="kw">binwidth</span> <span class="kw">=</span> <span class="fl">0.01</span>) +
   <span class="kw pkg">gganimate</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/gganimate/man/transition_states.html">transition_states</a></span>(
@@ -239,7 +239,7 @@
 <span class="co">#&gt; &gt; Custom fit by Moments-matching in up to 250 steps, with e = 1e-10 and peaks</span>
 <span class="co">#&gt; initialisation.</span>
 <span class="co">#&gt; &gt; Scoring (without parallel) 1 x 1 x 2 = 2 models by reICL.</span>
-<span class="co">#&gt; i MOBSTER fits completed in 703ms.</span>
+<span class="co">#&gt; i MOBSTER fits completed in 734ms.</span>
 <span class="co">#&gt; -- [ MOBSTER ] t_0 = 3 n = 2151 with k = 1 Beta(s) and a tail ------------------</span>
 <span class="co">#&gt; * Clusters: p = 56% [Tail] and 44% [C1], with p &gt; 0.</span>
 <span class="co">#&gt; * Tail [n = 1156, 56%] with alpha = 1.2.</span>
@@ -256,7 +256,7 @@
 <span class="co">#&gt; &gt; Custom fit by Moments-matching in up to 250 steps, with e = 1e-10 and peaks</span>
 <span class="co">#&gt; initialisation.</span>
 <span class="co">#&gt; &gt; Scoring (without parallel) 1 x 1 x 2 = 2 models by reICL.</span>
-<span class="co">#&gt; i MOBSTER fits completed in 14.2s.</span>
+<span class="co">#&gt; i MOBSTER fits completed in 14.3s.</span>
 <span class="co">#&gt; -- [ MOBSTER ] t_0 = 17.5 n = 3449 with k = 2 Beta(s) and a tail ---------------</span>
 <span class="co">#&gt; * Clusters: p = 49% [C2], 26% [Tail], and 25% [C1], with p &gt; 0.</span>
 <span class="co">#&gt; * Tail [n = 805, 26%] with alpha = 1.2.</span>
@@ -274,7 +274,7 @@
 <span class="co">#&gt; &gt; Custom fit by Moments-matching in up to 250 steps, with e = 1e-10 and peaks</span>
 <span class="co">#&gt; initialisation.</span>
 <span class="co">#&gt; &gt; Scoring (without parallel) 1 x 1 x 2 = 2 models by reICL.</span>
-<span class="co">#&gt; i MOBSTER fits completed in 1s.</span>
+<span class="co">#&gt; i MOBSTER fits completed in 1.5s.</span>
 <span class="co">#&gt; -- [ MOBSTER ] t_0 = 23 n = 4001 with k = 1 Beta(s) and a tail -----------------</span>
 <span class="co">#&gt; * Clusters: p = 60% [C1] and 40% [Tail], with p &gt; 0.</span>
 <span class="co">#&gt; * Tail [n = 1530, 40%] with alpha = 1.1.</span>

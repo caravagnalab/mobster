@@ -43,7 +43,6 @@ Suggests: knitr,
     rmarkdown,
     ctree,
     CNAqc,
-    webshot,
     ggmuller,
     png,
     plotly
