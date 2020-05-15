@@ -1,15 +1,18 @@
 #' Filter MOBSTER output clusters.
 #' 
 #' @description This function can filter out the clusters computed by MOBSTER
-#' based on two criteria: the mixing proportion value, and the number of mutations
-#' assigned. For both criteria a scalar should be given as input. The return object
-#' will contain only the clusters that pass both filters. If any cluster is dropped
+#' based on two criteria: the mixing proportion value,  the number of mutations
+#' assigned and the variance of the Beta clusters. 
+#' 
+#' For all criteria a scalar should be given as input. The return object
+#' will contain only the clusters that pass all filters. If any cluster is dropped
 #' the latent variables are re-computed, as well as the clustering assignments and the
 #' mixing proportions (all mutations will be still assigned after clusters' removal).
 #' 
 #' @param x A MOBSTER fit object.
 #' @param pi_cutoff The cutoff on the mixing proportions, default is 0.02.
 #' @param N_cutoff The cutoff on the number of mutations assigned to a cluster, default is 10.  
+#' @param Beta_variance_cutoff Minimum variance for a Beta peak.
 #' @param verbose If outputs should be reported to screen or not, default is no.
 #'
 #' @return A MOBSTER fit object where clusters are larger than \code{pi_cutoff} and contain
