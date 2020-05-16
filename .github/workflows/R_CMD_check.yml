@@ -67,14 +67,19 @@ jobs:
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
 
+
+
       - name: Build and install packages
         run: |
-          Rscript -e "remotes::install_github('caravagn/mobster')"
+          echo "GITHUB_SHA: ${GITHUB_SHA}"
+          echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+          echo "Sha: ${{ steps.vars.outputs.sha_short }}"
+          Rscript -e "remotes::install_github('caravagn/mobster', ref='${{ steps.vars.outputs.sha_short }}')"
 
       - name: Check
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
-        run: rcmdcheck::rcmdcheck(args = c("--no-manual"), error_on = "errors", check_dir = "check")
+        run: rcmdcheck::rcmdcheck(args = c("--no-manual"), error_on = "error", check_dir = "check")
         shell: Rscript {0}
 
       - name: Upload check results
