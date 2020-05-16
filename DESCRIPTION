@@ -45,7 +45,8 @@ Suggests: knitr,
     CNAqc,
     ggmuller,
     png,
-    plotly
+    plotly,
+    gganimate
 Remotes:
     caravagn/easypar,
     caravagn/pio,
