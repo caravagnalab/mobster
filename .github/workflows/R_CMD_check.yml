@@ -67,13 +67,24 @@ jobs:
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
 
-
+      - name: Shell GIT env
+        shell: bash
+        run: |
+          SHA=${{ github.event.pull_request.head.sha }}
+          echo "github.event.pull_request.head.sha = ${SHA}"
+          echo "GITHUB_SHA = ${GITHUB_SHA}"
+          echo "GITHUB_REF = ${GITHUB_REF}"
+          echo "BRANCH = ${GITHUB_REF#refs/heads/}"
+      - name: Declare some vars to use on other actions
+        id: vars
+        shell: bash
+        run: |
+          echo "GITHUB_SHA: ${GITHUB_SHA}"
+          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+          echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
 
       - name: Build and install packages
         run: |
-          echo "GITHUB_SHA: ${GITHUB_SHA}"
-          echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
-          echo "Sha: ${{ steps.vars.outputs.sha_short }}"
           Rscript -e "remotes::install_github('caravagn/mobster', ref='${{ steps.vars.outputs.sha_short }}')"
 
       - name: Check
