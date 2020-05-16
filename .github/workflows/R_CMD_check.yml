@@ -69,7 +69,7 @@ jobs:
 
       - name: Build and install packages
         run: |
-          Rscript -e "remotes::install_github('caravagn/mobster', ref='$(git rev-parse --short "$GITHUB_SHA")')"
+          Rscript -e "remotes::install_github('caravagn/mobster')"
 
       - name: Check
         env:
