@@ -3,7 +3,7 @@ on:
     branches:
       - master
       - development
-      - fix-master
+      - github-actions
   pull_request:
     branches:
       - master
@@ -69,14 +69,12 @@ jobs:
 
       - name: Build and install packages
         run: |
-          R CMD build . --no-build-vignettes
-          Rscript -e "install.packages('*.tar.gz')"
-          rm *.tar.gz
+          Rscript -e "remotes::install_github('caravagn/mobster', ref=$(git rev-parse --short "$GITHUB_SHA"))"
 
       - name: Check
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
-        run: rcmdcheck::rcmdcheck(args = c("--no-manual"), error_on = "error", check_dir = "check")
+        run: rcmdcheck::rcmdcheck(args = c("--no-manual"), error_on = "errors", check_dir = "check")
         shell: Rscript {0}
 
       - name: Upload check results
