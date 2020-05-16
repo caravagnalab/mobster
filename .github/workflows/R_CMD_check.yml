@@ -67,6 +67,12 @@ jobs:
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
 
+      - name: Build and install packages
+        run: |
+          R CMD build . --no-build-vignettes
+          Rscript -e "install.packages('*.tar.gz')"
+          rm *.tar.gz
+
       - name: Check
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
