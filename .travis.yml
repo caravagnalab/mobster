@@ -2,6 +2,8 @@
 
 language: R
 
+warnings_are_errors: false
+
 addons:
   apt:
     update: true
