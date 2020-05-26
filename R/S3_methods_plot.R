@@ -185,6 +185,8 @@ plot.dbpmm = function(x,
     {
       error = suppressWarnings(mobster:::.compute_fit_sqerr(x, binning = binwidth))
       
+      m = max(ggplot_build(hist_pl)$data[[1]]$y)
+      
       me = max(error$cum.y)
       error = error %>% dplyr::mutate(cum.y = (cum.y / me) * m)
       

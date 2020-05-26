@@ -17,27 +17,23 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
-
-<!-- bootstrap-toc -->
-<link rel="stylesheet" href="../bootstrap-toc.css">
-<script src="../bootstrap-toc.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -60,6 +56,7 @@ value for the Beta peak.
 The output is the result of calling the constructor ctree::cetrees
 on the input clustering results x." />
 <meta property="og:image" content="caravagn.github.io/mobster/logo.png" />
+<meta name="twitter:card" content="summary" />
 
 
 
@@ -77,7 +74,7 @@ on the input clustering results x." />
 
   </head>
 
-  <body data-spy="scroll" data-target="#toc">
+  <body>
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -145,7 +142,7 @@ on the input clustering results x." />
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/caravagn/mobster/">
+  <a href="https://github.com/caravagn/mobster">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -164,7 +161,7 @@ on the input clustering results x." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Return clone trees from the fit.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/caravagn/mobsterR/get_clone_trees.R'><code>R/get_clone_trees.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/caravagn/mobster/blob/master/R/get_clone_trees.R'><code>R/get_clone_trees.R</code></a></small>
     <div class="hidden name"><code>get_clone_trees.Rd</code></div>
     </div>
 
@@ -218,25 +215,29 @@ affect the sampling of the trees.</p></td>
 <span class='co'># Just print: x$data %&gt;% filter(region == 'exonic')</span>
 <span class='co'># SETD2 could really be a driver.</span>
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='no'>dplyr</span>)</div><div class='output co'>#&gt; <span class='message'>Loading required package: dplyr</span></div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'>Attaching package: 'dplyr'</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from 'package:stats':</span>
+#&gt; <span class='message'>Attaching package: ‘dplyr’</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:stats’:</span>
 #&gt; <span class='message'></span>
-#&gt; <span class='message'>    filter, lag</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from 'package:base':</span>
+#&gt; <span class='message'>    filter, lag</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:base’:</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'>    intersect, setdiff, setequal, union</span></div><div class='input'><span class='no'>genes_list</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'ARHGAP31'</span>, <span class='st'>'ABCC5'</span>, <span class='st'>'SETD2'</span>)
 <span class='no'>x</span>$<span class='no'>data</span> <span class='kw'>=</span> <span class='no'>x</span>$<span class='no'>data</span> <span class='kw'>%&gt;%</span>
-  <span class='kw pkg'>dplyr</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/dplyr/man/mutate.html'>mutate</a></span>(
+  <span class='kw pkg'>dplyr</span><span class='kw ns'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(
     <span class='kw'>driver</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span>(<span class='no'>region</span> <span class='kw'>==</span> <span class='st'>'exonic'</span> <span class='kw'>&amp;</span> <span class='no'>gene</span> <span class='kw'>%in%</span> <span class='no'>genes_list</span>, <span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>)
     )
 
 <span class='co'># Get the trees</span>
 <span class='no'>trees</span> <span class='kw'>=</span> <span class='fu'>get_clone_trees</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; <span class='error'>Error in get_clone_trees(x): Your data should have driver events annotated, cannot use 'ctree' otherwise.</span></div><div class='input'>
 <span class='co'># Print and plot the first tree (top rank)</span>
-<span class='kw pkg'>ctree</span><span class='kw ns'>:::</span><span class='fu'><a href='https://rdrr.io/pkg/ctree/man/print.ctree.html'>print.ctree</a></span>(<span class='no'>trees</span><span class='kw'>[[</span><span class='fl'>1</span>]])</div><div class='output co'>#&gt; <span class='warning'>Warning: replacing previous import 'igraph::%s%' by 'matrixcalc::%s%' when loading 'ctree'</span></div><div class='output co'>#&gt; <span class='warning'>Warning: replacing previous import 'igraph::groups' by 'tidygraph::groups' when loading 'ctree'</span></div><div class='output co'>#&gt; <span class='message'>v Loading ctree, 'Clone trees in cancer'. Support : &lt;https://caravagn.github.io/ctree/&gt;</span></div><div class='output co'>#&gt; <span class='error'>Error in ctree:::print.ctree(trees[[1]]): inherits(x, "ctree") is not TRUE</span></div><div class='input'><span class='kw pkg'>ctree</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ctree/man/plot.ctree.html'>plot.ctree</a></span>(<span class='no'>trees</span><span class='kw'>[[</span><span class='fl'>1</span>]])</div><div class='output co'>#&gt; <span class='error'>Error: $ operator is invalid for atomic vectors</span></div><div class='input'><span class='kw pkg'>ctree</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ctree/man/plot_CCF_clusters.html'>plot_CCF_clusters</a></span>(<span class='no'>trees</span><span class='kw'>[[</span><span class='fl'>1</span>]])</div><div class='output co'>#&gt; <span class='error'>Error: $ operator is invalid for atomic vectors</span></div><div class='input'><span class='kw pkg'>ctree</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ctree/man/plot_icon.html'>plot_icon</a></span>(<span class='no'>trees</span><span class='kw'>[[</span><span class='fl'>1</span>]])</div><div class='output co'>#&gt; <span class='error'>Error: $ operator is invalid for atomic vectors</span></div><div class='input'><span class='kw pkg'>ctree</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ctree/man/plot_clone_size.html'>plot_clone_size</a></span>(<span class='no'>trees</span><span class='kw'>[[</span><span class='fl'>1</span>]])</div><div class='output co'>#&gt; <span class='error'>Error: $ operator is invalid for atomic vectors</span></div></pre>
+<span class='kw pkg'>ctree</span><span class='kw ns'>:::</span><span class='fu'><a href='https://rdrr.io/pkg/ctree/man/print.ctree.html'>print.ctree</a></span>(<span class='no'>trees</span><span class='kw'>[[</span><span class='fl'>1</span>]])</div><div class='output co'>#&gt; <span class='warning'>Warning: replacing previous import ‘igraph::%s%’ by ‘matrixcalc::%s%’ when loading ‘ctree’</span></div><div class='output co'>#&gt; <span class='warning'>Warning: replacing previous import ‘igraph::groups’ by ‘tidygraph::groups’ when loading ‘ctree’</span></div><div class='output co'>#&gt; <span class='warning'>Warning: package ‘tibble’ was built under R version 3.6.2</span></div><div class='output co'>#&gt; <span class='warning'>Warning: package ‘tidyr’ was built under R version 3.6.2</span></div><div class='output co'>#&gt; <span class='warning'>Warning: package ‘purrr’ was built under R version 3.6.2</span></div><div class='output co'>#&gt; <span class='warning'>Warning: package ‘reshape2’ was built under R version 3.6.2</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✓</span><span> Loading </span><span style='color: #00BB00;'>ctree</span><span>, </span><span style='font-style: italic;'>'Clone trees in cancer'</span><span>. Support : </span><span style='color: #0000BB;font-style: italic;'>&lt;https://caravagn.github.io/ctree/&gt;</span><span></span></div><div class='output co'>#&gt; <span class='error'>Error in ctree:::print.ctree(trees[[1]]): inherits(x, "ctree") is not TRUE</span></div><div class='input'><span class='kw pkg'>ctree</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ctree/man/plot.ctree.html'>plot.ctree</a></span>(<span class='no'>trees</span><span class='kw'>[[</span><span class='fl'>1</span>]])</div><div class='output co'>#&gt; <span class='error'>Error: $ operator is invalid for atomic vectors</span></div><div class='input'><span class='kw pkg'>ctree</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ctree/man/plot_CCF_clusters.html'>plot_CCF_clusters</a></span>(<span class='no'>trees</span><span class='kw'>[[</span><span class='fl'>1</span>]])</div><div class='output co'>#&gt; <span class='error'>Error: $ operator is invalid for atomic vectors</span></div><div class='input'><span class='kw pkg'>ctree</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ctree/man/plot_icon.html'>plot_icon</a></span>(<span class='no'>trees</span><span class='kw'>[[</span><span class='fl'>1</span>]])</div><div class='output co'>#&gt; <span class='error'>Error: $ operator is invalid for atomic vectors</span></div><div class='input'><span class='kw pkg'>ctree</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ctree/man/plot_clone_size.html'>plot_clone_size</a></span>(<span class='no'>trees</span><span class='kw'>[[</span><span class='fl'>1</span>]])</div><div class='output co'>#&gt; <span class='error'>Error: $ operator is invalid for atomic vectors</span></div></span></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-    <nav id="toc" data-toggle="toc" class="sticky-top">
-      <h2 data-toc-skip>Contents</h2>
-    </nav>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#value">Value</a></li>
+      <li><a href="#examples">Examples</a></li>
+    </ul>
+
   </div>
 </div>
 
@@ -247,7 +248,7 @@ affect the sampling of the trees.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
 
       </footer>

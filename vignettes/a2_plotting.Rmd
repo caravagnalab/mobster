@@ -81,9 +81,9 @@ plot(best_fit,
 Other visualisations can be obtained as follows
 ```{r, fig.width=10, fig.height=8, warning = FALSE}
 ggpubr::ggarrange(
-  plot(best_fit, tail_color = "darkorange"),            # Tail color
-  plot(best_fit, beta_colors = c("purple", "magenta")), # Beta colors
-  plot(best_fit, cutoff_assignment = .50),              # Hide mutations based on latent variables 
+  plot(best_fit, tail_color = "darkorange"),                  # Tail color
+  plot(best_fit, beta_colors = c("steelblue", "darkorange")), # Beta colors
+  plot(best_fit, cutoff_assignment = .50),                    # Hide mutations based on latent variables 
   plot(best_fit, secondary_axis = "SSE"),               # Add a mirrored y-axis with the % of SSE
   ncol = 2,
   nrow = 2
