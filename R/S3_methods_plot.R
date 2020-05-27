@@ -35,6 +35,7 @@ plot.dbpmm = function(x,
                       cutoff_assignment = 0,
                       beta_colors = RColorBrewer::brewer.pal(n = 9, 'Set1'),
                       tail_color = "gainsboro",
+                      na_color = 'gray',
                       annotation_extras = NULL,
                       secondary_axis = NULL,
                       ...)
@@ -88,7 +89,16 @@ plot.dbpmm = function(x,
   }
   else
   {
-    warning("You did not pass enough input colours, using rainbow palette")
+    available =  clusters[clusters %in% names(MOBSTER_CLUSTER_COLORS)]
+    missing =  clusters[!(clusters %in% names(MOBSTER_CLUSTER_COLORS))]
+    
+    warning(
+      "You did not pass enough input colours, using rainbow palette.\n",
+      'Available: ', paste0(available, collapse = ', '), '\n',
+      'Missing: ', paste0(missing, collapse = ', ')
+    )
+    
+    
     MOBSTER_CLUSTER_COLORS = rainbow(length(clusters))
   }
   
