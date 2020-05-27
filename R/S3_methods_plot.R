@@ -93,13 +93,15 @@ plot.dbpmm = function(x,
     missing =  clusters[!(clusters %in% names(MOBSTER_CLUSTER_COLORS))]
     
     warning(
-      "You did not pass enough input colours, using rainbow palette.\n",
+      "You did not pass enough input colours, adding a gray colour\n",
       'Available: ', paste0(available, collapse = ', '), '\n',
       'Missing: ', paste0(missing, collapse = ', ')
     )
     
-    
-    MOBSTER_CLUSTER_COLORS = rainbow(length(clusters))
+    MOBSTER_CLUSTER_COLORS = c(MOBSTER_CLUSTER_COLORS,
+                               pio:::nmfy(paste(missing), rep("gray", length(missing)))
+                               )
+    # MOBSTER_CLUSTER_COLORS = rainbow(length(clusters))
   }
   
   # Plot title
