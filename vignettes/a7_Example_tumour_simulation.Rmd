@@ -37,10 +37,11 @@ We have simulated a tumour with 2 clones. The tumours starts with the ancestral 
 We load the simulation object [simulationdata.Rdata](./simulationdata.Rdata).
 
 ```{r, warning=FALSE, message=FALSE}
-require(mobster)
-require(dplyr)
-require(tibble)
-require(ggplot2)
+library(mobster)
+library(dplyr)
+library(tibble)
+library(ggplot2)
+library(gganimate)
 
 # Load input data from Marc
 load('simulationdata.Rdata')
