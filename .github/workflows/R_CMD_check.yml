@@ -3,7 +3,7 @@ on:
     branches:
       - master
       - development
-      - fix-master
+      - github-actions
   pull_request:
     branches:
       - master
@@ -36,7 +36,9 @@ jobs:
         with:
           r-version: ${{ matrix.config.r }}
 
-      - uses: r-lib/actions/setup-pandoc@master
+      - uses: r-lib/actions/setup-pandoc@v1
+        with:
+          pandoc-version: '2.9.2.1' # The pandoc version to download (if necessary) and use.
 
       - name: Query dependencies
         run: |
@@ -66,6 +68,26 @@ jobs:
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
+
+      - name: Shell GIT env
+        shell: bash
+        run: |
+          SHA=${{ github.event.pull_request.head.sha }}
+          echo "github.event.pull_request.head.sha = ${SHA}"
+          echo "GITHUB_SHA = ${GITHUB_SHA}"
+          echo "GITHUB_REF = ${GITHUB_REF}"
+          echo "BRANCH = ${GITHUB_REF#refs/heads/}"
+      - name: Declare some vars to use on other actions
+        id: vars
+        shell: bash
+        run: |
+          echo "GITHUB_SHA: ${GITHUB_SHA}"
+          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+          echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+
+      - name: Build and install packages
+        run: |
+          Rscript -e "remotes::install_github('caravagn/mobster', ref='${{ steps.vars.outputs.sha_short }}')"
 
       - name: Check
         env:
