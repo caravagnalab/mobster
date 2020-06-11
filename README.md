@@ -3,10 +3,8 @@
 
 <!-- badges: start -->
 
-[![Travis build
-master](https://travis-ci.org/caravagn/mobster.svg?branch=master)](https://travis-ci.org/caravagn/mobster)
-[![Travis build
-development](https://travis-ci.org/caravagn/mobster.svg?branch=development)](https://travis-ci.org/caravagn/mobster)
+[![Actions Status](https://github.com/caravagn/mobster/workflows/R-CMD-check/badge.svg?branch=master)](https://github.com/caravagn/mobster/actions?query=workflow%3AR-CMD-check+branch%3Amaster)
+[![Actions Status](https://github.com/caravagn/mobster/workflows/R-CMD-check/badge.svg?branch=development)](https://github.com/caravagn/mobster/actions?query=workflow%3AR-CMD-check+branch%3Adevelopment)
 [![Lifecycle:
 maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![](https://img.shields.io/badge/Part%20of-evoverse-blue.svg)](https://caravagn.github.io/evoverse)
