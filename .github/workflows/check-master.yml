@@ -2,13 +2,11 @@ on:
   push:
     branches:
       - master
-      - development
-      - github-actions
   pull_request:
     branches:
       - master
 
-name: R-CMD-check
+name: check-master
 
 jobs:
   R-CMD-check:
