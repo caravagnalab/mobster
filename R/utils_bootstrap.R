@@ -45,15 +45,27 @@ compute_co_clustering = function(x, resamples, fits)
       cl.assignments = unique(names(l[l == cl]))
       if(is.null(cl.assignments) | length(cl.assignments) == 1) next;
       
-      pairs = combn(cl.assignments, 2, simplify = F)
-
-      for (p in 1:length(pairs))  
+      # Use an index to optimise (July 2020)
+      for (p in 1:(length(cl.assignments) - 1))  
       {
-        M[pairs[[p]][1], pairs[[p]][2]] = M[pairs[[p]][1], 
-                                            pairs[[p]][2]] + 1
-        M[pairs[[p]][2], pairs[[p]][1]] = M[pairs[[p]][2], 
-                                            pairs[[p]][1]] + 1
+        # The p-th is what we look at, we take that element 
+        # and all those coming after it (p+1), (p+2), ...
+        pointer = cl.assignments[p]
+        targets = cl.assignments[(p+1):length(cl.assignments)]
+        
+        # We increase them by 1
+        M[pointer, targets] = M[pointer, targets] + 1
       }
+      
+      # pairs = combn(cl.assignments, 2, simplify = F)
+      # 
+      # for (p in 1:length(pairs))  
+      # {
+      #   M[pairs[[p]][1], pairs[[p]][2]] = M[pairs[[p]][1], 
+      #                                       pairs[[p]][2]] + 1
+      #   M[pairs[[p]][2], pairs[[p]][1]] = M[pairs[[p]][2], 
+      #                                       pairs[[p]][1]] + 1
+      # }
     }
     M
   }
@@ -80,15 +92,15 @@ compute_co_clustering = function(x, resamples, fits)
     colnames(co.clustering) = 1:N
   
   # Extract co-clustering labels
-  # pb = txtProgressBar(0, length(fits), style = 3)
-  sp1 <- make_spinner()
+  # sp1 <- make_spinner()
+  pr_bar = dplyr::progress_estimated(length(fits))
   
   for(w in seq(fits))
   {    
-    # setTxtProgressBar(pb, w)
-    sp1$spin();
+    # sp1$spin();
+    pr_bar$tick()$print()
     
-    cluster.results = Clusters(fits[[w]], cutoff_assignment = 0)
+    cluster.results = mobster::Clusters(fits[[w]], cutoff_assignment = 0)
     
     cluster.labels = cluster.results$cluster
     names(cluster.labels) = cluster.results$original.id
@@ -96,7 +108,7 @@ compute_co_clustering = function(x, resamples, fits)
     co.clustering = .coocc(l = cluster.labels, M = co.clustering)
   }
   
-  sp1$finish()
+  # sp1$finish()
   
   ordered.data = x$data[, c('VAF', 'cluster')]
   ordered.data$id = 1:N
