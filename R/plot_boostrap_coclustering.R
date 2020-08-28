@@ -39,14 +39,14 @@ plot_bootstrap_coclustering = function(x,
   n = length(bootstrap_results$fits)
   type = bootstrap_results$bootstrap
   
-  fit = x$data
-  ord_cl = order(x$data$cluster)
-  fit = fit[ord_cl,]
+  # Normalised matrix
+  cocl = bootstrap_statistics$bootstrap_co_clustering/n
+  ordered_labels = bootstrap_statistics$bootstrap_co_clustering_ordered_labels
   
-  cocl = bootstrap_statistics$bootstrap_co_clustering[ord_cl, ord_cl] /
-    n
-  colnames(cocl) = rownames(cocl) = 1:ncol(cocl)
-  cocl[upper.tri(cocl)] = 0
+  # cocl = bootstrap_statistics$bootstrap_co_clustering[ord_cl, ord_cl] /
+  #   n
+  # colnames(cocl) = rownames(cocl) = 1:ncol(cocl)
+  # cocl[upper.tri(cocl)] = 0
   
   bt = ggplot(data = cocl %>% reshape2::melt(),
               aes(x = Var1, y = Var2, fill = value)) +

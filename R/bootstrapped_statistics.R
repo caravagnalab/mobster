@@ -43,7 +43,8 @@ bootstrapped_statistics = function(x, bootstrap_results, bootstrap = 'nonparamet
   
   mobster:::m_inf(paste("Bootstrap observations n =", n))
   
-  cli::cli_process_start(paste("Computing model frequency"))
+  # cli::cli_process_start(paste("Computing model frequency"))
+  cli::cli_h1("Computing model frequency")
   
   res = NULL
   
@@ -104,9 +105,12 @@ bootstrapped_statistics = function(x, bootstrap_results, bootstrap = 'nonparamet
     dplyr::ungroup()
   
   pio::pioDisp(model.frequency)
-  cli::cli_process_done()
+  # cli::cli_process_done()
   
-  cli::cli_process_start("Confidence Intervals (CI) for empirical quantiles")
+  cli::cli_h1("Computing confidence Intervals (CI) for empirical quantiles")
+  
+  
+  # cli::cli_process_start("Confidence Intervals (CI) for empirical quantiles")
   # pio::pioDisp(stats)
   
   pio::pioStr("\nMixing proportions", "\n")
@@ -121,24 +125,31 @@ bootstrapped_statistics = function(x, bootstrap_results, bootstrap = 'nonparamet
   print(stats %>%
           dplyr::filter(statistics %in% c('Mean', 'Variance') & cluster != 'Tail'))
   
-  cli::cli_process_done()
+  # cli::cli_process_done()
+  
+  
   
   # Co-clustering only for nonparametric bootstrap
-  co_clustering = NULL
+  co_clustering_matrix = co_clustering_labels = NULL
   if(bootstrap == 'nonparametric') {
-
-    cli::cli_process_start("Co-clustering probability from nonparametric bootstrap")
-
-    co_clustering = mobster:::compute_co_clustering(x, resamples, bootstrap.fits)
     
-    cli::cli_process_done()
+    cli::cli_h1("Computing co-clustering probability for nonparametric bootstrap")
+    
+    # cli::cli_process_start("Co-clustering probability from nonparametric bootstrap")
+    
+    co_clustering = mobster:::compute_co_clustering(x, resamples, bootstrap.fits)
+    co_clustering_matrix = co_clustering$co.clustering
+    co_clustering_labels = co_clustering$ordered.labels
+    
+    # cli::cli_process_done()
   }
   
   ret = list(
     bootstrap_values = bootstrap.values,
     bootstrap_model = model.frequency,
     bootstrap_statistics = stats,
-    bootstrap_co_clustering = co_clustering
+    bootstrap_co_clustering = co_clustering_matrix,
+    bootstrap_co_clustering_ordered_labels = co_clustering_labels
   )
   
   return(ret)
