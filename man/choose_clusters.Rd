@@ -4,7 +4,13 @@
 \alias{choose_clusters}
 \title{Filter MOBSTER output clusters.}
 \usage{
-choose_clusters(x, pi_cutoff = 0.02, N_cutoff = 10, verbose = FALSE)
+choose_clusters(
+  x,
+  pi_cutoff = 0.02,
+  N_cutoff = 10,
+  Beta_variance_cutoff = 1e-04,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{x}{A MOBSTER fit object.}
@@ -12,6 +18,8 @@ choose_clusters(x, pi_cutoff = 0.02, N_cutoff = 10, verbose = FALSE)
 \item{pi_cutoff}{The cutoff on the mixing proportions, default is 0.02.}
 
 \item{N_cutoff}{The cutoff on the number of mutations assigned to a cluster, default is 10.}
+
+\item{Beta_variance_cutoff}{Minimum variance for a Beta peak.}
 
 \item{verbose}{If outputs should be reported to screen or not, default is no.}
 }
@@ -21,9 +29,11 @@ at least \code{N_cutoff}. If no such cluster exists an error is generated.
 }
 \description{
 This function can filter out the clusters computed by MOBSTER
-based on two criteria: the mixing proportion value, and the number of mutations
-assigned. For both criteria a scalar should be given as input. The return object
-will contain only the clusters that pass both filters. If any cluster is dropped
+based on two criteria: the mixing proportion value,  the number of mutations
+assigned and the variance of the Beta clusters. 
+
+For all criteria a scalar should be given as input. The return object
+will contain only the clusters that pass all filters. If any cluster is dropped
 the latent variables are re-computed, as well as the clustering assignments and the
 mixing proportions (all mutations will be still assigned after clusters' removal).
 }

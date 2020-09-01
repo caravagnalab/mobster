@@ -31,8 +31,6 @@
 #' all the content parsable from the VCF file, three columns
 #' named DP, NV and VAF where VAF = NV/DP.
 #' 
-#' @importFrom vcfR read.vcfR extract_info_tidy extract_gt_tidy
-#' 
 #' @export
 #'
 #' @examples
@@ -46,6 +44,10 @@ load_vcf = function(file,
                     DP_column = 'DP',
                     NV_column = 'NV')
 {
+  if (!requireNamespace("vcfR", quietly = TRUE)) {
+    stop("Package \"vcfR\" needed for this function to work. Please install it.",
+      call. = FALSE)
+  }
   if (!file.exists(file))
     stop("Input file not found: ", file)
   
