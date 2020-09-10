@@ -16,6 +16,8 @@
 #'
 #' @export
 #'
+#' @importFrom reshape2 melt
+#'
 #' @examples
 #' # Random small dataset
 #' dataset = random_dataset(N = 200, seed = 123, Beta_variance_scaling = 100)
