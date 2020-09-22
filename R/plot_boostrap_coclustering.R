@@ -32,8 +32,8 @@ plot_bootstrap_coclustering = function(x,
                                bootstrap_statistics,
                                colors = c(`Tail` = 'gainsboro'))
 {
-  is_bootstrap_results(bootstrap_results)
-  is_bootstrap_statistics(bootstrap_statistics)
+  mobster:::is_bootstrap_results(bootstrap_results)
+  mobster:::is_bootstrap_statistics(bootstrap_statistics)
   
   # plot
   n = length(bootstrap_results$fits)
@@ -88,8 +88,8 @@ plot_bootstrap_coclustering = function(x,
   
   bt = mobster:::add_color_pl(x, bt, colors)
   
-  
-  label = ggplot(data = fit %>% mutate(id = row_number()),
+  # Cluster assignments bar
+  label = ggplot(data = x$data %>% mutate(id = row_number()),
                  aes(x = 1, y = id, fill = cluster)) +
     geom_tile() +
     mobster:::my_ggplot_theme() +

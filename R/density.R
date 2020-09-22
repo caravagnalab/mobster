@@ -63,7 +63,7 @@ ddbpmm = function(x,
     data = x$data$VAF
   
   if (is.null(scale))
-    scale = .params_Pareto(x)$Scale
+    scale = mobster:::.params_Pareto(x)$Scale
   if (is.null(shape))
     shape = .params_Pareto(x)$Shape
   
@@ -118,7 +118,7 @@ template_density = function(x,
                             binwidth = 0.01,
                             reduce = FALSE)
 {
-  labels = names(.params_Pi(x))
+  labels = names(mobster:::.params_Pi(x))
   
   values = lapply(1:x$K,
                   # Component wise
@@ -126,7 +126,7 @@ template_density = function(x,
                     data.frame(
                       cluster = labels[w],
                       x = x.axis,
-                      y = ddbpmm(
+                      y = mobster::ddbpmm(
                         x,
                         data = x.axis,
                         components = w,

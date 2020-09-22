@@ -40,7 +40,8 @@ We show the analysis with a synthetic dataset.
 ```{r, fig.width=5, fig.height=4}
 # Example data where we annotate 3 events as drivers
 example_data = Clusters(mobster::fit_example$best)
-
+example_data = example_data %>% dplyr::select(-cluster, -Tail, -C1, -C2)
+  
 # Drivers annotation
 drivers_rows = c(2239, 3246, 3800)
 

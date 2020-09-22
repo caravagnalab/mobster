@@ -41,7 +41,9 @@
 #' 
 #' download.file(url = file, destfile = 'strelka-example.vcf')
 #' 
-#' load_vcf(file = 'strelka-example.vcf', DP_column)
+#' # We pretend that the number of variants is the gt_DP2 field, which is wrong
+#' # Anyway, this shows how you can load a VCF file.
+#' load_vcf(file = 'strelka-example.vcf', DP_column = 'gt_DP', NV_column = 'gt_DP2')
 load_vcf = function(file,
                     DP_column = 'DP',
                     NV_column = 'NV')
@@ -69,6 +71,14 @@ load_vcf = function(file,
   if(!(DP_column %in% cn)) stop("Depth column ", DP_column, " is not in the VCF columns: ", paste(cn, collapse = ', '), '.')
   if(!(NV_column %in% cn)) stop("Number of variants column ", NV_column, " is not in the VCF columns: ", paste(cn, collapse = ', '), '.')
   
-  all_data %>%
-    dplyr::mutate(DP = !!DP_column, NV = !!NV_column, VAF = NV/VAF)
+  all_data = all_data %>%
+    dplyr::rename(DP = !!DP_column, NV = !!NV_column) %>%
+    dplyr::mutate(DP = as.numeric(DP), NV = as.numeric(NV), VAF = NV/DP)
+  
+  if(any(is.na(all_data$VAF))) 
+  {
+    cli::cli_alert_warning("There are NA values in the VAF field, plelase remove those.")
+  }
+  
+  all_data
 }

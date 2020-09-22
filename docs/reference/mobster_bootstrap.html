@@ -17,23 +17,27 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -47,7 +51,6 @@
 bootstrap estimates for MOBSTER fits. This computation is parallel
 and uses  ?easypar." />
 <meta property="og:image" content="caravagn.github.io/mobster/logo.png" />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -65,7 +68,7 @@ and uses  ?easypar." />
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -133,7 +136,7 @@ and uses  ?easypar." />
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/caravagn/mobster">
+  <a href="https://github.com/caravagn/mobster/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -152,7 +155,7 @@ and uses  ?easypar." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Bootstrap a MOBSTER fit.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/caravagn/mobster/blob/master/R/mobster_bootstrap.R'><code>R/mobster_bootstrap.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/caravagn/mobsterR/mobster_bootstrap.R'><code>R/mobster_bootstrap.R</code></a></small>
     <div class="hidden name"><code>mobster_bootstrap.Rd</code></div>
     </div>
 
@@ -163,13 +166,13 @@ and uses  <code>?easypar</code>.</p>
     </div>
 
     <pre class="usage"><span class='fu'>mobster_bootstrap</span>(
-  <span class='no'>x</span>,
-  <span class='kw'>n.resamples</span> <span class='kw'>=</span> <span class='fl'>100</span>,
-  <span class='kw'>bootstrap</span> <span class='kw'>=</span> <span class='st'>"nonparametric"</span>,
-  <span class='kw'>cores.ratio</span> <span class='kw'>=</span> <span class='fl'>0.8</span>,
-  <span class='kw'>cache</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>save_data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>
+  <span class='kw'>x</span>,
+  n.resamples = <span class='fl'>100</span>,
+  bootstrap = <span class='st'>"nonparametric"</span>,
+  cores.ratio = <span class='fl'>0.8</span>,
+  cache = <span class='kw'>NULL</span>,
+  save_data = <span class='kw'>NULL</span>,
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -207,261 +210,26 @@ and uses  <code>?easypar</code>.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># Random small dataset</span>
-<span class='no'>dataset</span> <span class='kw'>=</span> <span class='fu'><a href='random_dataset.html'>random_dataset</a></span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>200</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>123</span>, <span class='kw'>Beta_variance_scaling</span> <span class='kw'>=</span> <span class='fl'>100</span>)
-<span class='no'>x</span> <span class='kw'>=</span> <span class='fu'><a href='mobster_fit.html'>mobster_fit</a></span>(<span class='no'>dataset</span>$<span class='no'>data</span>, <span class='kw'>auto_setup</span> <span class='kw'>=</span> <span class='st'>'FAST'</span>)</div><div class='output co'>#&gt; <span style='color: #BBBBBB;background-color: #0000BB;'> [ MOBSTER fit ] 
-#&gt; </span><span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #00BB00;'>✔</span><span> Loaded input data, n = 200.</span></div><div class='output co'>#&gt; <span class='message'>❯ n = 200. Mixture with k = </span><span style='color: #00BB00;'>1,2</span><span> Beta(s). Pareto tail: </span><span style='color: #00BB00;'>TRUE</span><span> and </span><span style='color: #00BB00;'>FALSE</span><span>. Output clusters with π &gt;</span>
-#&gt; <span class='message'>0.02 and n &gt; 10.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBB00;'>!</span><span> mobster automatic setup </span><span style='color: #00BB00;'>FAST</span><span> for the analysis.</span></div><div class='output co'>#&gt; <span class='message'>❯ Scoring (</span><span style='color: #BB0000;'>without parallel</span><span>) 2 x 2 x 2 = </span><span style='color: #00BB00;'>8</span><span> models by </span><span style='color: #00BB00;'>reICL</span><span>.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>[easypar] 2020-05-25 20:27:48 - Overriding parallel execution setup [FALSE] with global option : FALSE</span></div><div class='output co'>#&gt; 
-#&gt; </div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBBBB;'>ℹ</span><span> </span><span style='font-weight: bold;'>MOBSTER fits</span><span> completed in 3s.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>── </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] My MOBSTER model</span><span> n = 200 with </span><span style='color: #00BB00;'>k = 2</span><span> Beta(s) </span><span style='color: #BB0000;'>without tail</span><span> ─────────────────────────</span></div><div class='output co'>#&gt; <span class='message'>● Clusters: π = 52% [</span><span style='color: #BBBB00;'>C1</span><span>] and 48% [</span><span style='color: #BBBB00;'>C2</span><span>], with π &gt; 0.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>✖</span><span> No tail fit.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C1</span><span> [n = 102, 52%] with mean = 0.58.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C2</span><span> [n = 98, 48%] with mean = 0.11.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBBBB;'>ℹ</span><span> Score(s): NLL = -108.12; ICL = -182.58 (-182.58), H = 1.88 (1.88). Fit </span><span style='color: #00BB00;'>converged</span><span> by </span><span style='color: #00BB00;'>MM</span><span> in 66</span>
-#&gt; <span class='message'>steps.</span></div><div class='input'>
+<span class='kw'>dataset</span> <span class='op'>=</span> <span class='fu'><a href='random_dataset.html'>random_dataset</a></span>(N = <span class='fl'>200</span>, seed = <span class='fl'>123</span>, Beta_variance_scaling = <span class='fl'>100</span>)
+<span class='kw'>x</span> <span class='op'>=</span> <span class='fu'><a href='mobster_fit.html'>mobster_fit</a></span>(<span class='kw'>dataset</span><span class='op'>$</span><span class='kw'>data</span>, auto_setup = <span class='st'>'FAST'</span>)
+</div><div class='output co'>#&gt; <span style='color: #BBBBBB;background-color: #0000BB;'> [ MOBSTER fit ] 
+#&gt; </span><span></div><div class='output co'>#&gt; <span class='error'>Error in mobster:::check_input(x, K, samples, init, tail, epsilon, maxIter,     fit.type, seed, model.selection, trace): There are some reserved names in the input data that cannot be used, please remove or rename columns: cluster</span></div><div class='input'>
 <span class='co'># Just 5 resamples of a nonparametric bootstrap run, disabling the parallel engine</span>
-<span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span>(<span class='kw'>easypar.parallel</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-<span class='no'>boot_results</span> <span class='kw'>=</span> <span class='fu'>mobster_bootstrap</span>(<span class='no'>x</span>$<span class='no'>best</span>, <span class='kw'>n.resamples</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>auto_setup</span> <span class='kw'>=</span> <span class='st'>'FAST'</span>)</div><div class='output co'>#&gt; </span><span style='color: #BBBBBB;background-color: #0000BB;'> [ MOBSTER bootstrap ~ 5 resamples from nonparametric bootstrap ] 
-#&gt; </span><span></div><div class='output co'>#&gt; <span class='message'>── </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] My MOBSTER model</span><span> n = 200 with </span><span style='color: #00BB00;'>k = 2</span><span> Beta(s) </span><span style='color: #BB0000;'>without tail</span><span> ─────────────────────────</span></div><div class='output co'>#&gt; <span class='message'>● Clusters: π = 52% [</span><span style='color: #BBBB00;'>C1</span><span>] and 48% [</span><span style='color: #BBBB00;'>C2</span><span>], with π &gt; 0.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>✖</span><span> No tail fit.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C1</span><span> [n = 102, 52%] with mean = 0.58.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C2</span><span> [n = 98, 48%] with mean = 0.11.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBBBB;'>ℹ</span><span> Score(s): NLL = -108.12; ICL = -182.58 (-182.58), H = 1.88 (1.88). Fit </span><span style='color: #00BB00;'>converged</span><span> by </span><span style='color: #00BB00;'>MM</span><span> in 66</span>
-#&gt; <span class='message'>steps.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Creating nonparametric bootstrap resamples</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #00BB00;'>✓</span><span> Creating nonparametric bootstrap resamples ... done</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>── Running fits ──────────────────────────────────────────────────── Might take some time ...  ──</span></div><div class='output co'>#&gt; <span class='message'>[easypar] 2020-05-25 20:27:51 - Overriding parallel execution setup [TRUE] with global option : FALSE</span></div><div class='output co'>#&gt; </span><span style='color: #BBBBBB;background-color: #0000BB;'> [ MOBSTER fit ] 
-#&gt; </span><span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #00BB00;'>✔</span><span> Loaded input data, n = 200.</span></div><div class='output co'>#&gt; <span class='message'>❯ n = 200. Mixture with k = </span><span style='color: #00BB00;'>1,2</span><span> Beta(s). Pareto tail: </span><span style='color: #00BB00;'>TRUE</span><span> and </span><span style='color: #00BB00;'>FALSE</span><span>. Output clusters with π &gt;</span>
-#&gt; <span class='message'>0.02 and n &gt; 10.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBB00;'>!</span><span> mobster automatic setup </span><span style='color: #00BB00;'>FAST</span><span> for the analysis.</span></div><div class='output co'>#&gt; <span class='message'>❯ Scoring (</span><span style='color: #BB0000;'>without parallel</span><span>) 2 x 2 x 2 = </span><span style='color: #00BB00;'>8</span><span> models by </span><span style='color: #00BB00;'>reICL</span><span>.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>[easypar] 2020-05-25 20:27:51 - Overriding parallel execution setup [FALSE] with global option : FALSE</span></div><div class='output co'>#&gt; 
-#&gt; </div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBBBB;'>ℹ</span><span> </span><span style='font-weight: bold;'>MOBSTER fits</span><span> completed in 2.7s.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>── </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] My MOBSTER model</span><span> n = 200 with </span><span style='color: #00BB00;'>k = 2</span><span> Beta(s) </span><span style='color: #BB0000;'>without tail</span><span> ─────────────────────────</span></div><div class='output co'>#&gt; <span class='message'>● Clusters: π = 51% [</span><span style='color: #BBBB00;'>C1</span><span>] and 49% [</span><span style='color: #BBBB00;'>C2</span><span>], with π &gt; 0.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>✖</span><span> No tail fit.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C1</span><span> [n = 101, 51%] with mean = 0.58.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C2</span><span> [n = 99, 49%] with mean = 0.11.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBBBB;'>ℹ</span><span> Score(s): NLL = -118.81; ICL = -204.17 (-204.17), H = 1.66 (1.66). Fit </span><span style='color: #00BB00;'>converged</span><span> by </span><span style='color: #00BB00;'>MM</span><span> in 61</span>
-#&gt; <span class='message'>steps.</span></div><div class='output co'>#&gt; </span><span style='color: #BBBBBB;background-color: #0000BB;'> [ MOBSTER fit ] 
-#&gt; </span><span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #00BB00;'>✔</span><span> Loaded input data, n = 200.</span></div><div class='output co'>#&gt; <span class='message'>❯ n = 200. Mixture with k = </span><span style='color: #00BB00;'>1,2</span><span> Beta(s). Pareto tail: </span><span style='color: #00BB00;'>TRUE</span><span> and </span><span style='color: #00BB00;'>FALSE</span><span>. Output clusters with π &gt;</span>
-#&gt; <span class='message'>0.02 and n &gt; 10.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBB00;'>!</span><span> mobster automatic setup </span><span style='color: #00BB00;'>FAST</span><span> for the analysis.</span></div><div class='output co'>#&gt; <span class='message'>❯ Scoring (</span><span style='color: #BB0000;'>without parallel</span><span>) 2 x 2 x 2 = </span><span style='color: #00BB00;'>8</span><span> models by </span><span style='color: #00BB00;'>reICL</span><span>.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>[easypar] 2020-05-25 20:27:54 - Overriding parallel execution setup [FALSE] with global option : FALSE</span></div><div class='output co'>#&gt; 
-#&gt; </div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBBBB;'>ℹ</span><span> </span><span style='font-weight: bold;'>MOBSTER fits</span><span> completed in 2.4s.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>── </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] My MOBSTER model</span><span> n = 200 with </span><span style='color: #00BB00;'>k = 2</span><span> Beta(s) </span><span style='color: #BB0000;'>without tail</span><span> ─────────────────────────</span></div><div class='output co'>#&gt; <span class='message'>● Clusters: π = 50% [</span><span style='color: #BBBB00;'>C2</span><span>] and 50% [</span><span style='color: #BBBB00;'>C1</span><span>], with π &gt; 0.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>✖</span><span> No tail fit.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C1</span><span> [n = 99, 50%] with mean = 0.6.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C2</span><span> [n = 101, 50%] with mean = 0.12.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBBBB;'>ℹ</span><span> Score(s): NLL = -110.86; ICL = -188.81 (-188.81), H = 1.12 (1.12). Fit </span><span style='color: #00BB00;'>converged</span><span> by </span><span style='color: #00BB00;'>MM</span><span> in 57</span>
-#&gt; <span class='message'>steps.</span></div><div class='output co'>#&gt; </span><span style='color: #BBBBBB;background-color: #0000BB;'> [ MOBSTER fit ] 
-#&gt; </span><span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #00BB00;'>✔</span><span> Loaded input data, n = 200.</span></div><div class='output co'>#&gt; <span class='message'>❯ n = 200. Mixture with k = </span><span style='color: #00BB00;'>1,2</span><span> Beta(s). Pareto tail: </span><span style='color: #00BB00;'>TRUE</span><span> and </span><span style='color: #00BB00;'>FALSE</span><span>. Output clusters with π &gt;</span>
-#&gt; <span class='message'>0.02 and n &gt; 10.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBB00;'>!</span><span> mobster automatic setup </span><span style='color: #00BB00;'>FAST</span><span> for the analysis.</span></div><div class='output co'>#&gt; <span class='message'>❯ Scoring (</span><span style='color: #BB0000;'>without parallel</span><span>) 2 x 2 x 2 = </span><span style='color: #00BB00;'>8</span><span> models by </span><span style='color: #00BB00;'>reICL</span><span>.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>[easypar] 2020-05-25 20:27:57 - Overriding parallel execution setup [FALSE] with global option : FALSE</span></div><div class='output co'>#&gt; 
-#&gt; </div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBBBB;'>ℹ</span><span> </span><span style='font-weight: bold;'>MOBSTER fits</span><span> completed in 2.6s.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>── </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] My MOBSTER model</span><span> n = 200 with </span><span style='color: #00BB00;'>k = 2</span><span> Beta(s) </span><span style='color: #BB0000;'>without tail</span><span> ─────────────────────────</span></div><div class='output co'>#&gt; <span class='message'>● Clusters: π = 53% [</span><span style='color: #BBBB00;'>C1</span><span>] and 47% [</span><span style='color: #BBBB00;'>C2</span><span>], with π &gt; 0.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>✖</span><span> No tail fit.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C1</span><span> [n = 106, 53%] with mean = 0.59.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C2</span><span> [n = 94, 47%] with mean = 0.11.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBBBB;'>ℹ</span><span> Score(s): NLL = -117.56; ICL = -201.98 (-201.98), H = 1.35 (1.35). Fit </span><span style='color: #00BB00;'>converged</span><span> by </span><span style='color: #00BB00;'>MM</span><span> in 76</span>
-#&gt; <span class='message'>steps.</span></div><div class='output co'>#&gt; </span><span style='color: #BBBBBB;background-color: #0000BB;'> [ MOBSTER fit ] 
-#&gt; </span><span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #00BB00;'>✔</span><span> Loaded input data, n = 200.</span></div><div class='output co'>#&gt; <span class='message'>❯ n = 200. Mixture with k = </span><span style='color: #00BB00;'>1,2</span><span> Beta(s). Pareto tail: </span><span style='color: #00BB00;'>TRUE</span><span> and </span><span style='color: #00BB00;'>FALSE</span><span>. Output clusters with π &gt;</span>
-#&gt; <span class='message'>0.02 and n &gt; 10.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBB00;'>!</span><span> mobster automatic setup </span><span style='color: #00BB00;'>FAST</span><span> for the analysis.</span></div><div class='output co'>#&gt; <span class='message'>❯ Scoring (</span><span style='color: #BB0000;'>without parallel</span><span>) 2 x 2 x 2 = </span><span style='color: #00BB00;'>8</span><span> models by </span><span style='color: #00BB00;'>reICL</span><span>.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>[easypar] 2020-05-25 20:27:59 - Overriding parallel execution setup [FALSE] with global option : FALSE</span></div><div class='output co'>#&gt; 
-#&gt; </div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBBBB;'>ℹ</span><span> </span><span style='font-weight: bold;'>MOBSTER fits</span><span> completed in 3.5s.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>── </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] My MOBSTER model</span><span> n = 200 with </span><span style='color: #00BB00;'>k = 2</span><span> Beta(s) </span><span style='color: #BB0000;'>without tail</span><span> ─────────────────────────</span></div><div class='output co'>#&gt; <span class='message'>● Clusters: π = 54% [</span><span style='color: #BBBB00;'>C1</span><span>] and 46% [</span><span style='color: #BBBB00;'>C2</span><span>], with π &gt; 0.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>✖</span><span> No tail fit.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C1</span><span> [n = 108, 54%] with mean = 0.59.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C2</span><span> [n = 92, 46%] with mean = 0.13.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBBBB;'>ℹ</span><span> Score(s): NLL = -101.74; ICL = -170.66 (-170.66), H = 1.02 (1.02). Fit </span><span style='color: #00BB00;'>converged</span><span> by </span><span style='color: #00BB00;'>MM</span><span> in 13</span>
-#&gt; <span class='message'>steps.</span></div><div class='output co'>#&gt; </span><span style='color: #BBBBBB;background-color: #0000BB;'> [ MOBSTER fit ] 
-#&gt; </span><span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #00BB00;'>✔</span><span> Loaded input data, n = 200.</span></div><div class='output co'>#&gt; <span class='message'>❯ n = 200. Mixture with k = </span><span style='color: #00BB00;'>1,2</span><span> Beta(s). Pareto tail: </span><span style='color: #00BB00;'>TRUE</span><span> and </span><span style='color: #00BB00;'>FALSE</span><span>. Output clusters with π &gt;</span>
-#&gt; <span class='message'>0.02 and n &gt; 10.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBB00;'>!</span><span> mobster automatic setup </span><span style='color: #00BB00;'>FAST</span><span> for the analysis.</span></div><div class='output co'>#&gt; <span class='message'>❯ Scoring (</span><span style='color: #BB0000;'>without parallel</span><span>) 2 x 2 x 2 = </span><span style='color: #00BB00;'>8</span><span> models by </span><span style='color: #00BB00;'>reICL</span><span>.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>[easypar] 2020-05-25 20:28:03 - Overriding parallel execution setup [FALSE] with global option : FALSE</span></div><div class='output co'>#&gt; 
-#&gt; </div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBBBB;'>ℹ</span><span> </span><span style='font-weight: bold;'>MOBSTER fits</span><span> completed in 3.4s.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>── </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] My MOBSTER model</span><span> n = 200 with </span><span style='color: #00BB00;'>k = 2</span><span> Beta(s) </span><span style='color: #BB0000;'>without tail</span><span> ─────────────────────────</span></div><div class='output co'>#&gt; <span class='message'>● Clusters: π = 58% [</span><span style='color: #BBBB00;'>C1</span><span>] and 42% [</span><span style='color: #BBBB00;'>C2</span><span>], with π &gt; 0.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>✖</span><span> No tail fit.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C1</span><span> [n = 114, 58%] with mean = 0.57.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C2</span><span> [n = 86, 42%] with mean = 0.11.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBBBB;'>ℹ</span><span> Score(s): NLL = -105.37; ICL = -177.17 (-177.17), H = 1.78 (1.78). Fit </span><span style='color: #BB0000;'>interrupted</span><span> by </span><span style='color: #00BB00;'>MM</span><span> in</span>
-#&gt; <span class='message'>100 steps.</span></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span>(easypar.parallel = <span class='fl'>FALSE</span>)
+<span class='kw'>boot_results</span> <span class='op'>=</span> <span class='fu'>mobster_bootstrap</span>(<span class='kw'>x</span><span class='op'>$</span><span class='kw'>best</span>, n.resamples = <span class='fl'>5</span>, auto_setup = <span class='st'>'FAST'</span>)
+</div><div class='output co'>#&gt; </span><span style='color: #BBBBBB;background-color: #0000BB;'> [ MOBSTER bootstrap ~ 5 resamples from nonparametric bootstrap ] 
+#&gt; </span><span></div><div class='output co'>#&gt; <span class='error'>Error in is_mobster_fit(x): object 'x' not found</span></div><div class='input'>
 <span class='co'># The resample data is available in a list</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>boot_results</span>$<span class='no'>resamples</span><span class='kw'>[[</span><span class='fl'>1</span>]])</div><div class='output co'>#&gt; [[1]]
-#&gt;      id        VAF original.id
-#&gt; 1     1 0.51796731          93
-#&gt; 2     2 0.10662581         189
-#&gt; 3     3 0.15346219         197
-#&gt; 4     4 0.71187995          13
-#&gt; 5     5 0.05902402         175
-#&gt; 6     6 0.05902402         175
-#&gt; 7     7 0.61440798          79
-#&gt; 8     8 0.12286390         187
-#&gt; 9     9 0.46164409          62
-#&gt; 10   10 0.05278961         161
-#&gt; 11   11 0.04328793         119
-#&gt; 12   12 0.23287406         190
-#&gt; 13   13 0.08668096         122
-#&gt; 14   14 0.15346219         197
-#&gt; 15   15 0.43401627          14
-#&gt; 16   16 0.67301958         195
-#&gt; 17   17 0.57466625          31
-#&gt; 18   18 0.08434598         136
-#&gt; 19   19 0.02979764         111
-#&gt; 20   20 0.29749078         174
-#&gt; 21   21 0.51683769          86
-#&gt; 22   22 0.72430352          60
-#&gt; 23   23 0.46164409          62
-#&gt; 24   24 0.53161319          66
-#&gt; 25   25 0.61513016           1
-#&gt; 26   26 0.07562712         113
-#&gt; 27   27 0.51683769          86
-#&gt; 28   28 0.67912870          38
-#&gt; 29   29 0.46627543          88
-#&gt; 30   30 0.71166697          56
-#&gt; 31   31 0.08810669         106
-#&gt; 32   32 0.13620251         143
-#&gt; 33   33 0.11612617         138
-#&gt; 34   34 0.49730321          82
-#&gt; 35   35 0.06208767         123
-#&gt; 36   36 0.70284180          94
-#&gt; 37   37 0.06208767         123
-#&gt; 38   38 0.42751004          81
-#&gt; 39   39 0.67862073           4
-#&gt; 40   40 0.08747705         168
-#&gt; 41   41 0.08668096         122
-#&gt; 42   42 0.65434252          34
-#&gt; 43   43 0.08415006         100
-#&gt; 44   44 0.67301958         195
-#&gt; 45   45 0.08391171         110
-#&gt; 46   46 0.57319452          63
-#&gt; 47   47 0.62264994          67
-#&gt; 48   48 0.58635506          59
-#&gt; 49   49 0.61645161          45
-#&gt; 50   50 0.06731439         185
-#&gt; 51   51 0.52103494          95
-#&gt; 52   52 0.20522784         140
-#&gt; 53   53 0.18409048         159
-#&gt; 54   54 0.45979987          40
-#&gt; 55   55 0.08434598         136
-#&gt; 56   56 0.44827642          24
-#&gt; 57   57 0.06010055         191
-#&gt; 58   58 0.05393297         137
-#&gt; 59   59 0.15942611         160
-#&gt; 60   60 0.71007760          15
-#&gt; 61   61 0.05310553         170
-#&gt; 62   62 0.53161319          66
-#&gt; 63   63 0.58228860          20
-#&gt; 64   64 0.18409048         159
-#&gt; 65   65 0.15346219         197
-#&gt; 66   66 0.14648825         154
-#&gt; 67   67 0.18847011         151
-#&gt; 68   68 0.58635506          59
-#&gt; 69   69 0.73371146          96
-#&gt; 70   70 0.04428176         148
-#&gt; 71   71 0.27925367         156
-#&gt; 72   72 0.47680339          16
-#&gt; 73   73 0.57466625          31
-#&gt; 74   74 0.11685164         125
-#&gt; 75   75 0.53161319          66
-#&gt; 76   76 0.59010680          83
-#&gt; 77   77 0.57617853          72
-#&gt; 78   78 0.16570645         165
-#&gt; 79   79 0.37909462         194
-#&gt; 80   80 0.06764590         171
-#&gt; 81   81 0.74760698          21
-#&gt; 82   82 0.11370181         164
-#&gt; 83   83 0.09192788         132
-#&gt; 84   84 0.04428176         148
-#&gt; 85   85 0.02233042         134
-#&gt; 86   86 0.02979764         111
-#&gt; 87   87 0.77219358          27
-#&gt; 88   88 0.62271368          65
-#&gt; 89   89 0.02120704         127
-#&gt; 90   90 0.52259202          78
-#&gt; 91   91 0.10144527         135
-#&gt; 92   92 0.47006049          92
-#&gt; 93   93 0.11370181         164
-#&gt; 94   94 0.50386312          17
-#&gt; 95   95 0.70079811          33
-#&gt; 96   96 0.11033293         177
-#&gt; 97   97 0.18152401         182
-#&gt; 98   98 0.52103494          95
-#&gt; 99   99 0.08554961         149
-#&gt; 100 100 0.67301958         195
-#&gt; 101 101 0.10144527         135
-#&gt; 102 102 0.48237613          54
-#&gt; 103 103 0.71007760          15
-#&gt; 104 104 0.08554961         149
-#&gt; 105 105 0.10144527         135
-#&gt; 106 106 0.67998213          73
-#&gt; 107 107 0.09462104         193
-#&gt; 108 108 0.55147229          58
-#&gt; 109 109 0.10749586         126
-#&gt; 110 110 0.05902402         175
-#&gt; 111 111 0.08077727         104
-#&gt; 112 112 0.17617266         146
-#&gt; 113 113 0.06968916         158
-#&gt; 114 114 0.49416918          89
-#&gt; 115 115 0.67804058          75
-#&gt; 116 116 0.63865136          85
-#&gt; 117 117 0.51683769          86
-#&gt; 118 118 0.12286390         187
-#&gt; 119 119 0.55147229          58
-#&gt; 120 120 0.55504012          70
-#&gt; 121 121 0.06208767         123
-#&gt; 122 122 0.59010680          83
-#&gt; 123 123 0.44827642          24
-#&gt; 124 124 0.44827642          24
-#&gt; 125 125 0.07266066         181
-#&gt; 126 126 0.08267471         162
-#&gt; 127 127 0.53021870           7
-#&gt; 128 128 0.68651983          77
-#&gt; 129 129 0.74474824          80
-#&gt; 130 130 0.59485405          39
-#&gt; 131 131 0.51683769          86
-#&gt; 132 132 0.63050350          53
-#&gt; 133 133 0.08267471         162
-#&gt; 134 134 0.05278961         161
-#&gt; 135 135 0.65437443           9
-#&gt; 136 136 0.15942611         160
-#&gt; 137 137 0.14138817         133
-#&gt; 138 138 0.08387673         150
-#&gt; 139 139 0.07533878         200
-#&gt; 140 140 0.65973718          52
-#&gt; 141 141 0.57617853          72
-#&gt; 142 142 0.53701189          68
-#&gt; 143 143 0.06764590         171
-#&gt; 144 144 0.71166697          56
-#&gt; 145 145 0.13101051         167
-#&gt; 146 146 0.06424984         186
-#&gt; 147 147 0.07180271         118
-#&gt; 148 148 0.57186352           2
-#&gt; 149 149 0.53788908          37
-#&gt; 150 150 0.60126291          10
-#&gt; 151 151 0.13456331         112
-#&gt; 152 152 0.47006049          92
-#&gt; 153 153 0.53161319          66
-#&gt; 154 154 0.59010680          83
-#&gt; 155 155 0.13645069         114
-#&gt; 156 156 0.10662581         189
-#&gt; 157 157 0.57474093          19
-#&gt; 158 158 0.05278961         161
-#&gt; 159 159 0.25434749         176
-#&gt; 160 160 0.47680339          16
-#&gt; 161 161 0.44827642          24
-#&gt; 162 162 0.06424984         186
-#&gt; 163 163 0.11612617         138
-#&gt; 164 164 0.07562712         113
-#&gt; 165 165 0.02795963         142
-#&gt; 166 166 0.14648825         154
-#&gt; 167 167 0.66659415          41
-#&gt; 168 168 0.51796731          93
-#&gt; 169 169 0.57723436          44
-#&gt; 170 170 0.47006049          92
-#&gt; 171 171 0.17370173         115
-#&gt; 172 172 0.51683769          86
-#&gt; 173 173 0.18409048         159
-#&gt; 174 174 0.65437443           9
-#&gt; 175 175 0.05714139         107
-#&gt; 176 176 0.58635506          59
-#&gt; 177 177 0.30370976         121
-#&gt; 178 178 0.07266066         181
-#&gt; 179 179 0.67998213          73
-#&gt; 180 180 0.04428176         148
-#&gt; 181 181 0.58635506          59
-#&gt; 182 182 0.63495385          51
-#&gt; 183 183 0.69144367          57
-#&gt; 184 184 0.60126291          10
-#&gt; 185 185 0.58179492           6
-#&gt; 186 186 0.10918947         169
-#&gt; 187 187 0.53245520          32
-#&gt; 188 188 0.18295084         184
-#&gt; 189 189 0.48903433          49
-#&gt; 190 190 0.64982215          23
-#&gt; 191 191 0.05278961         161
-#&gt; 192 192 0.11612617         138
-#&gt; 193 193 0.08810669         106
-#&gt; 194 194 0.07533878         200
-#&gt; 195 195 0.18847011         151
-#&gt; 196 196 0.57319452          63
-#&gt; 197 197 0.46164409          62
-#&gt; 198 198 0.08434598         136
-#&gt; 199 199 0.10144527         135
-#&gt; 200 200 0.61513016           1
-#&gt; </div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>boot_results</span><span class='op'>$</span><span class='kw'>resamples</span>[[<span class='fl'>1</span>]])
+</div><div class='output co'>#&gt; <span class='error'>Error in print(boot_results$resamples[[1]]): object 'boot_results' not found</span></div><div class='input'>
 <span class='co'># The best fits are returned</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>boot_results</span>$<span class='no'>fits</span>)</div><div class='output co'>#&gt; $`1`</div><div class='output co'>#&gt; <span class='message'>── </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] My MOBSTER model</span><span> n = 200 with </span><span style='color: #00BB00;'>k = 2</span><span> Beta(s) </span><span style='color: #BB0000;'>without tail</span><span> ─────────────────────────</span></div><div class='output co'>#&gt; <span class='message'>● Clusters: π = 51% [</span><span style='color: #BBBB00;'>C1</span><span>] and 49% [</span><span style='color: #BBBB00;'>C2</span><span>], with π &gt; 0.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>✖</span><span> No tail fit.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C1</span><span> [n = 101, 51%] with mean = 0.58.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C2</span><span> [n = 99, 49%] with mean = 0.11.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBBBB;'>ℹ</span><span> Score(s): NLL = -118.81; ICL = -204.17 (-204.17), H = 1.66 (1.66). Fit </span><span style='color: #00BB00;'>converged</span><span> by </span><span style='color: #00BB00;'>MM</span><span> in 61</span>
-#&gt; <span class='message'>steps.</span></div><div class='output co'>#&gt; 
-#&gt; $`2`</div><div class='output co'>#&gt; <span class='message'>── </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] My MOBSTER model</span><span> n = 200 with </span><span style='color: #00BB00;'>k = 2</span><span> Beta(s) </span><span style='color: #BB0000;'>without tail</span><span> ─────────────────────────</span></div><div class='output co'>#&gt; <span class='message'>● Clusters: π = 50% [</span><span style='color: #BBBB00;'>C2</span><span>] and 50% [</span><span style='color: #BBBB00;'>C1</span><span>], with π &gt; 0.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>✖</span><span> No tail fit.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C1</span><span> [n = 99, 50%] with mean = 0.6.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C2</span><span> [n = 101, 50%] with mean = 0.12.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBBBB;'>ℹ</span><span> Score(s): NLL = -110.86; ICL = -188.81 (-188.81), H = 1.12 (1.12). Fit </span><span style='color: #00BB00;'>converged</span><span> by </span><span style='color: #00BB00;'>MM</span><span> in 57</span>
-#&gt; <span class='message'>steps.</span></div><div class='output co'>#&gt; 
-#&gt; $`3`</div><div class='output co'>#&gt; <span class='message'>── </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] My MOBSTER model</span><span> n = 200 with </span><span style='color: #00BB00;'>k = 2</span><span> Beta(s) </span><span style='color: #BB0000;'>without tail</span><span> ─────────────────────────</span></div><div class='output co'>#&gt; <span class='message'>● Clusters: π = 53% [</span><span style='color: #BBBB00;'>C1</span><span>] and 47% [</span><span style='color: #BBBB00;'>C2</span><span>], with π &gt; 0.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>✖</span><span> No tail fit.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C1</span><span> [n = 106, 53%] with mean = 0.59.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C2</span><span> [n = 94, 47%] with mean = 0.11.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBBBB;'>ℹ</span><span> Score(s): NLL = -117.56; ICL = -201.98 (-201.98), H = 1.35 (1.35). Fit </span><span style='color: #00BB00;'>converged</span><span> by </span><span style='color: #00BB00;'>MM</span><span> in 76</span>
-#&gt; <span class='message'>steps.</span></div><div class='output co'>#&gt; 
-#&gt; $`4`</div><div class='output co'>#&gt; <span class='message'>── </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] My MOBSTER model</span><span> n = 200 with </span><span style='color: #00BB00;'>k = 2</span><span> Beta(s) </span><span style='color: #BB0000;'>without tail</span><span> ─────────────────────────</span></div><div class='output co'>#&gt; <span class='message'>● Clusters: π = 54% [</span><span style='color: #BBBB00;'>C1</span><span>] and 46% [</span><span style='color: #BBBB00;'>C2</span><span>], with π &gt; 0.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>✖</span><span> No tail fit.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C1</span><span> [n = 108, 54%] with mean = 0.59.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C2</span><span> [n = 92, 46%] with mean = 0.13.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBBBB;'>ℹ</span><span> Score(s): NLL = -101.74; ICL = -170.66 (-170.66), H = 1.02 (1.02). Fit </span><span style='color: #00BB00;'>converged</span><span> by </span><span style='color: #00BB00;'>MM</span><span> in 13</span>
-#&gt; <span class='message'>steps.</span></div><div class='output co'>#&gt; 
-#&gt; $`5`</div><div class='output co'>#&gt; <span class='message'>── </span><span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] My MOBSTER model</span><span> n = 200 with </span><span style='color: #00BB00;'>k = 2</span><span> Beta(s) </span><span style='color: #BB0000;'>without tail</span><span> ─────────────────────────</span></div><div class='output co'>#&gt; <span class='message'>● Clusters: π = 58% [</span><span style='color: #BBBB00;'>C1</span><span>] and 42% [</span><span style='color: #BBBB00;'>C2</span><span>], with π &gt; 0.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BB0000;'>✖</span><span> No tail fit.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C1</span><span> [n = 114, 58%] with mean = 0.57.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C2</span><span> [n = 86, 42%] with mean = 0.11.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBBBB;'>ℹ</span><span> Score(s): NLL = -105.37; ICL = -177.17 (-177.17), H = 1.78 (1.78). Fit </span><span style='color: #BB0000;'>interrupted</span><span> by </span><span style='color: #00BB00;'>MM</span><span> in</span>
-#&gt; <span class='message'>100 steps.</span></div><div class='output co'>#&gt; </div></span></pre>
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>boot_results</span><span class='op'>$</span><span class='kw'>fits</span>)
+</div><div class='output co'>#&gt; <span class='error'>Error in print(boot_results$fits): object 'boot_results' not found</span></div></span></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -472,7 +240,7 @@ and uses  <code>?easypar</code>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

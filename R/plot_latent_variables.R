@@ -22,7 +22,7 @@
 #' plot_latent_variables(fit_example$best, cutoff_assignment = .9)
 plot_latent_variables = function(x, cutoff_assignment = 0)
 {
-  is_mobster_fit(x)
+  mobster:::is_mobster_fit(x)
 
   # assignments with LV
   assignments = mobster::Clusters(x, cutoff_assignment) %>%
@@ -37,7 +37,7 @@ plot_latent_variables = function(x, cutoff_assignment = 0)
 
   # Reshape and cut, preserving ordering on the y-axis
   lv = reshape2::melt(
-    assignments %>% select(clusters_names) %>% mutate(pos = row_number()),
+    assignments %>% dplyr::select(clusters_names) %>% dplyr::mutate(pos = row_number()),
     id = 'pos'
   )
   

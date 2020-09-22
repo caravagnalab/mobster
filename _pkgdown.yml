@@ -79,6 +79,7 @@ reference:
   - dnds
   - evolutionary_parameters
   - get_clone_trees
+  - load_vcf
 
 
 

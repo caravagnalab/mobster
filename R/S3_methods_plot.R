@@ -66,14 +66,16 @@ plot.dbpmm = function(x,
     dplyr::filter(type == 'Mean', cluster != 'Tail')
   
   # Component mixture density and total as \sum_i pi_i f_i
-  densities = mobster:::template_density(x,
-                                         x.axis = domain,
-                                         binwidth = binwidth,
-                                         reduce = TRUE)
+  densities = suppressWarnings(mobster:::template_density(
+    x,
+    x.axis = domain,
+    binwidth = binwidth,
+    reduce = TRUE
+  ))
   
   total_densities = tibble::as_tibble(densities) %>%
-    group_by(x) %>%
-    summarise(y = sum(y), cluster = 'f(x)')
+    dplyr::group_by(x) %>%
+    dplyr::summarise(y = sum(y), cluster = 'f(x)')
   
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
   # Plotting aestetics
@@ -247,7 +249,9 @@ plot.dbpmm = function(x,
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
   # Extra annotations (param) plus drivers
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-  hist_pl = mobster:::add_extra_plot_annotations(x, annotation_extras, base_plot = hist_pl)
+  hist_pl = suppressWarnings(
+    mobster:::add_extra_plot_annotations(x, annotation_extras, base_plot = hist_pl)
+  )
   
   return(hist_pl)
 }

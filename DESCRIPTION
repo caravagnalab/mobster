@@ -19,7 +19,7 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Depends:
-    R (>= 3.5.0),
+    R (>= 4.0),
 Imports: 
     sads,
     crayon,
@@ -38,7 +38,7 @@ Imports:
     magrittr,
     vcfR,
     cowplot
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Suggests: knitr,
     rmarkdown,
     ctree,

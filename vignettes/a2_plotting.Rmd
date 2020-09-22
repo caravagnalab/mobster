@@ -31,7 +31,7 @@ one of the available datasets where we annotate some random mutations as drivers
 
 ```{r, fig.width=5, fig.height=4}
 # Example data where we have 3 events as drivers
-example_data = Clusters(mobster::fit_example$best)
+example_data = Clusters(mobster::fit_example$best) %>% dplyr::select(VAF)
 
 # Drivers annotation (we selected this entries to have nice plots)
 drivers_rows = c(2239, 3246, 3800)

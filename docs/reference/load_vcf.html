@@ -17,23 +17,27 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -52,7 +56,6 @@ value; if any of the required columns are not found, an error
 is returned. This function does not filter any of the variants
 annotated in the input VCF file." />
 <meta property="og:image" content="caravagn.github.io/mobster/logo.png" />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -70,7 +73,7 @@ annotated in the input VCF file." />
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -138,7 +141,7 @@ annotated in the input VCF file." />
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/caravagn/mobster">
+  <a href="https://github.com/caravagn/mobster/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -157,7 +160,7 @@ annotated in the input VCF file." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Load data from a VCF file</h1>
-    <small class="dont-index">Source: <a href='https://github.com/caravagn/mobster/blob/master/R/load_VCF.R'><code>R/load_VCF.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/caravagn/mobsterR/load_VCF.R'><code>R/load_VCF.R</code></a></small>
     <div class="hidden name"><code>load_vcf.Rd</code></div>
     </div>
 
@@ -172,7 +175,7 @@ is returned. This function does not filter any of the variants
 annotated in the input VCF file.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>load_vcf</span>(<span class='no'>file</span>, <span class='kw'>DP_column</span> <span class='kw'>=</span> <span class='st'>"DP"</span>, <span class='kw'>NV_column</span> <span class='kw'>=</span> <span class='st'>"NV"</span>)</pre>
+    <pre class="usage"><span class='fu'>load_vcf</span>(<span class='kw'>file</span>, DP_column = <span class='st'>"DP"</span>, NV_column = <span class='st'>"NV"</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -201,20 +204,36 @@ named DP, NV and VAF where VAF = NV/DP.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># Example VCF file in the https://github.com/openvax/varcode repository</span>
-<span class='no'>file</span> <span class='kw'>=</span> <span class='st'>'https://raw.githubusercontent.com/openvax/varcode/master/test/data/strelka-example.vcf'</span>
+<span class='kw'>file</span> <span class='op'>=</span> <span class='st'>'https://raw.githubusercontent.com/openvax/varcode/master/test/data/strelka-example.vcf'</span>
 
-<span class='fu'><a href='https://rdrr.io/r/utils/download.file.html'>download.file</a></span>(<span class='kw'>url</span> <span class='kw'>=</span> <span class='no'>file</span>, <span class='kw'>destfile</span> <span class='kw'>=</span> <span class='st'>'strelka-example.vcf'</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/download.file.html'>download.file</a></span>(url = <span class='kw'>file</span>, destfile = <span class='st'>'strelka-example.vcf'</span>)
 
-<span class='fu'>load_vcf</span>(<span class='kw'>file</span> <span class='kw'>=</span> <span class='st'>'strelka-example.vcf'</span>, <span class='no'>DP_column</span>)</div><div class='output co'>#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span><span> Loading VCF file </span><span style='color: #00BB00;'>strelka-example.vcf</span><span> with package vcfR, file size </span><span style='color: #00BB00;'>11.6 Kb</span><span>.</span></div><div class='output co'>#&gt; <span class='error'>Error in DP_column %in% cn: object 'DP_column' not found</span></div></span></pre>
+<span class='co'># We pretend that the number of variants is the gt_DP2 field, which is wrong</span>
+<span class='co'># Anyway, this shows how you can load a VCF file.</span>
+<span class='fu'>load_vcf</span>(file = <span class='st'>'strelka-example.vcf'</span>, DP_column = <span class='st'>'gt_DP'</span>, NV_column = <span class='st'>'gt_DP2'</span>)
+</div><div class='output co'>#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span><span> Loading VCF file </span><span style='color: #00BB00;'>strelka-example.vcf</span><span> with package vcfR, file size </span><span style='color: #00BB00;'>11.6 Kb</span><span>.</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 40 x 33</span><span>
+#&gt;    CHROM POS   ID    REF   ALT   QUAL  FILTER INFO    Key   QSI  TQSI NT   
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span> chr1  1638… </span><span style='color: #BB0000;'>NA</span><span>    GC    G     </span><span style='color: #BB0000;'>NA</span><span>    PASS   IC=1…     1    33     1 ref  
+#&gt; </span><span style='color: #555555;'> 2</span><span> chr1  1708… </span><span style='color: #BB0000;'>NA</span><span>    G     GC    </span><span style='color: #BB0000;'>NA</span><span>    PASS   IC=3…     1    33     1 ref  
+#&gt; </span><span style='color: #555555;'> 3</span><span> chr2  9662… </span><span style='color: #BB0000;'>NA</span><span>    GC    G     </span><span style='color: #BB0000;'>NA</span><span>    PASS   IC=0…     2    46     1 ref  
+#&gt; </span><span style='color: #555555;'> 4</span><span> chr4  4911… </span><span style='color: #BB0000;'>NA</span><span>    C     CCCT… </span><span style='color: #BB0000;'>NA</span><span>    PASS   IC=1…     2    46     1 ref  
+#&gt; </span><span style='color: #555555;'> 5</span><span> chr4  4912… </span><span style='color: #BB0000;'>NA</span><span>    C     CGGA… </span><span style='color: #BB0000;'>NA</span><span>    PASS   IC=1…     3    33     1 ref  
+#&gt; </span><span style='color: #555555;'> 6</span><span> chr4  1909… </span><span style='color: #BB0000;'>NA</span><span>    C     CAT   </span><span style='color: #BB0000;'>NA</span><span>    PASS   IC=1…     3    33     1 ref  
+#&gt; </span><span style='color: #555555;'> 7</span><span> chr9  1399… </span><span style='color: #BB0000;'>NA</span><span>    T     TGTT… </span><span style='color: #BB0000;'>NA</span><span>    PASS   IC=1…     4    36     2 ref  
+#&gt; </span><span style='color: #555555;'> 8</span><span> chr9  1399… </span><span style='color: #BB0000;'>NA</span><span>    TGTT… T     </span><span style='color: #BB0000;'>NA</span><span>    PASS   IC=0…     4    36     2 ref  
+#&gt; </span><span style='color: #555555;'> 9</span><span> chr10 4236… </span><span style='color: #BB0000;'>NA</span><span>    C     CGGA… </span><span style='color: #BB0000;'>NA</span><span>    PASS   IC=1…     5    40     2 ref  
+#&gt; </span><span style='color: #555555;'>10</span><span> chr11 1271… </span><span style='color: #BB0000;'>NA</span><span>    A     AAAG  </span><span style='color: #BB0000;'>NA</span><span>    PASS   IC=1…     5    40     2 ref  
+#&gt; </span><span style='color: #555555;'># … with 30 more rows, and 21 more variables: QSI_NT </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span style='color: #555555;'>, TQSI_NT </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   SGT </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, RU </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, RC </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span style='color: #555555;'>, IC </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span style='color: #555555;'>, IHP </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span style='color: #555555;'>, SVTYPE </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   SOMATIC </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span style='color: #555555;'>, OVERLAP </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span style='color: #555555;'>, Indiv </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, DP </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, NV </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   gt_TAR </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, gt_TIR </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, gt_TOR </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, gt_DP50 </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, gt_FDP50 </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   gt_SUBDP50 </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, gt_GT_alleles </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, VAF </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span></div></span></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -225,7 +244,7 @@ named DP, NV and VAF where VAF = NV/DP.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

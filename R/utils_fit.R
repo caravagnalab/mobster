@@ -250,10 +250,12 @@
 {
   if(init) x$Clusters$fit.value = x$Clusters$init.value
   
-  x$Clusters %>%
-    dplyr::filter(cluster == 'Tail', type == 'Shape' | type == 'Scale') %>%
-    dplyr::select(-init.value) %>%
-    tidyr::spread(key = type, value = fit.value)
+  suppressWarnings(
+    x$Clusters %>%
+      dplyr::filter(cluster == 'Tail', type == 'Shape' | type == 'Scale') %>%
+      dplyr::select(-init.value) %>%
+      tidyr::spread(key = type, value = fit.value)
+  )
 }
 
 # Extract mixing proportions parameters

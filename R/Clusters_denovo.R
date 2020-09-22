@@ -37,9 +37,12 @@ Clusters_denovo = function(x, y)
   densities = NULL
   for(component in seq_along(components))
   {
+    df = ddbpmm(x, data = y$VAF, components = component, log = TRUE) %>% data.frame()
+    colnames(df) = components[component]
+      
     densities = dplyr::bind_cols(
       densities,
-      ddbpmm(x, data = y$VAF, components = component, log = TRUE) %>% data.frame()
+      df
     )
   }
   colnames(densities) = components

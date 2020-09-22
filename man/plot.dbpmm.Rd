@@ -6,9 +6,10 @@
 \usage{
 plot.dbpmm(
   x,
-  alpha = 0.7,
-  colors = c(Tail = "gainsboro"),
   cutoff_assignment = 0,
+  beta_colors = RColorBrewer::brewer.pal(n = 9, "Set1"),
+  tail_color = "gainsboro",
+  na_color = "gray",
   annotation_extras = NULL,
   secondary_axis = NULL,
   ...
@@ -17,20 +18,21 @@ plot.dbpmm(
 \arguments{
 \item{x}{An object of class \code{"dbpmm"}.}
 
-\item{alpha}{Alpha value for the colors of the histogram}
-
-\item{colors}{If provided, these colours will be used for each cluster.
-If a subset of colours is provided, palette Set1 from \code{RColorBrewer} is used.
-By default the tail colour is provided as 'gainsboro'.}
-
 \item{cutoff_assignment}{Parameters passed to run function \code{Clusters} which
 returns the hard clustering assignments for the histogram plot if one wants to plot
 only mutations with responsibility above this parameter.}
 
+\item{beta_colors}{A vector of colors that are used to colour the Beta clusters.
+Colors are used by order for \code{"C1"}, \code{"C2"}, \code{"C3"}, etc. If too
+few colours are used the \code{rainbow} palette is used instead of \code{beta_colors}.
+In all cases the colour of the tail is set by the other parameter \code{tail_color}.}
+
+\item{tail_color}{The colour of the tail cluster, if any.}
+
 \item{annotation_extras}{A dataframe that contains a label column, and a VAF value.
 The labels will be annotated to the corresponding clusters of the VAF values.}
 
-\item{secondary_axis}{\code{NULL} to leave the second axis empty, \code{"SSE"} to 
+\item{secondary_axis}{\code{NULL} to leave the second axis empty, \code{"SSE"} to
 report the cumulative percentage of SSE error, and \code{"N"} to report the
 cumulative number of mutations.}
 
@@ -46,7 +48,7 @@ Plot a MOBSTER fit.
 data(fit_example)
 plot(fit_example$best)
 plot(fit_example$best, secondary_axis = 'SSE')
-plot(fit_example$best, secondary_axis = 'N')
-plot(fit_example$best, alpha = 1, cutoff_assignment = .7)
-plot(fit_example$best, colors =  c(`Tail` = 'gainsboro', `C1` = 'darkorange'))
+plot(fit_example$best, cutoff_assignment = .7)
+plot(fit_example$best, beta_colors = c("indianred3", "orange"))
+plot(fit_example$best, tail_color = 'black')
 }
