@@ -16,6 +16,8 @@
 #' 
 #' @export
 #'
+#' @importFrom reshape2 melt
+#'
 #' @examples
 #' data('fit_example', package = 'mobster')
 #' plot_latent_variables(fit_example$best)

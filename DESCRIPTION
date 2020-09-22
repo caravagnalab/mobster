@@ -36,11 +36,11 @@ Imports:
     cli,
     tidyr,
     magrittr,
-    vcfR,
     cowplot
 RoxygenNote: 7.1.1
 Suggests: knitr,
     rmarkdown,
+    vcfR,
     ctree,
     CNAqc,
     ggmuller,
