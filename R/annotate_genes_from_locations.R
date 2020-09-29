@@ -6,9 +6,31 @@
 annotate_genes_from_locations = function(x)
 {
   crash_ifnotinstalled(c('Homo.sapiens', 'GenomicRanges', 'GenomicFeatures', 'TxDb.Hsapiens.UCSC.hg19.knownGene', 'org.Hs.egSYMBOL'))
-    
-  # This loads most of the required stuff
-  require(Homo.sapiens)
+  
+  if (!requireNamespace("Homo.sapiens", quietly = TRUE)) {
+    stop("Package \"Homo.sapiens\" needed for this function to work. Please install it.",
+      call. = FALSE)
+  }
+
+  if (!requireNamespace("GenomicRanges", quietly = TRUE)) {
+    stop("Package \"GenomicRanges\" needed for this function to work. Please install it.",
+      call. = FALSE)
+  }
+
+  if (!requireNamespace("GenomicFeatures", quietly = TRUE)) {
+    stop("Package \"GenomicFeatures\" needed for this function to work. Please install it.",
+      call. = FALSE)
+  }
+
+  if (!requireNamespace("TxDb.Hsapiens.UCSC.hg19.knownGene", quietly = TRUE)) {
+    stop("Package \"TxDb.Hsapiens.UCSC.hg19.knownGene\" needed for this function to work. Please install it.",
+      call. = FALSE)
+  }
+  
+  if (!requireNamespace("org.Hs.egSYMBOL", quietly = TRUE)) {
+    stop("Package \"org.Hs.egSYMBOL\" needed for this function to work. Please install it.",
+      call. = FALSE)
+  }
   
   if(!all(c('chr', 'from', 'to', 'ref', 'alt') %in% colnames(x$data)))
     stop("Missing genomic coordinates (chr, from, ref, alt) from the input data, cannot annotate genes.")
