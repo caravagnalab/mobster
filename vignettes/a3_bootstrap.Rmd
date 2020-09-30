@@ -61,6 +61,7 @@ Now we can compute `n.resamples` nonparametric bootstraps using function `mobste
 bootstrap_results = mobster_bootstrap(
   fit$best,
   bootstrap = 'nonparametric',
+  cores.ratio = 0, # can be increased
   n.resamples = 25,
   auto_setup = 'FAST' # forwarded to mobster_fit
   )

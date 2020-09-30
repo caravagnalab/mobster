@@ -22,7 +22,7 @@
 #' @import ggplot2
 #'
 #' @exportS3Method plot dbpmm
-#' @export
+#' @export plot.dbpmm
 #'
 #' @examples
 #' data(fit_example)

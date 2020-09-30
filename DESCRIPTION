@@ -54,7 +54,7 @@ Suggests: knitr,
     GenomicRanges,
     GenomicFeatures,
     TxDb.Hsapiens.UCSC.hg19.knownGene,
-    org.Hs.egSYMBOL
+    org.Hs.eg.db
 Remotes:
     caravagn/easypar,
     caravagn/pio,

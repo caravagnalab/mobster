@@ -2,10 +2,9 @@
 # GenomicRanges
 # GenomicFeatures
 # TxDb.Hsapiens.UCSC.hg19.knownGene
-# org.Hs.egSYMBOL
+# org.Hs.eg.db
 annotate_genes_from_locations = function(x)
 {
-  crash_ifnotinstalled(c('Homo.sapiens', 'GenomicRanges', 'GenomicFeatures', 'TxDb.Hsapiens.UCSC.hg19.knownGene', 'org.Hs.egSYMBOL'))
   
   if (!requireNamespace("Homo.sapiens", quietly = TRUE)) {
     stop("Package \"Homo.sapiens\" needed for this function to work. Please install it.",
@@ -27,8 +26,8 @@ annotate_genes_from_locations = function(x)
       call. = FALSE)
   }
   
-  if (!requireNamespace("org.Hs.egSYMBOL", quietly = TRUE)) {
-    stop("Package \"org.Hs.egSYMBOL\" needed for this function to work. Please install it.",
+  if (!requireNamespace("org.Hs.eg.db", quietly = TRUE)) {
+    stop("Package \"org.Hs.eg.db\" needed for this function to work. Please install it.",
       call. = FALSE)
   }
   
