@@ -49,7 +49,8 @@ x$data$driver_label[3] = "Fake_driver_3"
 trees = get_clone_trees(x)
 
 # Print and plot the first tree (top rank)
-ctree:::print.ctree(trees[[1]])
+library(ctree)
+ctree::print.ctree(trees[[1]])
 ctree::plot.ctree(trees[[1]])
 ctree::plot_CCF_clusters(trees[[1]])
 ctree::plot_icon(trees[[1]])

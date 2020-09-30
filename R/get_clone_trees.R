@@ -23,6 +23,7 @@
 #' @return The output of the constructor \code{ctree::cetrees}.
 #' 
 #' @export
+#' @importFrom ctree ctrees
 #'
 #' @examples
 #' # We take one of the released datasets
@@ -41,7 +42,8 @@
 #' trees = get_clone_trees(x)
 #' 
 #' # Print and plot the first tree (top rank)
-#' ctree:::print.ctree(trees[[1]])
+#' library(ctree)
+#' ctree::print.ctree(trees[[1]])
 #' ctree::plot.ctree(trees[[1]])
 #' ctree::plot_CCF_clusters(trees[[1]])
 #' ctree::plot_icon(trees[[1]])

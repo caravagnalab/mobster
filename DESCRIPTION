@@ -38,12 +38,12 @@ Imports:
     tidyr,
     magrittr,
     cowplot,
-    reshape2
+    reshape2,
+    ctree
 RoxygenNote: 7.1.1
 Suggests: knitr,
     rmarkdown,
     vcfR,
-    ctree,
     CNAqc,
     ggmuller,
     png,
