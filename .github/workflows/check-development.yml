@@ -68,7 +68,7 @@ jobs:
           ##if echo "$GITHUB_REF" | grep -q "RELEASE_"; then
           ##biocversion="$(basename -- $GITHUB_REF | tr '[:upper:]' '[:lower:]')"
           ##else
-          biocversion="devel"
+          biocversion="release"
           ##fi
           ## Define the image name and print the information
           imagename="bioconductor/bioconductor_docker:${biocversion}"
