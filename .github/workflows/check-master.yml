@@ -140,7 +140,7 @@ jobs:
       
       - name: Install dependencies
         run: |
-          sudo apt-get install libcurl4-openssl-dev libglpk-dev
+          sudo apt-get install libcurl4-openssl-dev libglpk-dev libmagick++-dev
 
       - uses: r-lib/actions/setup-r@master
 
@@ -220,6 +220,10 @@ jobs:
           message(paste('****', Sys.time(), 'pass number 2 at installing dependencies: any remaining dependencies ****'))
           deps <- remotes::dev_package_deps(dependencies = TRUE, repos = BiocManager::repositories())
           BiocManager::install(deps$package[deps$diff != 0])
+
+          ## Pass #3 sometime somethins is missing from github
+          message(paste('****', Sys.time(), 'pass number 3 at installing dependencies: github dependencies ****'))
+          remotes::install_deps(dependencies=TRUE)
 
           ## For running the checks
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))
@@ -457,6 +461,10 @@ jobs:
           message(paste('****', Sys.time(), 'pass number 2 at installing dependencies: any remaining dependencies ****'))
           deps <- remotes::dev_package_deps(dependencies = TRUE, repos = BiocManager::repositories())
           BiocManager::install(deps$package[deps$diff != 0])
+
+          ## Pass #3 sometime somethins is missing from github
+          message(paste('****', Sys.time(), 'pass number 3 at installing dependencies: github dependencies ****'))
+          remotes::install_deps(dependencies=TRUE)
 
           ## For running the checks
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))
