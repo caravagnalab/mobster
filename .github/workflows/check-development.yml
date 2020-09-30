@@ -346,7 +346,7 @@ jobs:
   ## dependencies as well, thus making this workflow useful beyond Bioconductor)
   R-CMD-check-r-lib:
     runs-on: ${{ matrix.config.os }}
-    needs: [define-docker-info, R-CMD-check-bioc]
+    needs: [define-docker-info, R-CMD-check]
 
     name: ${{ matrix.config.os }}
 
