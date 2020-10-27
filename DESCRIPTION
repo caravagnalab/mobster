@@ -1,14 +1,14 @@
 Package: mobster
 Type: Package
 Title: MOBSTER - Model-based tumour subclonal deconvolution
-Version: 0.1.1
-Date: 2020-04-29
+Version: 0.99.1
+Date: 2020-10-27
 Author: Giulio Caravagna
 Maintainer: Giulio Caravagna <gcaravagn@gmail.com>
 Authors@R: c(
     person("Giulio", "Caravagna", , "gcaravagn@gmail.com", role = c("aut", "cre"),
       comment = c(ORCID = "0000-0003-4240-3265")),
-    person("Luca", "De Sano", , "luca.desano@gmail.com", role = c("ctb"),
+    person("Luca", "De Sano", , "luca.desano@gmail.com", role = c("aut"),
       comment = c(ORCID = "0000-0002-9618-3774"))
   )
 Description: MOBSTER is a package that implements a statistical model for tumour subclonal deconvolution

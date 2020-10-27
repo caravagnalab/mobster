@@ -43,7 +43,7 @@ dataset = random_dataset(
   )
 
 # Fit model -- FAST option to speed up the vignette
-fit = mobster_fit(dataset$data %>% dplyr::rename(gen_cluster = cluster), auto_setup = 'FAST')
+fit = mobster_fit(dataset$data, auto_setup = 'FAST')
 
 # Composition with cowplot
 cowplot::plot_grid(

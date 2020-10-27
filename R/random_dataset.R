@@ -111,9 +111,9 @@ random_dataset = function(N = 5000,
     guides(fill = guide_legend('Component'))
   
   input = data.frame(VAF = samples,
-                     cluster = ids,
+                     simulated_cluster = ids,
                      stringsAsFactors = FALSE) %>% as_tibble()
-  input = input[!is.na(input$cluster),]
+  input = input[!is.na(input$simulated_cluster),]
   
   return(list(
     data = input,

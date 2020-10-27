@@ -79,9 +79,6 @@ In `mobster` we provide the implementation of the model's density function (`ddb
 # Data, in the MOBSTER input format with a "VAF" column.
 print(dataset$data)
 
-# We rename the `cluster` column (that is a reserved name)
-dataset$data = dataset$data %>% dplyr::rename(gen_clusters = cluster)
-
 # The generated model contains the parameters of the Beta components (a and b),
 # the shape and scale of the tail, and the mixing proportion. 
 print(dataset$model)
