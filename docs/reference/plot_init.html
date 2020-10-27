@@ -161,7 +161,7 @@
     <p>Plot the initial density of a fit.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plot_init</span>(<span class='no'>x</span>, <span class='kw'>colors</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>Tail</span> <span class='kw'>=</span> <span class='st'>"gainsboro"</span>))</pre>
+    <pre class="usage"><span class='fu'>plot_init</span>(<span class='kw'>x</span>, colors = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(Tail = <span class='st'>"gainsboro"</span>))</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -183,8 +183,9 @@ By default the tail colour is provided as 'gainsboro'.</p></td>
     <p>A ggplot object for the plot.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>fit_example</span>)
-<span class='fu'>plot_init</span>(<span class='no'>fit_example</span>$<span class='no'>best</span>)</div><div class='img'><img src='plot_init-1.png' alt='' width='700' height='433' /></div></pre>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>fit_example</span>)
+<span class='fu'>plot_init</span>(<span class='kw'>fit_example</span><span class='op'>$</span><span class='kw'>best</span>)
+</div><div class='img'><img src='plot_init-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -200,7 +201,7 @@ By default the tail colour is provided as 'gainsboro'.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

@@ -36,5 +36,7 @@ file = 'https://raw.githubusercontent.com/openvax/varcode/master/test/data/strel
 
 download.file(url = file, destfile = 'strelka-example.vcf')
 
-load_vcf(file = 'strelka-example.vcf', DP_column)
+# We pretend that the number of variants is the gt_DP2 field, which is wrong
+# Anyway, this shows how you can load a VCF file.
+load_vcf(file = 'strelka-example.vcf', DP_column = 'gt_DP', NV_column = 'gt_DP2')
 }

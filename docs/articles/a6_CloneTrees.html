@@ -107,13 +107,13 @@
 
       
 
-      </header><script src="a6_CloneTrees_files/header-attrs-2.1/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>6. Clone trees from clusters</h1>
                         <h4 class="author">Giulio Caravagna</h4>
             
-            <h4 class="date">11 mai, 2020</h4>
+            <h4 class="date">13 September, 2020</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/caravagn/mobstervignettes/a6_CloneTrees.Rmd"><code>vignettes/a6_CloneTrees.Rmd</code></a></small>
       <div class="hidden name"><code>a6_CloneTrees.Rmd</code></div>
@@ -127,76 +127,77 @@
 <!-- <a href="https://caravagn.github.io/ctree"><img src="https://caravagn.github.io/ctree/reference/figures/logo.png" width=77px height=91px></img></a> -->
 <!-- </center> -->
 <!-- <br> -->
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">mobster</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tidyr</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">dplyr</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/caravagn/mobster">mobster</a></span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://tidyr.tidyverse.org">tidyr</a></span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://dplyr.tidyverse.org">dplyr</a></span>)
+</pre></div>
 <p>Clone trees from <code>mobster</code> fits can be computing using the internal interface with <a href="https://caravagn.github.io/ctree">ctree</a>.</p>
 <p>You need to have drivers annotated your object if you want to use <code>ctree</code>, and every <code>driver_label</code> has to be unique, as it will be used as the <code>variantID</code> column to identify the driver event.</p>
 <p>We show the analysis with a synthetic dataset.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="co"># Example data where we annotate 3 events as drivers</span>
-<span class="no">example_data</span> <span class="kw">=</span> <span class="fu"><a href="../reference/Clusters.html">Clusters</a></span>(<span class="kw pkg">mobster</span><span class="kw ns">::</span><span class="no"><a href="../reference/fit_example.html">fit_example</a></span>$<span class="no">best</span>)
-
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="co"># Example data where we annotate 3 events as drivers</span>
+<span class="kw">example_data</span> <span class="op">=</span> <span class="fu"><a href="../reference/Clusters.html">Clusters</a></span>(<span class="kw">mobster</span>::<span class="kw"><a href="../reference/fit_example.html">fit_example</a></span><span class="op">$</span><span class="kw">best</span>)
+<span class="kw">example_data</span> <span class="op">=</span> <span class="kw">example_data</span> <span class="op">%&gt;%</span> <span class="kw">dplyr</span>::<span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="op">-</span><span class="kw">cluster</span>, <span class="op">-</span><span class="kw">Tail</span>, <span class="op">-</span><span class="kw">C1</span>, <span class="op">-</span><span class="kw">C2</span>)
+  
 <span class="co"># Drivers annotation</span>
-<span class="no">drivers_rows</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2239</span>, <span class="fl">3246</span>, <span class="fl">3800</span>)
+<span class="kw">drivers_rows</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2239</span>, <span class="fl">3246</span>, <span class="fl">3800</span>)
 
-<span class="no">example_data</span>$<span class="no">is_driver</span> <span class="kw">=</span> <span class="fl">FALSE</span>
-<span class="no">example_data</span>$<span class="no">driver_label</span> <span class="kw">=</span> <span class="fl">NA</span>
+<span class="kw">example_data</span><span class="op">$</span><span class="kw">is_driver</span> <span class="op">=</span> <span class="fl">FALSE</span>
+<span class="kw">example_data</span><span class="op">$</span><span class="kw">driver_label</span> <span class="op">=</span> <span class="fl">NA</span>
 
-<span class="no">example_data</span>$<span class="no">is_driver</span>[<span class="no">drivers_rows</span>] <span class="kw">=</span> <span class="fl">TRUE</span>
-<span class="no">example_data</span>$<span class="no">driver_label</span>[<span class="no">drivers_rows</span>] <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"DR1"</span>, <span class="st">"DR2"</span>, <span class="st">"DR3"</span>)
+<span class="kw">example_data</span><span class="op">$</span><span class="kw">is_driver</span>[<span class="kw">drivers_rows</span>] <span class="op">=</span> <span class="fl">TRUE</span>
+<span class="kw">example_data</span><span class="op">$</span><span class="kw">driver_label</span>[<span class="kw">drivers_rows</span>] <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"DR1"</span>, <span class="st">"DR2"</span>, <span class="st">"DR3"</span>)
 
 <span class="co"># Fit and print the data</span>
-<span class="no">fit</span> <span class="kw">=</span> <span class="fu"><a href="../reference/mobster_fit.html">mobster_fit</a></span>(<span class="no">example_data</span>, <span class="kw">auto_setup</span> <span class="kw">=</span> <span class="st">'FAST'</span>)
+<span class="kw">fit</span> <span class="op">=</span> <span class="fu"><a href="../reference/mobster_fit.html">mobster_fit</a></span>(<span class="kw">example_data</span>, auto_setup = <span class="st">'FAST'</span>)
 <span class="co">#&gt;  [ MOBSTER fit ]</span>
-<span class="co">#&gt; v Loaded input data, n = 5000.</span>
-<span class="co">#&gt; &gt; n = 5000. Mixture with k = 1,2 Beta(s). Pareto tail: TRUE and FALSE. Output</span>
-<span class="co">#&gt; clusters with p &gt; 0.02 and n &gt; 10.</span>
+<span class="co">#&gt; ✔ Loaded input data, n = 5000.</span>
+<span class="co">#&gt; ❯ n = 5000. Mixture with k = 1,2 Beta(s). Pareto tail: TRUE and FALSE. Output clusters with π &gt; 0.02</span>
+<span class="co">#&gt; and n &gt; 10.</span>
 <span class="co">#&gt; ! mobster automatic setup FAST for the analysis.</span>
-<span class="co">#&gt; &gt; Scoring (without parallel) 2 x 2 x 2 = 8 models by reICL.</span>
-<span class="co">#&gt; i MOBSTER fits completed in 8.8s.</span>
-<span class="co">#&gt; -- [ MOBSTER ] My MOBSTER model n = 5000 with k = 2 Beta(s) and a tail ---------</span>
-<span class="co">#&gt; * Clusters: p = 55% [C1], 31% [Tail], and 14% [C2], with p &gt; 0.</span>
-<span class="co">#&gt; * Tail [n = 1370, 31%] with alpha = 1.2.</span>
-<span class="co">#&gt; * Beta C1 [n = 2784, 55%] with mean = 0.48.</span>
-<span class="co">#&gt; * Beta C2 [n = 846, 14%] with mean = 0.15.</span>
-<span class="co">#&gt; i Score(s): NLL = -5671.5; ICL = -10359.09 (-11266.35), H = 907.26 (0). Fit</span>
-<span class="co">#&gt; converged by MM in 75 steps.</span>
-<span class="co">#&gt; i The fit object model contains also drivers annotated.</span>
-<span class="co">#&gt; Warning: `as.tibble()` is deprecated as of tibble 2.0.0.</span>
-<span class="co">#&gt; Please use `as_tibble()` instead.</span>
-<span class="co">#&gt; The signature and semantics have changed, see `?as_tibble`.</span>
-<span class="co">#&gt; This warning is displayed once every 8 hours.</span>
-<span class="co">#&gt; Call `lifecycle::last_warnings()` to see where this warning was generated.</span>
-<span class="co">#&gt; # A tibble: 3 x 7</span>
-<span class="co">#&gt;      VAF cluster   Tail       C1       C2 is_driver driver_label</span>
-<span class="co">#&gt;    &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;lgl&gt;     &lt;chr&gt;       </span>
-<span class="co">#&gt; 1 0.448  C1      0.0125 9.88e- 1 8.08e-21 TRUE      DR1         </span>
-<span class="co">#&gt; 2 0.159  C2      0.225  2.35e-34 7.75e- 1 TRUE      DR2         </span>
-<span class="co">#&gt; 3 0.0629 Tail    1.00   1.91e-82 4.02e- 5 TRUE      DR3</span>
+<span class="co">#&gt; ❯ Scoring (without parallel) 2 x 2 x 2 = 8 models by reICL.</span>
+<span class="co">#&gt; ℹ MOBSTER fits completed in 17.9s.</span>
+<span class="co">#&gt; ── [ MOBSTER ] My MOBSTER model n = 5000 with k = 2 Beta(s) and a tail ───────────────────────────────</span>
+<span class="co">#&gt; ● Clusters: π = 55% [C1], 31% [Tail], and 14% [C2], with π &gt; 0.</span>
+<span class="co">#&gt; ● Tail [n = 1370, 31%] with alpha = 1.2.</span>
+<span class="co">#&gt; ● Beta C1 [n = 2784, 55%] with mean = 0.48.</span>
+<span class="co">#&gt; ● Beta C2 [n = 846, 14%] with mean = 0.15.</span>
+<span class="co">#&gt; ℹ Score(s): NLL = -5671.5; ICL = -10359.09 (-11266.35), H = 907.26 (0). Fit converged by MM in 75</span>
+<span class="co">#&gt; steps.</span>
+<span class="co">#&gt; ℹ The fit object model contains also drivers annotated.</span>
+<span class="co">#&gt; # A tibble: 3 x 4</span>
+<span class="co">#&gt;      VAF is_driver driver_label cluster</span>
+<span class="co">#&gt;    &lt;dbl&gt; &lt;lgl&gt;     &lt;chr&gt;        &lt;chr&gt;  </span>
+<span class="co">#&gt; 1 0.448  TRUE      DR1          C1     </span>
+<span class="co">#&gt; 2 0.159  TRUE      DR2          C2     </span>
+<span class="co">#&gt; 3 0.0629 TRUE      DR3          Tail</span>
 
-<span class="no">best_fit</span> <span class="kw">=</span> <span class="no">fit</span>$<span class="no">best</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">best_fit</span>)
-<span class="co">#&gt; -- [ MOBSTER ] My MOBSTER model n = 5000 with k = 2 Beta(s) and a tail ---------</span>
-<span class="co">#&gt; * Clusters: p = 55% [C1], 31% [Tail], and 14% [C2], with p &gt; 0.</span>
-<span class="co">#&gt; * Tail [n = 1370, 31%] with alpha = 1.2.</span>
-<span class="co">#&gt; * Beta C1 [n = 2784, 55%] with mean = 0.48.</span>
-<span class="co">#&gt; * Beta C2 [n = 846, 14%] with mean = 0.15.</span>
-<span class="co">#&gt; i Score(s): NLL = -5671.5; ICL = -10359.09 (-11266.35), H = 907.26 (0). Fit</span>
-<span class="co">#&gt; converged by MM in 75 steps.</span>
-<span class="co">#&gt; i The fit object model contains also drivers annotated.</span>
-<span class="co">#&gt; # A tibble: 3 x 7</span>
-<span class="co">#&gt;      VAF cluster   Tail       C1       C2 is_driver driver_label</span>
-<span class="co">#&gt;    &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;lgl&gt;     &lt;chr&gt;       </span>
-<span class="co">#&gt; 1 0.448  C1      0.0125 9.88e- 1 8.08e-21 TRUE      DR1         </span>
-<span class="co">#&gt; 2 0.159  C2      0.225  2.35e-34 7.75e- 1 TRUE      DR2         </span>
-<span class="co">#&gt; 3 0.0629 Tail    1.00   1.91e-82 4.02e- 5 TRUE      DR3</span></pre></body></html></div>
+<span class="kw">best_fit</span> <span class="op">=</span> <span class="kw">fit</span><span class="op">$</span><span class="kw">best</span>
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw">best_fit</span>)
+<span class="co">#&gt; ── [ MOBSTER ] My MOBSTER model n = 5000 with k = 2 Beta(s) and a tail ───────────────────────────────</span>
+<span class="co">#&gt; ● Clusters: π = 55% [C1], 31% [Tail], and 14% [C2], with π &gt; 0.</span>
+<span class="co">#&gt; ● Tail [n = 1370, 31%] with alpha = 1.2.</span>
+<span class="co">#&gt; ● Beta C1 [n = 2784, 55%] with mean = 0.48.</span>
+<span class="co">#&gt; ● Beta C2 [n = 846, 14%] with mean = 0.15.</span>
+<span class="co">#&gt; ℹ Score(s): NLL = -5671.5; ICL = -10359.09 (-11266.35), H = 907.26 (0). Fit converged by MM in 75</span>
+<span class="co">#&gt; steps.</span>
+<span class="co">#&gt; ℹ The fit object model contains also drivers annotated.</span>
+<span class="co">#&gt; # A tibble: 3 x 4</span>
+<span class="co">#&gt;      VAF is_driver driver_label cluster</span>
+<span class="co">#&gt;    &lt;dbl&gt; &lt;lgl&gt;     &lt;chr&gt;        &lt;chr&gt;  </span>
+<span class="co">#&gt; 1 0.448  TRUE      DR1          C1     </span>
+<span class="co">#&gt; 2 0.159  TRUE      DR2          C2     </span>
+<span class="co">#&gt; 3 0.0629 TRUE      DR3          Tail</span>
+</pre></div>
 <div id="tree-computation" class="section level1">
 <h1 class="hasAnchor">
 <a href="#tree-computation" class="anchor"></a>Tree computation</h1>
 <p>Tree computation removes any mutation that is assigned to a <code>Tail</code> cluster because the clone tree represents the clones.</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co"># Get the trees, select top-rank</span>
-<span class="no">trees</span> <span class="kw">=</span> <span class="fu"><a href="../reference/get_clone_trees.html">get_clone_trees</a></span>(<span class="no">best_fit</span>)
-<span class="co">#&gt; v Loading ctree, 'Clone trees in cancer'. Support : &lt;https://caravagn.github.io/ctree/&gt;</span>
+<div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="co"># Get the trees, select top-rank</span>
+<span class="kw">trees</span> <span class="op">=</span> <span class="fu"><a href="../reference/get_clone_trees.html">get_clone_trees</a></span>(<span class="kw">best_fit</span>)
+<span class="co">#&gt; ✓ Loading ctree, 'Clone trees in cancer'. Support : &lt;https://caravagn.github.io/ctree/&gt;</span>
 <span class="co">#&gt;  [ ctree ~ generate clone trees for My_MOBSTER_model ] </span>
 <span class="co">#&gt; Sampler :  10000 (cutoff),  5000 (sampling),  100 (max store) </span>
 <span class="co">#&gt; # A tibble: 2 x 5</span>
@@ -205,18 +206,20 @@
 <span class="co">#&gt; 1 C2      0.149   846 FALSE     TRUE     </span>
 <span class="co">#&gt; 2 C1      0.478  2784 TRUE      TRUE     </span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; v Region R1  ~  #CCF clusters &gt; 1%:  2 </span>
-<span class="co">#&gt; v Trees per region 1 </span>
-<span class="co">#&gt; v Hashed trees 1 </span>
+<span class="co">#&gt; ✔ Region R1  ~  #CCF clusters &gt; 1%:  2 </span>
+<span class="co">#&gt; ✔ Trees per region 1 </span>
+<span class="co">#&gt; ✔ Hashed trees 1 </span>
 <span class="co">#&gt; There are no alternatives!</span>
-<span class="co">#&gt; v Pigeonhole Principle  </span>
-<span class="co">#&gt; v Ranking trees  </span>
-<span class="co">#&gt; v Trees with non-zero sscore 1 storing 1</span></pre></body></html></div>
+<span class="co">#&gt; ✔ Pigeonhole Principle  </span>
+<span class="co">#&gt; ✔ Ranking trees  </span>
+<span class="co">#&gt; ✔ Trees with non-zero sscore 1 storing 1</span>
+</pre></div>
 <p>The <em>top-rank</em> tree is in position <code>1</code> of <code>trees</code>; <code>ctree</code> implements S3 object methods to print an plot a tree.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">top_rank</span> <span class="kw">=</span> <span class="no">trees</span><span class="kw">[[</span><span class="fl">1</span>]]
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="kw">top_rank</span> <span class="op">=</span> <span class="kw">trees</span>[[<span class="fl">1</span>]]
 
 <span class="co"># Print with S3 methods from ctree</span>
-<span class="kw pkg">ctree</span><span class="kw ns">:::</span><span class="fu"><a href="https://rdrr.io/pkg/ctree/man/print.ctree.html">print.ctree</a></span>(<span class="no">top_rank</span>)
+<span class="kw">ctree</span>:::<span class="fu"><a href="https://rdrr.io/pkg/ctree/man/print.ctree.html">print.ctree</a></span>(<span class="kw">top_rank</span>)
 <span class="co">#&gt;  [ ctree - ctree rank 1/1 for My_MOBSTER_model ] </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; # A tibble: 2 x 5</span>
@@ -236,18 +239,21 @@
 <span class="co">#&gt;    DR1 ---&gt; DR2 </span>
 <span class="co">#&gt;    GL ---&gt; DR1 </span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Tree score 1</span></pre></body></html></div>
+<span class="co">#&gt; Tree score 1</span>
+</pre></div>
 <p>We can plot the top tree, aggregating different <code>ctree</code> plots.</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="co"># 1) Clone tree</span>
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="co"># 1) Clone tree</span>
 <span class="co"># 2) Input ctree data (here adjusted VAF)</span>
 <span class="co"># 3) Clone size barplot</span>
-<span class="kw pkg">ggpubr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ggpubr/man/ggarrange.html">ggarrange</a></span>(
-  <span class="kw pkg">ctree</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ctree/man/plot.ctree.html">plot.ctree</a></span>(<span class="no">top_rank</span>),
-  <span class="kw pkg">ctree</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ctree/man/plot_CCF_clusters.html">plot_CCF_clusters</a></span>(<span class="no">top_rank</span>),
-  <span class="kw pkg">ctree</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ctree/man/plot_clone_size.html">plot_clone_size</a></span>(<span class="no">top_rank</span>),
-  <span class="kw">nrow</span> <span class="kw">=</span> <span class="fl">1</span>,
-  <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">3</span>
-)</pre></body></html></div>
+<span class="kw">ggpubr</span>::<span class="fu"><a href="https://rdrr.io/pkg/ggpubr/man/ggarrange.html">ggarrange</a></span>(
+  <span class="kw">ctree</span>::<span class="fu"><a href="https://rdrr.io/pkg/ctree/man/plot.ctree.html">plot.ctree</a></span>(<span class="kw">top_rank</span>),
+  <span class="kw">ctree</span>::<span class="fu"><a href="https://rdrr.io/pkg/ctree/man/plot_CCF_clusters.html">plot_CCF_clusters</a></span>(<span class="kw">top_rank</span>),
+  <span class="kw">ctree</span>::<span class="fu"><a href="https://rdrr.io/pkg/ctree/man/plot_clone_size.html">plot_clone_size</a></span>(<span class="kw">top_rank</span>),
+  nrow = <span class="fl">1</span>,
+  ncol = <span class="fl">3</span>
+)
+</pre></div>
 <p><img src="a6_CloneTrees_files/figure-html/unnamed-chunk-6-1.png" width="1152"></p>
 </div>
   </div>
@@ -267,7 +273,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

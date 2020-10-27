@@ -107,13 +107,13 @@
 
       
 
-      </header><script src="a4_popgen_files/header-attrs-2.1/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>4. Population Genetics statistics</h1>
                         <h4 class="author">Giulio Caravagna</h4>
             
-            <h4 class="date">11 mai, 2020</h4>
+            <h4 class="date">13 September, 2020</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/caravagn/mobstervignettes/a4_popgen.Rmd"><code>vignettes/a4_popgen.Rmd</code></a></small>
       <div class="hidden name"><code>a4_popgen.Rmd</code></div>
@@ -122,25 +122,29 @@
 
     
     
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">mobster</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tidyr</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">dplyr</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/caravagn/mobster">mobster</a></span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://tidyr.tidyverse.org">tidyr</a></span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://dplyr.tidyverse.org">dplyr</a></span>)
+</pre></div>
 <p>Population Genetics statistics can be extracted from a MOBSTER model.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">'fit_example'</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">'mobster'</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">fit_example</span>$<span class="no">best</span>)
-<span class="co">#&gt; -- [ MOBSTER ] My MOBSTER model n = 5000 with k = 2 Beta(s) and a tail ---------</span>
-<span class="co">#&gt; * Clusters: p = 55% [C1], 31% [Tail], and 14% [C2], with p &gt; 0.</span>
-<span class="co">#&gt; * Tail [n = 1370, 31%] with alpha = 1.2.</span>
-<span class="co">#&gt; * Beta C1 [n = 2784, 55%] with mean = 0.48.</span>
-<span class="co">#&gt; * Beta C2 [n = 846, 14%] with mean = 0.15.</span>
-<span class="co">#&gt; i Score(s): NLL = -5671.5; ICL = -10359.09 (-11266.35), H = 907.26 (0). Fit</span>
-<span class="co">#&gt; converged by MM in 75 steps.</span>
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">'fit_example'</span>, package = <span class="st">'mobster'</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw">fit_example</span><span class="op">$</span><span class="kw">best</span>)
+<span class="co">#&gt; ── [ MOBSTER ] My MOBSTER model n = 5000 with k = 2 Beta(s) and a tail ───────────────────────────────</span>
+<span class="co">#&gt; ● Clusters: π = 55% [C1], 31% [Tail], and 14% [C2], with π &gt; 0.</span>
+<span class="co">#&gt; ● Tail [n = 1370, 31%] with alpha = 1.2.</span>
+<span class="co">#&gt; ● Beta C1 [n = 2784, 55%] with mean = 0.48.</span>
+<span class="co">#&gt; ● Beta C2 [n = 846, 14%] with mean = 0.15.</span>
+<span class="co">#&gt; ℹ Score(s): NLL = -5671.5; ICL = -10359.09 (-11266.35), H = 907.26 (0). Fit converged by MM in 75</span>
+<span class="co">#&gt; steps.</span>
 
-<span class="fu"><a href="../reference/evolutionary_parameters.html">evolutionary_parameters</a></span>(<span class="no">fit_example</span>)
+<span class="fu"><a href="../reference/evolutionary_parameters.html">evolutionary_parameters</a></span>(<span class="kw">fit_example</span>)
 <span class="co">#&gt; # A tibble: 1 x 7</span>
 <span class="co">#&gt;      mu exponent  time subclonefrequency subclonemutations cluster     s</span>
 <span class="co">#&gt;   &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;             &lt;dbl&gt;             &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt;</span>
-<span class="co">#&gt; 1  73.5     2.25  5.98             0.298              695. C2      0.177</span></pre></body></html></div>
+<span class="co">#&gt; 1  73.5     2.25  5.98             0.298              695. C2      0.177</span>
+</pre></div>
 <p>The mutation rate <code>mu</code> (cell division units) scaled by the probability of lineage survival <span class="math inline">\(\beta\)</span>, <span class="math inline">\(\mu/\beta\)</span>, is given by: <span class="math display">\[
 \mu/\beta = \dfrac{M} {(\frac{1}{f_\text{min}} - \frac{1}{f_\text{max}})}
 \]</span> Where <span class="math inline">\(f_\text{min}\)</span> is the minimum VAF and <span class="math inline">\(f_\text{max}\)</span> is the maximum, and <span class="math inline">\(M\)</span> is the number of mutations between <span class="math inline">\(f_\text{min}\)</span> and <span class="math inline">\(f_\text{max}\)</span>.</p>
@@ -163,7 +167,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

@@ -32,7 +32,7 @@ You can run a MOBSTER analysis if, for a set of input mutations (SNVs, indels et
 
 For VAF values you can use:
 
-* a `data.frame` (or, `tibble`) with a column named `VAF` whose values are numerical $0<x<1$, without `NA` entries;
+* a `data.frame` (or, `tibble`) with a column named `VAF` whose values are numerical $0<x<1$, without `NA` entries and columns named any of those: `cluster`, `Tail`, `C1`, `C2`, `C3`,...;
 * a VCF file that must contain at least a column with the total depth of sequencing and the number of reads with the variants. In this case you need first to use function `load_VCF` and load the VCF content, and then proceed using your data as a `data.frame`.
 
 For CCF values you can only use the a `data.frame` format. Importantly, you have to  store the CCF values in a column again named `VAF`, which must follow the same convention of a VAF column (i.e., range of values). Since CCF values usually peak at around `1.0` for clonal mutations (i.e., present in 100% of the input cells), we suggest to adjust standard CCF estimates dividing them by `0.5` in order to reflect the  peak of an _heterozygous clonal mutation_ at 50% VAF for a 100% pure bulk sample.
@@ -78,6 +78,9 @@ In `mobster` we provide the implementation of the model's density function (`ddb
 ```{r, fig.width=4, fig.height=3}
 # Data, in the MOBSTER input format with a "VAF" column.
 print(dataset$data)
+
+# We rename the `cluster` column (that is a reserved name)
+dataset$data = dataset$data %>% dplyr::rename(gen_clusters = cluster)
 
 # The generated model contains the parameters of the Beta components (a and b),
 # the shape and scale of the tail, and the mixing proportion. 

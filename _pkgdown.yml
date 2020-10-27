@@ -27,7 +27,6 @@ reference:
   - fit_example
   - LU4_lung_sample 
   - LUFF76_lung_sample 
-  - PD4120a_breast_sample
   - cancer_genes_dnds
 
 - title: Fitting functions
@@ -80,6 +79,7 @@ reference:
   - dnds
   - evolutionary_parameters
   - get_clone_trees
+  - load_vcf
 
 
 

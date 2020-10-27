@@ -1,15 +1,18 @@
 #' Filter MOBSTER output clusters.
 #' 
 #' @description This function can filter out the clusters computed by MOBSTER
-#' based on two criteria: the mixing proportion value, and the number of mutations
-#' assigned. For both criteria a scalar should be given as input. The return object
-#' will contain only the clusters that pass both filters. If any cluster is dropped
+#' based on two criteria: the mixing proportion value,  the number of mutations
+#' assigned and the variance of the Beta clusters. 
+#' 
+#' For all criteria a scalar should be given as input. The return object
+#' will contain only the clusters that pass all filters. If any cluster is dropped
 #' the latent variables are re-computed, as well as the clustering assignments and the
 #' mixing proportions (all mutations will be still assigned after clusters' removal).
 #' 
 #' @param x A MOBSTER fit object.
 #' @param pi_cutoff The cutoff on the mixing proportions, default is 0.02.
 #' @param N_cutoff The cutoff on the number of mutations assigned to a cluster, default is 10.  
+#' @param Beta_variance_cutoff Minimum variance for a Beta peak.
 #' @param verbose If outputs should be reported to screen or not, default is no.
 #'
 #' @return A MOBSTER fit object where clusters are larger than \code{pi_cutoff} and contain
@@ -28,41 +31,54 @@
 choose_clusters = function(x, 
                            pi_cutoff = 0.02,
                            N_cutoff = 10,
+                           Beta_variance_cutoff = 0.0001,
                            verbose = FALSE)
 {
   mobster:::is_mobster_fit(x)
   
   if(verbose)
   {
-    pio::pioTit(paste0("Selecting MOBSTER clusters (F1,2-heuristic)."))
-    pio::pioStr("\nF1.       Cluster size (proportion) > ", pi_cutoff)
-    pio::pioStr("\nF2.        Cluster size (mutations) > ", N_cutoff, '\n\n')
+    cli::cli_rule("Filtering MOBSTER clusters")
+    cli::cli_text(mobster:::m_inf(paste0("pi > {.field {", pi_cutoff, '}} (mixing proportions)')))
+    cli::cli_text(mobster:::m_inf(paste0(" n > {.field {", N_cutoff, '}} (mutations per cluster)')))
+    cli::cli_text(mobster:::m_inf(paste0(" v > {.field {", Beta_variance_cutoff, '}} (minimum Betta variance)')))
   }
   
   # Cluster size - remove clusters smaller than pi_cutoff, or less than N_cutoff mutations
   pi = mobster:::.params_Pi(x)
+  varb = x$Clusters %>% dplyr::filter(type == 'Variance', cluster != 'Tail')
   
   pass_clusters_picutoff = pi > pi_cutoff
   pass_clusters_Ncutoff = x$N.k > N_cutoff
+  pass_clusters_Bvcutoff = pio:::nmfy(varb$cluster, varb$fit.value > Beta_variance_cutoff)
   
-  tab_clusters = tibble(cluster = names(pi), pi = pi, N = x$N.k[names(pi)])
+  tab_clusters = tibble::tibble(cluster = names(pi), pi = pi, N = x$N.k[names(pi)])
   tab_clusters$F1 = pass_clusters_picutoff
   tab_clusters$F2 = pass_clusters_Ncutoff
+  tab_clusters = tab_clusters %>% 
+    dplyr::left_join(
+      data.frame(stringsAsFactors = FALSE, 
+                 cluster = names(pass_clusters_Bvcutoff), 
+                 Beta_var = varb$fit.value,
+                 F3 = pass_clusters_Bvcutoff),
+      by = 'cluster'
+      ) %>%
+    dplyr::select(cluster, pi, N, Beta_var, starts_with('F'))
+  
+  tab_clusters$retain = apply(tab_clusters, 1, function(x) all(as.logical(x[5:length(x)]), na.rm = TRUE))
   
   # CLusters that will be cancelled
-  clusters_to_cancel = !pass_clusters_picutoff[names(pi)] | !pass_clusters_Ncutoff[names(pi)] 
-  
+  clusters_to_cancel = tab_clusters$cluster[which(!tab_clusters$retain)]
+    
   # Report to screen
-  tab_clusters$remove = clusters_to_cancel
-  
-  if(verbose) print(tab_clusters %>% arrange(desc(remove)))
+  if(verbose) print(tab_clusters %>% arrange(desc(retain)))
   
   # Report easy cases
-  if(sum(tab_clusters$remove) == nrow(tab_clusters)) stop("All clusters filtered out, this seems an error.")
-  if(sum(tab_clusters$remove) == 0) return(x)
+  if(sum(!tab_clusters$retain) == nrow(tab_clusters)) stop("All clusters filtered out, this seems an error.")
+  if(sum(tab_clusters$retain) == 0) return(x)
   
   # Clusters that remain, which we remove from a copy of x
-  remaining_clusters = tab_clusters %>% dplyr::filter(!remove) %>% dplyr::pull(cluster)
+  remaining_clusters = tab_clusters$cluster[which(tab_clusters$retain)]
   remaining_beta_clusters = remaining_clusters[grepl('C', remaining_clusters)]
   
   # We modify a copy of the input

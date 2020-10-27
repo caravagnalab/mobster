@@ -5,6 +5,7 @@
 #'
 #' @return See \code{\link{print}}.
 #' @exportS3Method summary dbpmm
+#' @export summary.dbpmm
 #'
 #' @examples
 #' data(fit_example)
@@ -20,6 +21,7 @@ summary.dbpmm = function(object, ...) {
 #'
 #' @return nothing.
 #' @exportS3Method print dbpmm
+#' @export print.dbpmm
 #' @importFrom crayon white red green yellow black bgYellow blue bold
 #' @importFrom cli cli_rule cli_text
 #' @importFrom clisymbols symbol

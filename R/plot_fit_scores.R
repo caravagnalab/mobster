@@ -10,6 +10,9 @@
 #' @return A ggplot figure with the scores for model selection.
 #' @export
 #'
+#' @importFrom reshape2 melt
+#' 
+#'
 #' @examples
 #' data('fit_example', package = 'mobster')
 #' plot_fit_scores(fit_example)

@@ -113,15 +113,24 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="mobster-" class="section level1">
+<div id="mobster" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#mobster-" class="anchor"></a>mobster <a href="https://caravagn.github.io/mobster"><img src="reference/figures/logo.png" align="right" height="139"></a>
+<a href="#mobster" class="anchor"></a>mobster <a href="https://caravagn.github.io/mobster"><img src="reference/figures/logo.png" align="right" height="139"></a>
 </h1></div>
 <!-- badges: start -->
 
-<p><code>mobster</code> is a package that implements a model-based clustering approach to <em>subclonal deconvolution</em> from cancer genome sequencing data (<a href="https://www.biorxiv.org/content/10.1101/586560v1">Caravagna et al.; https://doi.org/10.1101/586560</a>, <em>under review</em>).</p>
-<p>The package integrates evolutionary theory and Machine-Learning to analyze (e.g., whole-genome) bulk data from cancer samples. This analysis relates to clustering; we approach it via a maximum-likelihood formulation of Dirichlet mixture models, and use bootstrap routines to assess the confidence of the parameters. The package implements S3 objects to visualize the data and the fits.</p>
+<p><code>mobster</code> is a package that implements a model-based approach for <em>subclonal deconvolution</em> of cancer genome sequencing data (<a href="https://www.nature.com/articles/s41588-020-0675-5#:~:text=Subclonal%20reconstruction%20methods%20based%20on,and%20infer%20their%20evolutionary%20history.&amp;text=We%20present%20a%20novel%20approach,learning%20with%20theoretical%20population%20genetics.">Caravagna et al; PMID: 32879509</a>).</p>
+<p>The package integrates evolutionary theory (i.e., population) and Machine-Learning to analyze (e.g., whole-genome) bulk data from cancer samples. This analysis relates to clustering; we approach it via a maximum-likelihood formulation of Dirichlet mixture models, and use bootstrap routines to assess the confidence of the parameters. The package implements S3 objects to visualize the data and the fits.</p>
 <p><code>mobster</code> is part of the <code>evoverse</code> set of <a href="https://caravagn.github.io/evoverse">R packages</a> to implement Cancer Evolution analyses.</p>
+<div id="citation" class="section level4">
+<h4 class="hasAnchor">
+<a href="#citation" class="anchor"></a>Citation</h4>
+<p><a href="https://doi.org/10.1038/s41588-020-0675-5"><img src="https://img.shields.io/badge/doi-10.1038/s41588--020--0675--5-red.svg"></a></p>
+<p>If you use <code>mobster</code>, please cite:</p>
+<ul>
+<li>G. Caravagna, T. Heide, M.J. Williams, L. Zapata, D. Nichol, K. Chkhaidze, W. Cross, G.D. Cresswell, B. Werner, A. Acar, L. Chesler, C.P. Barnes, G. Sanguinetti, T.A. Graham, A. Sottoriva. Subclonal reconstruction of tumors by using machine learning and population genetics. Nature Genetics 52, 898–907 (2020).</li>
+</ul>
+</div>
 <div id="help-and-support" class="section level4">
 <h4 class="hasAnchor">
 <a href="#help-and-support" class="anchor"></a>Help and support</h4>
@@ -131,8 +140,10 @@
 <h3 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h3>
 <p>You can install the released version of <code>mobster</code> from <a href="https://github.com/">GitHub</a> with:</p>
-<div class="sourceCode" id="cb1"><pre class="r"><span class="co"># install.packages("devtools")</span>
-<span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span>(<span class="st">"caravagn/mobster"</span>)</pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="co"># install.packages("devtools")</span>
+<span class="kw">devtools</span>::<span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span>(<span class="st">"caravagn/mobster"</span>)
+</pre></div>
 <hr>
 <div id="copyright-and-contacts" class="section level4">
 <h4 class="hasAnchor">
@@ -187,7 +198,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

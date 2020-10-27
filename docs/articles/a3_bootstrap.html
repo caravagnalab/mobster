@@ -107,13 +107,13 @@
 
       
 
-      </header><script src="a3_bootstrap_files/header-attrs-2.1/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>3. Confidence estimation by the bootstrap</h1>
                         <h4 class="author">Giulio Caravagna</h4>
             
-            <h4 class="date">11 mai, 2020</h4>
+            <h4 class="date">13 September, 2020</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/caravagn/mobstervignettes/a3_bootstrap.Rmd"><code>vignettes/a3_bootstrap.Rmd</code></a></small>
       <div class="hidden name"><code>a3_bootstrap.Rmd</code></div>
@@ -122,48 +122,55 @@
 
     
     
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">mobster</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tidyr</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">dplyr</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/caravagn/mobster">mobster</a></span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://tidyr.tidyverse.org">tidyr</a></span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://dplyr.tidyverse.org">dplyr</a></span>)
+</pre></div>
 <div id="bootstrapping-a-model" class="section level1">
 <h1 class="hasAnchor">
 <a href="#bootstrapping-a-model" class="anchor"></a>Bootstrapping a model</h1>
 <p>This vignette describes how to compute the <em>bootstrap</em> confidence of a MOBSTER model.</p>
 <p>Both <em>parametric</em> and <em>nonparametric</em> bootstrap options are available: the former samples data from the model, the latter re-samples the data (with repetitions). Statistics are bootstrap estimates (averages) of the bootstrap fits. In both cases a model bootstrap probability can be computed, as well as the probability of clustering together any two mutations.</p>
 <p>We show this with a small synthetic dataset .to speed up the computation.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="co"># Data generation</span>
-<span class="no">dataset</span> <span class="kw">=</span> <span class="fu"><a href="../reference/random_dataset.html">random_dataset</a></span>(
-  <span class="kw">N</span> <span class="kw">=</span> <span class="fl">400</span>,
-  <span class="kw">seed</span> <span class="kw">=</span> <span class="fl">123</span>,
-  <span class="kw">Beta_variance_scaling</span> <span class="kw">=</span> <span class="fl">100</span>
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="co"># Data generation</span>
+<span class="kw">dataset</span> <span class="op">=</span> <span class="fu"><a href="../reference/random_dataset.html">random_dataset</a></span>(
+  N = <span class="fl">400</span>, 
+  seed = <span class="fl">123</span>, 
+  Beta_variance_scaling = <span class="fl">100</span>
   )
 
 <span class="co"># Fit model -- FAST option to speed up the vignette</span>
-<span class="no">fit</span> <span class="kw">=</span> <span class="fu"><a href="../reference/mobster_fit.html">mobster_fit</a></span>(<span class="no">dataset</span>$<span class="no">data</span>, <span class="kw">auto_setup</span> <span class="kw">=</span> <span class="st">'FAST'</span>)
+<span class="kw">fit</span> <span class="op">=</span> <span class="fu"><a href="../reference/mobster_fit.html">mobster_fit</a></span>(<span class="kw">dataset</span><span class="op">$</span><span class="kw">data</span> <span class="op">%&gt;%</span> <span class="kw">dplyr</span>::<span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span>(gen_cluster = <span class="kw">cluster</span>), auto_setup = <span class="st">'FAST'</span>)
 <span class="co">#&gt;  [ MOBSTER fit ]</span>
 
 <span class="co"># Composition with cowplot</span>
-<span class="kw pkg">cowplot</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/cowplot/man/plot_grid.html">plot_grid</a></span>(
-  <span class="no">dataset</span>$<span class="no">plot</span>,
-  <span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">fit</span>$<span class="no">best</span>),
-  <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">2</span>,
-  <span class="kw">align</span> <span class="kw">=</span> <span class="st">'h'</span>) <span class="kw">%&gt;%</span>
-  <span class="no">print</span></pre></body></html></div>
+<span class="kw">cowplot</span>::<span class="fu"><a href="https://rdrr.io/pkg/cowplot/man/plot_grid.html">plot_grid</a></span>(
+  <span class="kw">dataset</span><span class="op">$</span><span class="kw">plot</span>, 
+  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="kw">fit</span><span class="op">$</span><span class="kw">best</span>), 
+  ncol = <span class="fl">2</span>, 
+  align = <span class="st">'h'</span>) <span class="op">%&gt;%</span>
+  <span class="kw">print</span>
+</pre></div>
 <p><img src="a3_bootstrap_files/figure-html/unnamed-chunk-3-1.png" width="768"></p>
 <p>Now we can compute <code>n.resamples</code> nonparametric bootstraps using function <code>mobster_bootstrap</code>, passing parameters to the calls of <code>mobster_fit</code>. This function by defaults runs the fits in parallel (using a default percentage of the available cores); parallel computing capabilities are achieved using package <a href="https://github.com/caravagn/easypar">easypar</a>.</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co"># The returned object contains also the list of bootstrap resamples, and the fits.</span>
-<span class="no">bootstrap_results</span> <span class="kw">=</span> <span class="fu"><a href="../reference/mobster_bootstrap.html">mobster_bootstrap</a></span>(
-  <span class="no">fit</span>$<span class="no">best</span>,
-  <span class="kw">bootstrap</span> <span class="kw">=</span> <span class="st">'nonparametric'</span>,
-  <span class="kw">n.resamples</span> <span class="kw">=</span> <span class="fl">25</span>,
-  <span class="kw">auto_setup</span> <span class="kw">=</span> <span class="st">'FAST'</span> <span class="co"># forwarded to mobster_fit</span>
+<div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="co"># The returned object contains also the list of bootstrap resamples, and the fits.</span>
+<span class="kw">bootstrap_results</span> <span class="op">=</span> <span class="fu"><a href="../reference/mobster_bootstrap.html">mobster_bootstrap</a></span>(
+  <span class="kw">fit</span><span class="op">$</span><span class="kw">best</span>,
+  bootstrap = <span class="st">'nonparametric'</span>,
+  n.resamples = <span class="fl">25</span>,
+  auto_setup = <span class="st">'FAST'</span> <span class="co"># forwarded to mobster_fit</span>
   )
-<span class="co">#&gt;  [ MOBSTER bootstrap ~ 25 resamples from nonparametric bootstrap ]</span></pre></body></html></div>
+<span class="co">#&gt;  [ MOBSTER bootstrap ~ 25 resamples from nonparametric bootstrap ]</span>
+</pre></div>
 <p>The output object includes the bootstrap resamples, the fits and possible error returned by the runs.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="co"># Resamples are available for inspection as list of lists, </span>
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="co"># Resamples are available for inspection as list of lists, </span>
 <span class="co"># with a mapping to record the mutation id of the resample data.</span>
 <span class="co"># Ids are row numbers.</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">bootstrap_results</span>$<span class="no">resamples</span><span class="kw">[[</span><span class="fl">1</span>]]<span class="kw">[[</span><span class="fl">1</span>]] <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/pkg/tidyr/man/reexports.html">as_tibble</a></span>())
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw">bootstrap_results</span><span class="op">$</span><span class="kw">resamples</span>[[<span class="fl">1</span>]][[<span class="fl">1</span>]] <span class="op">%&gt;%</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html">as_tibble</a></span>())
 <span class="co">#&gt; # A tibble: 400 x 3</span>
 <span class="co">#&gt;       id    VAF original.id</span>
 <span class="co">#&gt;    &lt;int&gt;  &lt;dbl&gt;       &lt;int&gt;</span>
@@ -177,35 +184,25 @@
 <span class="co">#&gt;  8     8 0.111          240</span>
 <span class="co">#&gt;  9     9 0.388           62</span>
 <span class="co">#&gt; 10    10 0.0669         375</span>
-<span class="co">#&gt; # ... with 390 more rows</span>
+<span class="co">#&gt; # … with 390 more rows</span>
 
 <span class="co"># Fits are available inside the $fits list</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">bootstrap_results</span>$<span class="no">fits</span><span class="kw">[[</span><span class="fl">1</span>]])
-<span class="co">#&gt; -- [ MOBSTER ] My MOBSTER model n = 400 with k = 2 Beta(s) without tail --------</span>
-<span class="co">#&gt; * Clusters: p = 52% [C1] and 48% [C2], with p &gt; 0.</span>
-<span class="co">#&gt; x No tail fit.</span>
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw">bootstrap_results</span><span class="op">$</span><span class="kw">fits</span>[[<span class="fl">1</span>]])
+<span class="co">#&gt; ── [ MOBSTER ] My MOBSTER model n = 400 with k = 2 Beta(s) without tail ──────────────────────────────</span>
+<span class="co">#&gt; ● Clusters: π = 52% [C1] and 48% [C2], with π &gt; 0.</span>
+<span class="co">#&gt; ✖ No tail fit.</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; * Beta C1 [n = 208, 52%] with mean = 0.54.</span>
-<span class="co">#&gt; * Beta C2 [n = 192, 48%] with mean = 0.1.</span>
-<span class="co">#&gt; i Score(s): NLL = -224.35; ICL = -409.54 (-409.54), H = 3.21 (3.21). Fit</span>
-<span class="co">#&gt; converged by MM in 13 steps.</span>
-<span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">bootstrap_results</span>$<span class="no">fits</span><span class="kw">[[</span><span class="fl">1</span>]])
-<span class="co">#&gt; Warning: Unknown or uninitialised column: `Scale`.</span>
-<span class="co">#&gt; Warning: Unknown or uninitialised column: `Shape`.</span>
-<span class="co">#&gt; Warning: Unknown or uninitialised column: `Scale`.</span>
-<span class="co">#&gt; Warning: Unknown or uninitialised column: `Shape`.</span>
-<span class="co">#&gt; Warning: Unknown or uninitialised column: `Scale`.</span>
-<span class="co">#&gt; Warning: Unknown or uninitialised column: `Shape`.</span>
-<span class="co">#&gt; Warning: Unknown or uninitialised column: `Scale`.</span>
-<span class="co">#&gt; Warning: Unknown or uninitialised column: `Shape`.</span>
-<span class="co">#&gt; Warning: Unknown or uninitialised column: `Scale`.</span>
-<span class="co">#&gt; Warning: Unknown or uninitialised column: `Shape`.</span>
-<span class="co">#&gt; Warning: Unknown or uninitialised column: `Scale`.</span>
-<span class="co">#&gt; Warning: Unknown or uninitialised column: `Shape`.</span></pre></body></html></div>
+<span class="co">#&gt; ● Beta C1 [n = 208, 52%] with mean = 0.54.</span>
+<span class="co">#&gt; ● Beta C2 [n = 192, 48%] with mean = 0.1.</span>
+<span class="co">#&gt; ℹ Score(s): NLL = -224.35; ICL = -409.54 (-409.54), H = 3.21 (3.21). Fit converged by MM in 13 steps.</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="kw">bootstrap_results</span><span class="op">$</span><span class="kw">fits</span>[[<span class="fl">1</span>]])
+</pre></div>
 <p><img src="a3_bootstrap_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
 <p>Errors of each run are available, if any.</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">bootstrap_results</span>$<span class="no">errors</span>)
-<span class="co">#&gt; NULL</span></pre></body></html></div>
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw">bootstrap_results</span><span class="op">$</span><span class="kw">errors</span>)
+<span class="co">#&gt; NULL</span>
+</pre></div>
 </div>
 <div id="bootstrap-statistics" class="section level1">
 <h1 class="hasAnchor">
@@ -213,64 +210,58 @@
 <p>Bootstrap statistics can be computed with <code>bootstrapped_statistics</code>.</p>
 <p>With nonparametric bootstrap the data co-clustering probability is also computed (the probability of any pair of mutations in the data to be clustered together). Note that this probability depends on the joint resample probability of each pair of mutations (each bootstrapped with probability <span class="math inline">\(1/n\)</span>, for <span class="math inline">\(n\)</span> mutations).</p>
 <p><code>bootstrap_statistics</code> shows to screen several statistics.</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r">bootstrap_statistics = bootstrapped_statistics(
-  fit$best, 
-  bootstrap_results = bootstrap_results
+<div class="sourceCode" id="cb6"><pre class="downlit">
+<span class="kw">bootstrap_statistics</span> <span class="op">=</span> <span class="fu"><a href="../reference/bootstrapped_statistics.html">bootstrapped_statistics</a></span>(
+  <span class="kw">fit</span><span class="op">$</span><span class="kw">best</span>, 
+  bootstrap_results = <span class="kw">bootstrap_results</span>
   )
-#&gt; i Computing model frequency
-#&gt; Warning: `as.tibble()` is deprecated as of tibble 2.0.0.
-#&gt; Please use `as_tibble()` instead.
-#&gt; The signature and semantics have changed, see `?as_tibble`.
-#&gt; This warning is displayed once every 8 hours.
-#&gt; Call `lifecycle::last_warnings()` to see where this warning was generated.
-#&gt; # A tibble: 2 x 3
-#&gt;   Model              Frequency fit.model
-#&gt;   &lt;fct&gt;                  &lt;dbl&gt; &lt;lgl&gt;    
-#&gt; 1 K = 2 without tail      0.96 TRUE     
-#&gt; 2 K = 2 with tail         0.04 FALSE
-#&gt; 
-v Computing model frequency ... done
-#&gt; 
-i Confidence Intervals (CI) for empirical quantiles
-#&gt; 
-#&gt; Mixing proportions 
-#&gt;  # A tibble: 3 x 8
-#&gt;   cluster statistics   min lower_quantile higher_quantile   max fit.value
-#&gt;   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;
-#&gt; 1 C1      Mixing pr~ 0.465          0.472          0.541  0.548     0.506
-#&gt; 2 C2      Mixing pr~ 0.376          0.422          0.528  0.535     0.494
-#&gt; 3 Tail    Mixing pr~ 0              0              0.0579 0.145     0    
-#&gt; # ... with 1 more variable: init.value &lt;dbl&gt;
-#&gt; 
-#&gt; Tail shape/ scale 
-#&gt;  # A tibble: 2 x 8
-#&gt;   cluster statistics    min lower_quantile higher_quantile    max fit.value
-#&gt;   &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;
-#&gt; 1 Tail    Scale      0.0374         0.0374          0.0374 0.0374        NA
-#&gt; 2 Tail    Shape      0.945          0.945           0.945  0.945         NA
-#&gt; # ... with 1 more variable: init.value &lt;dbl&gt;
-#&gt; 
-#&gt; Beta peaks 
-#&gt;  # A tibble: 4 x 8
-#&gt;   cluster statistics     min lower_quantile higher_quantile     max fit.value
-#&gt;   &lt;chr&gt;   &lt;chr&gt;        &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;
-#&gt; 1 C1      Mean       0.538          0.541           0.566   0.568     0.555  
-#&gt; 2 C1      Variance   0.00803        0.00840         0.0136  0.0150    0.0109 
-#&gt; 3 C2      Mean       0.0932         0.0956          0.110   0.110     0.104  
-#&gt; 4 C2      Variance   0.00165        0.00189         0.00320 0.00324   0.00270
-#&gt; # ... with 1 more variable: init.value &lt;dbl&gt;
-#&gt; 
-v Confidence Intervals (CI) for empirical quantiles ... done
-#&gt; 
-i Co-clustering probability from nonparametric bootstrap
-v Co-clustering probability from nonparametric bootstrap ... done</pre></body></html></div>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Computing model frequency ─────────────────────────────────────────────────────────────────────────</span>
+<span class="co">#&gt; # A tibble: 2 x 3</span>
+<span class="co">#&gt;   Model              Frequency fit.model</span>
+<span class="co">#&gt;   &lt;fct&gt;                  &lt;dbl&gt; &lt;lgl&gt;    </span>
+<span class="co">#&gt; 1 K = 2 without tail      0.96 TRUE     </span>
+<span class="co">#&gt; 2 K = 2 with tail         0.04 FALSE</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Computing confidence Intervals (CI) for empirical quantiles ───────────────────────────────────────</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Mixing proportions </span>
+<span class="co">#&gt;  # A tibble: 3 x 8</span>
+<span class="co">#&gt;   cluster statistics   min lower_quantile higher_quantile   max fit.value</span>
+<span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;</span>
+<span class="co">#&gt; 1 C1      Mixing pr… 0.465          0.472          0.541  0.548     0.506</span>
+<span class="co">#&gt; 2 C2      Mixing pr… 0.376          0.422          0.528  0.535     0.494</span>
+<span class="co">#&gt; 3 Tail    Mixing pr… 0              0              0.0579 0.145     0    </span>
+<span class="co">#&gt; # … with 1 more variable: init.value &lt;dbl&gt;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Tail shape/ scale </span>
+<span class="co">#&gt;  # A tibble: 2 x 8</span>
+<span class="co">#&gt;   cluster statistics    min lower_quantile higher_quantile    max fit.value</span>
+<span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;</span>
+<span class="co">#&gt; 1 Tail    Scale      0.0374         0.0374          0.0374 0.0374        NA</span>
+<span class="co">#&gt; 2 Tail    Shape      0.945          0.945           0.945  0.945         NA</span>
+<span class="co">#&gt; # … with 1 more variable: init.value &lt;dbl&gt;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Beta peaks </span>
+<span class="co">#&gt;  # A tibble: 4 x 8</span>
+<span class="co">#&gt;   cluster statistics     min lower_quantile higher_quantile     max fit.value</span>
+<span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;        &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;</span>
+<span class="co">#&gt; 1 C1      Mean       0.538          0.541           0.566   0.568     0.555  </span>
+<span class="co">#&gt; 2 C1      Variance   0.00803        0.00840         0.0136  0.0150    0.0109 </span>
+<span class="co">#&gt; 3 C2      Mean       0.0932         0.0956          0.110   0.110     0.104  </span>
+<span class="co">#&gt; 4 C2      Variance   0.00165        0.00189         0.00320 0.00324   0.00270</span>
+<span class="co">#&gt; # … with 1 more variable: init.value &lt;dbl&gt;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Computing co-clustering probability for nonparametric bootstrap ───────────────────────────────────</span>
+</pre></div>
 </div>
 <div id="visualising-bootstrap-results" class="section level1">
 <h1 class="hasAnchor">
 <a href="#visualising-bootstrap-results" class="anchor"></a>Visualising bootstrap results</h1>
 <p>Object <code>bootstrap_statistics</code> contains tibbles that can be plot with specific <code>mobster</code> functions.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="co"># All bootstrapped values</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">bootstrap_statistics</span>$<span class="no">bootstrap_values</span>)
+<div class="sourceCode" id="cb7"><pre class="downlit">
+<span class="co"># All bootstrapped values</span>
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw">bootstrap_statistics</span><span class="op">$</span><span class="kw">bootstrap_values</span>)
 <span class="co">#&gt; # A tibble: 279 x 5</span>
 <span class="co">#&gt;    cluster statistics        fit.value init.value resample</span>
 <span class="co">#&gt;    &lt;chr&gt;   &lt;chr&gt;                 &lt;dbl&gt;      &lt;dbl&gt;    &lt;int&gt;</span>
@@ -284,10 +275,10 @@ v Co-clustering probability from nonparametric bootstrap ... done</pre></body></
 <span class="co">#&gt;  8 C1      Variance            0.00996    0.00368        1</span>
 <span class="co">#&gt;  9 C2      Mixing proportion   0.480      0.5            1</span>
 <span class="co">#&gt; 10 C1      Mixing proportion   0.520      0.5            1</span>
-<span class="co">#&gt; # ... with 269 more rows</span>
+<span class="co">#&gt; # … with 269 more rows</span>
 
 <span class="co"># The model probability</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">bootstrap_statistics</span>$<span class="no">bootstrap_model</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw">bootstrap_statistics</span><span class="op">$</span><span class="kw">bootstrap_model</span>)
 <span class="co">#&gt; # A tibble: 2 x 3</span>
 <span class="co">#&gt;   Model              Frequency fit.model</span>
 <span class="co">#&gt;   &lt;fct&gt;                  &lt;dbl&gt; &lt;lgl&gt;    </span>
@@ -295,64 +286,68 @@ v Co-clustering probability from nonparametric bootstrap ... done</pre></body></
 <span class="co">#&gt; 2 K = 2 with tail         0.04 FALSE</span>
 
 <span class="co"># The parameter stastics</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">bootstrap_statistics</span>$<span class="no">bootstrap_statistics</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw">bootstrap_statistics</span><span class="op">$</span><span class="kw">bootstrap_statistics</span>)
 <span class="co">#&gt; # A tibble: 15 x 8</span>
 <span class="co">#&gt;    cluster statistics       min lower_quantile higher_quantile       max</span>
 <span class="co">#&gt;    &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;     &lt;dbl&gt;</span>
 <span class="co">#&gt;  1 C1      a            8.56           9.50           15.8      16.4    </span>
 <span class="co">#&gt;  2 C1      b            6.96           7.74           12.6      13.5    </span>
 <span class="co">#&gt;  3 C1      Mean         0.538          0.541           0.566     0.568  </span>
-<span class="co">#&gt;  4 C1      Mixing pr~   0.465          0.472           0.541     0.548  </span>
+<span class="co">#&gt;  4 C1      Mixing pr…   0.465          0.472           0.541     0.548  </span>
 <span class="co">#&gt;  5 C1      Variance     0.00803        0.00840         0.0136    0.0150 </span>
 <span class="co">#&gt;  6 C2      a            2.92           2.93            4.68      5.53   </span>
 <span class="co">#&gt;  7 C2      b           25.0           25.4            42.3      48.8    </span>
 <span class="co">#&gt;  8 C2      Mean         0.0932         0.0956          0.110     0.110  </span>
-<span class="co">#&gt;  9 C2      Mixing pr~   0.376          0.422           0.528     0.535  </span>
+<span class="co">#&gt;  9 C2      Mixing pr…   0.376          0.422           0.528     0.535  </span>
 <span class="co">#&gt; 10 C2      Variance     0.00165        0.00189         0.00320   0.00324</span>
 <span class="co">#&gt; 11 Tail    Mean       Inf            Inf             Inf       Inf      </span>
-<span class="co">#&gt; 12 Tail    Mixing pr~   0              0               0.0579    0.145  </span>
+<span class="co">#&gt; 12 Tail    Mixing pr…   0              0               0.0579    0.145  </span>
 <span class="co">#&gt; 13 Tail    Scale        0.0374         0.0374          0.0374    0.0374 </span>
 <span class="co">#&gt; 14 Tail    Shape        0.945          0.945           0.945     0.945  </span>
 <span class="co">#&gt; 15 Tail    Variance   Inf            Inf             Inf       Inf      </span>
-<span class="co">#&gt; # ... with 2 more variables: fit.value &lt;dbl&gt;, init.value &lt;dbl&gt;</span></pre></body></html></div>
+<span class="co">#&gt; # … with 2 more variables: fit.value &lt;dbl&gt;, init.value &lt;dbl&gt;</span>
+</pre></div>
 <p>Bootstrapping, one can plot the model frequency across re-samples. A model is identified by its mixture components (e.g., 2 Betas plus one tail).</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu"><a href="../reference/plot_bootstrap_model_frequency.html">plot_bootstrap_model_frequency</a></span>(
-  <span class="no">bootstrap_results</span>,
-  <span class="no">bootstrap_statistics</span>
-  )</pre></body></html></div>
+<div class="sourceCode" id="cb8"><pre class="downlit">
+<span class="fu"><a href="../reference/plot_bootstrap_model_frequency.html">plot_bootstrap_model_frequency</a></span>(
+  <span class="kw">bootstrap_results</span>, 
+  <span class="kw">bootstrap_statistics</span>
+  )
+</pre></div>
 <p><img src="a3_bootstrap_files/figure-html/unnamed-chunk-9-1.png" width="240"></p>
 <p>The bootstrap estimates of the parameters can be visualised.</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="co"># Plot the mixing proportions</span>
-<span class="no">mplot</span> <span class="kw">=</span> <span class="fu"><a href="../reference/plot_bootstrap_mixing_proportions.html">plot_bootstrap_mixing_proportions</a></span>(
-  <span class="no">fit</span>$<span class="no">best</span>,
-  <span class="kw">bootstrap_results</span> <span class="kw">=</span> <span class="no">bootstrap_results</span>,
-  <span class="kw">bootstrap_statistics</span> <span class="kw">=</span> <span class="no">bootstrap_statistics</span>
+<div class="sourceCode" id="cb9"><pre class="downlit">
+<span class="co"># Plot the mixing proportions</span>
+<span class="kw">mplot</span> <span class="op">=</span> <span class="fu"><a href="../reference/plot_bootstrap_mixing_proportions.html">plot_bootstrap_mixing_proportions</a></span>(
+  <span class="kw">fit</span><span class="op">$</span><span class="kw">best</span>, 
+  bootstrap_results = <span class="kw">bootstrap_results</span>, 
+  bootstrap_statistics = <span class="kw">bootstrap_statistics</span>
   )
 
 <span class="co"># Plot the tail parameters</span>
-<span class="no">tplot</span> <span class="kw">=</span> <span class="fu"><a href="../reference/plot_bootstrap_tail.html">plot_bootstrap_tail</a></span>(
-  <span class="no">fit</span>$<span class="no">best</span>,
-  <span class="kw">bootstrap_results</span> <span class="kw">=</span> <span class="no">bootstrap_results</span>,
-  <span class="kw">bootstrap_statistics</span> <span class="kw">=</span> <span class="no">bootstrap_statistics</span>
+<span class="kw">tplot</span> <span class="op">=</span> <span class="fu"><a href="../reference/plot_bootstrap_tail.html">plot_bootstrap_tail</a></span>(
+  <span class="kw">fit</span><span class="op">$</span><span class="kw">best</span>, 
+  bootstrap_results = <span class="kw">bootstrap_results</span>, 
+  bootstrap_statistics = <span class="kw">bootstrap_statistics</span>
   )
 
 <span class="co"># Plot the Beta parameters</span>
-<span class="no">bplot</span> <span class="kw">=</span> <span class="fu"><a href="../reference/plot_bootstrap_Beta.html">plot_bootstrap_Beta</a></span>(
-  <span class="no">fit</span>$<span class="no">best</span>,
-  <span class="kw">bootstrap_results</span> <span class="kw">=</span> <span class="no">bootstrap_results</span>,
-  <span class="kw">bootstrap_statistics</span> <span class="kw">=</span> <span class="no">bootstrap_statistics</span>
+<span class="kw">bplot</span> <span class="op">=</span> <span class="fu"><a href="../reference/plot_bootstrap_Beta.html">plot_bootstrap_Beta</a></span>(
+  <span class="kw">fit</span><span class="op">$</span><span class="kw">best</span>, 
+  bootstrap_results = <span class="kw">bootstrap_results</span>, 
+  bootstrap_statistics = <span class="kw">bootstrap_statistics</span>
   )
 <span class="co">#&gt; Warning: Removed 4 rows containing missing values (geom_bar).</span>
 
 <span class="co">#&gt; Warning: Removed 4 rows containing missing values (geom_bar).</span>
 
 <span class="co"># Figure</span>
-<span class="no">figure</span> <span class="kw">=</span> <span class="kw pkg">ggpubr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ggpubr/man/ggarrange.html">ggarrange</a></span>(
-  <span class="no">mplot</span>,
-  <span class="no">tplot</span>,
-  <span class="no">bplot</span>,
-  <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">3</span>, <span class="kw">nrow</span> <span class="kw">=</span> <span class="fl">1</span>,
-  <span class="kw">widths</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">.7</span>, <span class="fl">1</span>, <span class="fl">1</span>)
+<span class="kw">figure</span> <span class="op">=</span> <span class="kw">ggpubr</span>::<span class="fu"><a href="https://rdrr.io/pkg/ggpubr/man/ggarrange.html">ggarrange</a></span>(
+  <span class="kw">mplot</span>,
+  <span class="kw">tplot</span>,
+  <span class="kw">bplot</span>,
+  ncol = <span class="fl">3</span>, nrow = <span class="fl">1</span>,
+  widths = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">.7</span>, <span class="fl">1</span>, <span class="fl">1</span>)
 )
 <span class="co">#&gt; Warning in max(data$density): no non-missing arguments to max; returning -Inf</span>
 <span class="co">#&gt; Warning: Computation failed in `stat_ydensity()`:</span>
@@ -361,15 +356,18 @@ v Co-clustering probability from nonparametric bootstrap ... done</pre></body></
 <span class="co">#&gt; Warning: Computation failed in `stat_ydensity()`:</span>
 <span class="co">#&gt; replacement has 1 row, data has 0</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">figure</span>)</pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw">figure</span>)
+</pre></div>
 <p><img src="a3_bootstrap_files/figure-html/unnamed-chunk-10-1.png" width="1152"></p>
 <p>For a nonparametric bootstrap we can plot also the co-clustering probability of the data.</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r">
+<div class="sourceCode" id="cb10"><pre class="downlit">
+
 <span class="fu"><a href="../reference/plot_bootstrap_coclustering.html">plot_bootstrap_coclustering</a></span>(
-  <span class="no">fit</span>$<span class="no">best</span>,
-  <span class="kw">bootstrap_results</span> <span class="kw">=</span> <span class="no">bootstrap_results</span>,
-  <span class="kw">bootstrap_statistics</span> <span class="kw">=</span> <span class="no">bootstrap_statistics</span>
-  )</pre></body></html></div>
+  <span class="kw">fit</span><span class="op">$</span><span class="kw">best</span>, 
+  bootstrap_results = <span class="kw">bootstrap_results</span>, 
+  bootstrap_statistics = <span class="kw">bootstrap_statistics</span>
+  )
+</pre></div>
 <p><img src="a3_bootstrap_files/figure-html/unnamed-chunk-11-1.png" width="537.6"></p>
 </div>
   </div>
@@ -389,7 +387,7 @@ v Co-clustering probability from nonparametric bootstrap ... done</pre></body></
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

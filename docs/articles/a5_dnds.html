@@ -107,13 +107,13 @@
 
       
 
-      </header><script src="a5_dnds_files/header-attrs-2.1/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>5. dN/dS statistics</h1>
                         <h4 class="author">Giulio Caravagna</h4>
             
-            <h4 class="date">11 mai, 2020</h4>
+            <h4 class="date">13 September, 2020</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/caravagn/mobstervignettes/a5_dnds.Rmd"><code>vignettes/a5_dnds.Rmd</code></a></small>
       <div class="hidden name"><code>a5_dnds.Rmd</code></div>
@@ -122,9 +122,11 @@
 
     
     
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">mobster</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tidyr</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">dplyr</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/caravagn/mobster">mobster</a></span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://tidyr.tidyverse.org">tidyr</a></span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://dplyr.tidyverse.org">dplyr</a></span>)
+</pre></div>
 <div id="computing-dnds-values" class="section level1">
 <h1 class="hasAnchor">
 <a href="#computing-dnds-values" class="anchor"></a>Computing dnds values</h1>
@@ -137,52 +139,57 @@
 </ul>
 <p>Besides, it is important to know what is the reference genome used to align the genome; this information will be used by <code>dndscv</code> to annotate input mutations.</p>
 <p>We show this analysis with the fits for one of the lung samples available in the package.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">fit</span> <span class="kw">=</span> <span class="kw pkg">mobster</span><span class="kw ns">::</span><span class="no"><a href="../reference/LUFF76_lung_sample.html">LUFF76_lung_sample</a></span>
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="kw">fit</span> <span class="op">=</span> <span class="kw">mobster</span>::<span class="kw"><a href="../reference/LUFF76_lung_sample.html">LUFF76_lung_sample</a></span>
 
 <span class="co"># Print and plot the model</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">fit</span>$<span class="no">best</span>)
-<span class="co">#&gt; -- [ MOBSTER ]  n = 2298 with k = 1 Beta(s) and a tail -------------------------</span>
-<span class="co">#&gt; * Clusters: p = 50% [Tail] and 50% [C1], with p &gt; 0.</span>
-<span class="co">#&gt; * Tail [n = 1076, 50%] with alpha = 2.</span>
-<span class="co">#&gt; * Beta C1 [n = 1222, 50%] with mean = 0.25.</span>
-<span class="co">#&gt; i Score(s): NLL = -3095.24; ICL = -5784.22 (-6144.04), H = 359.82 (0). Fit</span>
-<span class="co">#&gt; converged by MM in 51 steps.</span>
-<span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">fit</span>$<span class="no">best</span>)</pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw">fit</span><span class="op">$</span><span class="kw">best</span>)
+<span class="co">#&gt; ── [ MOBSTER ]  n = 2298 with k = 1 Beta(s) and a tail ───────────────────────────────────────────────</span>
+<span class="co">#&gt; ● Clusters: π = 50% [Tail] and 50% [C1], with π &gt; 0.</span>
+<span class="co">#&gt; ● Tail [n = 1076, 50%] with alpha = 2.</span>
+<span class="co">#&gt; ● Beta C1 [n = 1222, 50%] with mean = 0.25.</span>
+<span class="co">#&gt; ℹ Score(s): NLL = -3095.24; ICL = -5784.22 (-6144.04), H = 359.82 (0). Fit converged by MM in 51</span>
+<span class="co">#&gt; steps.</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="kw">fit</span><span class="op">$</span><span class="kw">best</span>)
+</pre></div>
 <p><img src="a5_dnds_files/figure-html/unnamed-chunk-3-1.png" width="480"></p>
 <p>We compute the values using the clustering assignments from the best fit.</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">clusters</span> <span class="kw">=</span> <span class="fu"><a href="../reference/Clusters.html">Clusters</a></span>(<span class="no">fit</span>$<span class="no">best</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">clusters</span>)
+<div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="kw">clusters</span> <span class="op">=</span> <span class="fu"><a href="../reference/Clusters.html">Clusters</a></span>(<span class="kw">fit</span><span class="op">$</span><span class="kw">best</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw">clusters</span>)
 <span class="co">#&gt; # A tibble: 2,298 x 14</span>
-<span class="co">#&gt;      Key Callers t_alt_count t_ref_count Variant_Classif~    DP    VAF chr  </span>
+<span class="co">#&gt;      Key Callers t_alt_count t_ref_count Variant_Classif…    DP    VAF chr  </span>
 <span class="co">#&gt;    &lt;int&gt; &lt;chr&gt;         &lt;int&gt;       &lt;int&gt; &lt;chr&gt;            &lt;int&gt;  &lt;dbl&gt; &lt;chr&gt;</span>
-<span class="co">#&gt;  1   330 mutect~          23         149 intergenic         172 0.134  chr2 </span>
-<span class="co">#&gt;  2   331 mutect~          53         133 intergenic         186 0.285  chr2 </span>
-<span class="co">#&gt;  3   332 mutect~           8         132 intergenic         140 0.0571 chr2 </span>
-<span class="co">#&gt;  4   334 mutect~          26         112 intergenic         138 0.188  chr2 </span>
-<span class="co">#&gt;  5   335 mutect~          40         102 intronic           142 0.282  chr2 </span>
-<span class="co">#&gt;  6   336 mutect~          32          95 intronic           127 0.252  chr2 </span>
-<span class="co">#&gt;  7   337 mutect~          28         134 intergenic         162 0.173  chr2 </span>
-<span class="co">#&gt;  8   338 mutect~          14         148 intergenic         162 0.0864 chr2 </span>
-<span class="co">#&gt;  9   339 mutect~          11         108 intronic           119 0.0924 chr2 </span>
-<span class="co">#&gt; 10   340 mutect~          11         171 intergenic         182 0.0604 chr2 </span>
-<span class="co">#&gt; # ... with 2,288 more rows, and 6 more variables: from &lt;chr&gt;, ref &lt;chr&gt;,</span>
-<span class="co">#&gt; #   alt &lt;chr&gt;, cluster &lt;chr&gt;, Tail &lt;dbl&gt;, C1 &lt;dbl&gt;</span></pre></body></html></div>
+<span class="co">#&gt;  1   330 mutect…          23         149 intergenic         172 0.134  chr2 </span>
+<span class="co">#&gt;  2   331 mutect…          53         133 intergenic         186 0.285  chr2 </span>
+<span class="co">#&gt;  3   332 mutect…           8         132 intergenic         140 0.0571 chr2 </span>
+<span class="co">#&gt;  4   334 mutect…          26         112 intergenic         138 0.188  chr2 </span>
+<span class="co">#&gt;  5   335 mutect…          40         102 intronic           142 0.282  chr2 </span>
+<span class="co">#&gt;  6   336 mutect…          32          95 intronic           127 0.252  chr2 </span>
+<span class="co">#&gt;  7   337 mutect…          28         134 intergenic         162 0.173  chr2 </span>
+<span class="co">#&gt;  8   338 mutect…          14         148 intergenic         162 0.0864 chr2 </span>
+<span class="co">#&gt;  9   339 mutect…          11         108 intronic           119 0.0924 chr2 </span>
+<span class="co">#&gt; 10   340 mutect…          11         171 intergenic         182 0.0604 chr2 </span>
+<span class="co">#&gt; # … with 2,288 more rows, and 6 more variables: from &lt;chr&gt;, ref &lt;chr&gt;,</span>
+<span class="co">#&gt; #   alt &lt;chr&gt;, cluster &lt;chr&gt;, Tail &lt;dbl&gt;, C1 &lt;dbl&gt;</span>
+</pre></div>
 <p>The available clusters are <code>C1</code> and <code>Tail</code>; <code>C1</code> is the clonal cluster. We compute dN/dS with the default parameters.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="co"># Run by cluster and default gene list</span>
-<span class="no">dnds_stats</span> <span class="kw">=</span> <span class="fu"><a href="../reference/dnds.html">dnds</a></span>(
-  <span class="no">clusters</span>,
-  <span class="kw">gene_list</span> <span class="kw">=</span> <span class="kw">NULL</span>
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="co"># Run by cluster and default gene list</span>
+<span class="kw">dnds_stats</span> <span class="op">=</span> <span class="fu"><a href="../reference/dnds.html">dnds</a></span>(
+  <span class="kw">clusters</span>,
+  gene_list = <span class="kw">NULL</span>
 )
 <span class="co">#&gt; Missing 'sample' column, assuming mutations from a single patient (adding a sample label otherwise).</span>
-<span class="co">#&gt; i 2298 mutations; 'by cluster' groups in 0 samples, with no genes (default dndscv).</span>
+<span class="co">#&gt; ℹ 2298 mutations; 'by cluster' groups in 0 samples, with no genes (default dndscv).</span>
 <span class="co">#&gt; [refdb = hg19] Removing chr from chromosome names for hg19 reference compatability</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;   C1 Tail </span>
 <span class="co">#&gt; 1222 1076</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; -- Running dndscv --------------------------------------------------------------</span>
+<span class="co">#&gt; ── Running dndscv ────────────────────────────────────────────────────────────────────────────────────</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; -- Group Tail</span>
+<span class="co">#&gt; ── Group Tail</span>
 <span class="co">#&gt; [1] Loading the environment...</span>
 <span class="co">#&gt; [2] Annotating the mutations...</span>
 <span class="co">#&gt; [3] Estimating global rates...</span>
@@ -190,7 +197,7 @@
 <span class="co">#&gt; [5] Running dNdScv...</span>
 <span class="co">#&gt;     Regression model for substitutions (theta = 6.69e-05).</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; -- Group C1</span>
+<span class="co">#&gt; ── Group C1</span>
 <span class="co">#&gt; [1] Loading the environment...</span>
 <span class="co">#&gt; [2] Annotating the mutations...</span>
 <span class="co">#&gt; [3] Estimating global rates...</span>
@@ -198,7 +205,7 @@
 <span class="co">#&gt; [5] Running dNdScv...</span>
 <span class="co">#&gt; dndscv error</span>
 <span class="co">#&gt; Error in while ((it &lt;- it + 1) &lt; limit &amp;&amp; abs(del) &gt; eps) {: missing value where TRUE/FALSE needed</span>
-<span class="co">#&gt; -- dndscv results ------------------------------ wall, wmis, wnon, wspl, wtru --</span>
+<span class="co">#&gt; ── dndscv results ──────────────────────────────────────────────────── wall, wmis, wnon, wspl, wtru ──</span>
 <span class="co">#&gt; # A tibble: 5 x 5</span>
 <span class="co">#&gt;   name            mle cilow cihigh dnds_group</span>
 <span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;     </span>
@@ -206,22 +213,26 @@
 <span class="co">#&gt; 2 wnon  0.00000000804 0     Inf    Tail      </span>
 <span class="co">#&gt; 3 wspl  0.0000000260  0     Inf    Tail      </span>
 <span class="co">#&gt; 4 wtru  0.0000000170  0     Inf    Tail      </span>
-<span class="co">#&gt; 5 wall  0.701         0.109   4.51 Tail</span></pre></body></html></div>
+<span class="co">#&gt; 5 wall  0.701         0.109   4.51 Tail</span>
+</pre></div>
 <p>The statistics can be computed for a custom grouping of the clusters. Here it does not make much difference because we have only the clonal cluster, and the tail; but if we had one subclone <code>C2</code> we could have pooled together the mutations in the clones using</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="co"># Not run here</span>
-<span class="no">dnds_stats</span> <span class="kw">=</span> <span class="fu"><a href="../reference/dnds.html">dnds</a></span>(
-  <span class="no">clusters</span>,
-  <span class="kw">mapping</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">`C1`</span> <span class="kw">=</span> <span class="st">'Non-tail'</span>, <span class="kw">`C2`</span> <span class="kw">=</span> <span class="st">'Non-tail'</span>, <span class="kw">`Tail`</span> <span class="kw">=</span> <span class="st">'Tail'</span>),
-  <span class="kw">gene_list</span> <span class="kw">=</span> <span class="kw">NULL</span>
-)</pre></body></html></div>
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="co"># Not run here</span>
+<span class="kw">dnds_stats</span> <span class="op">=</span> <span class="fu"><a href="../reference/dnds.html">dnds</a></span>(
+  <span class="kw">clusters</span>,
+  mapping = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(`C1` = <span class="st">'Non-tail'</span>, `C2` = <span class="st">'Non-tail'</span>, `Tail` = <span class="st">'Tail'</span>),
+  gene_list = <span class="kw">NULL</span>
+)
+</pre></div>
 <p>In the above analysis we have run <code>dndscv</code> using the default gene list (<code>gene_list = NULL</code>). Notice that errors raised by <code>dndscv</code> are intercepted by <code>mobster</code>; some of this errors might originate from a dataset with not enough substitutions to compute dN/dS.</p>
 <p>The call returns:</p>
 <ul>
 <li>the table computed by <code>dndscv</code>, where column <code>dnds_group</code> labels the group.</li>
 <li>a <code>ggplot</code> plot of the point estimates and the confidence interval;</li>
 </ul>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="co"># Summary statistics</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">dnds_stats</span>$<span class="no">dnds_summary</span>)
+<div class="sourceCode" id="cb6"><pre class="downlit">
+<span class="co"># Summary statistics</span>
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw">dnds_stats</span><span class="op">$</span><span class="kw">dnds_summary</span>)
 <span class="co">#&gt; # A tibble: 5 x 5</span>
 <span class="co">#&gt;   name            mle cilow cihigh dnds_group</span>
 <span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;     </span>
@@ -232,7 +243,7 @@
 <span class="co">#&gt; 5 wall  0.701         0.109   4.51 Tail</span>
 
 <span class="co"># Table observation countns</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">dnds_stats</span>$<span class="no">dndscv_table</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw">dnds_stats</span><span class="op">$</span><span class="kw">dndscv_table</span>)
 <span class="co">#&gt; # A tibble: 20,091 x 15</span>
 <span class="co">#&gt;    gene_name n_syn n_mis n_non n_spl wmis_cv wnon_cv wspl_cv pmis_cv ptrunc_cv</span>
 <span class="co">#&gt;    &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;</span>
@@ -246,11 +257,12 @@
 <span class="co">#&gt;  8 OBSCN         0     0     0     0      0        0       0 9.15e-1     0.989</span>
 <span class="co">#&gt;  9 SYNE1         0     0     0     0      0        0       0 9.17e-1     0.985</span>
 <span class="co">#&gt; 10 NEB           0     0     0     0      0        0       0 9.19e-1     0.978</span>
-<span class="co">#&gt; # ... with 20,081 more rows, and 5 more variables: pallsubs_cv &lt;dbl&gt;,</span>
+<span class="co">#&gt; # … with 20,081 more rows, and 5 more variables: pallsubs_cv &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   qmis_cv &lt;dbl&gt;, qtrunc_cv &lt;dbl&gt;, qallsubs_cv &lt;dbl&gt;, dnds_group &lt;chr&gt;</span>
 
 <span class="co"># Plot</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">dnds_stats</span>$<span class="no">plot</span>)</pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw">dnds_stats</span><span class="op">$</span><span class="kw">plot</span>)
+</pre></div>
 <p><img src="a5_dnds_files/figure-html/unnamed-chunk-7-1.png" width="864"></p>
 <p>The default plot contains results obtained from all substitution models available in <code>dndscv</code>. Specific models can be required using the parameters of the <code>dnds</code> function.</p>
 </div>
@@ -265,11 +277,12 @@
 <li>a list of essential genes compiled in <code>Bloomen et al. Science 350.6264 (2015): 1092-1096.</code>.</li>
 </ul>
 <p>which are available to load.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="co"># Load the list</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">'cancer_genes_dnds'</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">'mobster'</span>)
+<div class="sourceCode" id="cb7"><pre class="downlit">
+<span class="co"># Load the list</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">'cancer_genes_dnds'</span>, package = <span class="st">'mobster'</span>)
 
 <span class="co"># Each sublist is a list </span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(<span class="no">cancer_genes_dnds</span>, <span class="no">head</span>))
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(<span class="kw">cancer_genes_dnds</span>, <span class="kw">head</span>))
 <span class="co">#&gt; $Martincorena_drivers</span>
 <span class="co">#&gt; [1] "CCDC6"     "EIF1AX"    "HIST1H2BD" "MED12"     "POLE"      "SMARCB1"  </span>
 <span class="co">#&gt; </span>
@@ -280,41 +293,47 @@
 <span class="co">#&gt; [1] "ABL1"    "RPL23A"  "AARS2"   "TRMT112" "FARSA"   "ABCB7"  </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $Bloomen_essentials</span>
-<span class="co">#&gt; [1] "AARS"     "AASDHPPT" "AATF"     "ABCB7"    "ABCE1"    "ABCF1"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "AARS"     "AASDHPPT" "AATF"     "ABCB7"    "ABCE1"    "ABCF1"</span>
+</pre></div>
 <p>A custom gene list can be used as follows.</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="co"># Not run here</span>
-<span class="no">dnds_stats</span> <span class="kw">=</span> <span class="fu"><a href="../reference/dnds.html">dnds</a></span>(
-  <span class="no">clusters</span>,
-  <span class="kw">mapping</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">`C1`</span> <span class="kw">=</span> <span class="st">'Non-tail'</span>, <span class="kw">`C2`</span> <span class="kw">=</span> <span class="st">'Non-tail'</span>, <span class="kw">`C3`</span> <span class="kw">=</span> <span class="st">'Non-tail'</span>, <span class="kw">`Tail`</span> <span class="kw">=</span> <span class="st">'Tail'</span>),
-  <span class="kw">gene_list</span> <span class="kw">=</span> <span class="no">cancer_genes_dnds</span>$<span class="no">Martincorena_drivers</span>
-)</pre></body></html></div>
+<div class="sourceCode" id="cb8"><pre class="downlit">
+<span class="co"># Not run here</span>
+<span class="kw">dnds_stats</span> <span class="op">=</span> <span class="fu"><a href="../reference/dnds.html">dnds</a></span>(
+  <span class="kw">clusters</span>,
+  mapping = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(`C1` = <span class="st">'Non-tail'</span>, `C2` = <span class="st">'Non-tail'</span>, `C3` = <span class="st">'Non-tail'</span>, `Tail` = <span class="st">'Tail'</span>),
+  gene_list = <span class="kw">cancer_genes_dnds</span><span class="op">$</span><span class="kw">Martincorena_drivers</span>
+)
+</pre></div>
 </div>
 <div id="pooling-data-from-multiple-patients" class="section level1">
 <h1 class="hasAnchor">
 <a href="#pooling-data-from-multiple-patients" class="anchor"></a>Pooling data from multiple patients</h1>
 <p>The input format of the <code>dnds</code> function allows to pool data from several fits at once. We pool data from the 2 datasets available in the package.</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="co"># 2 lung samples</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">'LU4_lung_sample'</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">'mobster'</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">'LUFF76_lung_sample'</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">'mobster'</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb9"><pre class="downlit">
+<span class="co"># 2 lung samples</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">'LU4_lung_sample'</span>, package = <span class="st">'mobster'</span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">'LUFF76_lung_sample'</span>, package = <span class="st">'mobster'</span>)
+</pre></div>
 <p>We pool the data selecting the required columns.</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">dnds_multi</span> <span class="kw">=</span> <span class="fu"><a href="../reference/dnds.html">dnds</a></span>(
+<div class="sourceCode" id="cb10"><pre class="downlit">
+<span class="kw">dnds_multi</span> <span class="op">=</span> <span class="fu"><a href="../reference/dnds.html">dnds</a></span>(
   <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(
-    <span class="fu"><a href="../reference/Clusters.html">Clusters</a></span>(<span class="no">LU4_lung_sample</span>$<span class="no">best</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/pkg/dplyr/man/select.html">select</a></span>(<span class="no">chr</span>, <span class="no">from</span>, <span class="no">ref</span>, <span class="no">alt</span>, <span class="no">cluster</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/pkg/dplyr/man/mutate.html">mutate</a></span>(<span class="kw">sample</span> <span class="kw">=</span> <span class="st">'LU4'</span>),
-    <span class="fu"><a href="../reference/Clusters.html">Clusters</a></span>(<span class="no">LUFF76_lung_sample</span>$<span class="no">best</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/pkg/dplyr/man/select.html">select</a></span>(<span class="no">chr</span>, <span class="no">from</span>, <span class="no">ref</span>, <span class="no">alt</span>, <span class="no">cluster</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/pkg/dplyr/man/mutate.html">mutate</a></span>(<span class="kw">sample</span> <span class="kw">=</span> <span class="st">'LUFF76'</span>)
+    <span class="fu"><a href="../reference/Clusters.html">Clusters</a></span>(<span class="kw">LU4_lung_sample</span><span class="op">$</span><span class="kw">best</span>) <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="kw">chr</span>, <span class="kw">from</span>, <span class="kw">ref</span>, <span class="kw">alt</span>, <span class="kw">cluster</span>) <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(sample = <span class="st">'LU4'</span>),
+    <span class="fu"><a href="../reference/Clusters.html">Clusters</a></span>(<span class="kw">LUFF76_lung_sample</span><span class="op">$</span><span class="kw">best</span>) <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="kw">chr</span>, <span class="kw">from</span>, <span class="kw">ref</span>, <span class="kw">alt</span>, <span class="kw">cluster</span>) <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(sample = <span class="st">'LUFF76'</span>)
   ),
-  <span class="kw">mapping</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">`C1`</span> <span class="kw">=</span> <span class="st">'Non-tail'</span>,  <span class="co"># Pool together all clonal mutations</span>
-              <span class="kw">`Tail`</span> <span class="kw">=</span> <span class="st">'Tail'</span>     <span class="co"># Pool together all tail mutations),</span>
+  mapping = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(`C1` = <span class="st">'Non-tail'</span>,  <span class="co"># Pool together all clonal mutations</span>
+              `Tail` = <span class="st">'Tail'</span>     <span class="co"># Pool together all tail mutations),</span>
   )
 )
-<span class="co">#&gt; i 3580 mutations; 2 groups in 2 samples, with no genes (default dndscv).</span>
+<span class="co">#&gt; ℹ 3580 mutations; 2 groups in 2 samples, with no genes (default dndscv).</span>
 <span class="co">#&gt; [refdb = hg19] Removing chr from chromosome names for hg19 reference compatability</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Non-tail     Tail </span>
 <span class="co">#&gt;     2194     1386</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; -- Running dndscv --------------------------------------------------------------</span>
+<span class="co">#&gt; ── Running dndscv ────────────────────────────────────────────────────────────────────────────────────</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; -- Group Non-tail</span>
+<span class="co">#&gt; ── Group Non-tail</span>
 <span class="co">#&gt; [1] Loading the environment...</span>
 <span class="co">#&gt; [2] Annotating the mutations...</span>
 <span class="co">#&gt; [3] Estimating global rates...</span>
@@ -322,14 +341,14 @@
 <span class="co">#&gt; [5] Running dNdScv...</span>
 <span class="co">#&gt;     Regression model for substitutions (theta = 17.5).</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; -- Group Tail</span>
+<span class="co">#&gt; ── Group Tail</span>
 <span class="co">#&gt; [1] Loading the environment...</span>
 <span class="co">#&gt; [2] Annotating the mutations...</span>
 <span class="co">#&gt; [3] Estimating global rates...</span>
 <span class="co">#&gt; [4] Running dNdSloc...</span>
 <span class="co">#&gt; [5] Running dNdScv...</span>
 <span class="co">#&gt;     Regression model for substitutions (theta = 8.54).</span>
-<span class="co">#&gt; -- dndscv results ------------------------------ wall, wmis, wnon, wspl, wtru --</span>
+<span class="co">#&gt; ── dndscv results ──────────────────────────────────────────────────── wall, wmis, wnon, wspl, wtru ──</span>
 <span class="co">#&gt; # A tibble: 10 x 5</span>
 <span class="co">#&gt;    name            mle  cilow cihigh dnds_group</span>
 <span class="co">#&gt;    &lt;chr&gt;         &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;     </span>
@@ -344,7 +363,8 @@
 <span class="co">#&gt;  9 wtru  0.0000000201  0      Inf    Tail      </span>
 <span class="co">#&gt; 10 wall  0.472         0.115    1.95 Tail</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">dnds_multi</span>$<span class="no">plot</span>)</pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw">dnds_multi</span><span class="op">$</span><span class="kw">plot</span>)
+</pre></div>
 <p><img src="a5_dnds_files/figure-html/unnamed-chunk-11-1.png" width="864"></p>
 </div>
   </div>
@@ -364,7 +384,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

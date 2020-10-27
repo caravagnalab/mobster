@@ -90,7 +90,7 @@ mobster_fit = function(x,
   cat('\n')
   
   # Check for basic input requirements
-  check_input(x,
+  mobster:::check_input(x,
               K,
               samples,
               init,

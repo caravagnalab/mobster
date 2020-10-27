@@ -34,26 +34,23 @@ on the input clustering results \code{x}.
 }
 \examples{
 # We take one of the released datasets
-x = mobster::PD4120a_breast_sample$best
+x = mobster::LU4_lung_sample$best
 
-# Genes are already annotated
-head(x$data$gene)
+# Annotate some random mutation as driver, we need that to build the trees with ctree
+x$data$is_driver = FALSE
+x$data$is_driver[1:3] = TRUE
 
-# Drivers we add, just taken at random from the exonic mutations.
-# Just print: x$data \%>\% filter(region == 'exonic')
-# SETD2 could really be a driver.
-require(dplyr)
-genes_list = c('ARHGAP31', 'ABCC5', 'SETD2')
-x$data = x$data \%>\% 
-  dplyr::mutate(
-    driver = ifelse(region == 'exonic' & gene \%in\% genes_list, TRUE, FALSE)
-    )
+x$data$driver_label = ""
+x$data$driver_label[1] = "Fake_driver_1"
+x$data$driver_label[2] = "Fake_driver_2"
+x$data$driver_label[3] = "Fake_driver_3"
 
 # Get the trees
 trees = get_clone_trees(x)
 
 # Print and plot the first tree (top rank)
-ctree:::print.ctree(trees[[1]])
+library(ctree)
+ctree::print.ctree(trees[[1]])
 ctree::plot.ctree(trees[[1]])
 ctree::plot_CCF_clusters(trees[[1]])
 ctree::plot_icon(trees[[1]])

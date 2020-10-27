@@ -178,23 +178,23 @@ parameter values in order to implement different analysis.</p>
     </div>
 
     <pre class="usage"><span class='fu'>mobster_fit</span>(
-  <span class='no'>x</span>,
-  <span class='kw'>K</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>3</span>,
-  <span class='kw'>samples</span> <span class='kw'>=</span> <span class='fl'>5</span>,
-  <span class='kw'>init</span> <span class='kw'>=</span> <span class='st'>"peaks"</span>,
-  <span class='kw'>tail</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>),
-  <span class='kw'>epsilon</span> <span class='kw'>=</span> <span class='fl'>1e-10</span>,
-  <span class='kw'>maxIter</span> <span class='kw'>=</span> <span class='fl'>250</span>,
-  <span class='kw'>fit.type</span> <span class='kw'>=</span> <span class='st'>"MM"</span>,
-  <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>12345</span>,
-  <span class='kw'>model.selection</span> <span class='kw'>=</span> <span class='st'>"reICL"</span>,
-  <span class='kw'>trace</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>pi_cutoff</span> <span class='kw'>=</span> <span class='fl'>0.02</span>,
-  <span class='kw'>N_cutoff</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-  <span class='kw'>auto_setup</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>silent</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>description</span> <span class='kw'>=</span> <span class='st'>"My MOBSTER model"</span>
+  <span class='kw'>x</span>,
+  K = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>,
+  samples = <span class='fl'>5</span>,
+  init = <span class='st'>"peaks"</span>,
+  tail = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>),
+  epsilon = <span class='fl'>1e-10</span>,
+  maxIter = <span class='fl'>250</span>,
+  fit.type = <span class='st'>"MM"</span>,
+  seed = <span class='fl'>12345</span>,
+  model.selection = <span class='st'>"reICL"</span>,
+  trace = <span class='fl'>FALSE</span>,
+  parallel = <span class='fl'>TRUE</span>,
+  pi_cutoff = <span class='fl'>0.02</span>,
+  N_cutoff = <span class='fl'>10</span>,
+  auto_setup = <span class='kw'>NULL</span>,
+  silent = <span class='fl'>FALSE</span>,
+  description = <span class='st'>"My MOBSTER model"</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -290,22 +290,23 @@ variable that specify which score has been used for model selection.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># Generate a random dataset</span>
-<span class='no'>x</span> <span class='kw'>=</span> <span class='fu'><a href='random_dataset.html'>random_dataset</a></span>(<span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>123</span>, <span class='kw'>Beta_variance_scaling</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>200</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>x</span>) <span class='co'># Contains a ggplot object</span></div><div class='output co'>#&gt; $data
-#&gt; # A tibble: 200 x 2
+<span class='kw'>x</span> <span class='op'>=</span> <span class='fu'><a href='random_dataset.html'>random_dataset</a></span>(seed = <span class='fl'>123</span>, Beta_variance_scaling = <span class='fl'>100</span>, N = <span class='fl'>200</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>x</span>) <span class='co'># Contains a ggplot object</span>
+</div><div class='output co'>#&gt; $data
+#&gt; <span style='color: #555555;'># A tibble: 200 x 2</span><span>
 #&gt;      VAF cluster
-#&gt;    &lt;dbl&gt; &lt;chr&gt;  
-#&gt;  1 0.615 C1     
-#&gt;  2 0.572 C1     
-#&gt;  3 0.846 C1     
-#&gt;  4 0.679 C1     
-#&gt;  5 0.502 C1     
-#&gt;  6 0.582 C1     
-#&gt;  7 0.530 C1     
-#&gt;  8 0.691 C1     
-#&gt;  9 0.654 C1     
-#&gt; 10 0.601 C1     
-#&gt; # ... with 190 more rows
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  
+#&gt; </span><span style='color: #555555;'> 1</span><span> 0.615 C1     
+#&gt; </span><span style='color: #555555;'> 2</span><span> 0.572 C1     
+#&gt; </span><span style='color: #555555;'> 3</span><span> 0.846 C1     
+#&gt; </span><span style='color: #555555;'> 4</span><span> 0.679 C1     
+#&gt; </span><span style='color: #555555;'> 5</span><span> 0.502 C1     
+#&gt; </span><span style='color: #555555;'> 6</span><span> 0.582 C1     
+#&gt; </span><span style='color: #555555;'> 7</span><span> 0.530 C1     
+#&gt; </span><span style='color: #555555;'> 8</span><span> 0.691 C1     
+#&gt; </span><span style='color: #555555;'> 9</span><span> 0.654 C1     
+#&gt; </span><span style='color: #555555;'>10</span><span> 0.601 C1     
+#&gt; </span><span style='color: #555555;'># … with 190 more rows</span><span>
 #&gt; 
 #&gt; $model
 #&gt; $model$a
@@ -329,17 +330,14 @@ variable that specify which score has been used for model selection.</p>
 #&gt; 
 #&gt; $plot</div><div class='img'><img src='mobster_fit-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; </div><div class='input'>
 <span class='co'># Fit, default models, changed epsilon for convergence</span>
-<span class='no'>x</span> <span class='kw'>=</span> <span class='fu'>mobster_fit</span>(<span class='no'>x</span>$<span class='no'>data</span>, <span class='kw'>epsilon</span> <span class='kw'>=</span> <span class='fl'>1e-5</span>)</div><div class='output co'>#&gt;  [ MOBSTER fit ] 
-#&gt; </div><div class='output co'>#&gt; <span class='message'>v Loaded input data, n = 200.</span></div><div class='output co'>#&gt; <span class='message'>&gt; n = 200. Mixture with k = 1,2,3 Beta(s). Pareto tail: TRUE and FALSE. Output</span>
-#&gt; <span class='message'>clusters with p &gt; 0.02 and n &gt; 10.</span></div><div class='output co'>#&gt; <span class='message'>&gt; Custom fit by Moments-matching in up to 250 steps, with e = 1e-05 and peaks</span>
-#&gt; <span class='message'>initialisation.</span></div><div class='output co'>#&gt; <span class='message'>&gt; Scoring (with parallel) 5 x 3 x 2 = 30 models by reICL.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>[easypar] 2020-05-11 21:04:14 - Overriding parallel execution setup [TRUE] with global option : FALSE</span></div><div class='output co'>#&gt; 
-#&gt; </div><div class='output co'>#&gt; <span class='message'>i MOBSTER fits completed in 40.8s.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>-- [ MOBSTER ] My MOBSTER model n = 200 with k = 2 Beta(s) without tail --------</span></div><div class='output co'>#&gt; <span class='message'>* Clusters: p = 52% [C1] and 48% [C2], with p &gt; 0.</span></div><div class='output co'>#&gt; <span class='message'>x No tail fit.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>* Beta C1 [n = 102, 52%] with mean = 0.58.</span></div><div class='output co'>#&gt; <span class='message'>* Beta C2 [n = 98, 48%] with mean = 0.11.</span></div><div class='output co'>#&gt; <span class='message'>i Score(s): NLL = -108.12; ICL = -182.58 (-182.58), H = 1.88 (1.88). Fit</span>
-#&gt; <span class='message'>converged by MM in 60 steps.</span></div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>x</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Scale`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Shape`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Scale`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Shape`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Scale`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Shape`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Scale`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Shape`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Scale`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Shape`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Scale`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Shape`.</span></div><div class='img'><img src='mobster_fit-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>x</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; <span class='message'>-- [ MOBSTER ] My MOBSTER model n = 200 with k = 2 Beta(s) without tail --------</span></div><div class='output co'>#&gt; <span class='message'>* Clusters: p = 52% [C1] and 48% [C2], with p &gt; 0.</span></div><div class='output co'>#&gt; <span class='message'>x No tail fit.</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>* Beta C1 [n = 102, 52%] with mean = 0.58.</span></div><div class='output co'>#&gt; <span class='message'>* Beta C2 [n = 98, 48%] with mean = 0.11.</span></div><div class='output co'>#&gt; <span class='message'>i Score(s): NLL = -108.12; ICL = -182.58 (-182.58), H = 1.88 (1.88). Fit</span>
-#&gt; <span class='message'>converged by MM in 60 steps.</span></div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span>(<span class='no'>x</span>$<span class='no'>runs</span>[<span class='fl'>1</span>:<span class='fl'>3</span>], <span class='no'>plot</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Scale`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Shape`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Scale`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Shape`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Scale`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Shape`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Scale`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Shape`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Scale`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Shape`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Scale`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Shape`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Scale`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Shape`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Scale`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Shape`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Scale`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Shape`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Scale`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Shape`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Scale`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Shape`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Scale`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Shape`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Scale`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Shape`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Scale`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Shape`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Scale`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Shape`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Scale`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Shape`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Scale`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Shape`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Scale`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Shape`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Scale`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Shape`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Scale`.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Unknown or uninitialised column: `Shape`.</span></div><div class='output co'>#&gt; $`8`</div><div class='img'><img src='mobster_fit-3.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; 
-#&gt; $`5`</div><div class='img'><img src='mobster_fit-4.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; 
-#&gt; $`3`</div><div class='img'><img src='mobster_fit-5.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; </div></pre>
+<span class='kw'>x</span> <span class='op'>=</span> <span class='fu'>mobster_fit</span>(<span class='kw'>x</span><span class='op'>$</span><span class='kw'>data</span>, epsilon = <span class='fl'>1e-5</span>)
+</div><div class='output co'>#&gt; </span><span style='color: #BBBBBB;background-color: #0000BB;'> [ MOBSTER fit ] 
+#&gt; </span><span></div><div class='output co'>#&gt; <span class='error'>Error in mobster:::check_input(x, K, samples, init, tail, epsilon, maxIter,     fit.type, seed, model.selection, trace): There are some reserved names in the input data that cannot be used, please remove or rename columns: cluster</span></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>x</span><span class='op'>$</span><span class='kw'>best</span>)
+</div><div class='output co'>#&gt; <span class='warning'>Warning: no non-missing arguments to min; returning Inf</span></div><div class='output co'>#&gt; <span class='warning'>Warning: no non-missing arguments to max; returning -Inf</span></div><div class='output co'>#&gt; <span class='warning'>Warning: no non-missing arguments to min; returning Inf</span></div><div class='output co'>#&gt; <span class='warning'>Warning: no non-missing arguments to max; returning -Inf</span></div><div class='output co'>#&gt; <span class='error'>Error in plot.window(...): need finite 'xlim' values</span></div><div class='img'><img src='mobster_fit-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>x</span><span class='op'>$</span><span class='kw'>best</span>)
+</div><div class='output co'>#&gt; NULL</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span>(<span class='kw'>x</span><span class='op'>$</span><span class='kw'>runs</span>[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>], <span class='kw'>plot</span>)
+</div><div class='output co'>#&gt; list()</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -355,7 +353,7 @@ variable that specify which score has been used for model selection.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

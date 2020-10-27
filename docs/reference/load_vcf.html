@@ -175,7 +175,7 @@ is returned. This function does not filter any of the variants
 annotated in the input VCF file.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>load_vcf</span>(<span class='no'>file</span>, <span class='kw'>DP_column</span> <span class='kw'>=</span> <span class='st'>"DP"</span>, <span class='kw'>NV_column</span> <span class='kw'>=</span> <span class='st'>"NV"</span>)</pre>
+    <pre class="usage"><span class='fu'>load_vcf</span>(<span class='kw'>file</span>, DP_column = <span class='st'>"DP"</span>, NV_column = <span class='st'>"NV"</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -204,11 +204,31 @@ named DP, NV and VAF where VAF = NV/DP.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># Example VCF file in the https://github.com/openvax/varcode repository</span>
-<span class='no'>file</span> <span class='kw'>=</span> <span class='st'>'https://raw.githubusercontent.com/openvax/varcode/master/test/data/strelka-example.vcf'</span>
+<span class='kw'>file</span> <span class='op'>=</span> <span class='st'>'https://raw.githubusercontent.com/openvax/varcode/master/test/data/strelka-example.vcf'</span>
 
-<span class='fu'><a href='https://rdrr.io/r/utils/download.file.html'>download.file</a></span>(<span class='kw'>url</span> <span class='kw'>=</span> <span class='no'>file</span>, <span class='kw'>destfile</span> <span class='kw'>=</span> <span class='st'>'strelka-example.vcf'</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/download.file.html'>download.file</a></span>(url = <span class='kw'>file</span>, destfile = <span class='st'>'strelka-example.vcf'</span>)
 
-<span class='fu'>load_vcf</span>(<span class='kw'>file</span> <span class='kw'>=</span> <span class='st'>'strelka-example.vcf'</span>, <span class='no'>DP_column</span>)</div><div class='output co'>#&gt; <span class='message'>i Loading VCF file strelka-example.vcf with package vcfR, file size 11.7 Kb.</span></div><div class='output co'>#&gt; <span class='error'>Error in DP_column %in% cn: object 'DP_column' not found</span></div></pre>
+<span class='co'># We pretend that the number of variants is the gt_DP2 field, which is wrong</span>
+<span class='co'># Anyway, this shows how you can load a VCF file.</span>
+<span class='fu'>load_vcf</span>(file = <span class='st'>'strelka-example.vcf'</span>, DP_column = <span class='st'>'gt_DP'</span>, NV_column = <span class='st'>'gt_DP2'</span>)
+</div><div class='output co'>#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span><span> Loading VCF file </span><span style='color: #00BB00;'>strelka-example.vcf</span><span> with package vcfR, file size </span><span style='color: #00BB00;'>11.6 Kb</span><span>.</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 40 x 33</span><span>
+#&gt;    CHROM POS   ID    REF   ALT   QUAL  FILTER INFO    Key   QSI  TQSI NT   
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span> chr1  1638… </span><span style='color: #BB0000;'>NA</span><span>    GC    G     </span><span style='color: #BB0000;'>NA</span><span>    PASS   IC=1…     1    33     1 ref  
+#&gt; </span><span style='color: #555555;'> 2</span><span> chr1  1708… </span><span style='color: #BB0000;'>NA</span><span>    G     GC    </span><span style='color: #BB0000;'>NA</span><span>    PASS   IC=3…     1    33     1 ref  
+#&gt; </span><span style='color: #555555;'> 3</span><span> chr2  9662… </span><span style='color: #BB0000;'>NA</span><span>    GC    G     </span><span style='color: #BB0000;'>NA</span><span>    PASS   IC=0…     2    46     1 ref  
+#&gt; </span><span style='color: #555555;'> 4</span><span> chr4  4911… </span><span style='color: #BB0000;'>NA</span><span>    C     CCCT… </span><span style='color: #BB0000;'>NA</span><span>    PASS   IC=1…     2    46     1 ref  
+#&gt; </span><span style='color: #555555;'> 5</span><span> chr4  4912… </span><span style='color: #BB0000;'>NA</span><span>    C     CGGA… </span><span style='color: #BB0000;'>NA</span><span>    PASS   IC=1…     3    33     1 ref  
+#&gt; </span><span style='color: #555555;'> 6</span><span> chr4  1909… </span><span style='color: #BB0000;'>NA</span><span>    C     CAT   </span><span style='color: #BB0000;'>NA</span><span>    PASS   IC=1…     3    33     1 ref  
+#&gt; </span><span style='color: #555555;'> 7</span><span> chr9  1399… </span><span style='color: #BB0000;'>NA</span><span>    T     TGTT… </span><span style='color: #BB0000;'>NA</span><span>    PASS   IC=1…     4    36     2 ref  
+#&gt; </span><span style='color: #555555;'> 8</span><span> chr9  1399… </span><span style='color: #BB0000;'>NA</span><span>    TGTT… T     </span><span style='color: #BB0000;'>NA</span><span>    PASS   IC=0…     4    36     2 ref  
+#&gt; </span><span style='color: #555555;'> 9</span><span> chr10 4236… </span><span style='color: #BB0000;'>NA</span><span>    C     CGGA… </span><span style='color: #BB0000;'>NA</span><span>    PASS   IC=1…     5    40     2 ref  
+#&gt; </span><span style='color: #555555;'>10</span><span> chr11 1271… </span><span style='color: #BB0000;'>NA</span><span>    A     AAAG  </span><span style='color: #BB0000;'>NA</span><span>    PASS   IC=1…     5    40     2 ref  
+#&gt; </span><span style='color: #555555;'># … with 30 more rows, and 21 more variables: QSI_NT </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span style='color: #555555;'>, TQSI_NT </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   SGT </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, RU </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, RC </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span style='color: #555555;'>, IC </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span style='color: #555555;'>, IHP </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span style='color: #555555;'>, SVTYPE </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   SOMATIC </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span style='color: #555555;'>, OVERLAP </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span style='color: #555555;'>, Indiv </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, DP </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, NV </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   gt_TAR </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, gt_TIR </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, gt_TOR </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, gt_DP50 </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, gt_FDP50 </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   gt_SUBDP50 </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, gt_GT_alleles </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, VAF </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -224,7 +244,7 @@ named DP, NV and VAF where VAF = NV/DP.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

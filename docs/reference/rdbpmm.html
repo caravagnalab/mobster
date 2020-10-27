@@ -166,14 +166,14 @@ model, or from a custom mixture. The principle is the same of function
     </div>
 
     <pre class="usage"><span class='fu'>rdbpmm</span>(
-  <span class='no'>x</span>,
-  <span class='kw'>a</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>b</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>pi</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>scale</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>tail.cutoff</span> <span class='kw'>=</span> <span class='fl'>1</span>
+  <span class='kw'>x</span>,
+  a = <span class='kw'>NULL</span>,
+  b = <span class='kw'>NULL</span>,
+  pi = <span class='kw'>NULL</span>,
+  shape = <span class='kw'>NULL</span>,
+  scale = <span class='kw'>NULL</span>,
+  n = <span class='fl'>1</span>,
+  tail.cutoff = <span class='fl'>1</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -225,30 +225,32 @@ are rejected (and re-sampled).</p></td>
     <p>n samples from the mixture</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>ggplot2</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='http://ggplot2.tidyverse.org'>ggplot2</a></span>)
 <span class='co'># 1 Beta component at 0.5 mean (symmetrical Beta)</span>
-<span class='no'>a</span> <span class='kw'>=</span> <span class='no'>b</span> <span class='kw'>=</span> <span class='fl'>50</span>
-<span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>a</span>) <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>b</span>) <span class='kw'>=</span> <span class='st'>"C1"</span>
+<span class='kw'>a</span> <span class='op'>=</span> <span class='kw'>b</span> <span class='op'>=</span> <span class='fl'>50</span>
+<span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='kw'>a</span>) <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='kw'>b</span>) <span class='op'>=</span> <span class='st'>"C1"</span>
 
 <span class='co'># 60% tail mutations</span>
-<span class='no'>pi</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'Tail'</span> <span class='kw'>=</span> <span class='fl'>.6</span>, <span class='st'>'C1'</span> <span class='kw'>=</span> <span class='fl'>.4</span>)
+<span class='kw'>pi</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'Tail'</span> = <span class='fl'>.6</span>, <span class='st'>'C1'</span> = <span class='fl'>.4</span>)
 
 <span class='co'># Sample</span>
-<span class='no'>v</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fu'>rdbpmm</span>(
-   <span class='kw'>x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-   <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
-   <span class='kw'>a</span> <span class='kw'>=</span> <span class='no'>a</span>,
-   <span class='kw'>b</span> <span class='kw'>=</span> <span class='no'>b</span>,
-   <span class='kw'>pi</span> <span class='kw'>=</span> <span class='no'>pi</span>,
-   <span class='kw'>shape</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-   <span class='kw'>scale</span> <span class='kw'>=</span> <span class='fl'>0.05</span>
+<span class='kw'>v</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x = <span class='fu'>rdbpmm</span>(
+   x = <span class='kw'>NULL</span>,
+   n = <span class='fl'>1000</span>,
+   a = <span class='kw'>a</span>,
+   b = <span class='kw'>b</span>,
+   pi = <span class='kw'>pi</span>,
+   shape = <span class='fl'>2</span>,
+   scale = <span class='fl'>0.05</span>
  ))
-<span class='fu'><a href='https://rdrr.io/pkg/ggplot2/man/ggplot.html'>ggplot</a></span>(<span class='no'>v</span>, <span class='fu'><a href='https://rdrr.io/pkg/ggplot2/man/aes.html'>aes</a></span>(<span class='no'>x</span>)) + <span class='fu'><a href='https://rdrr.io/pkg/ggplot2/man/geom_histogram.html'>geom_histogram</a></span>(<span class='kw'>binwidth</span> <span class='kw'>=</span> <span class='fl'>0.01</span>)</div><div class='img'><img src='rdbpmm-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span>(<span class='kw'>v</span>, <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span>(<span class='kw'>x</span>)) <span class='op'>+</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_histogram.html'>geom_histogram</a></span>(binwidth = <span class='fl'>0.01</span>)
+</div><div class='img'><img src='rdbpmm-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># Or use the parameters of a model available</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>'fit_example'</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'mobster'</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>'fit_example'</span>, package = <span class='st'>'mobster'</span>)
 
-<span class='no'>v</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fu'>rdbpmm</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='no'>fit_example</span>$<span class='no'>best</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1000</span>))
-<span class='fu'><a href='https://rdrr.io/pkg/ggplot2/man/ggplot.html'>ggplot</a></span>(<span class='no'>v</span>, <span class='fu'><a href='https://rdrr.io/pkg/ggplot2/man/aes.html'>aes</a></span>(<span class='no'>x</span>)) + <span class='fu'><a href='https://rdrr.io/pkg/ggplot2/man/geom_histogram.html'>geom_histogram</a></span>(<span class='kw'>binwidth</span> <span class='kw'>=</span> <span class='fl'>0.01</span>)</div><div class='img'><img src='rdbpmm-2.png' alt='' width='700' height='433' /></div></pre>
+<span class='kw'>v</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x = <span class='fu'>rdbpmm</span>(x = <span class='kw'>fit_example</span><span class='op'>$</span><span class='kw'>best</span>, n = <span class='fl'>1000</span>))
+<span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span>(<span class='kw'>v</span>, <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span>(<span class='kw'>x</span>)) <span class='op'>+</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_histogram.html'>geom_histogram</a></span>(binwidth = <span class='fl'>0.01</span>)
+</div><div class='img'><img src='rdbpmm-2.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -264,7 +266,7 @@ are rejected (and re-sampled).</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

@@ -16,6 +16,8 @@
 #'
 #' @export
 #'
+#' @importFrom reshape2 melt
+#'
 #' @examples
 #' # Random small dataset
 #' dataset = random_dataset(N = 200, seed = 123, Beta_variance_scaling = 100)
@@ -32,21 +34,21 @@ plot_bootstrap_coclustering = function(x,
                                bootstrap_statistics,
                                colors = c(`Tail` = 'gainsboro'))
 {
-  is_bootstrap_results(bootstrap_results)
-  is_bootstrap_statistics(bootstrap_statistics)
+  mobster:::is_bootstrap_results(bootstrap_results)
+  mobster:::is_bootstrap_statistics(bootstrap_statistics)
   
   # plot
   n = length(bootstrap_results$fits)
   type = bootstrap_results$bootstrap
   
-  fit = x$data
-  ord_cl = order(x$data$cluster)
-  fit = fit[ord_cl,]
+  # Normalised matrix
+  cocl = bootstrap_statistics$bootstrap_co_clustering/n
+  ordered_labels = bootstrap_statistics$bootstrap_co_clustering_ordered_labels
   
-  cocl = bootstrap_statistics$bootstrap_co_clustering[ord_cl, ord_cl] /
-    n
-  colnames(cocl) = rownames(cocl) = 1:ncol(cocl)
-  cocl[upper.tri(cocl)] = 0
+  # cocl = bootstrap_statistics$bootstrap_co_clustering[ord_cl, ord_cl] /
+  #   n
+  # colnames(cocl) = rownames(cocl) = 1:ncol(cocl)
+  # cocl[upper.tri(cocl)] = 0
   
   bt = ggplot(data = cocl %>% reshape2::melt(),
               aes(x = Var1, y = Var2, fill = value)) +
@@ -88,8 +90,8 @@ plot_bootstrap_coclustering = function(x,
   
   bt = mobster:::add_color_pl(x, bt, colors)
   
-  
-  label = ggplot(data = fit %>% mutate(id = row_number()),
+  # Cluster assignments bar
+  label = ggplot(data = x$data %>% mutate(id = row_number()),
                  aes(x = 1, y = id, fill = cluster)) +
     geom_tile() +
     mobster:::my_ggplot_theme() +

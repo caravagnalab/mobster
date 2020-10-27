@@ -24,6 +24,7 @@
 #' @return The fit object is a list with the summary table and the observation counts reported
 #' by package \code{dndscv}, together with a \code{ggplot} plot for the results.
 #'
+#' @importFrom dndscv dndscv
 #' @export
 #' 
 #' @examples

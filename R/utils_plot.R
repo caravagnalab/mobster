@@ -21,8 +21,8 @@ smart_colors = function(x, pl, colors)
     new_col = rainbow(length(wh_col))
   
   names(new_col) = sort(wh_col)
-  
-  return(c(mycolors, new_col))
+
+  return(c(mycolors, new_col[!is.na(names(new_col))]))
 }
 
 # add colours to a ggplot plot

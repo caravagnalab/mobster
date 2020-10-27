@@ -169,7 +169,7 @@ sample available at the Comprehensive Omics Archive of Lung Adenocarcinoma
 (http://genome.kaist.ac.kr/).</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>LU4_lung_sample</span>)</pre>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>LU4_lung_sample</span>)</pre>
 
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
@@ -177,9 +177,11 @@ sample available at the Comprehensive Omics Archive of Lung Adenocarcinoma
     <p>Output from `mobster_fit`.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>LU4_lung_sample</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'mobster'</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>LU4_lung_sample</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt; <span class='message'>-- [ MOBSTER ]  n = 1282 with k = 1 Beta(s) and a tail -------------------------</span></div><div class='output co'>#&gt; <span class='message'>* Clusters: p = 73% [C1] and 27% [Tail], with p &gt; 0.</span></div><div class='output co'>#&gt; <span class='message'>* Tail [n = 310, 27%] with alpha = 1.9.</span></div><div class='output co'>#&gt; <span class='message'>* Beta C1 [n = 972, 73%] with mean = 0.26.</span></div><div class='output co'>#&gt; <span class='message'>i Score(s): NLL = -1527.89; ICL = -2797.42 (-3012.83), H = 215.41 (0). Fit</span>
-#&gt; <span class='message'>converged by MM in 62 steps.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>LU4_lung_sample</span>$<span class='no'>best</span>)</div><div class='img'><img src='LU4_lung_sample-1.png' alt='' width='700' height='433' /></div></pre>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>LU4_lung_sample</span>, package = <span class='st'>'mobster'</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>LU4_lung_sample</span><span class='op'>$</span><span class='kw'>best</span>)
+</div><div class='output co'>#&gt; <span class='message'>── <span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] </span><span> n = 1282 with </span><span style='color: #00BB00;'>k = 1</span><span> Beta(s) </span><span style='color: #00BB00;'>and a tail</span><span> ───────────────────────────────────────────────</span></div><div class='output co'>#&gt; <span class='message'>● Clusters: π = 73% [</span><span style='color: #BBBB00;'>C1</span><span>] and 27% [</span><span style='color: #BBBB00;'>Tail</span><span>], with π &gt; 0.</span></div><div class='output co'>#&gt; <span class='message'>● Tail [n = 310, 27%] with alpha = 1.9.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C1</span><span> [n = 972, 73%] with mean = 0.26.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBBBB;'>ℹ</span><span> Score(s): NLL = -1527.89; ICL = -2797.42 (-3012.83), H = 215.41 (0). Fit </span><span style='color: #00BB00;'>converged</span><span> by </span><span style='color: #00BB00;'>MM</span><span> in 62</span>
+#&gt; <span class='message'>steps.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>LU4_lung_sample</span><span class='op'>$</span><span class='kw'>best</span>)
+</div><div class='img'><img src='LU4_lung_sample-1.png' alt='' width='700' height='433' /></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -195,7 +197,7 @@ sample available at the Comprehensive Omics Archive of Lung Adenocarcinoma
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

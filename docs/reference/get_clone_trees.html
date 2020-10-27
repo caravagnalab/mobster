@@ -183,7 +183,7 @@ value for the Beta peak.</p>
 on the input clustering results <code>x</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_clone_trees</span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>get_clone_trees</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -205,33 +205,55 @@ affect the sampling of the trees.</p></td>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># We take one of the released datasets</span>
-<span class='no'>x</span> <span class='kw'>=</span> <span class='kw pkg'>mobster</span><span class='kw ns'>::</span><span class='no'>PD4120a_breast_sample</span>$<span class='no'>best</span>
+<span class='kw'>x</span> <span class='op'>=</span> <span class='kw'>mobster</span>::<span class='kw'><a href='LU4_lung_sample.html'>LU4_lung_sample</a></span><span class='op'>$</span><span class='kw'>best</span>
 
-<span class='co'># Genes are already annotated</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>x</span>$<span class='no'>data</span>$<span class='no'>gene</span>)</div><div class='output co'>#&gt; [1] "LOC102723448(dist=8399),CHL1(dist=163705)" 
-#&gt; [2] "LOC102723448(dist=14314),CHL1(dist=157790)"
-#&gt; [3] "LOC102723448(dist=72916),CHL1(dist=99188)" 
-#&gt; [4] "LOC102723448(dist=84382),CHL1(dist=87722)" 
-#&gt; [5] "LOC102723448(dist=124685),CHL1(dist=47419)"
-#&gt; [6] "LOC102723448(dist=132721),CHL1(dist=39383)"</div><div class='input'>
-<span class='co'># Drivers we add, just taken at random from the exonic mutations.</span>
-<span class='co'># Just print: x$data %&gt;% filter(region == 'exonic')</span>
-<span class='co'># SETD2 could really be a driver.</span>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='no'>dplyr</span>)</div><div class='output co'>#&gt; <span class='message'>Loading required package: dplyr</span></div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'>Attaching package: 'dplyr'</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from 'package:stats':</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    filter, lag</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from 'package:base':</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    intersect, setdiff, setequal, union</span></div><div class='input'><span class='no'>genes_list</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'ARHGAP31'</span>, <span class='st'>'ABCC5'</span>, <span class='st'>'SETD2'</span>)
-<span class='no'>x</span>$<span class='no'>data</span> <span class='kw'>=</span> <span class='no'>x</span>$<span class='no'>data</span> <span class='kw'>%&gt;%</span>
-  <span class='kw pkg'>dplyr</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/dplyr/man/mutate.html'>mutate</a></span>(
-    <span class='kw'>driver</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span>(<span class='no'>region</span> <span class='kw'>==</span> <span class='st'>'exonic'</span> <span class='kw'>&amp;</span> <span class='no'>gene</span> <span class='kw'>%in%</span> <span class='no'>genes_list</span>, <span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>)
-    )
+<span class='co'># Annotate some random mutation as driver, we need that to build the trees with ctree</span>
+<span class='kw'>x</span><span class='op'>$</span><span class='kw'>data</span><span class='op'>$</span><span class='kw'>is_driver</span> <span class='op'>=</span> <span class='fl'>FALSE</span>
+<span class='kw'>x</span><span class='op'>$</span><span class='kw'>data</span><span class='op'>$</span><span class='kw'>is_driver</span>[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>] <span class='op'>=</span> <span class='fl'>TRUE</span>
+
+<span class='kw'>x</span><span class='op'>$</span><span class='kw'>data</span><span class='op'>$</span><span class='kw'>driver_label</span> <span class='op'>=</span> <span class='st'>""</span>
+<span class='kw'>x</span><span class='op'>$</span><span class='kw'>data</span><span class='op'>$</span><span class='kw'>driver_label</span>[<span class='fl'>1</span>] <span class='op'>=</span> <span class='st'>"Fake_driver_1"</span>
+<span class='kw'>x</span><span class='op'>$</span><span class='kw'>data</span><span class='op'>$</span><span class='kw'>driver_label</span>[<span class='fl'>2</span>] <span class='op'>=</span> <span class='st'>"Fake_driver_2"</span>
+<span class='kw'>x</span><span class='op'>$</span><span class='kw'>data</span><span class='op'>$</span><span class='kw'>driver_label</span>[<span class='fl'>3</span>] <span class='op'>=</span> <span class='st'>"Fake_driver_3"</span>
 
 <span class='co'># Get the trees</span>
-<span class='no'>trees</span> <span class='kw'>=</span> <span class='fu'>get_clone_trees</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; <span class='error'>Error in get_clone_trees(x): Your data should have driver events annotated, cannot use 'ctree' otherwise.</span></div><div class='input'>
+<span class='kw'>trees</span> <span class='op'>=</span> <span class='fu'>get_clone_trees</span>(<span class='kw'>x</span>)
+</div><div class='output co'>#&gt; <span class='warning'>Warning: replacing previous import ‘igraph::%s%’ by ‘matrixcalc::%s%’ when loading ‘ctree’</span></div><div class='output co'>#&gt; <span class='warning'>Warning: replacing previous import ‘igraph::groups’ by ‘tidygraph::groups’ when loading ‘ctree’</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✓</span><span> Loading </span><span style='color: #00BB00;'>ctree</span><span>, </span><span style='font-style: italic;'>'Clone trees in cancer'</span><span>. Support : </span><span style='color: #0000BB;font-style: italic;'>&lt;https://caravagn.github.io/ctree/&gt;</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #BBBBBB;background-color: #0000BB;'> [ ctree ~ generate clone trees for MOBSTER_dataset ] 
+#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>Sampler : </span><span> 10000 (cutoff),  5000 (sampling),  100 (max store) </span><span style='color: #000000;background-color: #BBBB00;'>
+#&gt; </span><span style='color: #555555;'># A tibble: 1 x 5</span><span>
+#&gt;   cluster    R1 nMuts is.clonal is.driver
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>    
+#&gt; </span><span style='color: #555555;'>1</span><span> C1      0.263   972 TRUE      TRUE     
+#&gt; 
+#&gt; </span><span style='color: #BB0000;'>Sampler: this model has 1 node, it has trivial models.
+#&gt; </span><span style='color: #00BB00;background-color: #BBBB00;'>✔</span><span style='color: #000000;background-color: #BBBB00;'> Trees with non-zero sscore</span><span> 1 storing 1 </span><span style='color: #000000;background-color: #BBBB00;'>
+#&gt; </span><span></div><div class='output co'>#&gt; <span class='message'>[easypar] 2020-09-13 11:23:33 - Overriding parallel execution setup [FALSE] with global option : FALSE</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>This tree has 1 node, creating a monoclonal model disregarding the input matrix.</span></div><div class='input'>
 <span class='co'># Print and plot the first tree (top rank)</span>
-<span class='kw pkg'>ctree</span><span class='kw ns'>:::</span><span class='fu'><a href='https://rdrr.io/pkg/ctree/man/print.ctree.html'>print.ctree</a></span>(<span class='no'>trees</span><span class='kw'>[[</span><span class='fl'>1</span>]])</div><div class='output co'>#&gt; <span class='warning'>Warning: replacing previous import 'igraph::%s%' by 'matrixcalc::%s%' when loading 'ctree'</span></div><div class='output co'>#&gt; <span class='warning'>Warning: replacing previous import 'igraph::groups' by 'tidygraph::groups' when loading 'ctree'</span></div><div class='output co'>#&gt; <span class='message'>v Loading ctree, 'Clone trees in cancer'. Support : &lt;https://caravagn.github.io/ctree/&gt;</span></div><div class='output co'>#&gt; <span class='error'>Error in ctree:::print.ctree(trees[[1]]): inherits(x, "ctree") is not TRUE</span></div><div class='input'><span class='kw pkg'>ctree</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ctree/man/plot.ctree.html'>plot.ctree</a></span>(<span class='no'>trees</span><span class='kw'>[[</span><span class='fl'>1</span>]])</div><div class='output co'>#&gt; <span class='error'>Error: $ operator is invalid for atomic vectors</span></div><div class='input'><span class='kw pkg'>ctree</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ctree/man/plot_CCF_clusters.html'>plot_CCF_clusters</a></span>(<span class='no'>trees</span><span class='kw'>[[</span><span class='fl'>1</span>]])</div><div class='output co'>#&gt; <span class='error'>Error: $ operator is invalid for atomic vectors</span></div><div class='input'><span class='kw pkg'>ctree</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ctree/man/plot_icon.html'>plot_icon</a></span>(<span class='no'>trees</span><span class='kw'>[[</span><span class='fl'>1</span>]])</div><div class='output co'>#&gt; <span class='error'>Error: $ operator is invalid for atomic vectors</span></div><div class='input'><span class='kw pkg'>ctree</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ctree/man/plot_clone_size.html'>plot_clone_size</a></span>(<span class='no'>trees</span><span class='kw'>[[</span><span class='fl'>1</span>]])</div><div class='output co'>#&gt; <span class='error'>Error: $ operator is invalid for atomic vectors</span></div></pre>
+<span class='kw'>ctree</span>:::<span class='fu'><a href='https://rdrr.io/pkg/ctree/man/print.ctree.html'>print.ctree</a></span>(<span class='kw'>trees</span>[[<span class='fl'>1</span>]])
+</div><div class='output co'>#&gt; </span><span style='color: #BBBBBB;background-color: #0000BB;'> [ ctree - ctree rank 1/1 for MOBSTER_dataset ] 
+#&gt; </span><span>
+#&gt; </span><span style='color: #555555;'># A tibble: 1 x 5</span><span>
+#&gt;   cluster    R1 nMuts is.clonal is.driver
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>    
+#&gt; </span><span style='color: #555555;'>1</span><span> C1      0.263   972 TRUE      TRUE     
+#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
+#&gt; Tree shape (drivers annotated)</span><span>  </span><span style='color: #000000;background-color: #BBBB00;'>
+#&gt; 
+#&gt; </span><span>  \-GL
+#&gt;    \-C1 [R1] :: Fake_driver_1, Fake_driver_3
+#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
+#&gt; Information transfer</span><span>  </span><span style='color: #000000;background-color: #BBBB00;'>
+#&gt; 
+#&gt; </span><span>   GL ---&gt; Fake_driver_1 
+#&gt;    GL ---&gt; Fake_driver_3 
+#&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
+#&gt; Tree score</span><span> 1 </span><span style='color: #000000;background-color: #BBBB00;'>
+#&gt; </span><span></div><div class='input'><span class='kw'>ctree</span>::<span class='fu'><a href='https://rdrr.io/pkg/ctree/man/plot.ctree.html'>plot.ctree</a></span>(<span class='kw'>trees</span>[[<span class='fl'>1</span>]])
+</div><div class='output co'>#&gt; <span class='warning'>Warning: Duplicated aesthetics after name standardisation: na.rm</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Removed 1 rows containing missing values (geom_point).</span></div><div class='img'><img src='get_clone_trees-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='kw'>ctree</span>::<span class='fu'><a href='https://rdrr.io/pkg/ctree/man/plot_CCF_clusters.html'>plot_CCF_clusters</a></span>(<span class='kw'>trees</span>[[<span class='fl'>1</span>]])
+</div><div class='img'><img src='get_clone_trees-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='kw'>ctree</span>::<span class='fu'><a href='https://rdrr.io/pkg/ctree/man/plot_icon.html'>plot_icon</a></span>(<span class='kw'>trees</span>[[<span class='fl'>1</span>]])
+</div><div class='img'><img src='get_clone_trees-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='kw'>ctree</span>::<span class='fu'><a href='https://rdrr.io/pkg/ctree/man/plot_clone_size.html'>plot_clone_size</a></span>(<span class='kw'>trees</span>[[<span class='fl'>1</span>]])
+</div><div class='img'><img src='get_clone_trees-4.png' alt='' width='700' height='433' /></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -247,7 +269,7 @@ affect the sampling of the trees.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

@@ -41,4 +41,12 @@ check_input = function(x, K, samples, init, tail, epsilon, maxIter, fit.type, se
     trace %in% c(T, F) | is.null(tail)
   )
   
+  # Check input column names, something should be reserved
+  fixed_names = c("cluster", "Tail", paste0("C", 1:100))
+  fixed_names = fixed_names[which(fixed_names %in% colnames(x))]
+  
+  if(length(fixed_names) > 0){
+    stop("There are some reserved names in the input data that cannot be used, please remove or rename columns: ", paste0(fixed_names, collapse = ', '))
+  }
+  
 }

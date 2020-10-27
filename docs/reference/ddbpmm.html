@@ -172,15 +172,15 @@ of the mixture.</p>
     </div>
 
     <pre class="usage"><span class='fu'>ddbpmm</span>(
-  <span class='no'>x</span>,
-  <span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>components</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='no'>x</span>$<span class='no'>K</span>,
-  <span class='kw'>a</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>b</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>pi</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>scale</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>log</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+  <span class='kw'>x</span>,
+  data = <span class='kw'>NULL</span>,
+  components = <span class='fl'>1</span><span class='op'>:</span><span class='kw'>x</span><span class='op'>$</span><span class='kw'>K</span>,
+  a = <span class='kw'>NULL</span>,
+  b = <span class='kw'>NULL</span>,
+  pi = <span class='kw'>NULL</span>,
+  scale = <span class='kw'>NULL</span>,
+  shape = <span class='kw'>NULL</span>,
+  log = <span class='fl'>TRUE</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -238,11 +238,12 @@ inside <code>x</code> are used.</p></td>
 used during fit one needs to use <code>log = TRUE</code> and change sign.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>ggplot2</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>'fit_example'</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'mobster'</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='http://ggplot2.tidyverse.org'>ggplot2</a></span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>'fit_example'</span>, package = <span class='st'>'mobster'</span>)
 
 <span class='co'># Use the full mixture, and its internal data</span>
-<span class='fu'>ddbpmm</span>(<span class='no'>fit_example</span>$<span class='no'>best</span>)</div><div class='output co'>#&gt;    [1]   -60.03236   -57.59940   -51.73723   -67.09574   -63.17183   -44.25529
+<span class='fu'>ddbpmm</span>(<span class='kw'>fit_example</span><span class='op'>$</span><span class='kw'>best</span>)
+</div><div class='output co'>#&gt;    [1]   -60.03236   -57.59940   -51.73723   -67.09574   -63.17183   -44.25529
 #&gt;    [7]   -41.72061   -69.16807   -55.26218   -60.60698   -53.57758   -64.77788
 #&gt;   [13]   -52.44456   -69.35108   -45.15515   -51.70950   -52.37641   -55.12010
 #&gt;   [19]   -49.46311   -56.73859   -62.85622   -53.30035   -60.48649   -48.89057
@@ -1077,11 +1078,13 @@ used during fit one needs to use <code>log = TRUE</code> and change sign.</p>
 #&gt; [4993]  -167.35829   -33.50072   -34.14727  -209.19892   -80.94293  -197.11159
 #&gt; [4999]   -82.91233   -52.57578</div><div class='input'>
 <span class='co'># Use only some of the mixture components, and pass some data</span>
-<span class='fu'>ddbpmm</span>(<span class='no'>fit_example</span>$<span class='no'>best</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='fl'>.4</span>, <span class='kw'>components</span> <span class='kw'>=</span> <span class='fl'>1</span>)</div><div class='output co'>#&gt;      Tail 
+<span class='fu'>ddbpmm</span>(<span class='kw'>fit_example</span><span class='op'>$</span><span class='kw'>best</span>, data = <span class='fl'>.4</span>, components = <span class='fl'>1</span>)
+</div><div class='output co'>#&gt;      Tail 
 #&gt; -2.621125 </div><div class='input'>
 <span class='co'># An internal function to get f(x) with x the [0,1] range.</span>
-<span class='fu'><a href='https://rdrr.io/pkg/ggplot2/man/ggplot.html'>ggplot</a></span>(<span class='kw pkg'>mobster</span><span class='kw ns'>:::</span><span class='fu'>template_density</span>(<span class='no'>fit_example</span>$<span class='no'>best</span>, <span class='kw'>reduce</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>),
-       <span class='fu'><a href='https://rdrr.io/pkg/ggplot2/man/aes.html'>aes</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='no'>x</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='no'>y</span>, <span class='kw'>color</span> <span class='kw'>=</span> <span class='no'>cluster</span>)) + <span class='fu'><a href='https://rdrr.io/pkg/ggplot2/man/geom_path.html'>geom_line</a></span>()</div><div class='img'><img src='ddbpmm-1.png' alt='' width='700' height='433' /></div></pre>
+<span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span>(<span class='kw'>mobster</span>:::<span class='fu'>template_density</span>(<span class='kw'>fit_example</span><span class='op'>$</span><span class='kw'>best</span>, reduce = <span class='fl'>TRUE</span>),
+       <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span>(x = <span class='kw'>x</span>, y = <span class='kw'>y</span>, color = <span class='kw'>cluster</span>)) <span class='op'>+</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_path.html'>geom_line</a></span>()
+</div><div class='img'><img src='ddbpmm-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -1097,7 +1100,7 @@ used during fit one needs to use <code>log = TRUE</code> and change sign.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>
