@@ -27,29 +27,30 @@
 #' ggplot(new_assignments, aes(VAF, fill = cluster)) + geom_histogram(binwidth = 0.01)
 Clusters_denovo = function(x, y)
 {
-  is_mobster_fit(x)
-  is_mobster_input_dataset(y)
+  mobster:::is_mobster_fit(x)
+  mobster:::is_mobster_input_dataset(y)
   
   # actual clusters
   components = names(mobster:::.params_Pi(x))
   
   # per-component density
-  densities = NULL
+  densities = y
   for(component in seq_along(components))
   {
-    df = ddbpmm(x, data = y$VAF, components = component, log = TRUE) %>% data.frame()
-    colnames(df) = components[component]
-      
+    comp_density = ddbpmm(x, data = y$VAF, components = component, log = TRUE) %>% data.frame()
+    colnames(comp_density) = components[component]
+    
     densities = dplyr::bind_cols(
       densities,
-      df
+      comp_density
     )
   }
-  colnames(densities) = components
+  # colnames(densities) = components
   densities = densities %>% as_tibble()
   
   # Hard clustering assignments
-  densities$cluster = components[apply(densities, 1, which.max)]
+  densities$cluster = components[apply(densities[, components, drop = FALSE], 1, which.max)]
   
-  dplyr::bind_cols(y, densities) %>% as_tibble()
+  densities
+  # dplyr::bind_cols(y, densities) %>% as_tibble()
 }
