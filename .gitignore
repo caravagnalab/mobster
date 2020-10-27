@@ -1,8 +1,41 @@
+/inst/doc/vignette.R
+/inst/doc/vignette.Rnw
+/vignettes/vignette.R
+/cfg.R
 
-*.pdf
+# History files
+.Rhistory
+.Rapp
+*.history
+
+# Example code in package build process
+*-Ex.R
+
+# RStudio files
+*.RData
+!/data/*.RData
+.Rproj.user/
+.Rproj
 .Rproj.user
-inst/doc
-vignettes/.DS_Store
-.Rhistory
-.Rhistory
+*.Rdata
+*.Rproj
+
+# Configuration file
+cfg.R
+
+# Other file
 *.log
+*.out
+*.toc
+*.gml
+.DS_Store
+
+# C++ file
+*.o
+*.so
+*.dll
+
+# pkgdown
+docs
+doc
+Meta
