@@ -28,14 +28,15 @@
 #' boot_results = mobster_bootstrap(x$best, n.resamples = 5, auto_setup = 'FAST')
 #' 
 #' boot_stats = bootstrapped_statistics(x$best, boot_results)
-#' plot_bootstrap_coclustering(x, boot_results, boot_stats)
+#' plot_bootstrap_coclustering(x$best, boot_results, boot_stats)
 plot_bootstrap_coclustering = function(x,
                                bootstrap_results,
                                bootstrap_statistics,
                                colors = c(`Tail` = 'gainsboro'))
 {
-  mobster:::is_bootstrap_results(bootstrap_results)
-  mobster:::is_bootstrap_statistics(bootstrap_statistics)
+  is_mobster_fit(x)
+  is_bootstrap_results(bootstrap_results)
+  is_bootstrap_statistics(bootstrap_statistics)
   
   # plot
   n = length(bootstrap_results$fits)

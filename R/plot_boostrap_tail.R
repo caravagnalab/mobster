@@ -25,12 +25,13 @@
 #' boot_results = mobster_bootstrap(x$best, n.resamples = 5, auto_setup = 'FAST')
 #' 
 #' boot_stats = bootstrapped_statistics(x$best, boot_results)
-#' plot_bootstrap_tail(x, boot_results, boot_stats)
+#' plot_bootstrap_tail(x$best, boot_results, boot_stats)
 plot_bootstrap_tail = function(x,
                                bootstrap_results,
                                bootstrap_statistics,
                                colors = c(`Tail` = 'gainsboro'))
 {
+  is_mobster_fit(x)
   is_bootstrap_results(bootstrap_results)
   is_bootstrap_statistics(bootstrap_statistics)
   
