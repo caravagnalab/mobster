@@ -40,5 +40,5 @@ options(easypar.parallel = FALSE)
 boot_results = mobster_bootstrap(x$best, n.resamples = 5, auto_setup = 'FAST')
 
 boot_stats = bootstrapped_statistics(x$best, boot_results)
-plot_bootstrap_Beta(x, boot_results, boot_stats)
+plot_bootstrap_Beta(x$best, boot_results, boot_stats)
 }
