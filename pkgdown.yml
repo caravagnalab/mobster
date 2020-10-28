@@ -1,0 +1,17 @@
+pandoc: '2.5'
+pkgdown: 1.6.1
+pkgdown_sha: ~
+articles:
+  a1_introduction: a1_introduction.html
+  a2_plotting: a2_plotting.html
+  a3_bootstrap: a3_bootstrap.html
+  a4_popgen: a4_popgen.html
+  a5_dnds: a5_dnds.html
+  a6_CloneTrees: a6_CloneTrees.html
+  a7_Example_tumour_simulation: a7_Example_tumour_simulation.html
+  mobster: mobster.html
+last_built: 2020-10-28T13:50Z
+urls:
+  reference: caravagn.github.io/mobster/reference
+  article: caravagn.github.io/mobster/articles
+
