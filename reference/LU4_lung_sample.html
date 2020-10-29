@@ -84,19 +84,13 @@ sample available at the Comprehensive Omics Archive of Lung Adenocarcinoma
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mobster</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/mobster.html">Get started</a>
 </li>
 <li>
@@ -179,7 +173,8 @@ sample available at the Comprehensive Omics Archive of Lung Adenocarcinoma
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>LU4_lung_sample</span>, package <span class='op'>=</span> <span class='st'>'mobster'</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>LU4_lung_sample</span><span class='op'>$</span><span class='va'>best</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>── <span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] </span><span> n = 1282 with </span><span style='color: #00BB00;'>k = 1</span><span> Beta(s) </span><span style='color: #00BB00;'>and a tail</span><span> ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span></div><div class='output co'>#&gt; <span class='message'>● Clusters: π = 73% [</span><span style='color: #BBBB00;'>C1</span><span>] and 27% [</span><span style='color: #BBBB00;'>Tail</span><span>], with π &gt; 0.</span></div><div class='output co'>#&gt; <span class='message'>● Tail [n = 310, 27%] with alpha = 1.9.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C1</span><span> [n = 972, 73%] with mean = 0.26.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBBBB;'>ℹ</span><span> Score(s): NLL = -1527.89; ICL = -2797.42 (-3012.83), H = 215.41 (0). Fit </span><span style='color: #00BB00;'>converged</span><span> by </span><span style='color: #00BB00;'>MM</span><span> in 62 steps.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>LU4_lung_sample</span><span class='op'>$</span><span class='va'>best</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>── <span style='color: #000000;background-color: #BBBB00;'>[ MOBSTER ] </span><span> n = 1282 with </span><span style='color: #00BB00;'>k = 1</span><span> Beta(s) </span><span style='color: #00BB00;'>and a tail</span><span> ─────────────────────────</span></div><div class='output co'>#&gt; <span class='message'>● Clusters: π = 73% [</span><span style='color: #BBBB00;'>C1</span><span>] and 27% [</span><span style='color: #BBBB00;'>Tail</span><span>], with π &gt; 0.</span></div><div class='output co'>#&gt; <span class='message'>● Tail [n = 310, 27%] with alpha = 1.9.</span></div><div class='output co'>#&gt; <span class='message'>● Beta </span><span style='color: #00BB00;'>C1</span><span> [n = 972, 73%] with mean = 0.26.</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #BBBBBB;'>ℹ</span><span> Score(s): NLL = -1527.89; ICL = -2797.42 (-3012.83), H = 215.41 (0). Fit</span>
+#&gt; <span class='message'></span><span style='color: #00BB00;'>converged</span><span> by </span><span style='color: #00BB00;'>MM</span><span> in 62 steps.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>LU4_lung_sample</span><span class='op'>$</span><span class='va'>best</span><span class='op'>)</span>
 </div><div class='img'><img src='LU4_lung_sample-1.png' alt='' width='700' height='433' /></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -192,11 +187,11 @@ sample available at the Comprehensive Omics Archive of Lung Adenocarcinoma
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='https://sites.google.com/site/giuliocaravagna/'>Giulio Caravagna</a>, Luca De Sano.</p>
+  <p>Developed by <a href='https://sites.google.com/site/giuliocaravagna/'>Giulio Caravagna</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

@@ -91,19 +91,13 @@ on the input clustering results x." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mobster</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/mobster.html">Get started</a>
 </li>
 <li>
@@ -218,26 +212,26 @@ affect the sampling of the trees.</p></td>
 
 <span class='co'># Get the trees</span>
 <span class='va'>trees</span> <span class='op'>=</span> <span class='fu'>get_clone_trees</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span><span> Loading </span><span style='color: #00BB00;'>ctree</span><span>, </span><span style='font-style: italic;'>'Clone trees in cancer'</span><span>. Support : </span><span style='color: #0000BB;font-style: italic;'>&lt;https://caravagn.github.io/ctree/&gt;</span><span></span></div><div class='output co'>#&gt; </span><span style='color: #BBBBBB;background-color: #0000BB;'> [ ctree ~ generate clone trees for MOBSTER_dataset ] 
+</div><div class='output co'>#&gt; <span style='color: #BBBBBB;background-color: #0000BB;'> [ ctree ~ generate clone trees for MOBSTER_dataset ] 
 #&gt; </span><span style='color: #000000;background-color: #BBBB00;'>Sampler : </span><span> 10000 (cutoff),  5000 (sampling),  100 (max store) </span><span style='color: #000000;background-color: #BBBB00;'>
-#&gt; </span><span style='color: #949494;'># A tibble: 1 x 5</span><span>
+#&gt; </span><span style='color: #555555;'># A tibble: 1 x 5</span><span>
 #&gt;   cluster    R1 nMuts is.clonal is.driver
-#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;lgl&gt;</span><span>     </span><span style='color: #949494;font-style: italic;'>&lt;lgl&gt;</span><span>    
-#&gt; </span><span style='color: #BCBCBC;'>1</span><span> C1      0.263   972 TRUE      TRUE     
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>    
+#&gt; </span><span style='color: #555555;'>1</span><span> C1      0.263   972 TRUE      TRUE     
 #&gt; 
 #&gt; </span><span style='color: #BB0000;'>Sampler: this model has 1 node, it has trivial models.
 #&gt; </span><span style='color: #00BB00;background-color: #BBBB00;'>✔</span><span style='color: #000000;background-color: #BBBB00;'> Trees with non-zero sscore</span><span> 1 storing 1 </span><span style='color: #000000;background-color: #BBBB00;'>
-#&gt; </span><span></div><div class='output co'>#&gt; <span class='message'>[easypar] 2020-10-28 14:56:01 - Overriding parallel execution setup [FALSE] with global option : FALSE</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; </span><span></div><div class='output co'>#&gt; <span class='message'>[easypar] 2020-10-29 11:27:33 - Overriding parallel execution setup [FALSE] with global option : FALSE</span></div><div class='output co'>#&gt; <span class='message'></span>
 #&gt; <span class='message'>This tree has 1 node, creating a monoclonal model disregarding the input matrix.</span></div><div class='input'>
 <span class='co'># Print and plot the first tree (top rank)</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'>ctree</span><span class='op'>)</span>
 <span class='fu'>ctree</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ctree/man/print.ctree.html'>print.ctree</a></span><span class='op'>(</span><span class='va'>trees</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; </span><span style='color: #BBBBBB;background-color: #0000BB;'> [ ctree - ctree rank 1/1 for MOBSTER_dataset ] 
 #&gt; </span><span>
-#&gt; </span><span style='color: #949494;'># A tibble: 1 x 5</span><span>
+#&gt; </span><span style='color: #555555;'># A tibble: 1 x 5</span><span>
 #&gt;   cluster    R1 nMuts is.clonal is.driver
-#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;lgl&gt;</span><span>     </span><span style='color: #949494;font-style: italic;'>&lt;lgl&gt;</span><span>    
-#&gt; </span><span style='color: #BCBCBC;'>1</span><span> C1      0.263   972 TRUE      TRUE     
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>    
+#&gt; </span><span style='color: #555555;'>1</span><span> C1      0.263   972 TRUE      TRUE     
 #&gt; </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt; Tree shape (drivers annotated)</span><span>  </span><span style='color: #000000;background-color: #BBBB00;'>
 #&gt; 
@@ -266,11 +260,11 @@ affect the sampling of the trees.</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='https://sites.google.com/site/giuliocaravagna/'>Giulio Caravagna</a>, Luca De Sano.</p>
+  <p>Developed by <a href='https://sites.google.com/site/giuliocaravagna/'>Giulio Caravagna</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>
