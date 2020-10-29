@@ -19,30 +19,38 @@
 #' # Random small dataset
 #' dataset = random_dataset(N = 200, seed = 123, Beta_variance_scaling = 100)
 #' x = mobster_fit(dataset$data, auto_setup = 'FAST')
-#' 
+#'
 #' # Just 5 resamples of a nonparametric bootstrap run, disabling the parallel engine
 #' options(easypar.parallel = FALSE)
 #' boot_results = mobster_bootstrap(x$best, n.resamples = 5, auto_setup = 'FAST')
-#' 
+#'
 #' boot_stats = bootstrapped_statistics(x$best, boot_results)
-#' plot_bootstrap_tail(x, boot_results, boot_stats)
+#' plot_bootstrap_tail(x$best, boot_results, boot_stats)
 plot_bootstrap_tail = function(x,
                                bootstrap_results,
                                bootstrap_statistics,
                                colors = c(`Tail` = 'gainsboro'))
 {
+  is_mobster_fit(x)
   is_bootstrap_results(bootstrap_results)
   is_bootstrap_statistics(bootstrap_statistics)
-  
+
   # plot
   n = length(bootstrap_results$fits)
   type = bootstrap_results$bootstrap
-  
+
   tail = bootstrap_statistics$bootstrap_values %>%
-    filter(statistics == 'Shape' |
-             statistics == 'Scale', 
-           cluster == 'Tail')
-  
+    dplyr::filter(
+      statistics == 'Shape' | statistics == 'Scale',
+      cluster == 'Tail'
+      )
+
+  if(nrow(tail) == 0)
+  {
+    cli::cli_alert_warning("No tail have been fit in these bootstraps, returning an empty plot")
+    return(CNAqc:::eplot())
+  }
+
   scale = ggplot(data = tail,
                  aes(x = statistics,
                      y = fit.value,
@@ -68,7 +76,7 @@ plot_bootstrap_tail = function(x,
       subtitle = paste0('n = ', n, ' ', type, ' bootstraps.')
     ) +
     guides(fill = FALSE)
-  
+
   scale = mobster:::add_fill_color_pl(x, scale, colors)
   scale
 }

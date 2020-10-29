@@ -1,14 +1,11 @@
 
-# mobster <a href='https://caravagn.github.io/mobster'><img src='man/figures/logo.png' align="right" height="139" /></a>
+# mobster <a href='https://caravagnalab.github.io/mobster'><img src='man/figures/logo.png' align="right" height="139" /></a>
 
 <!-- badges: start -->
 
-[![Travis build
-master](https://travis-ci.org/caravagn/mobster.svg?branch=master)](https://travis-ci.org/caravagn/mobster)
-[![Travis build
-development](https://travis-ci.org/caravagn/mobster.svg?branch=development)](https://travis-ci.org/caravagn/mobster)
-[![Lifecycle:
-maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+![check-master](https://github.com/caravagnalab/mobster/workflows/check-master/badge.svg?branch=master)
+![check-development](https://github.com/caravagnalab/mobster/workflows/check-development/badge.svg?branch=development)
+[![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://www.tidyverse.org/lifecycle/#stable)
 [![](https://img.shields.io/badge/Part%20of-evoverse-blue.svg)](https://caravagn.github.io/evoverse)
 <!-- badges: end -->
 
@@ -53,7 +50,7 @@ You can install the released version of `mobster` from
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("caravagn/mobster")
+devtools::install_github("caravagnalab/mobster")
 ```
 
 -----

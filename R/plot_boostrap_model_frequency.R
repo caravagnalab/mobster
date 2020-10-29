@@ -21,7 +21,7 @@
 #' boot_results = mobster_bootstrap(x$best, n.resamples = 5, auto_setup = 'FAST')
 #' 
 #' boot_stats = bootstrapped_statistics(x$best, boot_results)
-#' plot_bootstrap_model_frequency(x, boot_results, boot_stats)
+#' plot_bootstrap_model_frequency(boot_results, boot_stats)
 plot_bootstrap_model_frequency = function(bootstrap_results, bootstrap_statistics)
 {
   is_bootstrap_results(bootstrap_results)

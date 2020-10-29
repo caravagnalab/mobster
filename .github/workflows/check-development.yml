@@ -188,6 +188,7 @@ jobs:
           echo $rversion
 
           ## Save the info for the next job
+          echo "::set-output name=biocversion::${biocversion}"
           echo "::set-output name=rversion::${rversion}"
           echo "::set-output name=biocversionnum::${biocversionnum}"
         shell:
@@ -198,8 +199,8 @@ jobs:
         uses: actions/cache@v1
         with:
           path: /home/runner/work/_temp/Library
-          key: ${{ env.cache-version }}-${{ runner.os }}-biocdocker-biocbranch-${{ needs.define-docker-info.outputs.biocversion }}-r-${{ steps.findrversion.outputs.rversion }}-bioc-${{ steps.findrversion.outputs.biocversionnum }}-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: ${{ env.cache-version }}-${{ runner.os }}-biocdocker-biocbranch-${{ needs.define-docker-info.outputs.biocversion }}-r-${{ steps.findrversion.outputs.rversion }}-bioc-${{ steps.findrversion.outputs.biocversionnum }}-
+          key: ${{ env.cache-version }}-${{ runner.os }}-biocdocker-biocbranch-r-${{ steps.findrversion.outputs.rversion }}-bioc-${{ steps.findrversion.outputs.biocversionnum }}-${{ hashFiles('.github/depends.Rds') }}
+          restore-keys: ${{ env.cache-version }}-${{ runner.os }}-biocdocker-biocbranch-r-${{ steps.findrversion.outputs.rversion }}-bioc-${{ steps.findrversion.outputs.biocversionnum }}-
 
       - name: Install dependencies
         run: |
@@ -269,7 +270,7 @@ jobs:
           rcmdcheck::rcmdcheck(
               args = c("--timings"),
               build_args = c("--no-resave-data"),
-              error_on = "warning",
+              error_on = "error",
               check_dir = "check"
           )
         shell: Rscript {0}
@@ -337,7 +338,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@master
         with:
-          name: ${{ runner.os }}-biocdocker-biocbranch-${{ needs.define-docker-info.outputs.biocversion }}-r-${{ steps.findrversion.outputs.rversion }}-bioc-${{ steps.findrversion.outputs.biocversionnum }}-results
+          name: ${{ runner.os }}-biocdocker-biocbranch-r-${{ steps.findrversion.outputs.rversion }}-bioc-${{ steps.findrversion.outputs.biocversionnum }}-results
           path: check
 
   ## Run R CMD check on both macOS and Windows. You can also run the
@@ -348,7 +349,7 @@ jobs:
   ## dependencies as well, thus making this workflow useful beyond Bioconductor)
   R-CMD-check-r-lib:
     runs-on: ${{ matrix.config.os }}
-    needs: [define-docker-info, R-CMD-check]
+    needs: [R-CMD-check]
 
     name: ${{ matrix.config.os }}
 
@@ -364,7 +365,7 @@ jobs:
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       RSPM: ${{ matrix.config.rspm }}
-      BIOCVERSIONNUM: ${{ needs.R-CMD-check-bioc.outputs.biocversionnum }}
+      BIOCVERSIONNUM: ${{ needs.R-CMD-check.outputs.biocversionnum }}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
@@ -373,7 +374,7 @@ jobs:
       - name: Setup R from r-lib
         uses: r-lib/actions/setup-r@master
         with:
-          r-version: ${{ needs.R-CMD-check-bioc.outputs.rversion }}
+          r-version: ${{ needs.R-CMD-check.outputs.rversion }}
 
       - name: Setup pandoc from r-lib
         uses: r-lib/actions/setup-pandoc@master
@@ -402,8 +403,8 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ${{ env.R_LIBS_USER }}
-          key: ${{ env.cache-version }}-${{ runner.os }}-biocbranch-${{ needs.define-docker-info.outputs.biocversion }}-r-${{ needs.R-CMD-check-bioc.outputs.rversion }}-bioc-${{ needs.define-docker-info.outputs.biocversion }}-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: ${{ env.cache-version }}-${{ runner.os }}-biocbranch-${{ needs.define-docker-info.outputs.biocversion }}-r-${{ needs.R-CMD-check-bioc.outputs.rversion }}-bioc-${{ needs.define-docker-info.outputs.biocversion }}-
+          key: ${{ env.cache-version }}-${{ runner.os }}-biocbranch-r-${{ needs.R-CMD-check.outputs.rversion }}-bioc-${{ needs.define-docker-info.outputs.biocversion }}-${{ hashFiles('.github/depends.Rds') }}
+          restore-keys: ${{ env.cache-version }}-${{ runner.os }}-biocbranch-r-${{ needs.R-CMD-check.outputs.rversion }}-bioc-${{ needs.define-docker-info.outputs.biocversion }}-
 
       - name: Install Linux system dependencies
         if: runner.os == 'Linux'
@@ -511,7 +512,7 @@ jobs:
           rcmdcheck::rcmdcheck(
               args = c("--no-build-vignettes", "--no-manual", "--timings"),
               build_args = c("--no-manual", "--no-resave-data"),
-              error_on = "warning",
+              error_on = "error",
               check_dir = "check"
           )
         shell: Rscript {0}
@@ -545,5 +546,5 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@master
         with:
-          name: ${{ runner.os }}-biocbranch-${{ needs.define-docker-info.outputs.biocversion }}-r-${{ needs.R-CMD-check-bioc.outputs.rversion }}-bioc-${{ needs.define-docker-info.outputs.biocversion }}-results
+          name: ${{ runner.os }}-biocbranch-${{ needs.R-CMD-check.outputs.biocversion }}-r-${{ needs.R-CMD-check.outputs.rversion }}-bioc-${{ needs.R-CMD-check.outputs.biocversion }}-results
           path: check
