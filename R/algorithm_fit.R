@@ -15,9 +15,9 @@
   {
     stopifnot(fit.type %in% c('MLE', 'MM'))
     stopifnot(tail | K > 0)
-    
+
     .onLoad(NULL, NULL)
-    
+
     # suppressMessages(require(tidyverse))
     # suppressMessages(require(pio))
     # suppressMessages(require(crayon))
@@ -232,8 +232,8 @@
     ##==============================
     # Scores for model selection   #
     ##==============================
-    fit$scores = latent_vars_scores(
-      latent_vars(fit), # Extract latent variables
+    fit$scores = mobster:::latent_vars_scores(
+      mobster:::latent_vars(fit), # Extract latent variables
       fit$K,
       fit$fit.tail,
       fit$data$cluster)
@@ -242,17 +242,17 @@
       print.dbpmm(fit)
       cat('\n')
     }
-    
+
     # print("APPLICO FILTRI")
-    
+
     # Now apply the cluster-selection heuristic in function choose_clusters
     fit = choose_clusters(fit,  pi_cutoff = pi_cutoff, N_cutoff = N_cutoff)
 
     # print("RINOMINO")
-    
+
     # ... and re-order the Beta cluster ID by mean ...
     fit = rename_Beta_clusters(fit)
-    
+
     return(fit)
   }
 

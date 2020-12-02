@@ -27,21 +27,21 @@
 #'
 #' @return The density for the data. Notice that to compute the negative log-likelihood
 #' used during fit one needs to use \code{log = TRUE} and change sign.
-#' 
+#'
 #' @export
-#' 
+#'
 #' @importFrom  sads dpareto
 #'
-#' @examples 
+#' @examples
 #' library(ggplot2)
 #' data('fit_example', package = 'mobster')
-#' 
+#'
 #' # Use the full mixture, and its internal data
 #' ddbpmm(fit_example$best)
-#' 
+#'
 #' # Use only some of the mixture components, and pass some data
 #' ddbpmm(fit_example$best, data = .4, components = 1)
-#' 
+#'
 #' # An internal function to get f(x) with x the [0,1] range.
 #' ggplot(mobster:::template_density(fit_example$best, reduce = TRUE),
 #'        aes(x = x, y = y, color = cluster)) + geom_line()
@@ -53,36 +53,36 @@ ddbpmm = function(x,
                   pi = NULL,
                   scale = NULL,
                   shape = NULL,
-                  log = TRUE) 
+                  log = TRUE)
 {
-  is_mobster_fit(x)
+  mobster:::is_mobster_fit(x)
   stopifnot(length(components) > 0)
-  
+
   # Get parameters and data if these are not passed explicitly
   if (all(is.null(data)))
     data = x$data$VAF
-  
+
   if (is.null(scale))
     scale = mobster:::.params_Pareto(x)$Scale
   if (is.null(shape))
-    shape = .params_Pareto(x)$Shape
-  
+    shape = mobster:::.params_Pareto(x)$Shape
+
   if (all(is.null(a)))
-    a = .params_Beta(x)$a
+    a = mobster:::.params_Beta(x)$a
   if (all(is.null(b)))
-    b = .params_Beta(x)$b
-  
+    b = mobster:::.params_Beta(x)$b
+
   if (all(is.null(pi)))
     pi = .params_Pi(x)
-  
+
   # Mask what we do not compute
   mask = (1:x$K) %in% components
-  
+
   log_pi = log(pi)
-  
+
   logLik = 0
-  
-  # Tail
+
+  # Tail - if it is to be considered
   if (mask[1])
   {
     if (x$fit.tail)
@@ -93,21 +93,24 @@ ddbpmm = function(x,
     else
       logLik = rep(-Inf, length(data)) # Otherwise -Inf is the min achievable
   }
-  
+
   # Beta components
-  log_pi = log_pi[2:x$K]
-  
-  for (k in 1:length(log_pi))
-    if (mask[k + 1])
-      logLik = logLik +
-    log_pi[k] + dbeta(data,
-                      shape1 = a[k],
-                      shape2 = b[k],
-                      log = TRUE)
-  
+  if(x$Kbeta > 0)
+  {
+    log_pi = log_pi[2:x$K]
+
+    for (k in 1:length(log_pi))
+      if (mask[k + 1])
+        logLik = logLik +
+      log_pi[k] + dbeta(data,
+                        shape1 = a[k],
+                        shape2 = b[k],
+                        log = TRUE)
+  }
+
   if (!log)
     logLik = exp(logLik)
-  
+
   logLik
 }
 
@@ -119,7 +122,7 @@ template_density = function(x,
                             reduce = FALSE)
 {
   labels = names(mobster:::.params_Pi(x))
-  
+
   values = lapply(1:x$K,
                   # Component wise
                   function(w)
@@ -134,19 +137,19 @@ template_density = function(x,
                         log = FALSE
                       )
                     ))
-  
+
   names(values) = labels
-  
+
   # remove tail if not required, which is entry #1
   if (!x$fit.tail)
     values = values[2:x$K]
-  
+
   # Scale density wrt binwidth
   values = lapply(values, function(w) {
     w$y = w$y * binwidth
     w
   })
-  
+
   # Reduce if required
   if (reduce)
     values = Reduce(rbind, values)
@@ -171,7 +174,7 @@ template_density = function(x,
 
 
 #' Generate a random sample from a MOBSTER model.
-#' 
+#'
 #' @description This function can be used to generate data from a MOBSTER
 #' model, or from a custom mixture. The principle is the same of function
 #' \code{\link{ddbpmm}}.
@@ -190,11 +193,11 @@ template_density = function(x,
 #' inside \code{x} are used.
 #' @param tail.cutoff Because the Pareto Type I power law has support
 #' over all the positive real line, tail values above \code{tail.cutoff}
-#' are rejected (and re-sampled). 
+#' are rejected (and re-sampled).
 #'
 #' @return n samples from the mixture
-#' 
-#' 
+#'
+#'
 #' @export
 #'
 #' @examples
@@ -217,10 +220,10 @@ template_density = function(x,
 #'    scale = 0.05
 #'  ))
 #' ggplot(v, aes(x)) + geom_histogram(binwidth = 0.01)
-#' 
+#'
 #' # Or use the parameters of a model available
 #' data('fit_example', package = 'mobster')
-#' 
+#'
 #' v = data.frame(x = rdbpmm(x = fit_example$best, n = 1000))
 #' ggplot(v, aes(x)) + geom_histogram(binwidth = 0.01)
 rdbpmm = function(x,
@@ -232,14 +235,14 @@ rdbpmm = function(x,
                   n = 1,
                   tail.cutoff = 1)
 {
-  
+
   # Get parameters if these are not passed explicitly
   if (all(is.null(scale)) | all(is.null(shape)))
   {
     scale = .params_Pareto(x)$Scale
     shape = .params_Pareto(x)$Shape
   }
-  
+
   if (all(is.null(a)) | all(is.null(b)))
   {
     Betas = .params_Beta(x)
@@ -247,55 +250,55 @@ rdbpmm = function(x,
     b = Betas$b
     names(a) = names(b) = Betas$cluster
   }
-  
+
   if (all(is.null(pi)))
     pi = .params_Pi(x)
-  
+
   ############################ Sample mixing prop.
   pi.samples = sample(names(pi),
                       size = n,
                       prob = pi,
                       replace = TRUE)
-  
+
   ############################ Tail samples
   n.tail = table(pi.samples)['Tail']
   sample.tails = NULL
-  
+
   if (!is.na(n.tail) & n.tail > 0)
   {
     N = n.tail
-    
+
     # as the model is an approximation to the VAF we reject values > 1.
     repeat {
       # Get `N` Pareto Type I samples
       new.sample.tails = sads::rpareto(N,
                                        shape = shape,
                                        scale = scale)
-      
+
       # Store only values <= 1, which might be less than N
       new.sample.tails = new.sample.tails[new.sample.tails <= tail.cutoff]
-      
+
       sample.tails = c(sample.tails, new.sample.tails)
-      
+
       # Stop if we accumulated `n.tail` samples
       if (length(sample.tails) == n.tail)
         break
-      
-      
+
+
       # Otherwise repeat drawing N-length(sample.tails)
       N = N - length(new.sample.tails)
     }
   }
-  
+
   ############################ Beta samples
   n.Betas = table(pi.samples)[names(table(pi.samples)) != 'Tail']
-  
+
   sample.Betas = sapply(names(n.Betas),
                         function(w)
                         {
                           rbeta(n.Betas[w], shape1 = a[w], shape2 = b[w])
                         })
-  
+
   return(c(unlist(sample.Betas), unlist(sample.tails)))
 }
 
