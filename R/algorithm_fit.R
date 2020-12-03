@@ -54,7 +54,8 @@
 
 
     # Names of components
-    names.BetaC = names.ParetoC = NULL
+    names.BetaC = NULL
+    names.ParetoC = "Tail"
 
     if(K > 0) names.BetaC = paste('C', 1:K, sep = '')
     if(tail) names.ParetoC = 'Tail'
