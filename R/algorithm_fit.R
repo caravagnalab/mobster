@@ -18,6 +18,9 @@
 
     .onLoad(NULL, NULL)
 
+    if(K == 0 && !tail)
+      stop("Empty model K = 0 and no tail -- cannot compute.")
+
     # suppressMessages(require(tidyverse))
     # suppressMessages(require(pio))
     # suppressMessages(require(crayon))
@@ -51,8 +54,10 @@
 
 
     # Names of components
-    names.BetaC = paste('C', 1:K, sep = '')
-    names.ParetoC = 'Tail'
+    names.BetaC = names.ParetoC = NULL
+
+    if(K > 0) names.BetaC = paste('C', 1:K, sep = '')
+    if(tail) names.ParetoC = 'Tail'
 
     # Compute initial conditions
     fit$Clusters  = mobster:::.initializer(X$VAF, K = fit$Kbeta, tail = tail, init = init)
@@ -148,40 +153,43 @@
       fit$shape = as.numeric(-1 * (sum(fit$z_nk[, 1])) / (fit$z_nk[, 1] %*% (log(fit$scale) - logX)))
       fit = mobster:::.set_params_Pareto(fit, fit$shape, fit$scale)
 
-      # BETA: numerical MLE or analytical MM
-      for (k in 2:fit$K)
+      # BETA: numerical MLE or analytical MM, only if we have a Beta
+      if(fit$K >= 2)
       {
-        if (fit.type == 'MLE')
-          # MLE
-        {
-          # Compute a functional of the negative logLik, which we minimize
-          MLE.fit = stats4::mle(
-            minuslogl = mobster:::.NLLBetaMix(k, X$VAF, fit$z_nk, fit$pi),
-            start = list(a = fit$a[k - 1], b = fit$b[k - 1])
-          )
+        for (k in 2:fit$K)
+      {
+          if (fit.type == 'MLE')
+            # MLE
+          {
+            # Compute a functional of the negative logLik, which we minimize
+            MLE.fit = stats4::mle(
+              minuslogl = mobster:::.NLLBetaMix(k, X$VAF, fit$z_nk, fit$pi),
+              start = list(a = fit$a[k - 1], b = fit$b[k - 1])
+            )
 
-          fit$a[k - 1] = as.numeric(stats4::coef(MLE.fit)['a'])
-          fit$b[k - 1] = as.numeric(stats4::coef(MLE.fit)['b'])
-        }
-        else
-          # Moments Matching
-        {
-          mean = as.numeric((fit$z_nk[, k] %*% X$VAF) / (fit$N * fit$pi[k]))
-          var = as.numeric((fit$z_nk[, k] %*% ((X$VAF - mean) ** 2)) / (fit$N * fit$pi[k]))
+            fit$a[k - 1] = as.numeric(stats4::coef(MLE.fit)['a'])
+            fit$b[k - 1] = as.numeric(stats4::coef(MLE.fit)['b'])
+          }
+          else
+            # Moments Matching
+          {
+            mean = as.numeric((fit$z_nk[, k] %*% X$VAF) / (fit$N * fit$pi[k]))
+            var = as.numeric((fit$z_nk[, k] %*% ((X$VAF - mean) ** 2)) / (fit$N * fit$pi[k]))
 
-          if (is.na(mean) | is.na(var)) {
-            {
-              warning('Possible singularity in one Beta component a/b --> Inf.')
+            if (is.na(mean) | is.na(var)) {
+              {
+                warning('Possible singularity in one Beta component a/b --> Inf.')
+              }
             }
-          }
-          else {
-            par = mobster:::.estBetaParams(mean, var)
-            fit$a[k - 1] = par$a
-            fit$b[k - 1] = par$b
-          }
+            else {
+              par = mobster:::.estBetaParams(mean, var)
+              fit$a[k - 1] = par$a
+              fit$b[k - 1] = par$b
+            }
 
-          names(fit$a) = names(fit$b) = names.BetaC
-          fit = mobster:::.set_params_Beta(fit, fit$a, fit$b)
+            names(fit$a) = names(fit$b) = names.BetaC
+            fit = mobster:::.set_params_Beta(fit, fit$a, fit$b)
+          }
         }
       }
 
@@ -251,7 +259,8 @@
     # print("RINOMINO")
 
     # ... and re-order the Beta cluster ID by mean ...
-    fit = rename_Beta_clusters(fit)
+    if(fit$Kbeta > 0)
+      fit = rename_Beta_clusters(fit)
 
     return(fit)
   }
