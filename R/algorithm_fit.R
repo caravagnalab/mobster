@@ -255,7 +255,24 @@
     # print("APPLICO FILTRI")
 
     # Now apply the cluster-selection heuristic in function choose_clusters
+    K_beta_before_filters = fit$Kbeta
+    tail_before_filters = fit$fit.tail
+
     fit = choose_clusters(fit,  pi_cutoff = pi_cutoff, N_cutoff = N_cutoff)
+
+    if(is_verbose & K_beta_before_filters != fit$Kbeta)
+    {
+      cli::cli_alert_warning(
+        "After filtering (\u03C0 > {.value {pi_cutoff}}; N > {.value {N_cutoff}}) the number of Betas decreased from {.field {K_beta_before_filters}} to {.field {fit$Kbeta}}."
+      )
+    }
+
+    if(is_verbopse & tail_before_filters !=  fit$fit.tail)
+    {
+      cli::cli_alert_warning(
+        "After filtering (\u03C0 > {.value {pi_cutoff}}; N > {.value {N_cutoff}}) the tail was removed."
+      )
+    }
 
     # print("RINOMINO")
 
