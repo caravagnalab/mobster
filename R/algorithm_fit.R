@@ -267,7 +267,7 @@
       )
     }
 
-    if(is_verbopse & tail_before_filters !=  fit$fit.tail)
+    if(is_verbose & tail_before_filters !=  fit$fit.tail)
     {
       cli::cli_alert_warning(
         "After filtering (\u03C0 > {.value {pi_cutoff}}; N > {.value {N_cutoff}}) the tail was removed."
