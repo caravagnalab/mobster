@@ -6,7 +6,7 @@ template:
     footer: G. Caravagna, PhD.
 url:
   caravagn.github.io/mobster
-  
+
 repo:
   url:
     home: https://github.com/caravagn/mobster/
@@ -14,8 +14,6 @@ repo:
     issue: https://github.com/caravagn/mobster/issues
     user: https://github.com/caravagn
 
-
-  
 authors:
   Giulio Caravagna:
     href: https://sites.google.com/site/giuliocaravagna/
@@ -25,8 +23,8 @@ reference:
   desc:  Data released with the package
   contents:
   - fit_example
-  - LU4_lung_sample 
-  - LUFF76_lung_sample 
+  - LU4_lung_sample
+  - LUFF76_lung_sample
   - cancer_genes_dnds
 
 - title: Fitting functions
@@ -47,7 +45,7 @@ reference:
   - print.dbpmm
   - summary.dbpmm
   - plot.dbpmm
-  
+
 - title: Plotting functions
   desc:  These functions can be used to plot data and `mobster` fits.
   contents:
@@ -59,8 +57,8 @@ reference:
   - plot_latent_variables
   - plot_mixing_proportions
   - plot_model_selection
-  
-  
+
+
 - title: Bootstrap functions
   desc:  Bootstrap functions for `mobster` fits, and plotting functions.
   contents:
@@ -69,10 +67,10 @@ reference:
   - plot_bootstrap_Beta
   - plot_bootstrap_coclustering
   - plot_bootstrap_mixing_proportions
-  - plot_bootstrap_model_frequency 
+  - plot_bootstrap_model_frequency
   - plot_bootstrap_tail
 
-  
+
 - title: Extra features
   desc:  Other analyses for `mobster` fits.
   contents:
