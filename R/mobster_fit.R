@@ -88,7 +88,7 @@ mobster_fit = function(x,
 {
   pio::pioHdr(paste0("MOBSTER fit"))
   cat('\n')
-  
+
   # Check for basic input requirements
   mobster:::check_input(x,
               K,
@@ -101,17 +101,17 @@ mobster_fit = function(x,
               seed,
               model.selection,
               trace)
-  
+
   X = tibble::as_tibble(x)
-  
+
   mobster:::m_ok("Loaded input data, n = {.value {nrow(x)}}.") %>% cli::cli_text()
-  
+
   ###################### Auto setup of parameters
   if (!is.null(auto_setup))
   {
     # Get the parameters, checks they are known, throws errors.
     template = mobster:::auto_setup(auto_setup)
-    
+
     K = template$K
     samples = template$samples
     init = template$init
@@ -126,41 +126,42 @@ mobster_fit = function(x,
     pi_cutoff = template$pi_cutoff
     N_cutoff = template$N_cutoff
   }
-  
+
   ###################### Initializations
   set.seed(seed)
   TIME = as.POSIXct(Sys.time(), format = "%H:%M:%S")
-  
+
   # Storage variables
   best = obj = runs = NULL
-  
+
   # Configurations that will be used for model selection
   tests = expand.grid(
     K = K,
     tail = tail,
     Run = 1:samples,
     stringsAsFactors = FALSE
-  )
+  ) %>%
+    dplyr::filter(!(K == 0 & !tail))
   ntests = nrow(tests)
-  
+
   ###################### Print message
   mobster:::m_txt(
     "n = {.value {nrow(x)}}. Mixture with k = {.field {paste(K, collapse = ',')}} Beta(s). Pareto tail: {.field {tail}}. Output clusters with \u03c0 > {.value {pi_cutoff}} and n > {.value {N_cutoff}}."
   ) %>% cli::cli_text()
-  
+
   if (!is.null(auto_setup))
     mobster:::m_wrn("mobster automatic setup {.field {auto_setup}} for the analysis.") %>% cli::cli_text()
   else
     mobster:::m_txt(
       'Custom fit by {.field {ifelse(fit.type == \'MM\', "Moments-matching", "Maximum-Likelihood")}} in up to {.value {maxIter}} steps, with \u03B5 = {.value {epsilon}} and {.field {init}} initialisation.'
     ) %>% cli::cli_text()
-  
+
   mobster:::m_txt(
     'Scoring ({.value {ifelse(parallel, green("with parallel"), red("without parallel"))}}) {.value {samples}} x {.value {length(K)}} x {.value {length(tail)}} = {.field {ntests}} models by {.field {model.selection}}.'
   ) %>% cli::cli_text()
   cat('\n')
-  
-  
+
+
   # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
   # Fits are obtained using the easypar package
   # which allows easy parallelization of R functions
@@ -181,10 +182,10 @@ mobster_fit = function(x,
                       fit.type = fit.type,
                       trace = trace,
                       pi_cutoff = pi_cutoff,
-                      N_cutoff = N_cutoff, 
+                      N_cutoff = N_cutoff,
                       description = description
                     ))
-  
+
   runs = easypar::run(
     FUN = mobster:::.dbpmm.EM,
     PARAMS = inputs,
@@ -195,44 +196,44 @@ mobster_fit = function(x,
     cache = NULL,
     filter_errors = TRUE # Error managment is inside easypar
   )
-  
+
   # Should not happen
   if (length(runs) == 0)
     stop("All task returned errors, no fit available, raising this error to interrupt the computation....")
-  
+
   # What is successfull (id of the task)
   succesfull_tasks = names(runs) %>% as.numeric()
   tests = tests[succesfull_tasks, , drop = FALSE]
-  
+
   # Report timing to screen
   TIME = difftime(as.POSIXct(Sys.time(), format = "%H:%M:%S"), TIME, units = "mins")
-  
+
   cat('\n\n')
   mobster:::m_inf("{crayon::bold('MOBSTER fits')} completed in {.value {prettyunits::pretty_dt(TIME)}}.") %>% cli::cli_text()
   cat('\n')
-  
+
   # Get all scores
   scores_succesfull_tasks = lapply(runs, function(w)
     w$scores)
   tests = bind_cols(tests, Reduce(bind_rows, scores_succesfull_tasks))
-  
+
   # clean up some repeated results -- show unique fits
   tests$Run = NULL
   scores.columns = colnames(runs[[1]]$scores)
   tests[, scores.columns] = apply(tests[, scores.columns], 2, round, digits = 2)
-  
+
   runs = runs[!duplicated(tests)] # remove duplicated entries..
   tests = tests[!duplicated(tests),] # remove duplicated entries..
   rownames(tests) = NULL
-  
+
   # Model selection -- this will be returned later ..
   model = model_selection(runs, scores.suitable = model.selection)
   model = model$model.selection[[model.selection]]
   model$model.selection = model.selection
-  
+
   ###### SHOW BEST FIT
   # cli::cli_alert_info(paste(bold("BEST:"), model.selection))
   print.dbpmm(model$best)
-  
+
   return(model)
 }

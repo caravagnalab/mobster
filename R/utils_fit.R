@@ -19,7 +19,7 @@
     }
   }
 
-  if(is.character(init) && init == 'random')
+  if(is.character(init) && init == 'random' && K > 0)
     beta = sapply(runif(K), bsamp)
 
   if(is.character(init) && init == 'even')
@@ -42,7 +42,7 @@
     # }
   }
 
-  if(is.character(init) & init == 'peaks')
+  if(is.character(init) & init == 'peaks' & K > 0)
   {
     # Compute KDE
     h = hist(X, breaks = seq(0, 1, 0.01), plot = FALSE)
@@ -79,17 +79,20 @@
   # Prepare tibbles for Betas
   Betas = NULL
 
-  for(i in 1:K)
-    Betas =  dplyr::bind_rows(
-      Betas,
-      tibble::tribble(
-        ~cluster, ~type, ~fit.value, ~init.value,
-        paste0('C',i), "a", NA, unlist(beta['a', i]) %>% as.vector,
-        paste0('C',i), "b", NA, unlist(beta['a', i]) %>% as.vector,
-        paste0('C',i), "Mean", NA, unlist(beta['mean', i]) %>% as.vector,
-        paste0('C',i), "Variance", NA, unlist(beta['var', i]) %>% as.vector
+  if(K > 0)
+  {
+    for(i in 1:K)
+      Betas =  dplyr::bind_rows(
+        Betas,
+        tibble::tribble(
+          ~cluster, ~type, ~fit.value, ~init.value,
+          paste0('C',i), "a", NA, unlist(beta['a', i]) %>% as.vector,
+          paste0('C',i), "b", NA, unlist(beta['a', i]) %>% as.vector,
+          paste0('C',i), "Mean", NA, unlist(beta['mean', i]) %>% as.vector,
+          paste0('C',i), "Variance", NA, unlist(beta['var', i]) %>% as.vector
+        )
       )
-    )
+  }
 
   # Tail, sample and make a tibble
   Pareto = NULL
@@ -121,12 +124,13 @@
   )
 
   pi.Betas = NULL
-  for(x in unique(Betas$cluster))
-    pi.Betas = dplyr::bind_rows(pi.Betas,
-                                tibble::tribble(
-                                  ~cluster, ~type, ~fit.value, ~init.value,
-                                  x, "Mixing proportion", NA, 1/K
-                                ))
+  if(!is.null(Betas))
+    for(x in unique(Betas$cluster))
+      pi.Betas = dplyr::bind_rows(pi.Betas,
+                                  tibble::tribble(
+                                    ~cluster, ~type, ~fit.value, ~init.value,
+                                    x, "Mixing proportion", NA, 1/K
+                                  ))
 
   dplyr::bind_rows(Pareto, Betas, pi.Pareto, pi.Betas)
 }
@@ -155,15 +159,15 @@
   {
     # With MM in general we are not interested in the logLik
     # and we only look for variations in the actual mixing
-    # proportions. When the fit is however single-cluster, 
+    # proportions. When the fit is however single-cluster,
     # we need to check also the logLik because the proportions
     # never change by definition (do the abs beacuse Jensen's ineq. is invalid)
-    
+
     if(K > 1)
     {
       # Compute pi's difference after ith iteration
       pi.Diff  <- abs(prevpi - pi)
-  
+
       # Check for convergence -- all pi's have changed less than epsilon
       stopping = all(pi.Diff < epsilon)
     }
@@ -230,7 +234,7 @@
 .MeanVarPareto = function(shape, scale) {
   meanPareto = ifelse(shape > 1, (shape * scale) / (shape - 1), Inf)
   varPareto = ifelse(shape > 2, (shape * scale**2) / ((shape - 1)**2 * (shape - 2)), Inf)
-  
+
   return(list(mean = meanPareto, var = varPareto))
 }
 
@@ -238,18 +242,20 @@
 .params_Beta = function(x, init = FALSE)
 {
   if(init) x$Clusters$fit.value = x$Clusters$init.value
-  
-  x$Clusters %>%
-    dplyr::filter(cluster != 'Tail', type == 'a' | type == 'b') %>%
-    dplyr::select(-init.value) %>%
-    tidyr::spread(key = type, value = fit.value)
+
+  suppressWarnings(
+    x$Clusters %>%
+      dplyr::filter(cluster != 'Tail', type == 'a' | type == 'b') %>%
+      dplyr::select(-init.value) %>%
+      tidyr::spread(key = type, value = fit.value)
+  )
 }
 
 # Extract Pareto parameters
 .params_Pareto = function(x, init = FALSE)
 {
   if(init) x$Clusters$fit.value = x$Clusters$init.value
-  
+
   suppressWarnings(
     x$Clusters %>%
       dplyr::filter(cluster == 'Tail', type == 'Shape' | type == 'Scale') %>%
@@ -262,23 +268,23 @@
 .params_Pi = function(x, init = FALSE)
 {
   if(init) x$Clusters$fit.value = x$Clusters$init.value
-  
+
   v = x$Clusters %>%
     dplyr::filter(type == 'Mixing proportion') %>%
     dplyr::select(-init.value) %>%
     tidyr::spread(key = type, value = fit.value)
-  
+
   # pi = v$`Mixing proportion`
   # names(pi) = v$cluster
-  
+
   pi = pio:::nmfy(v$cluster, v$`Mixing proportion`)
-  
+
   # ord.pi = c(pi['Tail'], pi[names(pi) != 'Tail'])
   ord.pi = c(
     pi['Tail'],
     pi[sort(names(pi)[names(pi) != 'Tail'], decreasing = FALSE)]
     )
-  
+
   ord.pi
 }
 
@@ -286,77 +292,78 @@
 .set_params_Beta = function(fit, a, b)
 {
   names.BetaC = names(a)
-  if(any(is.null(names.BetaC))) stop("params -- named vector required?")
-  
+  if(any(is.null(names.BetaC))) return(fit)
+    # stop("params -- named vector required?")
+
   # Dangerous for ordering of Beta clusters..
   # fit$Clusters[
   #   fit$Clusters$cluster %in% names.BetaC & fit$Clusters$type == 'a',
   #   'fit.value'
   #   ] =  a
-  
+
   # fit$Clusters[
   #   fit$Clusters$cluster %in% names.BetaC & fit$Clusters$type == 'b',
   #   'fit.value'
   #   ] =  b
-  
-  
+
+
   fit$Clusters = fit$Clusters %>%
     dplyr::mutate(
-      fit.value = 
+      fit.value =
         ifelse(
-          (cluster %in% names.BetaC) & (type == 'a'), 
+          (cluster %in% names.BetaC) & (type == 'a'),
           a[cluster],
           fit.value
         )
     )
-  
+
   fit$Clusters = fit$Clusters %>%
     dplyr::mutate(
-      fit.value = 
+      fit.value =
         ifelse(
-          (cluster %in% names.BetaC) & (type == 'b'), 
+          (cluster %in% names.BetaC) & (type == 'b'),
           b[cluster],
           fit.value
         )
     )
-  
-  
-  
+
+
+
   for (s in names.BetaC)
   {
     mv = mobster:::.MeanVarBeta(a[s], b[s])
-    
+
     # fit$Clusters[
     #   fit$Clusters$cluster == s & fit$Clusters$type == 'Mean',
     #   'fit.value'
     #   ] =  mv$mean
-    
+
     # fit$Clusters[
     #   fit$Clusters$cluster == s & fit$Clusters$type == 'Variance',
     #   'fit.value'
     #   ] =  mv$var
-    
+
     fit$Clusters = fit$Clusters %>%
       dplyr::mutate(
-        fit.value = 
+        fit.value =
           ifelse(
-            (cluster == s) & (type == 'Mean'), 
+            (cluster == s) & (type == 'Mean'),
             mv$mean,
             fit.value
           )
       )
-    
+
     fit$Clusters = fit$Clusters %>%
       dplyr::mutate(
-        fit.value = 
+        fit.value =
           ifelse(
-            (cluster %in% s) & (type == 'Variance'), 
+            (cluster %in% s) & (type == 'Variance'),
             mv$var,
             fit.value
           )
       )
   }
-  
+
   fit
 }
 
@@ -364,29 +371,29 @@
 .set_params_Pareto = function(fit, shape, scale)
 {
   if(!fit$fit.tail) return(fit)
-  
+
   mv = mobster:::.MeanVarPareto(shape, scale)
-  
+
   fit$Clusters[
     fit$Clusters$cluster == 'Tail' & fit$Clusters$type == 'Shape',
     'fit.value'
     ] = shape
-  
+
   fit$Clusters[
     fit$Clusters$cluster == 'Tail' & fit$Clusters$type == 'Scale',
     'fit.value'
     ] =  scale
-  
+
   fit$Clusters[
     fit$Clusters$cluster == 'Tail' & fit$Clusters$type == 'Mean',
     'fit.value'
     ] =  mv$mean
-  
+
   fit$Clusters[
     fit$Clusters$cluster == 'Tail' & fit$Clusters$type == 'Variance',
     'fit.value'
     ] =  mv$var
-  
+
   fit
 }
 
@@ -398,16 +405,16 @@
   #   fit$Clusters$type == 'Mixing proportion',
   #   'fit.value'
   #   ] =  pi
-  
+
   fit$Clusters = fit$Clusters %>%
     dplyr::mutate(
       fit.value = ifelse(
-        type == 'Mixing proportion', 
+        type == 'Mixing proportion',
         pi[cluster],
         fit.value
       )
     )
-  
+
   fit
 }
 
@@ -419,21 +426,21 @@
     x.axis = seq(binning, 1-binning, by = binning), # Restricted for numerical errors
     binwidth = binning,
     reduce = TRUE)
-  
+
   densities = tibble::as_tibble(densities)
   densities = densities %>% group_by(x) %>% summarise(y = sum(y), cluster = 'f(x)')
-  
+
   # Empirical density
   empirical = hist(x$data$VAF, breaks = seq(0, 1, binning), plot = FALSE)$density
   empirical = empirical[-length(empirical)]
   empirical = empirical * binning # adjust for binwidth
-  
+
   # Error
   error = densities
   error$cluster = 'e(x)'
   error$y = (densities$y - empirical)^2
   error$cum.y = cumsum(error$y)
-  
+
   error
 }
 
@@ -473,6 +480,6 @@ template_parameters_fast_setup = function()
 auto_setup = function(x)
 {
   if(x == "FAST")  return(template_parameters_fast_setup())
-  
+
   stop("Auto setup unknown: use \"FAST\".")
 }

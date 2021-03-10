@@ -17,7 +17,6 @@ knitr::opts_chunk$set(
 ![check-master](https://github.com/caravagnalab/mobster/workflows/check-master/badge.svg?branch=master)
 ![check-development](https://github.com/caravagnalab/mobster/workflows/check-development/badge.svg?branch=development)
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://www.tidyverse.org/lifecycle/#stable)
-[![](https://img.shields.io/badge/Part%20of-evoverse-blue.svg)](https://caravagn.github.io/evoverse)
 <!-- badges: end -->
 
 `mobster` is a package that implements a model-based  approach for _subclonal deconvolution_ of cancer genome sequencing data ([Caravagna et al; PMID: 32879509](https://www.nature.com/articles/s41588-020-0675-5#:~:text=Subclonal%20reconstruction%20methods%20based%20on,and%20infer%20their%20evolutionary%20history.&text=We%20present%20a%20novel%20approach,learning%20with%20theoretical%20population%20genetics.)).
