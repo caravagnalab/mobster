@@ -5,6 +5,7 @@
 
 ![check-master](https://github.com/caravagnalab/mobster/workflows/check-master/badge.svg?branch=master)
 ![check-development](https://github.com/caravagnalab/mobster/workflows/check-development/badge.svg?branch=development)
+[![pkgdown](https://github.com/caravagnalab/mobster/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/caravagnalab/mobster/actions/workflows/pkgdown.yaml)
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://www.tidyverse.org/lifecycle/#stable)
 <!-- badges: end -->
