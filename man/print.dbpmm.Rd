@@ -2,12 +2,12 @@
 % Please edit documentation in R/S3_methods_print.R
 \name{print.dbpmm}
 \alias{print.dbpmm}
-\title{Summaries for an object of class \code{'dbpmm'} is like a print.}
+\title{Print a MOBSTER object.}
 \usage{
 \method{print}{dbpmm}(x, ...)
 }
 \arguments{
-\item{x}{An obj of class \code{'dbpmm'}.}
+\item{x}{An object of class \code{'dbpmm'}.}
 
 \item{...}{}
 }
@@ -15,7 +15,7 @@
 nothing.
 }
 \description{
-Summaries for an object of class \code{'dbpmm'} is like a print.
+Print a MOBSTER object.
 }
 \examples{
 data(fit_example)

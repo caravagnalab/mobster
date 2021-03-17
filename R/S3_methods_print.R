@@ -14,9 +14,9 @@ summary.dbpmm = function(object, ...) {
   print.dbpmm(object, ...)
 }
 
-#' Summaries for an object of class \code{'dbpmm'} is like a print.
+#' Print a MOBSTER object.
 #'
-#' @param x An obj of class \code{'dbpmm'}.
+#' @param x An object of class \code{'dbpmm'}.
 #' @param ...
 #'
 #' @return nothing.

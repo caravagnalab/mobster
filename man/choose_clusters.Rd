@@ -30,7 +30,7 @@ at least \code{N_cutoff}. If no such cluster exists an error is generated.
 \description{
 This function can filter out the clusters computed by MOBSTER
 based on two criteria: the mixing proportion value,  the number of mutations
-assigned and the variance of the Beta clusters. 
+assigned and the variance of the Beta clusters.
 
 For all criteria a scalar should be given as input. The return object
 will contain only the clusters that pass all filters. If any cluster is dropped
