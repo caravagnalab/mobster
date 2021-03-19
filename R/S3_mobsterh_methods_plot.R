@@ -52,7 +52,7 @@ plot.dbpmmh = function(x,
   add_drivers = function(x, drivers_table, plot)
   {
     # Missing drivers
-    ndrivers_missing = x$table %>%
+    ndrivers_missing = x$data %>%
       filter(is_driver, is.na(cluster)) %>%
       nrow
 
@@ -91,7 +91,7 @@ plot.dbpmmh = function(x,
 
   cli::cli_alert("Generating metadata for plot.")
 
-  data_table = x$table
+  data_table = x$data
 
   if (!show_na)
     data_table = data_table %>% filter(!is.na(cluster))
@@ -130,13 +130,6 @@ plot.dbpmmh = function(x,
   cluster_colors = c(tail_color, Beta_colors, `Not used` = 'lightpink')
   names(cluster_colors)[1:(length(cluster_colors) - 1)] = c("Tail", paste0("Beta", 1:nBeta))
 
-  # Transform cluster labels into proper intelligle names
-  data_table = data_table %>%
-    mutate(cluster = case_when(
-      cluster == 0 ~ "Tail",
-      is.na(cluster) ~ "Not used",
-      TRUE ~ paste0("Beta", cluster)
-    ))
 
   # Drivers table
   drivers_table = data_table %>%
