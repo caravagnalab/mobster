@@ -1,5 +1,5 @@
 #' Plot the scores for model selection.
-#' 
+#'
 #' @description Plots the scores via ICL, reICL, BIC and
 #' AIC which can be used for model selection. It allows to
 #' easily see if the model selected as best is consistently
@@ -11,7 +11,7 @@
 #' @export
 #'
 #' @importFrom reshape2 melt
-#' 
+#'
 #'
 #' @examples
 #' data('fit_example', package = 'mobster')
@@ -19,31 +19,41 @@
 plot_fit_scores = function(x)
 {
   is_list_mobster_fits(x)
-  
+
   model.selection = 'ICL'
   if (!is.null(x$model.selection))
     model.selection = x$model.selection
-  
-  scores = c('ICL', 'reICL', 'BIC', 'AIC')
-  
-  scores = x$fits.table[, c(scores, 'K', 'tail')]
+
+  if(is_mobsterL(x$best)){
+    scores = c('ICL', 'reICL', 'BIC', 'AIC')
+    scores = x$fits.table[, c(scores, 'K', 'tail')]
+
+  } else if (is_mobsterhL(x$best)){
+    scores = c('likelihood', 'ICL', 'BIC', 'AIC')
+    scores = x$fits.table[, c(scores, 'subclonal_clusters', 'tail')] %>%  rename(K = subclonal_clusters )
+    scores$likelihood <-  scores$likelihood * 2
+  }
+
+
+
+
   scores = scores[complete.cases(scores),]
-  
+
   scores = scores %>% mutate(tail = ifelse(tail, 'With Tail', 'Without Tail'))
-  
+
   ranks = order(scores[, model.selection])
   scores = scores[ranks, , drop = FALSE]
   scores$rank = 1:nrow(scores)
-  
+
   mscores = reshape2::melt(scores, c('K', 'tail', 'rank'))
-  
+
   K_vals = unique(mscores$K)
-  
+
   opt_scores = mscores %>%
     group_by(variable) %>%
     arrange(value) %>%
     filter(row_number() == 1)
-  
+
   ggplot(data = mscores,
          aes(x = rank,
              y = value)) +
@@ -69,7 +79,7 @@ plot_fit_scores = function(x)
     )  +
     scale_size(range = c(min(K_vals), max(K_vals)) * 0.7,
                breaks = min(K_vals):max(K_vals)) +
-    facet_wrap( ~ variable, ncol = 2) +
+    facet_wrap( ~ variable, ncol = 2, "freE") +
     labs(
       title  = bquote('Scores for model selection'),
       subtitle = bquote(.(nrow(scores)) ~ 'runs, '~ .(model.selection) ~ "used"),
@@ -82,5 +92,5 @@ plot_fit_scores = function(x)
       colour = guide_legend(title = 'Score')
     ) +
     my_ggplot_theme()
-  
+
 }

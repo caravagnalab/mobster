@@ -118,9 +118,9 @@ plot.dbpmmh = function(x,
   # Cluster colors
   cluster_colors = NULL
 
-  nBeta = data_table$cluster %>% unique()
+  nBeta = data_table %>%  filter(cluster != "Tail") %>%  pull() %>% unique() %>%  length()
   nBeta = nBeta[!is.na(nBeta)]
-  nBeta = nBeta[nBeta > 0] %>% max
+  #nBeta = nBeta[nBeta > 0] %>% max
 
   tail_color = 'gray'
 
@@ -128,7 +128,7 @@ plot.dbpmmh = function(x,
   Beta_colors = Beta_colors[1:nBeta]
 
   cluster_colors = c(tail_color, Beta_colors, `Not used` = 'lightpink')
-  names(cluster_colors)[1:(length(cluster_colors) - 1)] = c("Tail", paste0("Beta", 1:nBeta))
+  names(cluster_colors)[1:(length(cluster_colors) - 1)] = c("Tail", data_table %>%  filter(cluster != "Tail") %>%  pull() %>% unique() %>%  sort(decreasing = T))
 
 
   # Drivers table
@@ -144,7 +144,7 @@ plot.dbpmmh = function(x,
   VAF_binwidth = 0.01
 
   density_plot = ggplot(data_table,
-                        aes(VAF)) +
+                        aes(x = VAF)) +
     geom_histogram(
       aes(y = ..count.. / sum(..count..), fill = cluster %>% paste),
       binwidth = 0.01,
@@ -165,21 +165,24 @@ plot.dbpmmh = function(x,
   # Used karyotypes
   used_karyotypes = c("1:0", "1:1", "2:0", "2:1", "2:2")
 
-  # Power law density per karyotype
-  pareto_params = get_pareto(x)
+  if(has_tail(x)){
+    pareto_params = get_pareto(x)
+    # Power law density per karyotype
 
-  pareto_params_df = NULL
-  for (i in 1:nrow(pareto_params))
-    pareto_params_df = pareto_params_df %>%
-    bind_rows(
-      df_powerlaw_density(
-        shape = pareto_params$shape[i],
-        scale = pareto_params$scale[i],
-        mixing = pareto_params$mixing[i]
-      ) %>%
-        mutate(karyotype = pareto_params$karyotype[i],
-               cluster = "Tail")
-    )
+    pareto_params_df = NULL
+    for (i in 1:nrow(pareto_params))
+      pareto_params_df = pareto_params_df %>%
+      bind_rows(
+        df_powerlaw_density(
+          shape = pareto_params$shape[i],
+          scale = pareto_params$scale[i],
+          mixing = pareto_params$mixing[i]
+        ) %>%
+          mutate(karyotype = pareto_params$karyotype[i],
+                 cluster = "Tail")
+      )
+  }
+
 
   # Beta density per karyotype
   Beta_params = get_beta(x)
@@ -221,17 +224,7 @@ plot.dbpmmh = function(x,
       CNAqc:::my_ggplot_theme() +
       scale_fill_manual(values = cluster_colors) +
       guides(fill = guide_legend("Cluster")) +
-      geom_line(
-        data = pareto_params_df %>% filter(karyotype == k),
-        aes(
-          x = x,
-          y = y * VAF_binwidth,
-          color = cluster
-        ),
-        size = 1,
-        inherit.aes = FALSE,
-        show.legend = FALSE
-      ) +
+
       scale_color_manual(values = cluster_colors) +
       geom_line(
         data = beta_params_df %>% filter(karyotype == k),
@@ -245,6 +238,18 @@ plot.dbpmmh = function(x,
         size = 1
       )
 
+    if(has_tail(x)){
+      density_plot= density_plot + geom_line(
+        data = pareto_params_df %>% filter(karyotype == k),
+        aes(
+          x = x,
+          y = y * VAF_binwidth,
+          color = cluster
+        ),
+        size = 1,
+        inherit.aes = FALSE,
+        show.legend = FALSE
+      ) }
     density_plot = add_drivers(x, drivers_table %>% filter(karyotype == k), density_plot)
 
     if (s_k == 1)

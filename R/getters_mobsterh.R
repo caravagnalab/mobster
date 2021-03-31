@@ -27,6 +27,9 @@ get_pareto = function(x) {
 get_beta = function(x) {
   used = x$model_parameters %>% names
 
+  one_Beta = c("1:0", "1:1")
+  two_Beta = c("2:0", "2:1", "2:2")
+
   df = NULL
   for (k in used)
   {
@@ -36,9 +39,24 @@ get_beta = function(x) {
     tibble_beta = x$model_parameters[[k]][betas] %>% as_tibble()
     colnames(tibble_beta) = c("a", "b")
 
-    tibble_beta$mixing = x$model_parameters[[k]]$mixture_probs[-1]
+    if(has_tail(x))
+      tibble_beta$mixing = x$model_parameters[[k]]$mixture_probs[-1]
+    else
+      tibble_beta$mixing = x$model_parameters[[k]]$mixture_probs
     tibble_beta$karyotype = k
-    tibble_beta$cluster = paste0("Beta", 1:nrow(tibble_beta))
+    cluster <-  vector(length = nrow(tibble_beta))
+    if(k %in% one_Beta){
+      cluster[1] = "C1"
+      if(nrow(tibble_beta) > 1)
+        cluster[2:nrow(tibble_beta)] <-  paste0("S", 1:(nrow(tibble_beta)-1))
+    } else {
+      cluster[1:2] = c("C1", "C2")
+      if(nrow(tibble_beta) > 2)
+        cluster[3:nrow(tibble_beta)] <-  paste0("S", 1:(nrow(tibble_beta)-2))
+    }
+
+    tibble_beta$cluster <-  cluster
+
 
     df = df %>% bind_rows(tibble_beta)
   }
@@ -46,30 +64,37 @@ get_beta = function(x) {
   df
 }
 
-# Interpret clonality from a MOBSTERh fit
-clonality_interpreter = function(x)
-{
-  tail_params = get_pareto(x) %>%
-    mutate(what = "Neutral") %>%
-    select(karyotype,
-           cluster,
-           what)
+get_mixture_weights <- function(x){
 
-  one_Beta = c("1:0", "1:1")
-  two_Beta = c("2:0", "2:1", "2:2")
+  return(clonality_interpreter(x))
 
-  Beta_params = get_beta(x) %>% mutate(what = case_when(
-    (karyotype %in% one_Beta) & (cluster == "Beta1") ~ "Clonal",
-    (karyotype %in% one_Beta) & (cluster != "Beta1") ~ "Subclone",
-    (karyotype %in% two_Beta) &
-      (cluster %in% c("Beta1", "Beta2")) ~ "Clonal",
-    (karyotype %in% two_Beta) &
-      !(cluster %in% c("Beta1", "Beta2")) ~ "Subclone"
-  )) %>%
-    select(karyotype,
-           cluster,
-           what)
-
-  return(tail_params %>%
-           bind_rows(Beta_params))
 }
+
+get_assignment_probs <- function(x, cutoff = 0){
+
+  used = x$model_parameters %>% names
+  clusts <-  clonality_interpreter(x)
+  df = NULL
+  for(k in used){
+    k_probs <- x$model_parameters[[k]]$cluster_probs %>% t
+    k_probs <-  k_probs %>%  as.data.frame()
+    k_probs$cluste <-  apply(k_probs, 1, function(kk) {
+      if(max(kk) < cutoff) return(NA)
+      else return(which.max(kk))
+    })
+    k_probs <-  k_probs  %>%  arrange(-cluste, across()) %>% select(-cluste) %>% as.matrix()
+    colnames(k_probs) <- clusts %>% filter(karyotype == !!k) %>% pull(cluster)
+    k_probs <- k_probs %>%  reshape2::melt() %>% as_tibble()
+    colnames(k_probs) <-  c("Point", "Cluster", "Value")
+    k_probs$Karyotype <-  k
+    to_filt <-  k_probs %>%  group_by(Point) %>%  summarize(Max = max(Value))
+    k_probs <-  dplyr::full_join(to_filt, k_probs, by = "Point")
+    k_probs <-  k_probs %>%  mutate(Cluster = if_else(Max > cutoff, as.character(Cluster), "NA"))
+    df = df %>%  bind_rows(k_probs)
+
+  }
+
+  return(df)
+}
+
+

@@ -1,13 +1,21 @@
 is_mobster_fit = function(x)
 {
-  if (!inherits(x, 'dbpmm'))
+  if (!inherits(x, 'dbpmm') && !inherits(x, 'dbpmmh'))
   {
     cli::cli_alert_danger(
       "The input object is not a MOBSTER fit; if you have run \"mobster_fit\" access the object named \"best\" (e.g., x$best)."
     )
-    
+
     stop("Wrong parameter, a fit was instead expected.")
   }
+}
+
+is_mobsterhL = function(x){
+  return(inherits(x, 'dbpmmh'))
+}
+
+is_mobsterL <-  function(x){
+  return(inherits(x, 'dbpmm'))
 }
 
 is_mobster_input_dataset = function(x)
@@ -16,10 +24,10 @@ is_mobster_input_dataset = function(x)
     cli::cli_alert_danger(
       "The input object is not a MOBSTER fit; {.value {s}}."
     )
-    
+
     stop("Bad MOBSTER input.")
   }
-  
+
   if (!is.data.frame(x)) merr("The input is not of class data.frame.")
   if (ncol(x) == 0) merr("The input does not have any column.")
   if (!('VAF' %in% colnames(x))) merr("The input does not have a column named VAF.")
@@ -33,13 +41,13 @@ is_list_mobster_fits = function(x)
       cli::cli_alert_danger(
         "The input object is not a list of MOBSTER fits; {.value {s}}."
       )
-      
+
     stop("Bad MOBSTER input (list of fits).")
   }
-  
+
   if(!is.list(x)) merr("Input isn ot a list.")
   if(!all(c('fits.table', 'runs', 'best', 'model.selection') %in% names(x))) merr("Missing names, there should be 'fits.table', 'runs', 'best', 'model.selection' at least.")
-  if(!all(sapply(x$runs, class) == 'dbpmm')) merr("Runs objects are not MOBSTER fits.")
-  if(class(x$best) != 'dbpmm') merr("Best is not MOBSTER a fits.")
+  if(!all(grepl(sapply(x$runs, class) , pattern =  'dbpmm[h]'))) merr("Runs objects are not MOBSTER fits.")
+  if(!grepl(class(x$best), pattern =  'dbpmm[h]')) merr("Best is not MOBSTER a fits.")
 }
 

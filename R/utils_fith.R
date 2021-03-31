@@ -51,3 +51,13 @@ split_and_tolist <- function(x){
 
   return(res)
 }
+
+
+has_tail <-  function(x){
+
+  if(is_mobsterhL(x))
+    return(!is.null(x$model_parameters[[1]]$tail_scale))
+  else
+    return(x$fit.tail)
+
+}
