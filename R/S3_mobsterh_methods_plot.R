@@ -124,7 +124,7 @@ plot.dbpmmh = function(x,
 
   tail_color = 'gray'
 
-  Beta_colors = suppressWarnings(RColorBrewer::brewer.pal(nBeta, 'Set1'))
+  Beta_colors = suppressWarnings(RColorBrewer::brewer.pal(9, 'Set1'))
   Beta_colors = Beta_colors[1:nBeta]
 
   cluster_colors = c(tail_color, Beta_colors, `Not used` = 'lightpink')
@@ -175,6 +175,32 @@ plot.dbpmmh = function(x,
       bind_rows(
         df_powerlaw_density(
           shape = pareto_params$shape[i],
+          scale = pareto_params$scale[i],
+          mixing = pareto_params$mixing[i]
+        ) %>%
+          mutate(karyotype = pareto_params$karyotype[i],
+                 cluster = "Tail")
+      )
+
+    pareto_params_df_low = NULL
+    for (i in 1:nrow(pareto_params))
+      pareto_params_df_low = pareto_params_df_low %>%
+      bind_rows(
+        df_powerlaw_density(
+          shape = pareto_params$shape[i] - 2 * sqrt((2*pareto_params$shape[i] + exp(pareto_params$shape_noise[i])) *(exp(pareto_params$shape_noise[i]) - 1)),
+          scale = pareto_params$scale[i],
+          mixing = pareto_params$mixing[i]
+        ) %>%
+          mutate(karyotype = pareto_params$karyotype[i],
+                 cluster = "Tail")
+      )
+
+    pareto_params_df_high = NULL
+    for (i in 1:nrow(pareto_params))
+      pareto_params_df_high = pareto_params_df_high %>%
+      bind_rows(
+        df_powerlaw_density(
+          shape = pareto_params$shape[i] + 2 * sqrt((2*pareto_params$shape[i] + exp(pareto_params$shape_noise[i])) *(exp(pareto_params$shape_noise[i]) - 1)),
           scale = pareto_params$scale[i],
           mixing = pareto_params$mixing[i]
         ) %>%
@@ -249,7 +275,34 @@ plot.dbpmmh = function(x,
         size = 1,
         inherit.aes = FALSE,
         show.legend = FALSE
-      ) }
+      ) +  geom_line(
+        data = pareto_params_df_low %>% filter(karyotype == k),
+        aes(
+          x = x,
+          y = y * VAF_binwidth,
+        ),
+        size = 0.5,
+        color = "black",
+        linetype = "dashed",
+        inherit.aes = FALSE,
+        show.legend = FALSE
+      )+  geom_line(
+        data = pareto_params_df_high %>% filter(karyotype == k),
+        aes(
+          x = x,
+          y = y * VAF_binwidth,
+          color = cluster
+        ),
+        size = 0.5,
+        color = "black",
+        linetype = "dashed",
+        inherit.aes = FALSE,
+        show.legend = FALSE
+      )
+
+
+
+      }
     density_plot = add_drivers(x, drivers_table %>% filter(karyotype == k), density_plot)
 
     if (s_k == 1)

@@ -16,6 +16,8 @@ get_pareto = function(x) {
         scale = x$model_parameters[[k]]$tail_scale,
         shape = x$model_parameters[[k]]$tail_shape,
         mixing = x$model_parameters[[k]]$mixture_probs[1],
+        shape_noise = x$model_parameters[[k]]$tail_shape_sd,
+        shape_sd_karyo = x$model_parameters[[k]]$tail_noise,
         cluster = "Tail"
       )
     )

@@ -28,6 +28,7 @@
 #' @param N_cutoff Parameter passed to function \code{choose_clusters}, which determines the minimum number of mutations
 #' assigned to a cluster to be returned as output.
 #' @param description A textual description of this dataset.
+#' @param lrd_gamma learning rate decay fator, final learning rate is gonna be lrd_gamma * lr
 #' @return A list of all fits computed (objects of class \code{dbpmm}), the best fit, a table with the results of the fits and a
 #' variable that specify which score has been used for model selection.
 #'
@@ -64,15 +65,17 @@ mobsterh_fit = function(x,
                        N_cutoff = 80,
                        silent = FALSE,
                        alpha_prior_concentration = 5,
-                       alpha_prior_rate = 10,
-                       number_of_trials_clonal_mean=500.,
+                       alpha_prior_rate = 0.01,
+                       number_of_trials_clonal_mean=300,
+                       number_of_trials_k = 150,
                        prior_lims_clonal=c(0.1, 100000.),
                        prior_lims_k=c(0.1, 100000.),
                        lr = 0.01,
                        compile = FALSE,
                        CUDA = FALSE,
                        description = "My MOBSTERH model",
-                       karyotypes = c("1:0", "1:1","2:1", "2:0", "2:2"))
+                       karyotypes = c("1:0", "1:1","2:1", "2:0", "2:2"),
+                       lrd_gamma = 0.1)
 {
   pio::pioHdr(paste0("MOBSTERh fit"))
   cat('\n')
@@ -106,7 +109,8 @@ mobsterh_fit = function(x,
                         prior_lims_k,
                         prior_lims_clonal,
                         alpha_prior_concentration,
-                        alpha_prior_rate)
+                        alpha_prior_rate
+                        )
 
 
   mobster:::m_ok("Loaded input data, {.value {length(x)}} karyotypes.") %>% cli::cli_text()
@@ -167,13 +171,15 @@ mobsterh_fit = function(x,
                       alpha_prior_concentration = alpha_prior_concentration,
                       alpha_prior_rate = alpha_prior_rate,
                       number_of_trials_clonal_mean=number_of_trials_clonal_mean,
+                      number_of_trials_k = number_of_trials_k,
                       prior_lims_clonal=prior_lims_clonal,
                       prior_lims_k=prior_lims_k,
                       lr = lr,
                       e = epsilon,
                       compile = compile,
                       CUDA = CUDA,
-                      description = description
+                      description = description,
+                      lrd_gamma = lrd_gamma
                     ))
 
 
@@ -234,13 +240,15 @@ mobsterh_fit_aux <-  function( data,
                               alpha_prior_concentration,
                               alpha_prior_rate,
                               number_of_trials_clonal_mean,
+                              number_of_trials_k,
                               prior_lims_clonal,
                               prior_lims_k,
                               lr,
                               e,
                               compile,
                               CUDA,
-                              description){
+                              description,
+                              lrd_gamma){
 
 
   data_u <- data
@@ -256,9 +264,10 @@ mobsterh_fit_aux <-  function( data,
                              alpha_prior_concentration = alpha_prior_concentration,
                              alpha_prior_rate = alpha_prior_rate,
                              number_of_trials_clonal_mean = number_of_trials_clonal_mean,
+                             number_of_trials_k = number_of_trials_k,
                              prior_lims_clonal = prior_lims_clonal
                              ,prior_lims_k = prior_lims_k
-                             ,compile = compile, CUDA = CUDA)
+                             ,compile = compile, CUDA = CUDA, lrd_gamma = lrd_gamma)
 
   assig_temp = lapply(1:length(data_u), function(i) return(data.frame(id = names(data_u[[i]]),
                                                                       cluster = inf_res$model_parameters[[i]]$cluster_assignments
