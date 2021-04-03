@@ -7,8 +7,15 @@
 get_pareto = function(x) {
   used = x$model_parameters %>% names
 
+  one_Beta = c("1:0", "1:1")
+  two_Beta = c("2:0", "2:1", "2:2")
+
   df = NULL
-  for (k in used)
+  for (k in used){
+    beta_mean_k <- x$model_parameters[[k]]$beta_concentration1 / (x$model_parameters[[k]]$beta_concentration2 + x$model_parameters[[k]]$beta_concentration1)
+    min_beta_clonal_mean <- ifelse(test = k %in% one_Beta,
+                                   beta_mean_k,
+                                   min(beta_mean_k))
     df = df %>%
     bind_rows(
       data.frame(
@@ -17,10 +24,13 @@ get_pareto = function(x) {
         shape = x$model_parameters[[k]]$tail_shape,
         mixing = x$model_parameters[[k]]$mixture_probs[1],
         shape_noise = x$model_parameters[[k]]$tail_noise,
-        location = if(is_truncated(x), min(x$model_parameters[[k]]$), NULL)
+        location = ifelse(is_truncated(x),
+                          min_beta_clonal_mean,
+                          Inf),
         cluster = "Tail"
       )
     )
+  }
 
   df
 }

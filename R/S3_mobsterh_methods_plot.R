@@ -25,18 +25,18 @@ plot.dbpmmh = function(x,
   # Generate dpareto density
   df_powerlaw_density = function(shape = 1,
                                  scale = 0.05,
-                                 mixing = 0.5, 
-                                 location = NULL)
+                                 mixing = 0.5,
+                                 location = Inf)
   {
     domain_x = seq(0, 1, 0.01)
-    if(is.null(location))
+    if(location == Inf)
       line_points = sads::dpareto(x = domain_x,
                                 shape = shape,
                                 scale = scale) * mixing
     else
       line_points = VGAM::dtruncpareto(x = domain_x,
-                                  lower = shape, upper = location,
-                                  scale = scale) * mixing
+                                  lower = scale, upper = location,
+                                   shape = shape) * mixing
 
     data.frame(x = domain_x, y = line_points)
   }
@@ -132,7 +132,7 @@ plot.dbpmmh = function(x,
 
   Beta_colors = suppressWarnings(RColorBrewer::brewer.pal(9, 'Set1'))
   names(Beta_colors) = c("C1", "C2", "S1", "S2", "S3", "S4", "S5", "S6", "S7")
-  
+
   cluster_colors = c("Tail" = tail_color, Beta_colors, `Not used` = 'lightpink')
 
 
@@ -181,7 +181,8 @@ plot.dbpmmh = function(x,
         df_powerlaw_density(
           shape = pareto_params$shape[i],
           scale = pareto_params$scale[i],
-          mixing = pareto_params$mixing[i]
+          mixing = pareto_params$mixing[i],
+          location = pareto_params$location[i]
         ) %>%
           mutate(karyotype = pareto_params$karyotype[i],
                  cluster = "Tail")
@@ -194,7 +195,8 @@ plot.dbpmmh = function(x,
         df_powerlaw_density(
           shape = pareto_params$shape[i] - 2 * sqrt((2*pareto_params$shape[i] + exp(pareto_params$shape_noise[i])) *(exp(pareto_params$shape_noise[i]) - 1)),
           scale = pareto_params$scale[i],
-          mixing = pareto_params$mixing[i]
+          mixing = pareto_params$mixing[i],
+          location = pareto_params$location[i]
         ) %>%
           mutate(karyotype = pareto_params$karyotype[i],
                  cluster = "Tail")
@@ -207,7 +209,8 @@ plot.dbpmmh = function(x,
         df_powerlaw_density(
           shape = pareto_params$shape[i] + 2 * sqrt((2*pareto_params$shape[i] + exp(pareto_params$shape_noise[i])) *(exp(pareto_params$shape_noise[i]) - 1)),
           scale = pareto_params$scale[i],
-          mixing = pareto_params$mixing[i]
+          mixing = pareto_params$mixing[i],
+          location = pareto_params$location[i]
         ) %>%
           mutate(karyotype = pareto_params$karyotype[i],
                  cluster = "Tail")

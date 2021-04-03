@@ -58,8 +58,10 @@
 mobsterh_fit = function(x,
                        subclonal_clusters = 1:2,
                        tail = c(TRUE, FALSE),
+                       truncate_pareto= c(TRUE, FALSE),
                        purity = 1.,
-                       epsilon = 1e-3,
+                       samples = 1,
+                       epsilon = 1e-5,
                        maxIter = 2000,
                        model.selection = 'ICL',
                        parallel = FALSE,
@@ -72,7 +74,7 @@ mobsterh_fit = function(x,
                        number_of_trials_k = 150,
                        prior_lims_clonal=c(0.1, 100000.),
                        prior_lims_k=c(0.1, 100000.),
-                       lr = 0.01,
+                       lr = 0.05,
                        compile = FALSE,
                        CUDA = FALSE,
                        description = "My MOBSTERH model",
@@ -132,6 +134,7 @@ mobsterh_fit = function(x,
   tests = expand.grid(
     subclonal_clusters = subclonal_clusters,
     tail = tail,
+    truncate_pareto = truncate_pareto,
     stringsAsFactors = FALSE
   )
   ntests = nrow(tests)
@@ -169,6 +172,8 @@ mobsterh_fit = function(x,
                       data_raw = data_raw,
                       subclonal_clusters =  as.integer(tests[r, 'subclonal_clusters']),
                       tail = as.integer(tests[r, 'tail']),
+                      truncate_pareto = tests[r, 'truncate_pareto'],
+                      samples = samples,
                       purity = purity,
                       max_it = as.integer(maxIter),
                       alpha_precision_concentration = alpha_precision_concentration,
@@ -190,7 +195,7 @@ mobsterh_fit = function(x,
     FUN = mobsterh_fit_aux,
     PARAMS = inputs,
     export = ls(globalenv(), all.names = TRUE),
-    cores.ratio = .8,
+    cores.ratio = .5,
     parallel = parallel,
     cache = NULL,
     filter_errors = TRUE # Error managment is inside easypar
@@ -237,6 +242,8 @@ mobsterh_fit_aux <-  function( data,
                                data_raw,
                               subclonal_clusters,
                               tail,
+                              truncate_pareto,
+                              samples,
                               purity,
                               max_it,
                               seed,
@@ -259,18 +266,23 @@ mobsterh_fit_aux <-  function( data,
 
   mob <- reticulate::import("mobster")
 
-  inf_res <- mob$fit_mobster(data, K = as.integer(subclonal_clusters), tail = as.integer(tail),
-                             purity = purity,
-                             max_it = max_it,
-                             lr = lr,
-                             e = e,
-                             alpha_precision_concentration = alpha_precision_concentration,
-                             alpha_precision_rate = alpha_precision_rate,
-                             number_of_trials_clonal_mean = number_of_trials_clonal_mean,
-                             number_of_trials_k = number_of_trials_k,
-                             prior_lims_clonal = prior_lims_clonal
-                             ,prior_lims_k = prior_lims_k
-                             ,compile = compile, CUDA = CUDA, lrd_gamma = lrd_gamma)
+  inf_res <- lapply(1:samples,function(s) mob$fit_mobster(data = data, K = as.integer(subclonal_clusters),
+                                               tail = as.integer(tail),
+                                               truncated_pareto = truncate_pareto,
+                                               purity = purity,
+                                               max_it = max_it,
+                                               lr = lr,
+                                               e = e,
+                                               alpha_precision_concentration = alpha_precision_concentration,
+                                               alpha_precision_rate = alpha_precision_rate,
+                                               number_of_trials_clonal_mean = number_of_trials_clonal_mean,
+                                               number_of_trials_k = number_of_trials_k,
+                                               prior_lims_clonal = prior_lims_clonal
+                                               ,prior_lims_k = prior_lims_k
+                                               ,compile = compile, CUDA = CUDA, lrd_gamma = lrd_gamma))
+
+  best_model <- which.max(sapply(inf_res, function(h) h$information_criteria$likelihood))
+  inf_res <-  inf_res[[best_model]]
 
   assig_temp = lapply(1:length(data_u), function(i) return(data.frame(id = names(data_u[[i]]),
                                                                       cluster = inf_res$model_parameters[[i]]$cluster_assignments
@@ -280,7 +292,7 @@ mobsterh_fit_aux <-  function( data,
     table = data_raw$cnaqc$snvs %>% select(chr, from, to, ref, alt, VAF,karyotype, is_driver, driver_label) %>%
       mutate(id = paste(chr,from, to, sep = ":"))
   else
-    table = data_raw$cnaqc$snvs  %>%
+    table = data_raw  %>%
     mutate(id = paste(chr,from, to, sep = ":"))
 
   inf_res$data = dplyr::left_join(table, assig_temp, by = "id", copy = T) %>% as.data.frame()

@@ -16,13 +16,13 @@ format_data_mobsterh_QC <-  function(x, kar = c("1:0", "1:1", "2:1", "2:0", "2:2
   valid_karyo <- x$QC$QC_table %>% dplyr::filter(QC == "PASS", type == "Peaks") %>% pull(karyotype)
 
   valid_karyo <-  intersect(kar, valid_karyo)
-  
+
 
 
   res <- x$cnaqc$snvs %>% filter(karyotype %in% valid_karyo,Variant_Type == "SNP") %>%  filter(VAF >= vaf_t) %>% mutate(id = paste(chr, from, to, sep = ":")) %>% select(VAF, karyotype, id)
 
-  valid_k_n <- res %>%  group_by(karyotype) %>% summarize(n = n()) %>%  filter(n > n_t) %>% pull(karyotype)
-  
+  valid_k_n <- res %>%  dplyr::group_by(karyotype) %>% dplyr::summarize(n = dplyr::n()) %>%  dplyr::filter(n > n_t) %>% dplyr::pull(karyotype)
+
   return(split_and_tolist(res %>% filter(karyotype %in% valid_k_n)))
 
 }
@@ -63,5 +63,11 @@ has_tail <-  function(x){
     return(!is.null(x$model_parameters[[1]]$tail_scale))
   else
     return(x$fit.tail)
+
+}
+
+is_truncated <-  function(x){
+
+  return(has_tail(x) & x$run_parameters$truncated_pareto)
 
 }
