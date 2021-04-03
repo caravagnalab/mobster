@@ -11,15 +11,19 @@ get_purity <- function(x){
 
 }
 
-format_data_mobsterh_QC <-  function(x, kar = c("1:0", "1:1", "2:1", "2:0", "2:2"), vaf_t = 0.05){
+format_data_mobsterh_QC <-  function(x, kar = c("1:0", "1:1", "2:1", "2:0", "2:2"), vaf_t = 0.05, n_t = 100){
 
   valid_karyo <- x$QC$QC_table %>% dplyr::filter(QC == "PASS", type == "Peaks") %>% pull(karyotype)
 
   valid_karyo <-  intersect(kar, valid_karyo)
+  
+
 
   res <- x$cnaqc$snvs %>% filter(karyotype %in% valid_karyo,Variant_Type == "SNP") %>%  filter(VAF >= vaf_t) %>% mutate(id = paste(chr, from, to, sep = ":")) %>% select(VAF, karyotype, id)
 
-  return(split_and_tolist(res))
+  valid_k_n <- res %>%  group_by(karyotype) %>% summarize(n = n()) %>%  filter(n > n_t) %>% pull(karyotype)
+  
+  return(split_and_tolist(res %>% filter(karyotype %in% valid_k_n)))
 
 }
 

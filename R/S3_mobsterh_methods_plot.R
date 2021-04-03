@@ -25,12 +25,18 @@ plot.dbpmmh = function(x,
   # Generate dpareto density
   df_powerlaw_density = function(shape = 1,
                                  scale = 0.05,
-                                 mixing = 0.5)
+                                 mixing = 0.5, 
+                                 location = NULL)
   {
     domain_x = seq(0, 1, 0.01)
-    line_points = sads::dpareto(x = domain_x,
+    if(is.null(location))
+      line_points = sads::dpareto(x = domain_x,
                                 shape = shape,
                                 scale = scale) * mixing
+    else
+      line_points = VGAM::dtruncpareto(x = domain_x,
+                                  lower = shape, upper = location,
+                                  scale = scale) * mixing
 
     data.frame(x = domain_x, y = line_points)
   }
@@ -125,10 +131,9 @@ plot.dbpmmh = function(x,
   tail_color = 'gray'
 
   Beta_colors = suppressWarnings(RColorBrewer::brewer.pal(9, 'Set1'))
-  Beta_colors = Beta_colors[1:nBeta]
-
-  cluster_colors = c(tail_color, Beta_colors, `Not used` = 'lightpink')
-  names(cluster_colors)[1:(length(cluster_colors) - 1)] = c("Tail", data_table %>%  filter(cluster != "Tail") %>%  pull() %>% unique() %>%  sort(decreasing = T))
+  names(Beta_colors) = c("C1", "C2", "S1", "S2", "S3", "S4", "S5", "S6", "S7")
+  
+  cluster_colors = c("Tail" = tail_color, Beta_colors, `Not used` = 'lightpink')
 
 
   # Drivers table

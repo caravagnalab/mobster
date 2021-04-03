@@ -29,6 +29,8 @@
 #' assigned to a cluster to be returned as output.
 #' @param description A textual description of this dataset.
 #' @param lrd_gamma learning rate decay fator, final learning rate is gonna be lrd_gamma * lr
+#' @param vaf_filter Discard mutations under a specific VAF threshold for the fitting procedure
+#' @param n_t Discard karyotypes with less then a given number of mutations.
 #' @return A list of all fits computed (objects of class \code{dbpmm}), the best fit, a table with the results of the fits and a
 #' variable that specify which score has been used for model selection.
 #'
@@ -64,8 +66,8 @@ mobsterh_fit = function(x,
                        pi_cutoff = 0.05,
                        N_cutoff = 80,
                        silent = FALSE,
-                       alpha_prior_concentration = 5,
-                       alpha_prior_rate = 0.01,
+                       alpha_precision_concentration = 5,
+                       alpha_precision_rate = 0.01,
                        number_of_trials_clonal_mean=300,
                        number_of_trials_k = 150,
                        prior_lims_clonal=c(0.1, 100000.),
@@ -75,7 +77,9 @@ mobsterh_fit = function(x,
                        CUDA = FALSE,
                        description = "My MOBSTERH model",
                        karyotypes = c("1:0", "1:1","2:1", "2:0", "2:2"),
-                       lrd_gamma = 0.1)
+                       lrd_gamma = 0.1,
+                       vaf_filter = 0.05,
+                       n_t = 100)
 {
   pio::pioHdr(paste0("MOBSTERh fit"))
   cat('\n')
@@ -85,7 +89,7 @@ mobsterh_fit = function(x,
 
   if(inherits(x, "evopipe_qc")){
     purity <- get_purity(x)
-    x <- format_data_mobsterh_QC(x)
+    x <- format_data_mobsterh_QC(x, vaf_t = vaf_filter, n_t = n_t)
   } else if (is.matrix(x) | is.data.frame(x)){
     if(!all(colnames(x) %in% c("VAF","karyotypes", "chr", "from", "to")))
       stop("Please provide a data.frame with the following columns: VAF, karyotypes, chr, from, to")
@@ -108,8 +112,8 @@ mobsterh_fit = function(x,
                         karyotypes,
                         prior_lims_k,
                         prior_lims_clonal,
-                        alpha_prior_concentration,
-                        alpha_prior_rate
+                        alpha_precision_concentration,
+                        alpha_precision_rate
                         )
 
 
@@ -129,8 +133,7 @@ mobsterh_fit = function(x,
     subclonal_clusters = subclonal_clusters,
     tail = tail,
     stringsAsFactors = FALSE
-  ) %>%
-    dplyr::filter(!(subclonal_clusters == 0 & !tail))
+  )
   ntests = nrow(tests)
 
   ###################### Print message
@@ -168,8 +171,8 @@ mobsterh_fit = function(x,
                       tail = as.integer(tests[r, 'tail']),
                       purity = purity,
                       max_it = as.integer(maxIter),
-                      alpha_prior_concentration = alpha_prior_concentration,
-                      alpha_prior_rate = alpha_prior_rate,
+                      alpha_precision_concentration = alpha_precision_concentration,
+                      alpha_precision_rate = alpha_precision_rate,
                       number_of_trials_clonal_mean=number_of_trials_clonal_mean,
                       number_of_trials_k = number_of_trials_k,
                       prior_lims_clonal=prior_lims_clonal,
@@ -237,8 +240,8 @@ mobsterh_fit_aux <-  function( data,
                               purity,
                               max_it,
                               seed,
-                              alpha_prior_concentration,
-                              alpha_prior_rate,
+                              alpha_precision_concentration,
+                              alpha_precision_rate,
                               number_of_trials_clonal_mean,
                               number_of_trials_k,
                               prior_lims_clonal,
@@ -261,8 +264,8 @@ mobsterh_fit_aux <-  function( data,
                              max_it = max_it,
                              lr = lr,
                              e = e,
-                             alpha_prior_concentration = alpha_prior_concentration,
-                             alpha_prior_rate = alpha_prior_rate,
+                             alpha_precision_concentration = alpha_precision_concentration,
+                             alpha_precision_rate = alpha_precision_rate,
                              number_of_trials_clonal_mean = number_of_trials_clonal_mean,
                              number_of_trials_k = number_of_trials_k,
                              prior_lims_clonal = prior_lims_clonal
