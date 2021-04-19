@@ -7,6 +7,8 @@
 get_pareto = function(x) {
   used = x$model_parameters %>% names
 
+  if(!has_tail(x)) return(NULL)
+
   one_Beta = c("1:0", "1:1")
   two_Beta = c("2:0", "2:1", "2:2")
 

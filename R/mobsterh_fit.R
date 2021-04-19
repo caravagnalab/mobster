@@ -56,11 +56,12 @@
 #' lapply(x$runs[1:3], plot)
 #'
 mobsterh_fit = function(x,
-                       subclonal_clusters = 1:2,
+                       subclonal_clusters = 0:2,
                        tail = c(TRUE, FALSE),
                        truncate_pareto= c(TRUE, FALSE),
                        purity = 1.,
                        samples = 1,
+                       enforce_QC_PASS = TRUE,
                        epsilon = 1e-5,
                        maxIter = 2000,
                        model.selection = 'ICL',
@@ -71,10 +72,10 @@ mobsterh_fit = function(x,
                        alpha_precision_concentration = 5,
                        alpha_precision_rate = 0.01,
                        number_of_trials_clonal_mean=300,
-                       number_of_trials_k = 150,
+                       number_of_trials_k = 120,
                        prior_lims_clonal=c(0.1, 100000.),
                        prior_lims_k=c(0.1, 100000.),
-                       lr = 0.05,
+                       lr = 0.01,
                        compile = FALSE,
                        CUDA = FALSE,
                        description = "My MOBSTERH model",
@@ -91,7 +92,7 @@ mobsterh_fit = function(x,
 
   if(inherits(x, "evopipe_qc")){
     purity <- get_purity(x)
-    x <- format_data_mobsterh_QC(x, vaf_t = vaf_filter, n_t = n_t)
+    x <- format_data_mobsterh_QC(x, vaf_t = vaf_filter, n_t = n_t,enforce_QC_PASS = enforce_QC_PASS )
   } else if (is.matrix(x) | is.data.frame(x)){
     if(!all(colnames(x) %in% c("VAF","karyotypes", "chr", "from", "to")))
       stop("Please provide a data.frame with the following columns: VAF, karyotypes, chr, from, to")
@@ -100,6 +101,7 @@ mobsterh_fit = function(x,
     stop("Please provide a data.frame or a CNAqc object as input")
   }
 
+  if(is.null(x)) return(NULL)
 
   # Check for basic input requirements
   mobster:::check_inputh(
@@ -289,11 +291,14 @@ mobsterh_fit_aux <-  function( data,
                                                                       )))
   assig_temp = Reduce(assig_temp, f = rbind)
   if(inherits(data_raw, what = "evopipe_qc"))
-    table = data_raw$cnaqc$snvs %>% select(chr, from, to, ref, alt, VAF,karyotype, is_driver, driver_label) %>%
+    table = data_raw$cnaqc$snvs %>%
       mutate(id = paste(chr,from, to, sep = ":"))
   else
     table = data_raw  %>%
     mutate(id = paste(chr,from, to, sep = ":"))
+
+  if(is.null(table$is_driver)) table$is_driver <-  FALSE
+  if(is.null(table$driver_label)) table$driver_label <-  ""
 
   inf_res$data = dplyr::left_join(table, assig_temp, by = "id", copy = T) %>% as.data.frame()
 

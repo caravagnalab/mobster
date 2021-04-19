@@ -11,15 +11,41 @@ get_purity <- function(x){
 
 }
 
-format_data_mobsterh_QC <-  function(x, kar = c("1:0", "1:1", "2:1", "2:0", "2:2"), vaf_t = 0.05, n_t = 100){
+format_data_mobsterh_QC <-  function(x, kar = c("1:0", "1:1", "2:1", "2:0", "2:2"), vaf_t = 0.05, n_t = 100, enforce_QC_PASS = TRUE){
 
-  valid_karyo <- x$QC$QC_table %>% dplyr::filter(QC == "PASS", type == "Peaks") %>% pull(karyotype)
+  if(enforce_QC_PASS)
+    valid_karyo <- x$QC$QC_table %>% dplyr::filter(QC == "PASS", type == "Peaks") %>% pull(karyotype)
+  else
+    valid_karyo <-  kar
 
   valid_karyo <-  intersect(kar, valid_karyo)
 
+  if(length(valid_karyo) < 1){
+    reason = case_when(
+      is.null(x$QC$QC_table) ~ "There are no QC tables for input 'x', rerun the data QC pipeline",
+      (nrow(Peaks_entries) == 0) ~ "There are no 'Peaks' in the QC tables for input 'x', rerun the data QC pipeline",
+      all(Peaks_entries$QC != "PASS") ~ "All peaks in the input data are failed, check your segmentation and CN calls.",
+      TRUE ~ paste0("Unknown error - the following karyotypes are PASS: ", paste(QC_peaks, collapse = ', '), '.')
+    )
+
+    cat("\n")
+    cat(
+      cli::boxx(
+        paste0("There is nothing to perform deconvolution here! ",reason),
+        padding = 1,
+        col = 'white',
+        float = 'center',
+        background_col = "brown")
+    )
+    cat("\n")
+    return(NULL)
+  }
 
 
-  res <- x$cnaqc$snvs %>% filter(karyotype %in% valid_karyo,Variant_Type == "SNP") %>%  filter(VAF >= vaf_t) %>% mutate(id = paste(chr, from, to, sep = ":")) %>% select(VAF, karyotype, id)
+
+  res <- x$cnaqc$snvs %>% filter(karyotype %in% valid_karyo,type == "SNV") %>%
+    filter(VAF >= vaf_t) %>% mutate(id = paste(chr, from, to, sep = ":")) %>%
+    select(VAF, karyotype, id) %>% mutate(VAF = VAF - 0.0001)
 
   valid_k_n <- res %>%  dplyr::group_by(karyotype) %>% dplyr::summarize(n = dplyr::n()) %>%  dplyr::filter(n > n_t) %>% dplyr::pull(karyotype)
 
@@ -31,7 +57,7 @@ format_data_mobsterh_QC <-  function(x, kar = c("1:0", "1:1", "2:1", "2:0", "2:2
 
 format_data_mobsterh_DF <-  function(x, kar = c("1:0", "1:1", "2:1", "2:0", "2:2"), vaf_t = 0.05){
 
-  res <- x$cnaqc$snvs %>% filter(karyotype %in% kar,VAF >= 0.05, VAF < 1, VAF > 0) %>% mutate(id = paste(chr, from, to, sep = ":")) %>% select(VAF, karyotype, id)
+  res <- x$cnaqc$snvs %>% filter(karyotype %in% kar,VAF > vaf_t, VAF < 1, VAF > 0) %>% mutate(id = paste(chr, from, to, sep = ":")) %>% select(VAF, karyotype, id)
 
   return(split_and_tolist(res))
 
