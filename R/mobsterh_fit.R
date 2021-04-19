@@ -139,6 +139,8 @@ mobsterh_fit = function(x,
     truncate_pareto = truncate_pareto,
     stringsAsFactors = FALSE
   )
+
+  tests <- tests[-which(!tests$tail & tests$truncate_pareto),]
   ntests = nrow(tests)
 
   ###################### Print message
@@ -153,7 +155,7 @@ mobsterh_fit = function(x,
   ) %>% cli::cli_text()
 
   mobster:::m_txt(
-    'Scoring ({.value {ifelse(parallel, green("with parallel"), red("without parallel"))}}) {.value {length(subclonal_clusters)}} x {.value {length(tail)}} = {.field {ntests}} models by {.field {model.selection}}.'
+    'Scoring ({.value {ifelse(parallel, green("with parallel"), red("without parallel"))}}) {.value {.field {ntests}}} models by {.field {model.selection}}.'
   ) %>% cli::cli_text()
   cat('\n')
 

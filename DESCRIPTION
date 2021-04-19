@@ -19,6 +19,12 @@ Description: MOBSTER is a package that implements a statistical model for tumour
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
+Config/reticulate:
+  list(
+    packages = list(
+      list(package = "HMOBSTER", pip = TRUE)
+    )
+  )
 Depends:
     R (>= 4.0),
 Imports: 
@@ -39,7 +45,8 @@ Imports:
     magrittr,
     cowplot,
     reshape2,
-    ctree
+    ctree,
+    reticulate
 RoxygenNote: 7.1.1
 Suggests: knitr,
     rmarkdown,
