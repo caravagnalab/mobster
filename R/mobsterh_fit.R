@@ -78,7 +78,7 @@ mobsterh_fit = function(x,
                        lr = 0.01,
                        compile = FALSE,
                        CUDA = FALSE,
-                       description = "My MOBSTERH model",
+                       description = "My MOBSTERh model",
                        karyotypes = c("1:0", "1:1","2:1", "2:0", "2:2"),
                        lrd_gamma = 0.1,
                        vaf_filter = 0.05,
@@ -104,21 +104,21 @@ mobsterh_fit = function(x,
   if(is.null(x)) return(NULL)
 
   # Check for basic input requirements
-  mobster:::check_inputh(
-                        K,
-                        subclonal_clusters,
-                        tail,
-                        epsilon,
-                        maxIter,
-                        fit.type,
-                        lr,
-                        model.selection,
-                        karyotypes,
-                        prior_lims_k,
-                        prior_lims_clonal,
-                        alpha_precision_concentration,
-                        alpha_precision_rate
-                        )
+  check_inputh(
+    K,
+    subclonal_clusters,
+    tail,
+    epsilon,
+    maxIter,
+    fit.type,
+    lr,
+    model.selection,
+    karyotypes,
+    prior_lims_k,
+    prior_lims_clonal,
+    alpha_precision_concentration,
+    alpha_precision_rate
+  )
 
 
   mobster:::m_ok("Loaded input data, {.value {length(x)}} karyotypes.") %>% cli::cli_text()
@@ -212,7 +212,7 @@ mobsterh_fit = function(x,
   TIME = difftime(as.POSIXct(Sys.time(), format = "%H:%M:%S"), TIME, units = "mins")
 
   cat('\n\n')
-  mobster:::m_inf("{crayon::bold('MOBSTERH fits')} completed in {.value {prettyunits::pretty_dt(TIME)}}.") %>% cli::cli_text()
+  mobster:::m_inf("{crayon::bold('MOBSTERh fits')} completed in {.value {prettyunits::pretty_dt(TIME)}}.") %>% cli::cli_text()
   cat('\n')
 
   # Get all scores

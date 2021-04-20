@@ -4,6 +4,9 @@
 #' @param show_na Leave in the plot points for which a clustering assignment
 #' is not available (\code{NA}).
 #' @param add_density Add density of the fit on top of the histogram.
+#' @param empty_plot Force the inclusion of an empty plot for a karyotype
+#' that has not been used (from the list of supported karyotypes).
+#' @param assembly_plot Turn the plot into a one-line strip, instead of returning
 #' @param ... Unused.
 #'
 #' @return A ggplot or a cowplot object for the plot (depends on parameters).
@@ -16,6 +19,8 @@
 plot.dbpmmh = function(x,
                        show_na = FALSE,
                        add_density = TRUE,
+                       empty_plot = TRUE,
+                       assembly_plot = TRUE,
                        ...)
 {
   #############################################
@@ -55,14 +60,33 @@ plot.dbpmmh = function(x,
   }
 
   # Add drivers annotation
-  add_drivers = function(x, drivers_table, plot)
+  add_drivers = function(x, drivers_table, plot, facet = FALSE)
   {
-    # Missing drivers
-    ndrivers_missing = x$data %>%
-      filter(is_driver, is.na(cluster)) %>%
-      nrow
+    if ((drivers_table %>% nrow) == 0)
+      return(plot)
 
-    if (drivers_table %>% nrow > 0)
+    if(facet)
+      plot = plot +
+      scale_x_continuous(
+        limits = c(0, 1),
+        expand = c(0,0),
+        sec.axis = dup_axis(
+          breaks = drivers_table$VAF,
+          labels = drivers_table$driver_label,
+          name = NULL
+        )
+      ) +
+      geom_vline(
+        data = drivers_table,
+        aes(xintercept = VAF, color = cluster),
+        size = .5,
+        linetype = 'dashed',
+        show.legend = FALSE
+      ) +
+      theme(
+        axis.text.x.top = element_text(angle = 45, color = 'black', hjust = 0)
+      )
+    else
       plot = plot +
         geom_vline(
           data = drivers_table,
@@ -85,10 +109,16 @@ plot.dbpmmh = function(x,
           hjust = 1
         )
 
-    if (ndrivers_missing > 0)
-      plot = plot + labs(subtitle = paste0(ndrivers_missing, " driver annotated has not been analysed"))
-
     return(plot)
+  }
+
+  # Has missing driver annotations?
+  n_missing_drivers = function(x, drivers_table)
+  {
+    # Missing drivers
+    x$data %>%
+      filter(is_driver, is.na(cluster)) %>%
+      nrow
   }
 
   #############################################
@@ -102,10 +132,20 @@ plot.dbpmmh = function(x,
   if (!show_na)
     data_table = data_table %>% filter(!is.na(cluster))
 
+  # Drivers table
+  drivers_table = data_table %>%
+    filter(is_driver, cluster != "Not used") %>%
+    mutate(driver_label = ifelse(
+      is.na(driver_label),
+      paste(chr, from, paste0(ref, '>', alt), sep = ':'),
+      driver_label
+    ))
+
   # Inline model interpretation
   fit_interpreter = clonality_interpreter(x) %>% filter(what == 'Subclone')
 
   fit_caption = "No subclonal expansions detected"
+
   if (fit_interpreter %>% nrow > 0)
     fit_caption = fit_interpreter %>%
     group_by(cluster) %>%
@@ -113,6 +153,11 @@ plot.dbpmmh = function(x,
     mutate(l = paste0(cluster, ' [', l, ']')) %>%
     pull(l) %>%
     paste(collapse = ', ')
+
+  fit_caption = paste0(
+    fit_caption, '; ',
+    n_missing_drivers(x, drivers_table), ' driver(s) unassigned.'
+  )
 
   # Nonsense plot
   #
@@ -130,20 +175,13 @@ plot.dbpmmh = function(x,
 
   tail_color = 'gray'
 
-  Beta_colors = suppressWarnings(RColorBrewer::brewer.pal(9, 'Set1'))
+  clonal_colors = suppressWarnings(RColorBrewer::brewer.pal(9, 'Set1'))[1:2]
+  subclonal_colors = suppressWarnings(RColorBrewer::brewer.pal(7, 'Dark2'))[1:7]
+
+  Beta_colors = c(clonal_colors, subclonal_colors)
   names(Beta_colors) = c("C1", "C2", "S1", "S2", "S3", "S4", "S5", "S6", "S7")
 
   cluster_colors = c("Tail" = tail_color, Beta_colors, `Not used` = 'lightpink')
-
-
-  # Drivers table
-  drivers_table = data_table %>%
-    filter(is_driver, cluster != "Not used") %>%
-    mutate(driver_label = ifelse(
-      is.na(driver_label),
-      paste(chr, from, paste0(ref, '>', alt), sep = ':'),
-      driver_label
-    ))
 
   # VAF plot, make a temporary plot to return if not densities are required
   VAF_binwidth = 0.01
@@ -163,7 +201,7 @@ plot.dbpmmh = function(x,
     labs(y = "Density", caption = fit_caption)
 
   if (!add_density)
-    return(add_drivers(x, drivers_table, density_plot))
+    return(add_drivers(x, drivers_table, density_plot, facet = FALSE))
 
   cli::cli_alert("Generating fit densities.")
 
@@ -237,15 +275,32 @@ plot.dbpmmh = function(x,
     )
 
   # Create one plot per karyotype
+  fit_plots = lapply(used_karyotypes, function(x){
 
-  fit_plots = NULL
+    ggplot(data = data.frame(x = 0, y = 0, label = "X"), aes(x = x,
+                                                             y = y, label = label)) + CNAqc:::my_ggplot_theme() +
+      theme(
+        panel.border = element_rect(
+          colour = "black",
+          fill = NA,
+          linetype = "dashed"
+        ),
+        panel.background = element_rect(fill = "gainsboro"),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_blank()
+      )
+  })
+  names(fit_plots) = used_karyotypes
+
   used_karyotypes_plot = x$model_parameters %>% names %>% seq_along()
 
   for (s_k in used_karyotypes_plot)
   {
     k = (x$model_parameters %>% names)[s_k]
 
-    cli::cli_alert("Generating and assembly plot for {.field {k}}")
+    cli::cli_alert("Generating plot for {.field {k}}")
 
     density_plot = ggplot(data_table %>% filter(karyotype == k),
                           aes(VAF)) +
@@ -272,6 +327,7 @@ plot.dbpmmh = function(x,
         size = 1
       )
 
+    # Add tail density
     if(has_tail(x)){
       density_plot= density_plot + geom_line(
         data = pareto_params_df %>% filter(karyotype == k),
@@ -307,26 +363,33 @@ plot.dbpmmh = function(x,
         inherit.aes = FALSE,
         show.legend = FALSE
       )
+    }
 
-
-
-      }
-    density_plot = add_drivers(x, drivers_table %>% filter(karyotype == k), density_plot)
+    density_plot = add_drivers(x, drivers_table %>% filter(karyotype == k), density_plot, facet = TRUE)
 
     if (s_k == 1)
       density_plot = density_plot + labs(y = "Density")
     else
       density_plot = density_plot + labs(y = NULL)
 
-    if (s_k == used_karyotypes_plot %>% length) {
+    if (s_k == (used_karyotypes_plot %>% length)) {
       density_plot = density_plot +
         labs(caption = fit_caption)
     }
 
-    fit_plots = append(fit_plots, density_plot %>% list)
+    fit_plots[[k]] = density_plot
   }
 
+  # Remove empty plots if required
+  if(!empty_plot){
+    fit_plots = fit_plots[x$model_parameters %>% names]
+  }
+
+  if(!assembly_plot)
+    return(fit_plots)
+
   cowplot::plot_grid(plotlist = fit_plots,
+                     nrow = 1,
                      align = 'h',
                      axis = 'tb')
 }

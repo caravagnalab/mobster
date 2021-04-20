@@ -2,10 +2,10 @@
 #'
 #' @description Data from an example MOBSTER fit; this object is the
 #' result of running `mobster_fit` function on the input dat.a
-#' The ouput is a list which contains the best fit, the top runs and 
-#' a table summarising the fit scores. The input data has been simulated
+#' The output is a list which contains the best fit, the top runs and
+#' a table summarizing the fit scores. The input data has been simulated
 #' with a stochastic branching process model.
-#' 
+#'
 #' @docType data
 #'
 #' @usage data(fit_example)
@@ -20,6 +20,27 @@
 #' plot(fit_example$best)
 "fit_example"
 
+#' Example MOBSTERh fit.
+#'
+#' @description Data from an example MOBSTERh fit; this object is the
+#' result of running `mobsterh_fit` function on input data.
+#' The object format is the same of `fit_example`.
+#'
+#' @docType data
+#'
+#' @usage data(fit_example_mobsterh)
+#'
+#' @format Output from `mobsterh_fit`.
+#'
+#' @keywords datasets
+#'
+#' @examples
+#' data(fit_example_mobsterh)
+#' print(fit_example_mobsterh$best)
+#' plot(fit_example_mobsterh$best)
+"fit_example_mobsterh"
+
+
 
 #' List of cancer genes to compute dnds values.
 #'
@@ -27,13 +48,13 @@
 #' There are 2 lists available of putative driver genes, and 2 lists of
 #' essential genes; these lists have been subset to include only
 #' genes in the RefCDS database.
-#' 
-#' Drivers have been compiled in 
-#' `Martincorena, et al. Cell 171.5 (2017): 1029-1041`, and in 
+#'
+#' Drivers have been compiled in
+#' `Martincorena, et al. Cell 171.5 (2017): 1029-1041`, and in
 #' `Tarabichi, et al. Nature Genetics 50.12 (2018): 1630`.
 #' Essential genes have been compiled using two different cell lines in
 #' `Wang et al. Science 350.6264 (2015): 1096-1101.` and
-#' `Bloomen et al. Science 350.6264 (2015): 1092-1096`. All lists are 
+#' `Bloomen et al. Science 350.6264 (2015): 1092-1096`. All lists are
 #' available and named accordingly; use `names(cancer_genes_dnds)` to
 #' see the available names.
 #'
@@ -54,8 +75,8 @@
 #' MOBSTER fit for the LUFF76 lung sample.
 #'
 #' @description MOBSTER fit for the LUFF76 lung sample; this object is the
-#' result of running `mobster_fit` function on the input data described in the 
-#' main MOBSTER paper. The data consists of diploid mutations for the 
+#' result of running `mobster_fit` function on the input data described in the
+#' main MOBSTER paper. The data consists of diploid mutations for the
 #' sample available at the Comprehensive Omics Archive of Lung Adenocarcinoma
 #' (http://genome.kaist.ac.kr/).
 #'
@@ -77,8 +98,8 @@
 #' MOBSTER fit for the LU4 lung sample.
 #'
 #' @description MOBSTER fit for the LU4 lung sample; this object is the
-#' result of running `mobster_fit` function on the input data described in the 
-#' main MOBSTER paper. The data consists of diploid mutations for the 
+#' result of running `mobster_fit` function on the input data described in the
+#' main MOBSTER paper. The data consists of diploid mutations for the
 #' sample available at the Comprehensive Omics Archive of Lung Adenocarcinoma
 #' (http://genome.kaist.ac.kr/).
 #'

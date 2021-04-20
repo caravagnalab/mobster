@@ -8,6 +8,7 @@ Maintainer: Giulio Caravagna <gcaravagn@gmail.com>
 Authors@R: c(
     person("Giulio", "Caravagna", , "gcaravagn@gmail.com", role = c("aut", "cre"),
       comment = c(ORCID = "0000-0003-4240-3265")),
+    person("Milite", "Salvatore", , "militesalvatore@gmail.com", role = c("aut")),
     person("Luca", "De Sano", , "luca.desano@gmail.com", role = c("aut"),
       comment = c(ORCID = "0000-0002-9618-3774"))
   )
@@ -69,5 +70,5 @@ Remotes:
     caravagn/ctree,
     caravagn/CNAqc
 VignetteBuilder: knitr
-URL: https://github.com/caravagn/mobster
-BugReports: https://github.com/caravagn/mobster/issues
+URL: https://github.com/caravagnalab/mobster
+BugReports: https://github.com/caravagnalab/mobster/issues

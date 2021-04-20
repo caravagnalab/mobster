@@ -28,7 +28,7 @@ mobsterh_fit(
   lr = 0.01,
   compile = FALSE,
   CUDA = FALSE,
-  description = "My MOBSTERH model",
+  description = "My MOBSTERh model",
   karyotypes = c("1:0", "1:1", "2:1", "2:0", "2:2"),
   lrd_gamma = 0.1,
   vaf_filter = 0.05,

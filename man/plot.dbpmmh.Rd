@@ -4,7 +4,14 @@
 \alias{plot.dbpmmh}
 \title{Plot a MOBSTERh fit.}
 \usage{
-plot.dbpmmh(x, show_na = FALSE, add_density = TRUE, ...)
+plot.dbpmmh(
+  x,
+  show_na = FALSE,
+  add_density = TRUE,
+  empty_plot = TRUE,
+  assembly_plot = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{An object of class \code{"dbpmmh"}.}
@@ -13,6 +20,11 @@ plot.dbpmmh(x, show_na = FALSE, add_density = TRUE, ...)
 is not available (\code{NA}).}
 
 \item{add_density}{Add density of the fit on top of the histogram.}
+
+\item{empty_plot}{Force the inclusion of an empty plot for a karyotype
+that has not been used (from the list of supported karyotypes).}
+
+\item{assembly_plot}{Turn the plot into a one-line strip, instead of returning}
 
 \item{...}{Unused.}
 }
