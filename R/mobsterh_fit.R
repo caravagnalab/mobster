@@ -82,7 +82,8 @@ mobsterh_fit = function(x,
                        karyotypes = c("1:0", "1:1","2:1", "2:0", "2:2"),
                        lrd_gamma = 0.1,
                        vaf_filter = 0.05,
-                       n_t = 100)
+                       n_t = 100,
+                       quantile_filt = 0.995)
 {
   pio::pioHdr(paste0("MOBSTERh fit"))
   cat('\n')
@@ -102,6 +103,11 @@ mobsterh_fit = function(x,
   }
 
   if(is.null(x)) return(NULL)
+
+  x <-  lapply(x, function(k) {
+    qf <- quantile(k, quantile_filt)
+    k[k < qf]
+  })
 
   # Check for basic input requirements
   mobster:::check_inputh(
@@ -205,6 +211,8 @@ mobsterh_fit = function(x,
     filter_errors = TRUE # Error managment is inside easypar
     ,progress_bar = FALSE
   )
+
+  runs <-  runs[!is.null(runs)]
 
 
 
