@@ -187,7 +187,7 @@ mobster_fit = function(x,
                     ))
 
   runs = easypar::run(
-    FUN = mobster:::.dbpmm.EM,
+    FUN = .dbpmm.EM,
     PARAMS = inputs,
     packages = c("dplyr", 'tidyr', "mobster"), # Required for pipes and other functions
     export = ls(globalenv(), all.names = TRUE),
@@ -234,6 +234,9 @@ mobster_fit = function(x,
   ###### SHOW BEST FIT
   # cli::cli_alert_info(paste(bold("BEST:"), model.selection))
   print.dbpmm(model$best)
+
+  # Add S3 class
+  class(model) <- "mobster_deconv"
 
   return(model)
 }

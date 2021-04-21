@@ -17,3 +17,6 @@ nothing.
 \description{
 Print a MOBSTERh object.
 }
+\examples{
+data("fit_example_mobsterh", package = 'mobster')
+}

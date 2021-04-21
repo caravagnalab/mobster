@@ -2,7 +2,7 @@
 % Please edit documentation in R/mobsterh_fit.R
 \name{mobsterh_fit}
 \alias{mobsterh_fit}
-\title{Fit a model with MOBSTERH.}
+\title{Fit a model with MOBSTERh.}
 \usage{
 mobsterh_fit(
   x,
@@ -32,7 +32,8 @@ mobsterh_fit(
   karyotypes = c("1:0", "1:1", "2:1", "2:0", "2:2"),
   lrd_gamma = 0.1,
   vaf_filter = 0.05,
-  n_t = 100
+  n_t = 100,
+  quantile_filt = 0.995
 )
 }
 \arguments{
@@ -81,9 +82,9 @@ variable that specify which score has been used for model selection.
 }
 \description{
 This function fits a bayesian hierarchical version of the MOBSTER model implemented in \code{mobster_fit}. We still
-have a mixture of beta distributions and an optional Pareto type-one distribution to model the neutral tail. From a modelling
+have a mixture of Beta distributions and an optional Pareto type-one distribution to model the neutral tail. From a modelling
 point of view the main difference here is that we are expanding that model over different karyotypes and we treat the problem from a bayesian point of view.
-In this way we can grant information about the mutationt rate and the tail pooling from the different karyotypes and at the same time include the
+In this way we can grant information about the mutation rate and the tail pooling from the different karyotypes and at the same time include the
 strong prior knowledge we have about
 }
 \examples{

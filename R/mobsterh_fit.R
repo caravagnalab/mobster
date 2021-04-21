@@ -1,9 +1,9 @@
-#' Fit a model with MOBSTERH.
+#' Fit a model with MOBSTERh.
 #'
 #' @description This function fits a bayesian hierarchical version of the MOBSTER model implemented in \code{mobster_fit}. We still
-#' have a mixture of beta distributions and an optional Pareto type-one distribution to model the neutral tail. From a modelling
+#' have a mixture of Beta distributions and an optional Pareto type-one distribution to model the neutral tail. From a modelling
 #' point of view the main difference here is that we are expanding that model over different karyotypes and we treat the problem from a bayesian point of view.
-#' In this way we can grant information about the mutationt rate and the tail pooling from the different karyotypes and at the same time include the
+#' In this way we can grant information about the mutation rate and the tail pooling from the different karyotypes and at the same time include the
 #' strong prior knowledge we have about
 #'
 #'
@@ -56,53 +56,88 @@
 #' lapply(x$runs[1:3], plot)
 #'
 mobsterh_fit = function(x,
-                       subclonal_clusters = 0:2,
-                       tail = c(TRUE, FALSE),
-                       truncate_pareto= c(TRUE, FALSE),
-                       purity = 1.,
-                       samples = 1,
-                       enforce_QC_PASS = TRUE,
-                       epsilon = 1e-5,
-                       maxIter = 2000,
-                       model.selection = 'ICL',
-                       parallel = FALSE,
-                       pi_cutoff = 0.05,
-                       N_cutoff = 80,
-                       silent = FALSE,
-                       alpha_precision_concentration = 5,
-                       alpha_precision_rate = 0.01,
-                       number_of_trials_clonal_mean=300,
-                       number_of_trials_k = 120,
-                       prior_lims_clonal=c(0.1, 100000.),
-                       prior_lims_k=c(0.1, 100000.),
-                       lr = 0.01,
-                       compile = FALSE,
-                       CUDA = FALSE,
-                       description = "My MOBSTERh model",
-                       karyotypes = c("1:0", "1:1","2:1", "2:0", "2:2"),
-                       lrd_gamma = 0.1,
-                       vaf_filter = 0.05,
-                       n_t = 100,
-                       quantile_filt = 0.995)
+                        subclonal_clusters = 0:2,
+                        tail = c(TRUE, FALSE),
+                        truncate_pareto = c(TRUE, FALSE),
+                        purity = 1.,
+                        samples = 1,
+                        enforce_QC_PASS = TRUE,
+                        epsilon = 1e-5,
+                        maxIter = 2000,
+                        model.selection = 'ICL',
+                        parallel = FALSE,
+                        pi_cutoff = 0.05,
+                        N_cutoff = 80,
+                        silent = FALSE,
+                        alpha_precision_concentration = 5,
+                        alpha_precision_rate = 0.01,
+                        number_of_trials_clonal_mean = 300,
+                        number_of_trials_k = 120,
+                        prior_lims_clonal = c(0.1, 100000.),
+                        prior_lims_k = c(0.1, 100000.),
+                        lr = 0.01,
+                        compile = FALSE,
+                        CUDA = FALSE,
+                        description = "My MOBSTERh model",
+                        karyotypes = c("1:0", "1:1", "2:1", "2:0", "2:2"),
+                        lrd_gamma = 0.1,
+                        vaf_filter = 0.05,
+                        n_t = 100,
+                        quantile_filt = 0.995)
 {
   pio::pioHdr(paste0("MOBSTERh fit"))
   cat('\n')
 
+  data_raw <- NULL
+  can_work = FALSE
 
-  data_raw <- x
-
-  if(inherits(x, "evopipe_qc")){
+  # Evoverse pipeline input
+  if (inherits(x, "evopipe_qc"))
+  {
     purity <- get_purity(x)
-    x <- format_data_mobsterh_QC(x, vaf_t = vaf_filter, n_t = n_t,enforce_QC_PASS = enforce_QC_PASS )
-  } else if (is.matrix(x) | is.data.frame(x)){
-    if(!all(colnames(x) %in% c("VAF","karyotypes", "chr", "from", "to")))
-      stop("Please provide a data.frame with the following columns: VAF, karyotypes, chr, from, to")
-    x <- format_data_mobsterh_DF(x)
-  } else {
-    stop("Please provide a data.frame or a CNAqc object as input")
+    data_raw <- x
+    x <-
+      format_data_mobsterh_QC(x,
+                              vaf_t = vaf_filter,
+                              n_t = n_t,
+                              enforce_QC_PASS = enforce_QC_PASS)
+
+    can_work = TRUE
   }
 
-  if(is.null(x)) return(NULL)
+  # CNAqc object
+  if (inherits(x, "cnaqc"))
+  {
+    purity <- x$purity
+    data_raw <- x$snvs
+    x <- format_data_mobsterh_DF(x$snvs)
+
+    can_work = TRUE
+  }
+
+  # Tibble
+  if (is.matrix(x) | is.data.frame(x))
+  {
+    if (!all(c("VAF", "karyotype", "chr", "from", "to") %in% colnames(x)))
+      stop(
+        "Please provide a data.frame with the following columns: VAF, karyotype, chr, from, to"
+      )
+
+    data_raw <- x
+    x <- format_data_mobsterh_DF(x)
+    cli::cli_alert_warning("Using input purity {.field {purity}}")
+
+    can_work = TRUE
+  }
+
+  if (!can_work) {
+    stop(
+      "Input must be any of:\n\t- a data.frame, \n\t- an evoverse data QC pipeline output, \n\t- a CNAqc object."
+    )
+  }
+
+  if (is.null(x))
+    return(NULL)
 
   x <-  lapply(x, function(k) {
     qf <- quantile(k, quantile_filt)
@@ -128,7 +163,7 @@ mobsterh_fit = function(x,
 
 
   mobster:::m_ok("Loaded input data, {.value {length(x)}} karyotypes.") %>% cli::cli_text()
-  for(k in 1:length(x)){
+  for (k in 1:length(x)) {
     cli::cli_alert_info("Karyotype {names(x)[k]} with n = {.value {length(x[[k]])}} mutations")
   }
 
@@ -146,7 +181,7 @@ mobsterh_fit = function(x,
     stringsAsFactors = FALSE
   )
 
-  tests <- tests[-which(!tests$tail & tests$truncate_pareto),]
+  tests <- tests[-which(!tests$tail & tests$truncate_pareto), ]
   ntests = nrow(tests)
 
   ###################### Print message
@@ -188,10 +223,10 @@ mobsterh_fit = function(x,
                       max_it = as.integer(maxIter),
                       alpha_precision_concentration = alpha_precision_concentration,
                       alpha_precision_rate = alpha_precision_rate,
-                      number_of_trials_clonal_mean=number_of_trials_clonal_mean,
+                      number_of_trials_clonal_mean = number_of_trials_clonal_mean,
                       number_of_trials_k = number_of_trials_k,
-                      prior_lims_clonal=prior_lims_clonal,
-                      prior_lims_k=prior_lims_k,
+                      prior_lims_clonal = prior_lims_clonal,
+                      prior_lims_k = prior_lims_k,
                       lr = lr,
                       e = epsilon,
                       compile = compile,
@@ -209,7 +244,8 @@ mobsterh_fit = function(x,
     parallel = parallel,
     cache = NULL,
     filter_errors = TRUE # Error managment is inside easypar
-    ,progress_bar = FALSE
+    ,
+    progress_bar = FALSE
   )
 
   runs <-  runs[!is.null(runs)]
@@ -220,7 +256,9 @@ mobsterh_fit = function(x,
   TIME = difftime(as.POSIXct(Sys.time(), format = "%H:%M:%S"), TIME, units = "mins")
 
   cat('\n\n')
-  mobster:::m_inf("{crayon::bold('MOBSTERh fits')} completed in {.value {prettyunits::pretty_dt(TIME)}}.") %>% cli::cli_text()
+  mobster:::m_inf(
+    "{crayon::bold('MOBSTERh fits')} completed in {.value {prettyunits::pretty_dt(TIME)}}."
+  ) %>% cli::cli_text()
   cat('\n')
 
   # Get all scores
@@ -244,14 +282,17 @@ mobsterh_fit = function(x,
   ###### SHOW BEST FIT
   print.dbpmmh(model$best)
 
+  # Add S3 class
+  class(model) <- "mobster_deconv"
+
   return(model)
 }
 
 
 
 
-mobsterh_fit_aux <-  function( data,
-                               data_raw,
+mobsterh_fit_aux <-  function(data,
+                              data_raw,
                               subclonal_clusters,
                               tail,
                               truncate_pareto,
@@ -270,45 +311,67 @@ mobsterh_fit_aux <-  function( data,
                               compile,
                               CUDA,
                               description,
-                              lrd_gamma){
-
-
+                              lrd_gamma) {
   data_u <- data
   data <- tensorize(data_u)
 
   mob <- reticulate::import("mobster")
 
-  inf_res <- lapply(1:samples,function(s) mob$fit_mobster(data = data, K = as.integer(subclonal_clusters),
-                                               tail = as.integer(tail),
-                                               truncated_pareto = truncate_pareto,
-                                               purity = purity,
-                                               max_it = max_it,
-                                               lr = lr,
-                                               e = e,
-                                               alpha_precision_concentration = alpha_precision_concentration,
-                                               alpha_precision_rate = alpha_precision_rate,
-                                               number_of_trials_clonal_mean = number_of_trials_clonal_mean,
-                                               number_of_trials_k = number_of_trials_k,
-                                               prior_lims_clonal = prior_lims_clonal
-                                               ,prior_lims_k = prior_lims_k
-                                               ,compile = compile, CUDA = CUDA, lrd_gamma = lrd_gamma))
+  inf_res <-
+    lapply(1:samples, function(s)
+      mob$fit_mobster(
+        data = data,
+        K = as.integer(subclonal_clusters),
+        tail = as.integer(tail),
+        truncated_pareto = truncate_pareto,
+        purity = purity,
+        max_it = max_it,
+        lr = lr,
+        e = e,
+        alpha_precision_concentration = alpha_precision_concentration,
+        alpha_precision_rate = alpha_precision_rate,
+        number_of_trials_clonal_mean = number_of_trials_clonal_mean,
+        number_of_trials_k = number_of_trials_k,
+        prior_lims_clonal = prior_lims_clonal,
+        prior_lims_k = prior_lims_k,
+        compile = compile,
+        CUDA = CUDA,
+        lrd_gamma = lrd_gamma
+      ))
 
-  best_model <- which.max(sapply(inf_res, function(h) h$information_criteria$likelihood))
+  best_model <-
+    which.max(sapply(inf_res, function(h)
+      h$information_criteria$likelihood))
   inf_res <-  inf_res[[best_model]]
 
-  assig_temp = lapply(1:length(data_u), function(i) return(data.frame(id = names(data_u[[i]]),
-                                                                      cluster = inf_res$model_parameters[[i]]$cluster_assignments
-                                                                      )))
+  assig_temp = lapply(1:length(data_u), function(i)
+    return(
+      data.frame(
+        id = names(data_u[[i]]),
+        cluster = inf_res$model_parameters[[i]]$cluster_assignments
+      )
+    ))
   assig_temp = Reduce(assig_temp, f = rbind)
-  if(inherits(data_raw, what = "evopipe_qc"))
-    table = data_raw$cnaqc$snvs %>%
-      mutate(id = paste(chr,from, to, sep = ":"))
-  else
-    table = data_raw  %>%
-    mutate(id = paste(chr,from, to, sep = ":"))
 
-  if(is.null(table$is_driver)) table$is_driver <-  FALSE
-  if(is.null(table$driver_label)) table$driver_label <-  ""
+  table = NULL
+  if (inherits(data_raw, what = "evopipe_qc"))
+  {
+    table = data_raw$cnaqc$snvs %>%
+      mutate(id = paste(chr, from, to, sep = ":"))
+  } else
+  {
+    if (inherits(data_raw, what = "cnaqc"))
+      table = data_raw$snvs %>%
+        mutate(id = paste(chr, from, to, sep = ":"))
+    else
+      table = data_raw  %>%
+        mutate(id = paste(chr, from, to, sep = ":"))
+  }
+
+  if (is.null(table$is_driver))
+    table$is_driver <-  FALSE
+  if (is.null(table$driver_label))
+    table$driver_label <-  ""
 
   inf_res$data = dplyr::left_join(table, assig_temp, by = "id", copy = T) %>% as.data.frame()
 
