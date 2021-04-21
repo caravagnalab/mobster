@@ -57,6 +57,10 @@ format_data_mobsterh_QC <-
     valid_k_n <-
       res %>%  dplyr::group_by(karyotype) %>% dplyr::summarize(n = dplyr::n()) %>%  dplyr::filter(n > n_t) %>% dplyr::pull(karyotype)
 
+    nremoved <- length(res$karyotype %>%  unique()) - length(valid_k_n %>% unique())
+    if(nremoved > 0 )
+      cli::cli_alert_warning("Removing {length(nremoved)}  karyotypes, containing less than {n_t} mutations")
+
     return(split_and_tolist(res %>% filter(karyotype %in% valid_k_n)))
 
   }
@@ -66,11 +70,23 @@ format_data_mobsterh_QC <-
 format_data_mobsterh_DF <-
   function(x,
            kar = c("1:0", "1:1", "2:1", "2:0", "2:2"),
-           vaf_t = 0.05) {
+           vaf_t = 0.05,
+           n_t = 100) {
+
+    if("cluster" %in% colnames(x)){
+      cli::cli_alert_warning("A coloumn names cluster already exists, overwriting it!")
+      x$cluster <-  NULL
+    }
+
     res <- x %>%
       filter(karyotype %in% kar, VAF > vaf_t, VAF < 1, VAF > 0) %>% mutate(id = paste(chr, from, to, sep = ":")) %>% select(VAF, karyotype, id)
+    valid_k_n <-
+      res %>%  dplyr::group_by(karyotype) %>% dplyr::summarize(n = dplyr::n()) %>%  dplyr::filter(n > n_t) %>% dplyr::pull(karyotype)
+    nremoved <- length(res$karyotype %>%  unique()) - length(valid_k_n %>% unique())
+    if(nremoved > 0 )
+      cli::cli_alert_warning("Removing {length(nremoved)} karyotypes, containing less than {n_t} mutations")
 
-    return(split_and_tolist(res))
+    return(split_and_tolist(res %>% filter(karyotype %in% valid_k_n)))
 
   }
 

@@ -4,34 +4,45 @@
 #' have a mixture of Beta distributions and an optional Pareto type-one distribution to model the neutral tail. From a modelling
 #' point of view the main difference here is that we are expanding that model over different karyotypes and we treat the problem from a bayesian point of view.
 #' In this way we can grant information about the mutation rate and the tail pooling from the different karyotypes and at the same time include the
-#' strong prior knowledge we have about
+#' strong prior knowledge we have about how clonal and subclonal clusters are supposed to be ddistributed along the VAF spectrum.
+#' All the Beta distribution in the prior model are not modelled using concentration parameters but using this parametrization;
+#' \deqn{concentration1 = mean  * number_of_trials}
+#' \deqn{concentration1 = (1 - mean)  * number_of_trials}
 #'
 #'
-#' @param x Input tibble (or data.frame) or an evopipe_qc object (preferred),
+#' @param x Input tibble (or data.frame), cnaqc object ot evopipe_qc object (laste two preferred),
 #' @param subclonal_clusters A vector with the number of Beta components to use. All values of \code{K} must be positive
-#' and strictly greater than 0; they are combined with the value of \code{tail} to define all model
+#' and strictly greater than 0; they are combined with the value of \code{tail} and to define all model
 #' configurations tested for model selection
-#' @param init Initial values for the paremeters of the model. With \code{"ranodm"} the mean and variance
-#' of each Beta component are randomply sampled in the interval (0,1). With \code{"peaks"} a peak detection
-#' heuristic is used to place the Beta means to match the peaks; in that case the variance is still randomised.
-#' In both cases the power-law shape is randomised.
-#' @param tail If \code{0} the fit will not use a tail, if \code{1} it will.
+#' @param truncate_pareto When \code{TRUE} the fit will be done with a Truncated pareto distribution with probability density equal to 0
+#' for values x greater than the mean of the smallest clonal cluster
+#' @param tail If \code{TRUE} the fit will not use a Pareto to model the tail, if \code{FALSE} it will.
+#' @param purity User provided tumor purity, used only when the input is a data.frame
+#' @param samples If the number of samples is greater than 1, then for each tail-truncation-subclone configuration \code{samples} fit
+#' are produced and the one with the highest \code{model.selection} values is taken.
+#' @param enforce_QC_PASS if \code{TRUE} when using a cnaqc of evopipe_qc object fit just the karyotype that passe QC.
 #' @param epsilon Tolerance for convergency estimation. For MLE fit this is compared to the differential of the
 #' negative log-likelihood (NLL); for MM fit the largest differential among the mixing proportions (pi) is used.
 #' @param maxIter Maximum number of steps for a fit. If convergency is not achieved before these steps, the fit is interrupted.
-#' @param seed Seed for the random numbers generator
 #' @param model.selection Score to minimize to select the best model; this has to be one of \code{'ICL'},
 #' \code{'BIC'}, \code{'AIC'} or \code{'likelihood'}. We advise to use only reICL and ICL
-#' @param parallel Optional parameter to run the fits in parallel (default), or not.
-#' @param pi_cutoff Parameter passed to function \code{choose_clusters}, which determines the minimum mixing proportion of a
-#' cluster to be returned as output.
-#' @param N_cutoff Parameter passed to function \code{choose_clusters}, which determines the minimum number of mutations
-#' assigned to a cluster to be returned as output.
+#' @param parallel Optional parameter to run the fits in parallel, or not (default).
+#' @param alpha_precision_concentration Concentration value for the gamma modelling the prior shape of the Pareto
+#' @param alpha_precision_rate Rate value for the gamma modelling the prior shape of the Pareto
+#' @param number_of_trials_clonal_mean Number of trials for the Beta prior over the clonal clusters mean
+#' @param number_of_trials_k Number of trials for the Beta prior over the subclonal clusters mean
+#' @param prior_lims_clonal Bounds on the uniform prior over the number of trials for the clonal clusters
+#' @param prior_lims_k Bounds on the uniform prior over the number of trials for the subclonal clusters
+#' @param lr Learning rate used by the Adam oprimizer
+#' @param compile Use the just-in-time (JIT) compiler
+#' @param CUDA Use the default GPU to train the model (you need to setup PyTorch for this)
 #' @param description A textual description of this dataset.
 #' @param lrd_gamma learning rate decay fator, final learning rate is gonna be lrd_gamma * lr
 #' @param vaf_filter Discard mutations under a specific VAF threshold for the fitting procedure
 #' @param n_t Discard karyotypes with less then a given number of mutations.
-#' @return A list of all fits computed (objects of class \code{dbpmm}), the best fit, a table with the results of the fits and a
+#' @param quantile_filt Filter the mutations with VAF higher than those quantile
+#'
+#' @return An object of class \code{mobster_deconv}, i.e. list of all fits computed (objects of class \code{dbpmm}), the best fit, a table with the results of the fits and a
 #' variable that specify which score has been used for model selection.
 #'
 #' @importFrom dplyr filter mutate select arrange desc pull row_number group_by
@@ -44,16 +55,15 @@
 #
 #' @examples
 #' # Generate a random dataset
-#' x = random_dataset(seed = 123, Beta_variance_scaling = 100, N = 200)
-#' print(x) # Contains a ggplot object
+#' data("fit_example_mobsterh", package = "mobster")
 #'
-#' # Fit, default models, changed epsilon for convergence
-#' x = mobster_fit(x$data, epsilon = 1e-5)
+#'x = fit_example_mobsterh$best$data
+#'
+#' # Fit, default model
+#' x = mobster_fit(x, K = 0:1, truncate_pareto = FALSE)
 #'
 #' plot(x$best)
 #' print(x$best)
-#'
-#' lapply(x$runs[1:3], plot)
 #'
 mobsterh_fit = function(x,
                         subclonal_clusters = 0:2,
@@ -66,9 +76,6 @@ mobsterh_fit = function(x,
                         maxIter = 2000,
                         model.selection = 'ICL',
                         parallel = FALSE,
-                        pi_cutoff = 0.05,
-                        N_cutoff = 80,
-                        silent = FALSE,
                         alpha_precision_concentration = 5,
                         alpha_precision_rate = 0.01,
                         number_of_trials_clonal_mean = 300,
@@ -180,14 +187,14 @@ mobsterh_fit = function(x,
     truncate_pareto = truncate_pareto,
     stringsAsFactors = FALSE
   )
-
-  tests <- tests[-which(!tests$tail & tests$truncate_pareto), ]
+  if(length(truncate_pareto) == 2)
+    tests <- tests[-which(!tests$tail & tests$truncate_pareto), ]
   ntests = nrow(tests)
 
   ###################### Print message
 
   mobster:::m_txt(
-    "n = {.value {nrow(x)}}. Mixture with S = {.field {paste(subclonal_clusters, collapse = ',')}} subclonal Beta(s). Pareto tail: {.field {tail}}. Output clusters with \u03c0 > {.value {pi_cutoff}} and n > {.value {N_cutoff}}."
+    "n = {.value {nrow(x)}}. Mixture with S = {.field {paste(subclonal_clusters, collapse = ',')}} subclonal Beta(s). Pareto tail: {.field {tail}}."
   ) %>% cli::cli_text()
 
 
@@ -372,6 +379,11 @@ mobsterh_fit_aux <-  function(data,
     table$is_driver <-  FALSE
   if (is.null(table$driver_label))
     table$driver_label <-  ""
+
+  if("cluster" %in% colnames(table)){
+    cli::cli_alert_warning("A coloumn named cluster already exists, overwriting it!")
+    table$cluster <-  NULL
+  }
 
   inf_res$data = dplyr::left_join(table, assig_temp, by = "id", copy = T) %>% as.data.frame()
 

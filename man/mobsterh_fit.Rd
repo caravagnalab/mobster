@@ -16,9 +16,6 @@ mobsterh_fit(
   maxIter = 2000,
   model.selection = "ICL",
   parallel = FALSE,
-  pi_cutoff = 0.05,
-  N_cutoff = 80,
-  silent = FALSE,
   alpha_precision_concentration = 5,
   alpha_precision_rate = 0.01,
   number_of_trials_clonal_mean = 300,
@@ -37,13 +34,23 @@ mobsterh_fit(
 )
 }
 \arguments{
-\item{x}{Input tibble (or data.frame) or an evopipe_qc object (preferred),}
+\item{x}{Input tibble (or data.frame), cnaqc object ot evopipe_qc object (laste two preferred),}
 
 \item{subclonal_clusters}{A vector with the number of Beta components to use. All values of \code{K} must be positive
-and strictly greater than 0; they are combined with the value of \code{tail} to define all model
+and strictly greater than 0; they are combined with the value of \code{tail} and to define all model
 configurations tested for model selection}
 
-\item{tail}{If \code{0} the fit will not use a tail, if \code{1} it will.}
+\item{tail}{If \code{TRUE} the fit will not use a Pareto to model the tail, if \code{FALSE} it will.}
+
+\item{truncate_pareto}{When \code{TRUE} the fit will be done with a Truncated pareto distribution with probability density equal to 0
+for values x greater than the mean of the smallest clonal cluster}
+
+\item{purity}{User provided tumor purity, used only when the input is a data.frame}
+
+\item{samples}{If the number of samples is greater than 1, then for each tail-truncation-subclone configuration \code{samples} fit
+are produced and the one with the highest \code{model.selection} values is taken.}
+
+\item{enforce_QC_PASS}{if \code{TRUE} when using a cnaqc of evopipe_qc object fit just the karyotype that passe QC.}
 
 \item{epsilon}{Tolerance for convergency estimation. For MLE fit this is compared to the differential of the
 negative log-likelihood (NLL); for MM fit the largest differential among the mixing proportions (pi) is used.}
@@ -53,13 +60,25 @@ negative log-likelihood (NLL); for MM fit the largest differential among the mix
 \item{model.selection}{Score to minimize to select the best model; this has to be one of \code{'ICL'},
 \code{'BIC'}, \code{'AIC'} or \code{'likelihood'}. We advise to use only reICL and ICL}
 
-\item{parallel}{Optional parameter to run the fits in parallel (default), or not.}
+\item{parallel}{Optional parameter to run the fits in parallel, or not (default).}
 
-\item{pi_cutoff}{Parameter passed to function \code{choose_clusters}, which determines the minimum mixing proportion of a
-cluster to be returned as output.}
+\item{alpha_precision_concentration}{Concentration value for the gamma modelling the prior shape of the Pareto}
 
-\item{N_cutoff}{Parameter passed to function \code{choose_clusters}, which determines the minimum number of mutations
-assigned to a cluster to be returned as output.}
+\item{alpha_precision_rate}{Rate value for the gamma modelling the prior shape of the Pareto}
+
+\item{number_of_trials_clonal_mean}{Number of trials for the Beta prior over the clonal clusters mean}
+
+\item{number_of_trials_k}{Number of trials for the Beta prior over the subclonal clusters mean}
+
+\item{prior_lims_clonal}{Bounds on the uniform prior over the number of trials for the clonal clusters}
+
+\item{prior_lims_k}{Bounds on the uniform prior over the number of trials for the subclonal clusters}
+
+\item{lr}{Learning rate used by the Adam oprimizer}
+
+\item{compile}{Use the just-in-time (JIT) compiler}
+
+\item{CUDA}{Use the default GPU to train the model (you need to setup PyTorch for this)}
 
 \item{description}{A textual description of this dataset.}
 
@@ -69,15 +88,10 @@ assigned to a cluster to be returned as output.}
 
 \item{n_t}{Discard karyotypes with less then a given number of mutations.}
 
-\item{init}{Initial values for the paremeters of the model. With \code{"ranodm"} the mean and variance
-of each Beta component are randomply sampled in the interval (0,1). With \code{"peaks"} a peak detection
-heuristic is used to place the Beta means to match the peaks; in that case the variance is still randomised.
-In both cases the power-law shape is randomised.}
-
-\item{seed}{Seed for the random numbers generator}
+\item{quantile_filt}{Filter the mutations with VAF higher than those quantile}
 }
 \value{
-A list of all fits computed (objects of class \code{dbpmm}), the best fit, a table with the results of the fits and a
+An object of class \code{mobster_deconv}, i.e. list of all fits computed (objects of class \code{dbpmm}), the best fit, a table with the results of the fits and a
 variable that specify which score has been used for model selection.
 }
 \description{
@@ -85,19 +99,21 @@ This function fits a bayesian hierarchical version of the MOBSTER model implemen
 have a mixture of Beta distributions and an optional Pareto type-one distribution to model the neutral tail. From a modelling
 point of view the main difference here is that we are expanding that model over different karyotypes and we treat the problem from a bayesian point of view.
 In this way we can grant information about the mutation rate and the tail pooling from the different karyotypes and at the same time include the
-strong prior knowledge we have about
+strong prior knowledge we have about how clonal and subclonal clusters are supposed to be ddistributed along the VAF spectrum.
+All the Beta distribution in the prior model are not modelled using concentration parameters but using this parametrization;
+\deqn{concentration1 = mean  * number_of_trials}
+\deqn{concentration1 = (1 - mean)  * number_of_trials}
 }
 \examples{
 # Generate a random dataset
-x = random_dataset(seed = 123, Beta_variance_scaling = 100, N = 200)
-print(x) # Contains a ggplot object
+data("fit_example_mobsterh", package = "mobster")
 
-# Fit, default models, changed epsilon for convergence
-x = mobster_fit(x$data, epsilon = 1e-5)
+x = fit_example_mobsterh$best$data
+
+# Fit, default model
+x = mobster_fit(x, K = 0:1, truncate_pareto = FALSE)
 
 plot(x$best)
 print(x$best)
-
-lapply(x$runs[1:3], plot)
 
 }
