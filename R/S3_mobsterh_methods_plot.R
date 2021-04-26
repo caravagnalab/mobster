@@ -231,7 +231,7 @@ plot.dbpmmh = function(x,
       pareto_params_df_low = pareto_params_df_low %>%
       bind_rows(
         df_powerlaw_density(
-          shape = pareto_params$shape[i] - 2 * sqrt((2*pareto_params$shape[i] + exp(pareto_params$shape_noise[i])) *(exp(pareto_params$shape_noise[i]) - 1)),
+          shape = qlnorm(0.05,meanlog = log(pareto_params$shape[i]),sdlog = pareto_params$shape_noise[i]),
           scale = pareto_params$scale[i],
           mixing = pareto_params$mixing[i],
           location = pareto_params$location[i]
@@ -245,7 +245,7 @@ plot.dbpmmh = function(x,
       pareto_params_df_high = pareto_params_df_high %>%
       bind_rows(
         df_powerlaw_density(
-          shape = pareto_params$shape[i] + 2 * sqrt((2*pareto_params$shape[i] + exp(pareto_params$shape_noise[i])) *(exp(pareto_params$shape_noise[i]) - 1)),
+          shape = qlnorm(0.95,meanlog = log(pareto_params$shape[i]),sdlog = pareto_params$shape_noise[i]),
           scale = pareto_params$scale[i],
           mixing = pareto_params$mixing[i],
           location = pareto_params$location[i]
