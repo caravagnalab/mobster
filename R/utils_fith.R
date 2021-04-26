@@ -14,7 +14,8 @@ format_data_mobsterh_QC <-
            kar = c("1:0", "1:1", "2:1", "2:0", "2:2"),
            vaf_t = 0.05,
            n_t = 100,
-           enforce_QC_PASS = TRUE) {
+           enforce_QC_PASS = TRUE
+           ) {
     if (enforce_QC_PASS)
       valid_karyo <-
         x$QC$QC_table %>% dplyr::filter(QC == "PASS", type == "Peaks") %>% pull(karyotype)

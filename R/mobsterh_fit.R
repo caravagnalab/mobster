@@ -5,9 +5,9 @@
 #' point of view the main difference here is that we are expanding that model over different karyotypes and we treat the problem from a bayesian point of view.
 #' In this way we can grant information about the mutation rate and the tail pooling from the different karyotypes and at the same time include the
 #' strong prior knowledge we have about how clonal and subclonal clusters are supposed to be ddistributed along the VAF spectrum.
-#' All the Beta distribution in the prior model are not modelled using concentration parameters but using this parametrization;
+#' All the Beta distributions in the prior model are not modelled using concentration parameters but using this parametrization:
 #' \deqn{concentration1 = mean  * number_of_trials}
-#' \deqn{concentration1 = (1 - mean)  * number_of_trials}
+#' \deqn{concentration2 = (1 - mean)  * number_of_trials}
 #'
 #'
 #' @param x Input tibble (or data.frame), cnaqc object ot evopipe_qc object (laste two preferred),
@@ -25,7 +25,7 @@
 #' negative log-likelihood (NLL); for MM fit the largest differential among the mixing proportions (pi) is used.
 #' @param maxIter Maximum number of steps for a fit. If convergency is not achieved before these steps, the fit is interrupted.
 #' @param model.selection Score to minimize to select the best model; this has to be one of \code{'ICL'},
-#' \code{'BIC'}, \code{'AIC'} or \code{'likelihood'}. We advise to use only reICL and ICL
+#' \code{'BIC'}, \code{'AIC'} or \code{'likelihood'}. We advise to use only ICL
 #' @param parallel Optional parameter to run the fits in parallel, or not (default).
 #' @param alpha_precision_concentration Concentration value for the gamma modelling the prior shape of the Pareto
 #' @param alpha_precision_rate Rate value for the gamma modelling the prior shape of the Pareto
@@ -41,6 +41,7 @@
 #' @param vaf_filter Discard mutations under a specific VAF threshold for the fitting procedure
 #' @param n_t Discard karyotypes with less then a given number of mutations.
 #' @param quantile_filt Filter the mutations with VAF higher than those quantile
+#' @param N_MAX subsample an N_MAX number of mutations, it keeps the drivers. Works only with a CNAqc input
 #'
 #' @return An object of class \code{mobster_deconv}, i.e. list of all fits computed (objects of class \code{dbpmm}), the best fit, a table with the results of the fits and a
 #' variable that specify which score has been used for model selection.
@@ -90,7 +91,8 @@ mobsterh_fit = function(x,
                         lrd_gamma = 0.1,
                         vaf_filter = 0.05,
                         n_t = 100,
-                        quantile_filt = 0.995)
+                        quantile_filt = 0.995,
+                        N_MAX = 50000)
 {
   pio::pioHdr(paste0("MOBSTERh fit"))
   cat('\n')
@@ -102,12 +104,14 @@ mobsterh_fit = function(x,
   if (inherits(x, "evopipe_qc"))
   {
     purity <- get_purity(x)
+    x$cnaqc <- CNAqc::subsample(x$cnaqc,N = N_MAX)
     data_raw <- x
     x <-
       format_data_mobsterh_QC(x,
                               vaf_t = vaf_filter,
                               n_t = n_t,
-                              enforce_QC_PASS = enforce_QC_PASS)
+                              enforce_QC_PASS = enforce_QC_PASS
+                              )
 
     can_work = TRUE
   }
@@ -115,6 +119,7 @@ mobsterh_fit = function(x,
   # CNAqc object
   if (inherits(x, "cnaqc"))
   {
+    x <- CNAqc::subsample(x, N = N_MAX)
     purity <- x$purity
     data_raw <- x$snvs
     x <- format_data_mobsterh_DF(x$snvs)
