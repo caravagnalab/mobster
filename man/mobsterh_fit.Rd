@@ -30,7 +30,8 @@ mobsterh_fit(
   lrd_gamma = 0.1,
   vaf_filter = 0.05,
   n_t = 100,
-  quantile_filt = 0.995
+  quantile_filt = 0.995,
+  N_MAX = 50000
 )
 }
 \arguments{
@@ -58,7 +59,7 @@ negative log-likelihood (NLL); for MM fit the largest differential among the mix
 \item{maxIter}{Maximum number of steps for a fit. If convergency is not achieved before these steps, the fit is interrupted.}
 
 \item{model.selection}{Score to minimize to select the best model; this has to be one of \code{'ICL'},
-\code{'BIC'}, \code{'AIC'} or \code{'likelihood'}. We advise to use only reICL and ICL}
+\code{'BIC'}, \code{'AIC'} or \code{'likelihood'}. We advise to use only ICL}
 
 \item{parallel}{Optional parameter to run the fits in parallel, or not (default).}
 
@@ -89,6 +90,8 @@ negative log-likelihood (NLL); for MM fit the largest differential among the mix
 \item{n_t}{Discard karyotypes with less then a given number of mutations.}
 
 \item{quantile_filt}{Filter the mutations with VAF higher than those quantile}
+
+\item{N_MAX}{subsample an N_MAX number of mutations, it keeps the drivers. Works only with a CNAqc input}
 }
 \value{
 An object of class \code{mobster_deconv}, i.e. list of all fits computed (objects of class \code{dbpmm}), the best fit, a table with the results of the fits and a
@@ -100,9 +103,9 @@ have a mixture of Beta distributions and an optional Pareto type-one distributio
 point of view the main difference here is that we are expanding that model over different karyotypes and we treat the problem from a bayesian point of view.
 In this way we can grant information about the mutation rate and the tail pooling from the different karyotypes and at the same time include the
 strong prior knowledge we have about how clonal and subclonal clusters are supposed to be ddistributed along the VAF spectrum.
-All the Beta distribution in the prior model are not modelled using concentration parameters but using this parametrization;
+All the Beta distributions in the prior model are not modelled using concentration parameters but using this parametrization:
 \deqn{concentration1 = mean  * number_of_trials}
-\deqn{concentration1 = (1 - mean)  * number_of_trials}
+\deqn{concentration2 = (1 - mean)  * number_of_trials}
 }
 \examples{
 # Generate a random dataset
