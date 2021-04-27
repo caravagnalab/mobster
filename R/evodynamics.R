@@ -282,3 +282,127 @@ evolutionary_parameters <-
     }
     return(res)
   }
+
+
+# Estimate mutation rate posterior from MOBSTER fit
+#
+# The parameters defining the posterior distribution of the mutation rate are computed, together with the plot
+# of the distribution.
+# The accumulation of subclonal mutations on the genome is described by a Poisson
+# process with intensity Lambda=mu\sum_{i in karyotypes}(1/f_min;i-1/f_max;i)l_i, where mu is the effective mutation
+# rate, f_min;i,f_max;i are respectively the minimum and maximum frequency of the mutations assigned to the
+# tail and l_i is the length of the genomic region for a given karyotype. Assuming a gamma distribution 
+# with parameters alpha,beta as prior, the posterior distribution is again a gamma distribution with 
+# parameters alpha* = alpha + \sum_{i in karyotypes}(M_i), beta* = beta + \sum(1/f_min;i-1/f_max;i)l_i, 
+# where M_i are the number of subclonal mutations for a given karyotype.
+# 
+# @param fit Mobster fit
+# @param list object containing the alpha and beta parameters of the gamma prior
+# @return a list containing the parameters of the posterior distribution and a density plot
+# @examples
+# mu_posterior(mobsterfit)
+# @export
+
+mu_posterior <- function(fit, prior){
+  
+  
+  # get subloclonal mutations, min/max frequency and chromosome lenght for each karyotype
+  
+  subclonal_mutations=c()
+  f_min=c()
+  f_max=c()
+  length_karyo=c()
+  
+  for (karyo in names(fit$best$model_parameters)){
+    
+    tail_mutations = fit$best$model_parameters[karyo][[1]]$cluster_assignments %>% as_tibble() %>% 
+      rename(cluster=value) %>% filter(cluster=="Tail")
+    subclonal_mutations= c(subclonal_mutations,length(tail_mutations$cluster))
+    f_min= c(f_min,fit$best$model_parameters[karyo][[1]]$tail_scale)
+    alpha=fit$best$model_parameters[karyo][[1]]$beta_concentration1[1]
+    beta=fit$best$model_parameters[karyo][[1]]$beta_concentration1[2]
+    f_max= c(f_max,alpha/(alpha+beta))
+    karyotype= fit$best$data %>% filter(karyotype==karyo)
+    segment_ids <- karyotype$segment_id %>% unique() 
+    segment_ids <- read.table(text = segment_ids, sep = ":", as.is = TRUE)
+    length_karyo=c(length_karyo, sum(segment_ids$V3-segment_ids$V2))
+    
+  }
+  # calculate alpha e beta mutation rate posterior
+  
+  alpha = prior$alpha + sum(subclonal_mutations)
+  beta =  prior$beta + sum( (1/f_min-1/f_max)*length_karyo )
+  mean = alpha/beta
+  var = alpha/(beta^2)
+  sampling = rgamma(1000,shape=alpha,rate=beta)
+  
+  #sampling from the posterior distribution
+  
+  plot = ggplot(data.frame(mu=sampling), aes(x=mu)) +
+    geom_histogram(bins = 100, aes(y=..density.., fill="indianred")) +
+    stat_function(
+      fun = dgamma,
+      colour = "cornflowerblue",
+      size = 1,
+      args = list(shape=alpha,rate=beta)) + theme(legend.position = "none") +
+    labs(title = "mutation rate posterior distribution", x = "mu", y = "Density") 
+  
+  # return the results of the inference
+  
+  inference = list(alpha=alpha,beta=beta,mean=mean,var=var,plot=plot)
+  
+  return(inference) 
+  
+}
+
+
+# Estimate the parameters of the mutation rate prior from a mobster fit.
+#
+# It is assumed a gamma distribution as prior for the mutation rate. The parameters alpha and beta are estimated from 
+# the data. We compute an estimator of mu for each karyotype, i.e. mu_i= M_i/((1/f_min;i-1/f_max;i)l_i) and take the mean and
+# variance accross different karyotypes. Using the MM formula for the gamma distribution we get an expression for 
+# alpha and beta parameters.
+# 
+# @param fit Mobster fit
+# @return a list containing the parameters of the prior distribution
+# @examples
+# estimate_prior(mobsterfit)
+
+estimate_prior <- function(fit){
+  
+  # get subloclonal mutations, min/max frequency and chromosome lenght for each karyotype
+  
+  subclonal_mutations=c()
+  f_min=c()
+  f_max=c()
+  length_karyo=c()
+  
+  for (karyo in names(fit$best$model_parameters)){
+    
+    tail_mutations = fit$best$model_parameters[karyo][[1]]$cluster_assignments %>% as_tibble() %>% 
+      rename(cluster=value) %>% filter(cluster=="Tail")
+    subclonal_mutations= c(subclonal_mutations,length(tail_mutations$cluster))
+    f_min= c(f_min,fit$best$model_parameters[karyo][[1]]$tail_scale)
+    alpha=fit$best$model_parameters[karyo][[1]]$beta_concentration1[1]
+    beta=fit$best$model_parameters[karyo][[1]]$beta_concentration1[2]
+    f_max= c(f_max,alpha/(alpha+beta))
+    karyotype= fit$best$data %>% filter(karyotype==karyo)
+    segment_ids <- karyotype$segment_id %>% unique() 
+    segment_ids <- read.table(text = segment_ids, sep = ":", as.is = TRUE)
+    length_karyo=c(length_karyo, sum(segment_ids$V3-segment_ids$V2))
+  }
+  
+  #parameters estimates
+  
+  mu = mean( subclonal_mutations/( (1/f_min-1/f_max)*length_karyo ) )
+  var=sd( subclonal_mutations/( (1/f_min-1/f_max)*length_karyo ) )^2
+  
+  alpha = (mu^2)/var
+  beta = mu/var
+  
+  prior = list(alpha=alpha,beta=beta)
+  
+  return(prior)
+  
+}
+
