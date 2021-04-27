@@ -284,24 +284,25 @@ evolutionary_parameters <-
   }
 
 
-# Estimate mutation rate posterior from MOBSTER fit
-#
-# The parameters defining the posterior distribution of the mutation rate are computed, together with the plot
-# of the distribution.
-# The accumulation of subclonal mutations on the genome is described by a Poisson
-# process with intensity Lambda=mu\sum_{i in karyotypes}(1/f_min;i-1/f_max;i)l_i, where mu is the effective mutation
-# rate, f_min;i,f_max;i are respectively the minimum and maximum frequency of the mutations assigned to the
-# tail and l_i is the length of the genomic region for a given karyotype. Assuming a gamma distribution 
-# with parameters alpha,beta as prior, the posterior distribution is again a gamma distribution with 
-# parameters alpha* = alpha + \sum_{i in karyotypes}(M_i), beta* = beta + \sum(1/f_min;i-1/f_max;i)l_i, 
-# where M_i are the number of subclonal mutations for a given karyotype.
+#' Estimate mutation rate posterior from MOBSTER fit
+#'
+#'  @description The parameters defining the posterior distribution of the mutation rate are computed, together with the plot
+#'  of the distribution. The accumulation of subclonal mutations on the genome is described by a Poisson
+#'  process with intensity \Lambda=\mu\sum_{i \in mathrm{karyotypes}}(1/f_{min;i}-1/f_{max;i})\ell_i,
+#'  where \mu is the effective mutation rate, f_{min;i},f_{max;i} are respectively the minimum and maximum frequency 
+#'  of the mutations assigned to the tail and \ell_i is the length of the genomic region for a given karyotype. 
+#'  Assuming a gamma distribution with parameters alpha,beta as prior, the posterior distribution is again a 
+#'  gamma distribution with parameters \alpha^{\prime} = \alpha + \sum_{i in \mathrm{karyotypes}}M_i, 
+#'  \beta = \beta + \sum(1/f_{min;i}-1/f_{max;i})\ell_i, where M_i are the number of subclonal mutations for a given karyotype.
 # 
-# @param fit Mobster fit
-# @param list object containing the alpha and beta parameters of the gamma prior
-# @return a list containing the parameters of the posterior distribution and a density plot
-# @examples
-# mu_posterior(mobsterfit)
-# @export
+#'  @param fit HMobster fit
+#'  @param list object containing the alpha and beta parameters of the gamma prior
+#'  @return a list containing the parameters of the posterior distribution and a density plot
+#'  @examples
+#'  data('fit_example_mobsterh', package = 'mobster')
+#'  prior=list(alpha=10^-4,beta=10^-4)
+#'  mu_posterior(fit_example_mobsterh,prior=prior)
+#'  @export
 
 mu_posterior <- function(fit, prior){
   
@@ -344,7 +345,9 @@ mu_posterior <- function(fit, prior){
       fun = dgamma,
       colour = "cornflowerblue",
       size = 1,
-      args = list(shape=alpha,rate=beta)) + theme(legend.position = "none") +
+      args = list(shape=alpha,rate=beta)) + geom_vline(xintercept = mean, linetype="dashed") +
+     theme_bw() + theme(legend.position = "none") + annotate("text", x = 1.3*10^-8, y = 7.5*10^8, label= paste0("mean = ", format(mean,digits = 2) ) ) + 
+    annotate("text", x = 1.3*10^-8, y = 7*10^8, label= paste0("sd = ", format(sqrt(var),digits = 2) ) ) + 
     labs(title = "mutation rate posterior distribution", x = "mu", y = "Density") 
   
   # return the results of the inference
@@ -356,17 +359,18 @@ mu_posterior <- function(fit, prior){
 }
 
 
-# Estimate the parameters of the mutation rate prior from a mobster fit.
-#
-# It is assumed a gamma distribution as prior for the mutation rate. The parameters alpha and beta are estimated from 
-# the data. We compute an estimator of mu for each karyotype, i.e. mu_i= M_i/((1/f_min;i-1/f_max;i)l_i) and take the mean and
-# variance accross different karyotypes. Using the MM formula for the gamma distribution we get an expression for 
-# alpha and beta parameters.
-# 
-# @param fit Mobster fit
-# @return a list containing the parameters of the prior distribution
-# @examples
-# estimate_prior(mobsterfit)
+#' Estimate the parameters of the mutation rate prior from a mobster fit.
+#'
+#' @description It is assumed a gamma distribution as prior for the mutation rate. The parameters alpha and beta are estimated from 
+#' the data. We compute an estimator of mu for each karyotype, i.e. \mu_i= M_i/((1/f_{min;i}-1/f_{max;i})\ell_i) and take the mean and
+#' variance accross different karyotypes. Using the MM formula for the gamma distribution we get an expression for 
+#' alpha and beta parameters.
+#' 
+#' @param fit HMobster fit
+#' @return a list containing the parameters of the prior distribution
+#' @examples
+#' data('fit_example_mobsterh', package = 'mobster')
+#' estimate_prior(fit_example_mobsterh)
 
 estimate_prior <- function(fit){
   
