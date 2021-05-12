@@ -255,12 +255,12 @@ mobsterh_fit = function(x,
     cores.ratio = .5,
     parallel = parallel,
     cache = NULL,
-    filter_errors = TRUE # Error managment is inside easypar
+    filter_errors = FALSE # Error managment is inside easypar
     ,
     progress_bar = FALSE
   )
 
-  filt <-  !is.null(runs)
+  filt <-  sapply(runs,function(w) !is.null(w$information_criteria))
   runs <-  runs[filt]
 
 
