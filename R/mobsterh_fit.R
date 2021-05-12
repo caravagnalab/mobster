@@ -260,7 +260,8 @@ mobsterh_fit = function(x,
     progress_bar = FALSE
   )
 
-  runs <-  runs[!is.null(runs)]
+  filt <-  !is.null(runs)
+  runs <-  runs[filt]
 
 
 
@@ -276,7 +277,7 @@ mobsterh_fit = function(x,
   # Get all scores
   scores_succesfull_tasks = lapply(runs, function(w)
     w$information_criteria  %>% as.data.frame())
-  tests = bind_cols(tests, Reduce(bind_rows, scores_succesfull_tasks))
+  tests = bind_cols(tests[filt] , Reduce(bind_rows, scores_succesfull_tasks))
 
 
   # Model selection -- this will be returned later ..
