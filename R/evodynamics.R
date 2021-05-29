@@ -321,7 +321,7 @@ mu_posterior <- function(fit, prior){
     subclonal_mutations= c(subclonal_mutations,length(tail_mutations$cluster))
     f_min= c(f_min,fit$best$model_parameters[karyo][[1]]$tail_scale)
     alpha=fit$best$model_parameters[karyo][[1]]$beta_concentration1[1]
-    beta=fit$best$model_parameters[karyo][[1]]$beta_concentration1[2]
+    beta=fit$best$model_parameters[karyo][[1]]$beta_concentration2[1]
     f_max= c(f_max,alpha/(alpha+beta))
     karyotype= fit$best$data %>% filter(karyotype==karyo)
     segment_ids <- karyotype$segment_id %>% unique() 
@@ -335,7 +335,7 @@ mu_posterior <- function(fit, prior){
   beta =  prior$beta + sum( (1/f_min-1/f_max)*length_karyo )
   mean = alpha/beta
   var = alpha/(beta^2)
-  sampling = rgamma(1000,shape=alpha,rate=beta)
+  sampling = rgamma(10000,shape=alpha,rate=beta)
   
   #sampling from the posterior distribution
   
@@ -346,8 +346,7 @@ mu_posterior <- function(fit, prior){
       colour = "cornflowerblue",
       size = 1,
       args = list(shape=alpha,rate=beta)) + geom_vline(xintercept = mean, linetype="dashed") +
-     theme_bw() + theme(legend.position = "none") + annotate("text", x = 1.3*10^-8, y = 7.5*10^8, label= paste0("mean = ", format(mean,digits = 2) ) ) + 
-    annotate("text", x = 1.3*10^-8, y = 7*10^8, label= paste0("sd = ", format(sqrt(var),digits = 2) ) ) + 
+     theme_bw() + theme(legend.position = "none")  + 
     labs(title = "mutation rate posterior distribution", x = "mu", y = "Density") 
   
   # return the results of the inference
@@ -388,7 +387,7 @@ estimate_prior <- function(fit){
     subclonal_mutations= c(subclonal_mutations,length(tail_mutations$cluster))
     f_min= c(f_min,fit$best$model_parameters[karyo][[1]]$tail_scale)
     alpha=fit$best$model_parameters[karyo][[1]]$beta_concentration1[1]
-    beta=fit$best$model_parameters[karyo][[1]]$beta_concentration1[2]
+    beta=fit$best$model_parameters[karyo][[1]]$beta_concentration2[1]
     f_max= c(f_max,alpha/(alpha+beta))
     karyotype= fit$best$data %>% filter(karyotype==karyo)
     segment_ids <- karyotype$segment_id %>% unique() 
