@@ -351,7 +351,7 @@ mu_posterior <- function(fit, prior){
   
   # return the results of the inference
   
-  inference = list(alpha=alpha,beta=beta,mean=mean,var=var,plot=plot)
+  inference = tibble(alpha=alpha,beta=beta,mean=mean,var=var,plot=list(plot))
   
   return(inference) 
   
