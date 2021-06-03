@@ -53,7 +53,7 @@ format_data_mobsterh_QC <-
     res <-
       x$cnaqc$snvs %>% filter(karyotype %in% valid_karyo, type == "SNV") %>%
       filter(VAF >= vaf_t) %>% mutate(id = paste(chr, from, to, sep = ":")) %>%
-      select(VAF, karyotype, id) %>% mutate(VAF = VAF - 0.0001)
+      select(VAF, karyotype, id) %>% mutate(VAF = VAF - 0.00001)
 
     valid_k_n <-
       res %>%  dplyr::group_by(karyotype) %>% dplyr::summarize(n = dplyr::n()) %>%  dplyr::filter(n > n_t) %>% dplyr::pull(karyotype)
@@ -80,7 +80,8 @@ format_data_mobsterh_DF <-
     }
 
     res <- x %>%
-      filter(karyotype %in% kar, VAF > vaf_t, VAF < 1, VAF > 0) %>% mutate(id = paste(chr, from, to, sep = ":")) %>% select(VAF, karyotype, id)
+      filter(karyotype %in% kar, VAF > vaf_t, VAF <= 1, VAF > 0) %>% mutate(id = paste(chr, from, to, sep = ":")) %>% 
+    select(VAF, karyotype, id) %>% mutate(VAF = VAF - 0.00001)
     valid_k_n <-
       res %>%  dplyr::group_by(karyotype) %>% dplyr::summarize(n = dplyr::n()) %>%  dplyr::filter(n > n_t) %>% dplyr::pull(karyotype)
     nremoved <- length(res$karyotype %>%  unique()) - length(valid_k_n %>% unique())
