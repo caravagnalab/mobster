@@ -122,7 +122,9 @@ mobsterh_fit = function(x,
     x <- CNAqc::subsample(x, N = N_MAX)
     purity <- x$purity
     data_raw <- x$snvs
-    x <- format_data_mobsterh_DF(x$snvs)
+    x <- format_data_mobsterh_DF(x$snvs,
+                                 vaf_t = vaf_filter,
+                                 n_t = n_t)
 
     can_work = TRUE
   }
@@ -136,7 +138,9 @@ mobsterh_fit = function(x,
       )
 
     data_raw <- x
-    x <- format_data_mobsterh_DF(x)
+    x <- format_data_mobsterh_DF(x,
+                                 vaf_t = vaf_filter,
+                                 n_t = n_t)
     cli::cli_alert_warning("Using input purity {.field {purity}}")
 
     can_work = TRUE
