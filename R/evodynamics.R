@@ -316,9 +316,10 @@ mu_posterior <- function(fit, prior){
   
   for (karyo in names(fit$best$model_parameters)){
     
-    tail_mutations = fit$best$model_parameters[karyo][[1]]$cluster_assignments %>% as_tibble() %>% 
-      rename(cluster=value) %>% filter(cluster=="Tail")
-    subclonal_mutations= c(subclonal_mutations,length(tail_mutations$cluster))
+    I=seq(1,length(fit$best$model_parameters[karyo][[1]]$cluster_probs),
+          length(fit$best$model_parameters[karyo][[1]]$mixture_probs) )
+    tail_mutations = fit$best$model_parameters[karyo][[1]]$cluster_probs[I]
+    subclonal_mutations= c(subclonal_mutations,tail_mutations %>% sum())
     f_min= c(f_min,fit$best$model_parameters[karyo][[1]]$tail_scale)
     alpha=fit$best$model_parameters[karyo][[1]]$beta_concentration1[1]
     beta=fit$best$model_parameters[karyo][[1]]$beta_concentration2[1]
@@ -329,6 +330,7 @@ mu_posterior <- function(fit, prior){
     length_karyo=c(length_karyo, sum(segment_ids$V3-segment_ids$V2))
     
   }
+  
   # calculate alpha e beta mutation rate posterior
   
   alpha = prior$alpha + sum(subclonal_mutations)
@@ -382,9 +384,10 @@ estimate_prior <- function(fit){
   
   for (karyo in names(fit$best$model_parameters)){
     
-    tail_mutations = fit$best$model_parameters[karyo][[1]]$cluster_assignments %>% as_tibble() %>% 
-      rename(cluster=value) %>% filter(cluster=="Tail")
-    subclonal_mutations= c(subclonal_mutations,length(tail_mutations$cluster))
+    I=seq(1,length(fit$best$model_parameters[karyo][[1]]$cluster_probs),
+          length(fit$best$model_parameters[karyo][[1]]$mixture_probs))
+    tail_mutations = fit$best$model_parameters[karyo][[1]]$cluster_probs[I]
+    subclonal_mutations= c(subclonal_mutations,tail_mutations %>% sum())
     f_min= c(f_min,fit$best$model_parameters[karyo][[1]]$tail_scale)
     alpha=fit$best$model_parameters[karyo][[1]]$beta_concentration1[1]
     beta=fit$best$model_parameters[karyo][[1]]$beta_concentration2[1]
