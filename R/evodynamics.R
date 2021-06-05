@@ -306,6 +306,13 @@ evolutionary_parameters <-
 
 mu_posterior <- function(fit, prior){
   
+  # check tail
+  
+  if(fit$best$run_parameters$tail == 0){
+    
+    stop("No Tail")
+    
+  }
   
   # get subloclonal mutations, min/max frequency and chromosome lenght for each karyotype
   
@@ -317,7 +324,7 @@ mu_posterior <- function(fit, prior){
   for (karyo in names(fit$best$model_parameters)){
     
     I=seq(1,length(fit$best$model_parameters[karyo][[1]]$cluster_probs),
-          length(fit$best$model_parameters[karyo][[1]]$mixture_probs) )
+          length(fit$best$model_parameters[karyo][[1]]$mixture_probs))
     tail_mutations = fit$best$model_parameters[karyo][[1]]$cluster_probs[I]
     subclonal_mutations= c(subclonal_mutations,tail_mutations %>% sum())
     f_min= c(f_min,fit$best$model_parameters[karyo][[1]]$tail_scale)
