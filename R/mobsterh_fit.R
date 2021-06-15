@@ -91,7 +91,7 @@ mobsterh_fit = function(x,
                         lrd_gamma = 0.1,
                         vaf_filter = 0.05,
                         n_t = 100,
-                        quantile_filt = 0.995,
+                        quantile_filt = 1,
                         N_MAX = 50000)
 {
   pio::pioHdr(paste0("MOBSTERh fit"))
@@ -157,7 +157,7 @@ mobsterh_fit = function(x,
 
   x <-  lapply(x, function(k) {
     qf <- quantile(k, quantile_filt)
-    k[k < qf]
+    k[k <= qf]
   })
 
   # Check for basic input requirements
@@ -259,8 +259,7 @@ mobsterh_fit = function(x,
     cores.ratio = .5,
     parallel = parallel,
     cache = NULL,
-    filter_errors = FALSE # Error managment is inside easypar
-    ,
+    filter_errors = FALSE,
     progress_bar = FALSE
   )
 
