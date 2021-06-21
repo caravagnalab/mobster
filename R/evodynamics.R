@@ -304,7 +304,7 @@ evolutionary_parameters <-
 #'  mu_posterior(fit_example_mobsterh,prior=prior)
 #'  @export
 
-mu_posterior <- function(fit, prior){
+mu_posterior <- function(fit, prior=list(alpha=10^-4,beta=10^-4)){
   
   # check tail
   
