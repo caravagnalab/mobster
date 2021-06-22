@@ -68,7 +68,7 @@ plot.dbpmmh = function(x,
     if(facet)
       plot = plot +
       scale_x_continuous(
-        limits = c(0, 1),
+        limits = c(0, 1.01),
         expand = c(0,0),
         sec.axis = dup_axis(
           breaks = drivers_table$VAF,
@@ -142,7 +142,7 @@ plot.dbpmmh = function(x,
     ))
 
   # Inline model interpretation
-  fit_interpreter = clonality_interpreter(x) %>% filter(what == 'Subclone')
+  fit_interpreter = mobster:::clonality_interpreter(x) %>% filter(what == 'Subclone')
 
   fit_caption = "No subclonal expansions detected"
 
@@ -208,8 +208,8 @@ plot.dbpmmh = function(x,
   # Used karyotypes
   used_karyotypes = c("1:0", "1:1", "2:0", "2:1", "2:2")
 
-  if(has_tail(x)){
-    pareto_params = get_pareto(x)
+  if(mobster:::has_tail(x)){
+    pareto_params = mobster:::get_pareto(x)
     # Power law density per karyotype
 
     pareto_params_df = NULL
@@ -257,7 +257,7 @@ plot.dbpmmh = function(x,
 
 
   # Beta density per karyotype
-  Beta_params = get_beta(x)
+  Beta_params = mobster:::get_beta(x)
 
   beta_params_df = NULL
   for (i in 1:nrow(Beta_params))
@@ -328,7 +328,7 @@ plot.dbpmmh = function(x,
       )
 
     # Add tail density
-    if(has_tail(x)){
+    if(mobster:::has_tail(x)){
       density_plot= density_plot + geom_line(
         data = pareto_params_df %>% filter(karyotype == k),
         aes(
