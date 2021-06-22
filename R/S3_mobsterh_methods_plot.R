@@ -34,14 +34,17 @@ plot.dbpmmh = function(x,
                                  location = Inf)
   {
     domain_x = seq(0, 1, 0.01)
-    if(location == Inf)
+    if (location == Inf)
       line_points = sads::dpareto(x = domain_x,
-                                shape = shape,
-                                scale = scale) * mixing
+                                  shape = shape,
+                                  scale = scale) * mixing
     else
-      line_points = VGAM::dtruncpareto(x = domain_x,
-                                  lower = scale, upper = location,
-                                   shape = shape) * mixing
+      line_points = VGAM::dtruncpareto(
+        x = domain_x,
+        lower = scale,
+        upper = location,
+        shape = shape
+      ) * mixing
 
     data.frame(x = domain_x, y = line_points)
   }
@@ -65,27 +68,29 @@ plot.dbpmmh = function(x,
     if ((drivers_table %>% nrow) == 0)
       return(plot)
 
-    if(facet)
+    if (facet)
       plot = plot +
-      scale_x_continuous(
-        limits = c(0, 1.01),
-        expand = c(0,0),
-        sec.axis = dup_axis(
-          breaks = drivers_table$VAF,
-          labels = drivers_table$driver_label,
-          name = NULL
-        )
-      ) +
-      geom_vline(
-        data = drivers_table,
-        aes(xintercept = VAF, color = cluster),
-        size = .5,
-        linetype = 'dashed',
-        show.legend = FALSE
-      ) +
-      theme(
-        axis.text.x.top = element_text(angle = 45, color = 'black', hjust = 0)
-      )
+        scale_x_continuous(
+          limits = c(0, 1.01),
+          expand = c(0, 0),
+          sec.axis = dup_axis(
+            breaks = drivers_table$VAF,
+            labels = drivers_table$driver_label,
+            name = NULL
+          )
+        ) +
+        geom_vline(
+          data = drivers_table,
+          aes(xintercept = VAF, color = cluster),
+          size = .5,
+          linetype = 'dashed',
+          show.legend = FALSE
+        ) +
+        theme(axis.text.x.top = element_text(
+          angle = 45,
+          color = 'black',
+          hjust = 0
+        ))
     else
       plot = plot +
         geom_vline(
@@ -154,10 +159,10 @@ plot.dbpmmh = function(x,
     pull(l) %>%
     paste(collapse = ', ')
 
-  fit_caption = paste0(
-    fit_caption, '; ',
-    n_missing_drivers(x, drivers_table), ' driver(s) unassigned.'
-  )
+  fit_caption = paste0(fit_caption,
+                       '; ',
+                       n_missing_drivers(x, drivers_table),
+                       ' driver(s) unassigned.')
 
   # Nonsense plot
   #
@@ -206,7 +211,7 @@ plot.dbpmmh = function(x,
       binwidth = 0.01,
       alpha = 0.6
     ) +
-    facet_wrap(~ karyotype, scales = 'free_y') +
+    facet_wrap( ~ karyotype, scales = 'free_y') +
     CNAqc:::my_ggplot_theme() +
     scale_fill_manual(values = cluster_colors) +
     scale_color_manual(values = cluster_colors) +
@@ -221,7 +226,7 @@ plot.dbpmmh = function(x,
   # Used karyotypes
   used_karyotypes = c("1:0", "1:1", "2:0", "2:1", "2:2")
 
-  if(mobster:::has_tail(x)){
+  if (mobster:::has_tail(x)) {
     pareto_params = mobster:::get_pareto(x)
     # Power law density per karyotype
 
@@ -244,7 +249,11 @@ plot.dbpmmh = function(x,
       pareto_params_df_low = pareto_params_df_low %>%
       bind_rows(
         df_powerlaw_density(
-          shape = qlnorm(0.05,meanlog = log(pareto_params$shape[i]),sdlog = pareto_params$shape_noise[i]),
+          shape = qlnorm(
+            0.05,
+            meanlog = log(pareto_params$shape[i]),
+            sdlog = pareto_params$shape_noise[i]
+          ),
           scale = pareto_params$scale[i],
           mixing = pareto_params$mixing[i],
           location = pareto_params$location[i]
@@ -258,7 +267,11 @@ plot.dbpmmh = function(x,
       pareto_params_df_high = pareto_params_df_high %>%
       bind_rows(
         df_powerlaw_density(
-          shape = qlnorm(0.95,meanlog = log(pareto_params$shape[i]),sdlog = pareto_params$shape_noise[i]),
+          shape = qlnorm(
+            0.95,
+            meanlog = log(pareto_params$shape[i]),
+            sdlog = pareto_params$shape_noise[i]
+          ),
           scale = pareto_params$scale[i],
           mixing = pareto_params$mixing[i],
           location = pareto_params$location[i]
@@ -288,8 +301,7 @@ plot.dbpmmh = function(x,
     )
 
   # Create one plot per karyotype
-  fit_plots = lapply(used_karyotypes, function(x){
-
+  fit_plots = lapply(used_karyotypes, function(x) {
     ggplot(data = data.frame(x = 0, y = 0, label = "X"), aes(x = x,
                                                              y = y, label = label)) + CNAqc:::my_ggplot_theme() +
       theme(
@@ -315,14 +327,16 @@ plot.dbpmmh = function(x,
 
     cli::cli_alert("Generating plot for {.field {k}}")
 
-    density_plot = ggplot(data_table %>% filter(karyotype == k),
-                          aes(VAF)) +
+    density_plot = ggplot(
+      data_table %>% filter(karyotype == k) %>% mutate(karyotype = nkaryo_labels[karyotype]),
+      aes(VAF)
+    ) +
       geom_histogram(
         aes(y = ..count.. / sum(..count..), fill = cluster %>% paste),
         binwidth = 0.01,
         alpha = 0.5
       ) +
-      facet_wrap(~ karyotype, scales = 'free_y') +
+      facet_wrap( ~ karyotype, scales = 'free_y') +
       CNAqc:::my_ggplot_theme() +
       scale_fill_manual(values = cluster_colors) +
       guides(fill = guide_legend("Cluster")) +
@@ -341,8 +355,8 @@ plot.dbpmmh = function(x,
       )
 
     # Add tail density
-    if(mobster:::has_tail(x)){
-      density_plot= density_plot + geom_line(
+    if (mobster:::has_tail(x)) {
+      density_plot = density_plot + geom_line(
         data = pareto_params_df %>% filter(karyotype == k),
         aes(
           x = x,
@@ -354,16 +368,14 @@ plot.dbpmmh = function(x,
         show.legend = FALSE
       ) +  geom_line(
         data = pareto_params_df_low %>% filter(karyotype == k),
-        aes(
-          x = x,
-          y = y * VAF_binwidth,
-        ),
+        aes(x = x,
+            y = y * VAF_binwidth,),
         size = 0.5,
         color = "black",
         linetype = "dashed",
         inherit.aes = FALSE,
         show.legend = FALSE
-      )+  geom_line(
+      ) +  geom_line(
         data = pareto_params_df_high %>% filter(karyotype == k),
         aes(
           x = x,
@@ -378,7 +390,10 @@ plot.dbpmmh = function(x,
       )
     }
 
-    density_plot = add_drivers(x, drivers_table %>% filter(karyotype == k), density_plot, facet = TRUE)
+    density_plot = add_drivers(x,
+                               drivers_table %>% filter(karyotype == k),
+                               density_plot,
+                               facet = TRUE)
 
     if (s_k == 1)
       density_plot = density_plot + labs(y = "Density")
@@ -394,15 +409,17 @@ plot.dbpmmh = function(x,
   }
 
   # Remove empty plots if required
-  if(!empty_plot){
+  if (!empty_plot) {
     fit_plots = fit_plots[x$model_parameters %>% names]
   }
 
-  if(!assembly_plot)
+  if (!assembly_plot)
     return(fit_plots)
 
-  cowplot::plot_grid(plotlist = fit_plots,
-                     nrow = 1,
-                     align = 'h',
-                     axis = 'tb')
+  cowplot::plot_grid(
+    plotlist = fit_plots,
+    nrow = 1,
+    align = 'h',
+    axis = 'tb'
+  )
 }
