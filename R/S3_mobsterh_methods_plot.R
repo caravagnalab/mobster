@@ -183,10 +183,23 @@ plot.dbpmmh = function(x,
 
   cluster_colors = c("Tail" = tail_color, Beta_colors, `Not used` = 'lightpink')
 
+  cluster_colors = cluster_colors[data_table$cluster %>% unique]
+
   # VAF plot, make a temporary plot to return if not densities are required
   VAF_binwidth = 0.01
 
-  density_plot = ggplot(data_table,
+  nkaryo = data_table %>%
+    group_by(karyotype) %>%
+    summarise(n = n()) %>%
+    mutate(label_karyotype = paste0(karyotype, " (n = ", n, ')'))
+
+  nkaryo_labels = nkaryo$label_karyotype
+  names(nkaryo_labels) = nkaryo$karyotype
+
+  # data_table$karyotype = nkaryo_labels[data_table$karyotype]
+
+
+  density_plot = ggplot(data_table %>% mutate(karyotype = nkaryo_labels[karyotype]),
                         aes(x = VAF)) +
     geom_histogram(
       aes(y = ..count.. / sum(..count..), fill = cluster %>% paste),
