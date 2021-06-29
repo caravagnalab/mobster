@@ -361,6 +361,10 @@ mobsterh_fit_aux <-  function(data,
   inf_res <-  inf_res[[best_model]]
 
   assig_temp = lapply(1:length(data_u), function(i)
+
+    names(inf_res$model_parameters[[i]]$cluster_assignments) <- names(data_u[[i]])
+    colnames(inf_res$model_parameters[[i]]$cluster_probs) <- names(data_u[[i]])
+
     return(
       data.frame(
         id = names(data_u[[i]]),
