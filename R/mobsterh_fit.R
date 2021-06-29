@@ -360,10 +360,12 @@ mobsterh_fit_aux <-  function(data,
       h$information_criteria$likelihood))
   inf_res <-  inf_res[[best_model]]
 
-  assig_temp = lapply(1:length(data_u), function(i){
-
+  for(i in 1:length(data_u)) {
     names(inf_res$model_parameters[[i]]$cluster_assignments) <- names(data_u[[i]])
     colnames(inf_res$model_parameters[[i]]$cluster_probs) <- names(data_u[[i]])
+  }
+
+  assig_temp = lapply(1:length(data_u), function(i){
 
     return(
       data.frame(
