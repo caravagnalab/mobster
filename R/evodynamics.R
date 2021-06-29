@@ -323,9 +323,7 @@ mu_posterior <- function(fit, prior=list(alpha=10^-4,beta=10^-4)){
   
   for (karyo in names(fit$best$model_parameters)){
     
-    I=seq(1,length(fit$best$model_parameters[karyo][[1]]$cluster_probs),
-          length(fit$best$model_parameters[karyo][[1]]$mixture_probs))
-    tail_mutations = fit$best$model_parameters[karyo][[1]]$cluster_probs[I]
+    tail_mutations = fit$best$model_parameters[karyo][[1]]$cluster_probs[1,] %>% sum()
     subclonal_mutations= c(subclonal_mutations,tail_mutations %>% sum())
     f_min= c(f_min,fit$best$model_parameters[karyo][[1]]$tail_scale)
     alpha=fit$best$model_parameters[karyo][[1]]$beta_concentration1[1]
@@ -391,9 +389,7 @@ estimate_prior <- function(fit){
   
   for (karyo in names(fit$best$model_parameters)){
     
-    I=seq(1,length(fit$best$model_parameters[karyo][[1]]$cluster_probs),
-          length(fit$best$model_parameters[karyo][[1]]$mixture_probs))
-    tail_mutations = fit$best$model_parameters[karyo][[1]]$cluster_probs[I]
+    tail_mutations = fit$best$model_parameters[karyo][[1]]$cluster_probs[1,] %>% sum()
     subclonal_mutations= c(subclonal_mutations,tail_mutations %>% sum())
     f_min= c(f_min,fit$best$model_parameters[karyo][[1]]$tail_scale)
     alpha=fit$best$model_parameters[karyo][[1]]$beta_concentration1[1]
