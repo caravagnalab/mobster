@@ -147,7 +147,7 @@ plot.dbpmmh = function(x,
     ))
 
   # Inline model interpretation
-  fit_interpreter = mobster:::clonality_interpreter(x) %>% filter(what == 'Subclone')
+  fit_interpreter = clonality_interpreter(x) %>% filter(what == 'Subclone')
 
   fit_caption = "No subclonal expansions detected"
 
@@ -244,6 +244,8 @@ plot.dbpmmh = function(x,
                  cluster = "Tail")
       )
 
+    pareto_params_df$karyotype = nkaryo_labels[pareto_params_df$karyotype]
+
     pareto_params_df_low = NULL
     for (i in 1:nrow(pareto_params))
       pareto_params_df_low = pareto_params_df_low %>%
@@ -279,6 +281,9 @@ plot.dbpmmh = function(x,
           mutate(karyotype = pareto_params$karyotype[i],
                  cluster = "Tail")
       )
+
+    pareto_params_df_low$karyotype = nkaryo_labels[pareto_params_df_low$karyotype]
+    pareto_params_df_high$karyotype = nkaryo_labels[pareto_params_df_high$karyotype]
   }
 
 
@@ -299,6 +304,8 @@ plot.dbpmmh = function(x,
           cluster = Beta_params$cluster[i]
         )
     )
+
+  beta_params_df$karyotype = nkaryo_labels[beta_params_df$karyotype]
 
   # Create one plot per karyotype
   fit_plots = lapply(used_karyotypes, function(x) {
@@ -324,6 +331,9 @@ plot.dbpmmh = function(x,
   for (s_k in used_karyotypes_plot)
   {
     k = (x$model_parameters %>% names)[s_k]
+    k_label = nkaryo_labels[k]
+
+    # data_table$karyotype = nkaryo_labels[data_table$karyotype]
 
     cli::cli_alert("Generating plot for {.field {k}}")
 
@@ -340,10 +350,9 @@ plot.dbpmmh = function(x,
       CNAqc:::my_ggplot_theme() +
       scale_fill_manual(values = cluster_colors) +
       guides(fill = guide_legend("Cluster")) +
-
       scale_color_manual(values = cluster_colors) +
       geom_line(
-        data = beta_params_df %>% filter(karyotype == k),
+        data = beta_params_df %>% filter(karyotype == k_label),
         aes(
           x = x,
           y = y * VAF_binwidth,
@@ -357,7 +366,7 @@ plot.dbpmmh = function(x,
     # Add tail density
     if (mobster:::has_tail(x)) {
       density_plot = density_plot + geom_line(
-        data = pareto_params_df %>% filter(karyotype == k),
+        data = pareto_params_df %>% filter(karyotype == k_label),
         aes(
           x = x,
           y = y * VAF_binwidth,
@@ -391,7 +400,7 @@ plot.dbpmmh = function(x,
     }
 
     density_plot = add_drivers(x,
-                               drivers_table %>% filter(karyotype == k),
+                               drivers_table %>% filter(karyotype == k) %>% mutate(karyotype = nkaryo_labels[karyotype]),
                                density_plot,
                                facet = TRUE)
 
