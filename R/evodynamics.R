@@ -305,6 +305,7 @@ evolutionary_parameters <-
 #'  @export
 mu_posterior <- function(fit,
                          genome_length,
+                         quantiles = c(0.02,0.98),
                          prior = list(alpha = 1e-4, beta = 1e-4)) {
 
   # check tail
@@ -370,6 +371,8 @@ mu_posterior <- function(fit,
   mean = alpha / beta
   var = alpha / (beta ^ 2)
   sampling = rgamma(10000, shape = alpha, rate = beta)
+  q1 = quantile(sampling,quantiles[1])
+  q2 = quantile(sampling,quantiles[2])
 
   #sampling from the posterior distribution
 
@@ -392,6 +395,8 @@ mu_posterior <- function(fit,
     beta = beta,
     mean = mean,
     var = var,
+    lower_quantile = q1,
+    upper_quantile = q2,
     plot = list(plot)
   )
 
