@@ -125,7 +125,22 @@ print.dbpmmh = function(x, ...)
     writeLines(paste0("      ",
                       capture.output(
                         x$data %>% filter(is_driver, is.na(cluster)) %>%
-                          select(chr, from, to, ref, alt, driver_label, karyotype, cluster) %>%
+                          select(chr, from, to, ref, alt, driver_label, karyotype, cluster, VAF) %>%
+                          print(row.names = F)
+                      )))
+
+  }
+
+  n_pna = x$data %>% filter(is_driver, driver_posteriori_annot) %>% nrow
+  if(n_pna > 0)
+  {
+    cli::cli_alert_info("{crayon::red(n_pna)} driver(s) were annotated a posteriori.")
+    cat('\n')
+
+    writeLines(paste0("      ",
+                      capture.output(
+                        x$data %>% filter(is_driver, driver_posteriori_annot) %>%
+                          select(chr, from, to, ref, alt, driver_label, karyotype, cluster, VAF) %>%
                           print(row.names = F)
                       )))
 
