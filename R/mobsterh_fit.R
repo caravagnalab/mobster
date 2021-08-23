@@ -203,7 +203,7 @@ mobsterh_fit = function(x,
   ###################### Print message
 
   mobster:::m_txt(
-    "n = {.value {nrow(x)}}. Mixture with S = {.field {paste(subclonal_clusters, collapse = ',')}} subclonal Beta(s). Pareto tail: {.field {tail}}."
+    "n = {.value {nrow(tests)}}. Mixture with S = {.field {paste(subclonal_clusters, collapse = ',')}} subclonal Beta(s). Pareto tail: {.field {tail}}."
   ) %>% cli::cli_text()
 
 
@@ -294,6 +294,10 @@ mobsterh_fit = function(x,
 
   model$runs <-  runs
   model$fits.table <- tests
+
+  # assign drivers in not-fitted karyotypes #
+
+  model$best <- assign_drivers(model$best, purity)
 
   ###### SHOW BEST FIT
   print.dbpmmh(model$best)

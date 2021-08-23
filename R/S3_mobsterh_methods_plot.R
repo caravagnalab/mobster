@@ -7,6 +7,9 @@
 #' @param empty_plot Force the inclusion of an empty plot for a karyotype
 #' that has not been used (from the list of supported karyotypes).
 #' @param assembly_plot Turn the plot into a one-line strip, instead of returning
+#' @param add_density Add distribution density over the histogram
+#' @param show_na Show filtered mutations as NA cluster
+#' @param empty_plot Pad filtered and/or absent karyotypes with empyt plots
 #' @param ... Unused.
 #'
 #' @return A ggplot or a cowplot object for the plot (depends on parameters).
@@ -62,9 +65,12 @@ plot.dbpmmh = function(x,
     data.frame(x = domain_x, y = line_points)
   }
 
+
+
   # Add drivers annotation
   add_drivers = function(x, drivers_table, plot, facet = FALSE)
   {
+
     if ((drivers_table %>% nrow) == 0)
       return(plot)
 
@@ -126,6 +132,16 @@ plot.dbpmmh = function(x,
       nrow
   }
 
+
+  # Has a posteriori driver annotations?
+  n_reannotated_drivers = function(x, drivers_table)
+  {
+    # Missing drivers
+    x$data %>%
+      filter(is_driver, driver_posteriori_annot) %>%
+      nrow
+  }
+
   #############################################
   # Auxiliary function(s) private to the plot #
   #############################################
@@ -134,8 +150,8 @@ plot.dbpmmh = function(x,
 
   data_table = x$data
 
-  if (!show_na)
-    data_table = data_table %>% filter(!is.na(cluster))
+   if (!show_na)
+     data_table = data_table %>% filter(!is.na(cluster))
 
   # Drivers table
   drivers_table = data_table %>%
@@ -162,7 +178,9 @@ plot.dbpmmh = function(x,
   fit_caption = paste0(fit_caption,
                        '; ',
                        n_missing_drivers(x, drivers_table),
-                       ' driver(s) unassigned.')
+                       ' driver(s) unassigned; ',
+                       n_reannotated_drivers(x, drivers_table),
+                       ' driver(s) assigned a posteriori;')
 
   # Nonsense plot
   #
