@@ -296,8 +296,13 @@ mobsterh_fit = function(x,
   model$fits.table <- tests
 
   # assign drivers in not-fitted karyotypes #
+  if(model){
+    model$best <- assign_drivers(model$best, purity)
+  } else {
+    if(sum(model$best$data$is_driver) > 0)
+      cli::cli_alert_info("To annotate driver genes a posteriori, you need to define coloumns DP (total depth) and NV (variant depth) in the input file.")
+  }
 
-  model$best <- assign_drivers(model$best, purity)
 
   ###### SHOW BEST FIT
   print.dbpmmh(model$best)
@@ -395,9 +400,9 @@ mobsterh_fit_aux <-  function(data,
         mutate(id = paste(chr, from, to, sep = ":"))
   }
 
-  if (is.null(table$is_driver))
+  if ("is_driver" %in% colnames(table) )
     table$is_driver <-  FALSE
-  if (is.null(table$driver_label))
+  if ("driver_label" %in% colnames(table) )
     table$driver_label <-  ""
 
   if("cluster" %in% colnames(table)){

@@ -3,6 +3,14 @@
 #' @description Generate a random MOBSTER model, its data and creates a plot for it.
 #'
 #' @param N Number of samples to generate (mutations).
+#' @param karyotypes_p A named vector of multinomial coefficients
+#' in the form \code{`M:m` = p} denoting the un-normalised probability
+#' mass of generating a segment with \code{"M"} copies of the major allele,
+#' and \code{"m"} copies of the minor allele.
+#' @param breakpoints_rate Poisson rate $\lambda>0$ to sample the number of
+#' breakpoints per chromosome. The sampling process ensures that
+#' @param reference_genome Reference genome ("hg19 or hg38") to use as reference
+#' @param sex sex of the individual
 #' @param K_betas Number of Beta components (subclones).
 #' @param pi_tail_bounds 2D vector with min and max size of the tail's mutations (proportions).
 #' @param pi_min Minimum mixing proportion for every component.
@@ -22,17 +30,28 @@
 #' @examples
 #' x = random_dataset()
 #' print(x)
-random_dataset = function(N = 10000,
-                          K_betas = 2,
-                          pi_tail_bounds = c(.2, .4),
-                          pi_min = 0.1,
-                          shape = 2,
-                          scale = 0.05,
-                          seed = NULL)
+random_dataset_mobsterh <-  function(N = 5000,
+                                     karyotypes_p = c(`1:0` = 1, `2:0` = 1, `1:1` = 6, `2:1` = 2, `2:2` = 1),
+                                     breakpoints_rate = 2,
+                                     reference_genome = "GRCh38",
+                                     sex = 'm',
+                                     purity = 1,
+                                     pi_min = 0.1,
+                                     Betas_separation = 0.1,
+                                     Beta_variance_scaling = 1e3,
+                                     Beta_bounds = c(.1, .9),
+                                     shape_bounds = c(1, 1, 3),
+                                     scale = 0.05,
+                                     seed = NULL)
 {
-  # require(MCMCpack)
-
   set.seed(seed)
+
+  cnvs <- sample_CNA_segments(karyotypes_p = karyotypes_p,
+                              breakpoints_rate = breakpoints_rate,
+                              reference_genome = reference_genome,
+                              sex = sex)
+
+
 
   Bt = paste0('C', 1:K_betas)
 

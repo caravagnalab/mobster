@@ -1,8 +1,11 @@
 assign_drivers <- function(x, purity, rho = 0.01){
 
-  drivers <- x$data %>%  filter(is_driver == T, is.na(cluster))  %>%
+  drivers <- x$data %>%  filter(is_driver, is.na(cluster), !is.na(karyotype), nchar(karyotype) > 1)  %>%
     tidyr::separate("karyotype", c("Major", "minor"), sep = ":") %>%
     mutate(Tot = Major %>%  as.numeric() + minor %>%  as.numeric())
+
+
+  if(nrow(drivers) == 0) return(x)
 
   p_clonal <- calculate_prob_clonal(drivers,purity, rho)
   if(x$run_parameters$tail){
@@ -37,8 +40,8 @@ assign_drivers <- function(x, purity, rho = 0.01){
 
   x$data$driver_posteriori_annot <-  FALSE
 
-  x$data[x$data$is_driver == T & is.na(x$data$cluster),] <-
-    x$data %>%  filter(is_driver == T, is.na(cluster)) %>% mutate(cluster = new_clust, driver_posteriori_annot = T)
+  x$data[x$data$is_driver & is.na(x$data$cluster) & is.na(karyotype) & nchar(karyotype) > 1,] <-
+    x$data %>%  filter(is_driver, is.na(cluster), !is.na(karyotype), nchar(karyotype) > 1) %>% mutate(cluster = new_clust, driver_posteriori_annot = T)
 
   return(x)
 
