@@ -299,6 +299,7 @@ mobsterh_fit = function(x,
   if(all(c("DP", "NV") %in% colnames(model$best$data))) {
     model$best <- assign_drivers(model$best, purity)
   } else {
+    model$best$data$driver_posteriori_annot <-  FALSE
     if(sum(model$best$data$is_driver) > 0)
       cli::cli_alert_info("To annotate driver genes a posteriori, you need to define coloumns DP (total depth) and NV (variant depth) in the input file.")
   }
