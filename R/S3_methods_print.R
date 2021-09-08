@@ -127,7 +127,7 @@ print.dbpmm = function(x, ...)
 
   if(mobster:::has_drivers_annotated(x))
   {
-    drv_list = x$data %>%
+    drv_list <-  x$data %>%
       dplyr::filter(is_driver)
 
     if(nrow(drv_list) > 0)

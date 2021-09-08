@@ -303,7 +303,6 @@ mobsterh_fit = function(x,
       cli::cli_alert_info("To annotate driver genes a posteriori, you need to define coloumns DP (total depth) and NV (variant depth) in the input file.")
   }
 
-
   ###### SHOW BEST FIT
   print.dbpmmh(model$best)
 
@@ -400,9 +399,9 @@ mobsterh_fit_aux <-  function(data,
         mutate(id = paste(chr, from, to, sep = ":"))
   }
 
-  if ("is_driver" %in% colnames(table) )
+  if (!("is_driver" %in% colnames(table)))
     table$is_driver <-  FALSE
-  if ("driver_label" %in% colnames(table) )
+  if (!("driver_label" %in% colnames(table)))
     table$driver_label <-  ""
 
   if("cluster" %in% colnames(table)){
