@@ -296,7 +296,7 @@ mobsterh_fit = function(x,
   model$fits.table <- tests
 
   # assign drivers in not-fitted karyotypes #
-  if(model){
+  if(c("DP", "NV") %in% colnames(model$best$data)) {
     model$best <- assign_drivers(model$best, purity)
   } else {
     if(sum(model$best$data$is_driver) > 0)
