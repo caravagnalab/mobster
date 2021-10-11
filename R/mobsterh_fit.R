@@ -103,11 +103,11 @@ mobsterh_fit = function(x,
   # Evoverse pipeline input
   if (inherits(x, "evopipe_qc"))
   {
-    purity <- get_purity(x)
+    purity <- mobster:::get_purity(x)
     x$cnaqc <- CNAqc::subsample(x$cnaqc,N = N_MAX)
     data_raw <- x
     x <-
-      format_data_mobsterh_QC(x,
+      mobster:::format_data_mobsterh_QC(x,
                               vaf_t = vaf_filter,
                               n_t = n_t,
                               enforce_QC_PASS = enforce_QC_PASS
@@ -161,7 +161,7 @@ mobsterh_fit = function(x,
   })
 
   # Check for basic input requirements
-  check_inputh(
+  mobster:::check_inputh(
     K,
     subclonal_clusters,
     tail,
@@ -253,7 +253,7 @@ mobsterh_fit = function(x,
 
 
   runs = easypar::run(
-    FUN = mobsterh_fit_aux,
+    FUN = mobster:::mobsterh_fit_aux,
     PARAMS = inputs,
     export = ls(globalenv(), all.names = TRUE),
     cores.ratio = .5,
@@ -338,7 +338,7 @@ mobsterh_fit_aux <-  function(data,
                               description,
                               lrd_gamma) {
   data_u <- data
-  data <- tensorize(data_u)
+  data <- mobster:::tensorize(data_u)
 
   mob <- reticulate::import("mobster")
 

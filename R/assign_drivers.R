@@ -40,7 +40,7 @@ assign_drivers <- function(x, purity, rho = 0.01){
 
   x$data$driver_posteriori_annot <-  FALSE
 
-  x$data[x$data$is_driver & is.na(x$data$cluster) & is.na(karyotype) & nchar(karyotype) > 1,] <-
+  x$data[x$data$is_driver & is.na(x$data$cluster) & !is.na(x$data$karyotype) & nchar(x$data$karyotype) > 1,] <-
     x$data %>%  filter(is_driver, is.na(cluster), !is.na(karyotype), nchar(karyotype) > 1) %>% mutate(cluster = new_clust, driver_posteriori_annot = T)
 
   return(x)
