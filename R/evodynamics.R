@@ -386,7 +386,7 @@ mu_posterior <- function(fit,
     ) + geom_vline(xintercept = mean, linetype = "dashed") +
     theme_bw() +
     theme(legend.position = "none")  +
-    labs(title = "mutation rate posterior distribution", x = "mu", y = "Density")
+    labs(x = "mu", y = "Density")
 
   # return the results of the inference
 
