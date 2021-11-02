@@ -300,9 +300,10 @@ evolutionary_parameters <-
 #'  @return a list containing the parameters of the posterior distribution and a density plot
 #'  @examples
 #'  data('fit_example_mobsterh', package = 'mobster')
-#'  prior=list(alpha=10^-4,beta=10^-4)
-#'  mu_posterior(fit_example_mobsterh,prior=prior)
+#'  genome_length = get_genome_length(fit_example_mobsterh)
+#'  mu_posterior(fit_example_mobsterh$best,genome_length)
 #'  @export
+
 mu_posterior <- function(fit,
                          genome_length,
                          quantiles = c(0.02,0.98),
@@ -405,54 +406,30 @@ mu_posterior <- function(fit,
 }
 
 
-#' Estimate the parameters of the mutation rate prior from a mobster fit.
+#' Calculate the length of the genome in base pairs for any karyotype from a mobster fit.
 #'
-#' @description It is assumed a gamma distribution as prior for the mutation rate. The parameters alpha and beta are estimated from
-#' the data. We compute an estimator of mu for each karyotype, i.e. \mu_i= M_i/((1/f_{min;i}-1/f_{max;i})\ell_i) and take the mean and
-#' variance accross different karyotypes. Using the MM formula for the gamma distribution we get an expression for
-#' alpha and beta parameters.
+#' @description The function takes the segmentation from the mobsterh fit and computes the genome length as
+#' the sum $l= \sum_{i}\mathrm{to}_{i}-\mathrm{from}_{i}$, where $\mathrm{to}_{i}$ and $\mathrm{from}_{i}$ are the extremal 
+#' coordinates of the $i^{th}$ segment with the considered karyotype.
 #'
 #' @param fit HMobster fit
-#' @return a list containing the parameters of the prior distribution
+#' @return a tibble containing the genome lenght for any karyotype of the segmentation
 #' @examples
 #' data('fit_example_mobsterh', package = 'mobster')
-#' estimate_prior(fit_example_mobsterh)
+#' get_genome_length(fit_example_mobsterh)
+#'  @export
 
-estimate_prior <- function(fit) {
-  # get subloclonal mutations, min/max frequency and chromosome lenght for each karyotype
+get_genome_length = function(fit){
+  
+id = fit$best$data %>% mutate(segment_id = paste0(segment_id,":",karyotype)) %>% 
+     select(segment_id) %>% unique()
 
-  subclonal_mutations = c()
-  f_min = c()
-  f_max = c()
-  length_karyo = c()
+seg <- read.table(text = id$segment_id, sep = ":", as.is = TRUE)
 
-  for (karyo in names(fit$best$model_parameters)) {
-    tail_mutations = fit$best$model_parameters[karyo][[1]]$cluster_probs[1, ] %>% sum()
-    subclonal_mutations = c(subclonal_mutations, tail_mutations %>% sum())
-    f_min = c(f_min, fit$best$model_parameters[karyo][[1]]$tail_scale)
-    alpha = fit$best$model_parameters[karyo][[1]]$beta_concentration1[1]
-    beta = fit$best$model_parameters[karyo][[1]]$beta_concentration2[1]
-    f_max = c(f_max, alpha / (alpha + beta))
-    karyotype = fit$best$data %>% filter(karyotype == karyo)
-    segment_ids <- karyotype$segment_id %>% unique()
-    segment_ids <-
-      read.table(text = segment_ids,
-                 sep = ":",
-                 as.is = TRUE)
-    length_karyo = c(length_karyo, sum(segment_ids$V3 - segment_ids$V2))
-  }
+lengths = seg %>% mutate(karyotype = paste0(V4,":",V5)) %>% group_by(karyotype) %>% 
+          summarize(length = sum(V3-V2)) 
 
-  #parameters estimates
-
-  mu = mean(subclonal_mutations / ((1 / f_min - 1 / f_max) * length_karyo))
-  var = sd(subclonal_mutations / ((1 / f_min - 1 / f_max) * length_karyo)) ^
-    2
-
-  alpha = (mu ^ 2) / var
-  beta = mu / var
-
-  prior = list(alpha = alpha, beta = beta)
-
-  return(prior)
+return(lengths)
 
 }
+
