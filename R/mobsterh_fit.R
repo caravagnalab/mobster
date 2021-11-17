@@ -2,15 +2,21 @@
 #'
 #' @description This function fits a bayesian hierarchical version of the MOBSTER model implemented in \code{mobster_fit}. We still
 #' have a mixture of Beta distributions and an optional Pareto type-one distribution to model the neutral tail. From a modelling
-#' point of view the main difference here is that we are expanding that model over different karyotypes and we treat the problem from a bayesian point of view.
+#' point of view there are two main differenceshere:
+#'   1. We are expanding that model over different karyotypes and we treat the problem from a bayesian point of view.
+#'   2. We model do not consider the VAF deconvolution but the read count deconvolution (with a beta-binomial noise term)
 #' In this way we can grant information about the mutation rate and the tail pooling from the different karyotypes and at the same time include the
 #' strong prior knowledge we have about how clonal and subclonal clusters are supposed to be ddistributed along the VAF spectrum.
+#' By modelling counts then, we also explicitly account for the binomial (with dispersion) sampling process that happens 
+#' during sequencing.
+#' 
 #' All the Beta distributions in the prior model are not modelled using concentration parameters but using this parametrization:
 #' \deqn{concentration1 = mean  * number_of_trials}
 #' \deqn{concentration2 = (1 - mean)  * number_of_trials}
 #'
 #'
 #' @param x Input tibble (or data.frame), cnaqc object ot evopipe_qc object (laste two preferred),
+#' the input data.frame should have at least 6 coloumns named as chr, from, to, NV (number of variant), DP (depth) and karyotype.
 #' @param subclonal_clusters A vector with the number of Beta components to use. All values of \code{K} must be positive
 #' and strictly greater than 0; they are combined with the value of \code{tail} and to define all model
 #' configurations tested for model selection
@@ -21,8 +27,8 @@
 #' @param samples If the number of samples is greater than 1, then for each tail-truncation-subclone configuration \code{samples} fit
 #' are produced and the one with the highest \code{model.selection} values is taken.
 #' @param enforce_QC_PASS if \code{TRUE} when using a cnaqc of evopipe_qc object fit just the karyotype that passe QC.
-#' @param epsilon Tolerance for convergency estimation. For MLE fit this is compared to the differential of the
-#' negative log-likelihood (NLL); for MM fit the largest differential among the mixing proportions (pi) is used.
+#' @param epsilon Tolerance for convergency estimation. As ELBO oscillations are common in gradient based VI, we will monitor the convergence of all the parameters in the model,
+#' the inference stops when (abs(new-old) / abs(old)) < epsilon, for all the parameters
 #' @param maxIter Maximum number of steps for a fit. If convergency is not achieved before these steps, the fit is interrupted.
 #' @param model.selection Score to minimize to select the best model; this has to be one of \code{'ICL'},
 #' \code{'BIC'}, \code{'AIC'} or \code{'likelihood'}. We advise to use only ICL
@@ -73,7 +79,7 @@ mobsterh_fit = function(x,
                         purity = 1.,
                         samples = 1,
                         enforce_QC_PASS = TRUE,
-                        epsilon = 1e-5,
+                        epsilon = 0.01,
                         maxIter = 2000,
                         model.selection = 'ICL',
                         parallel = FALSE,
@@ -103,11 +109,11 @@ mobsterh_fit = function(x,
   # Evoverse pipeline input
   if (inherits(x, "evopipe_qc"))
   {
-    purity <- get_purity(x)
+    purity <- mobster:::get_purity(x)
     x$cnaqc <- CNAqc::subsample(x$cnaqc,N = N_MAX)
     data_raw <- x
     x <-
-      format_data_mobsterh_QC(x,
+      mobster:::format_data_mobsterh_QC(x,
                               vaf_t = vaf_filter,
                               n_t = n_t,
                               enforce_QC_PASS = enforce_QC_PASS
@@ -132,9 +138,9 @@ mobsterh_fit = function(x,
   # Tibble
   if (is.matrix(x) | is.data.frame(x))
   {
-    if (!all(c("VAF", "karyotype", "chr", "from", "to") %in% colnames(x)))
+    if (!all(c("NV", "DP", "karyotype", "chr", "from", "to") %in% colnames(x)))
       stop(
-        "Please provide a data.frame with the following columns: VAF, karyotype, chr, from, to"
+        "Please provide a data.frame with the following columns: NV, DP, karyotype, chr, from, to"
       )
 
     data_raw <- x
@@ -156,12 +162,12 @@ mobsterh_fit = function(x,
     return(NULL)
 
   x <-  lapply(x, function(k) {
-    qf <- quantile(k, quantile_filt)
-    k[k <= qf]
+    qf <- quantile((k[,1] / k[,2]) , quantile_filt)
+    k[(k[,1] / k[,2]) <= qf, ]
   })
 
   # Check for basic input requirements
-  check_inputh(
+  mobster:::check_inputh(
     K,
     subclonal_clusters,
     tail,
@@ -253,14 +259,14 @@ mobsterh_fit = function(x,
 
 
   runs = easypar::run(
-    FUN = mobsterh_fit_aux,
+    FUN = mobster:::mobsterh_fit_aux,
     PARAMS = inputs,
     export = ls(globalenv(), all.names = TRUE),
     cores.ratio = .5,
     parallel = parallel,
     cache = NULL,
     filter_errors = FALSE,
-    progress_bar = FALSE
+    progress_bar = FALSE,silent = F
   )
 
   filt <-  sapply(runs,function(w) !is.null(w$information_criteria))
@@ -295,14 +301,9 @@ mobsterh_fit = function(x,
   model$runs <-  runs
   model$fits.table <- tests
 
-  # assign drivers in not-fitted karyotypes #
-  if(all(c("DP", "NV") %in% colnames(model$best$data))) {
-    model$best <- assign_drivers(model$best, purity)
-  } else {
-    model$best$data$driver_posteriori_annot <-  FALSE
-    if(sum(model$best$data$is_driver) > 0)
-      cli::cli_alert_info("To annotate driver genes a posteriori, you need to define coloumns DP (total depth) and NV (variant depth) in the input file.")
-  }
+
+  model$best <- assign_drivers(model$best, purity)
+
 
   ###### SHOW BEST FIT
   print.dbpmmh(model$best)
@@ -338,7 +339,7 @@ mobsterh_fit_aux <-  function(data,
                               description,
                               lrd_gamma) {
   data_u <- data
-  data <- tensorize(data_u)
+  data <- mobster:::tensorize(data_u)
 
   mob <- reticulate::import("mobster")
 
@@ -378,7 +379,7 @@ mobsterh_fit_aux <-  function(data,
 
     return(
       data.frame(
-        id = names(data_u[[i]]),
+        id = rownames(data_u[[i]]),
         cluster = inf_res$model_parameters[[i]]$cluster_assignments
       )
     )
@@ -410,8 +411,10 @@ mobsterh_fit_aux <-  function(data,
     table$cluster <-  NULL
   }
 
-  inf_res$data = dplyr::left_join(table, assig_temp, by = "id", copy = T) %>% as.data.frame()
+  inf_res$data <-  dplyr::left_join(table, assig_temp, by = "id", copy = T) %>% as.data.frame()
 
+  inf_res$data <- inf_res$data %>% dplyr::mutate(VAF = NV / DP)
+  
   inf_res$description <- description
 
   class(inf_res) <- "dbpmmh"

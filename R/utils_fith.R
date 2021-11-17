@@ -52,8 +52,9 @@ format_data_mobsterh_QC <-
 
     res <-
       x$cnaqc$snvs %>% filter(karyotype %in% valid_karyo, type == "SNV") %>%
+      mutate(VAF = NV / DP) %>% 
       filter(VAF >= vaf_t) %>% mutate(id = paste(chr, from, to, sep = ":")) %>%
-      select(VAF, karyotype, id) %>% mutate(VAF = VAF - 0.0001)
+      select(NV, DP, karyotype, id)
 
     valid_k_n <-
       res %>%  dplyr::group_by(karyotype) %>% dplyr::summarize(n = dplyr::n()) %>%  dplyr::filter(n > n_t) %>% dplyr::pull(karyotype)
@@ -80,8 +81,11 @@ format_data_mobsterh_DF <-
     }
 
     res <- x %>%
-      filter(karyotype %in% kar, VAF > vaf_t, VAF <= 1, VAF > 0) %>% mutate(id = paste(chr, from, to, sep = ":")) %>%
-    select(VAF, karyotype, id) %>% mutate(VAF = VAF - 0.0001)
+      mutate(VAF = NV / DP) %>% 
+      filter(karyotype %in% kar, VAF > vaf_t, VAF <= 1, VAF > 0) %>% 
+      mutate(id = paste(chr, from, to, sep = ":")) %>%
+    select(NV, DP, karyotype, id) 
+    
     valid_k_n <-
       res %>%  dplyr::group_by(karyotype) %>% dplyr::summarize(n = dplyr::n()) %>%  dplyr::filter(n > n_t) %>% dplyr::pull(karyotype)
     nremoved <- length(res$karyotype %>%  unique()) - length(valid_k_n %>% unique())
@@ -99,16 +103,13 @@ split_and_tolist <- function(x) {
   nm <-  lapply(res, function(y)
     y$id)
   res <-  lapply(res, function(y)
-    y$VAF)
+    cbind(y$NV, y$DP))
 
   for (i in 1:length(res))
-    names(res[[i]]) <- nm[[i]]
+    rownames(res[[i]]) <- nm[[i]]
 
-  filt <- sapply(res, function(y)
-    length(y) > 100)
-
-  nm <- names(res)[which(filt)]
-  res <- as.list(res[which(filt)])
+  nm <- names(res)
+  res <- as.list(res)
   names(res) <- nm
 
   return(res)

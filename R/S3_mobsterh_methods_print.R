@@ -66,11 +66,11 @@ print.dbpmmh = function(x, ...)
              x$data %>%
                filter(is_driver, karyotype == y, cluster == cl) %>%
                pull(driver_label) %>%
-               paste(sep = ', ')
+               paste(collapse  = ', ')
            }
-
+           
            w_map = sapply(w, w_add)
-
+           
            # Add label fun
            w_addl = function(cl){
              if(w_map[[cl]] %>% length() == 0)

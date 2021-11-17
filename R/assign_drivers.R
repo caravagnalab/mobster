@@ -5,7 +5,10 @@ assign_drivers <- function(x, purity, rho = 0.01){
     mutate(Tot = Major %>%  as.numeric() + minor %>%  as.numeric())
 
 
-  if(nrow(drivers) == 0) return(x)
+  if(nrow(drivers) == 0) {
+    x$data$driver_posteriori_annot <-  FALSE
+    return(x)
+  }
 
   p_clonal <- calculate_prob_clonal(drivers,purity, rho)
   if(x$run_parameters$tail){
