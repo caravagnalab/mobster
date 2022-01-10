@@ -35,16 +35,12 @@ print.dbpmmh = function(x, ...)
   cli::cli_rule(
     paste(
       crayon::bgMagenta(crayon::white("[ MOBSTERh ] {.value {x$description}}")),
-      '{.field {length(x$model_parameters)}} karyotypes, {.field {x$run_parameters$K}} subclonal Beta(s) {.value {ifelse(x$run_parameters$tail == 1, crayon::green("with tail"), crayon::red("without tail"))}}'
+      '{.field {length(x$model_parameters)}} karyotypes, {.field {x$run_parameters$K}} subclonal {.field {x$run_parameters$subclonal_prior}}(s) {.value {ifelse(x$run_parameters$tail == 1, crayon::green("with tail"), crayon::red("without tail"))}}'
     )
   )
 
-  # x$model_parameters %>% names
-  # x$run_parameters
-  # get_beta(x)
-  # mobster:::get_pareto(x)
-
   cln = clonality_interpreter(x)
+  
   cln = ifelse(
     "Subclone" %in% cln$what,
     " Polyclonal " %>% crayon::magenta() %>% crayon::bgWhite(),
@@ -57,7 +53,7 @@ print.dbpmmh = function(x, ...)
   sapply(x$model_parameters %>% names,
          function(y) {
            w = clonality_interpreter(x) %>%
-             filter(karyotype == y) %>%
+             dplyr::filter(karyotype == y) %>%
              pull(cluster) %>%
              sort()
 

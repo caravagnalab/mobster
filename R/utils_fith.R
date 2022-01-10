@@ -124,6 +124,14 @@ has_tail <-  function(x) {
 
 }
 
+has_subclones <- function(x) {
+  return(x$run_parameters$K > 0)
+}
+
+is_moyal <- function(x) {
+  return(x$run_parameters$subclonal_prior == "Moyal")
+}
+
 is_truncated <-  function(x) {
   return(has_tail(x) & x$run_parameters$truncated_pareto)
 

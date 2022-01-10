@@ -52,6 +52,27 @@ plot.dbpmmh = function(x,
     data.frame(x = domain_x, y = line_points)
   }
 
+  # Generate dpareto density
+  df_moyal_density = function(loc = 1,
+                                 scale = 0.05,
+                                 upper = 0.5,
+                                 lower = 0,
+                                 mixing = 0.5
+                                 )
+  {
+    domain_x = seq(0, 1, 0.01)
+
+    line_points = dtruncmoyal(
+      x = domain_x,
+      loc = loc,
+      scale = scale,
+      upper = upper,
+      lower = lower
+    ) * mixing
+    
+    data.frame(x = domain_x, y = line_points)
+  }
+  
   # Generate dbeta density
   df_Beta_density = function(a = 10,
                              b = 10,
@@ -192,8 +213,8 @@ plot.dbpmmh = function(x,
   # Cluster colors
   cluster_colors = NULL
 
-  nBeta = data_table %>%  filter(cluster != "Tail") %>%  pull() %>% unique() %>%  length()
-  nBeta = nBeta[!is.na(nBeta)]
+  clonal_clusters = data_table %>%  filter(substr(cluster,1,1) == "C") %>%  pull(cluster) %>% unique() %>%  length()
+  clonal_clusters = clonal_clusters[!is.na(clonal_clusters)]
   #nBeta = nBeta[nBeta > 0] %>% max
 
   tail_color = 'gray'
@@ -201,10 +222,10 @@ plot.dbpmmh = function(x,
   clonal_colors = suppressWarnings(RColorBrewer::brewer.pal(9, 'Set1'))[1:2]
   subclonal_colors = suppressWarnings(RColorBrewer::brewer.pal(7, 'Dark2'))[1:7]
 
-  Beta_colors = c(clonal_colors, subclonal_colors)
-  names(Beta_colors) = c("C1", "C2", "S1", "S2", "S3", "S4", "S5", "S6", "S7")
+  names(clonal_colors) = c("C1", "C2")
+  names(subclonal_colors) =  c("S1", "S2", "S3", "S4", "S5", "S6", "S7")
 
-  cluster_colors = c("Tail" = tail_color, Beta_colors, `Not used` = 'lightpink')
+  cluster_colors = c("Tail" = tail_color, clonal_colors, subclonal_colors, `Not used` = 'lightpink')
 
   cluster_colors = cluster_colors[data_table$cluster %>% unique]
 
@@ -244,67 +265,6 @@ plot.dbpmmh = function(x,
   # Used karyotypes
   used_karyotypes = c("1:0", "1:1", "2:0", "2:1", "2:2")
 
-  if (mobster:::has_tail(x)) {
-    pareto_params = mobster:::get_pareto(x)
-    # Power law density per karyotype
-
-    pareto_params_df = NULL
-    for (i in 1:nrow(pareto_params))
-      pareto_params_df = pareto_params_df %>%
-      bind_rows(
-        df_powerlaw_density(
-          shape = pareto_params$shape[i],
-          scale = pareto_params$scale[i],
-          mixing = pareto_params$mixing[i],
-          location = pareto_params$location[i]
-        ) %>%
-          mutate(karyotype = pareto_params$karyotype[i],
-                 cluster = "Tail")
-      )
-
-    pareto_params_df$karyotype = nkaryo_labels[pareto_params_df$karyotype]
-
-    pareto_params_df_low = NULL
-    for (i in 1:nrow(pareto_params))
-      pareto_params_df_low = pareto_params_df_low %>%
-      bind_rows(
-        df_powerlaw_density(
-          shape = qlnorm(
-            0.05,
-            meanlog = log(pareto_params$shape[i]),
-            sdlog = pareto_params$shape_noise[i]
-          ),
-          scale = pareto_params$scale[i],
-          mixing = pareto_params$mixing[i],
-          location = pareto_params$location[i]
-        ) %>%
-          mutate(karyotype = pareto_params$karyotype[i],
-                 cluster = "Tail")
-      )
-
-    pareto_params_df_high = NULL
-    for (i in 1:nrow(pareto_params))
-      pareto_params_df_high = pareto_params_df_high %>%
-      bind_rows(
-        df_powerlaw_density(
-          shape = qlnorm(
-            0.95,
-            meanlog = log(pareto_params$shape[i]),
-            sdlog = pareto_params$shape_noise[i]
-          ),
-          scale = pareto_params$scale[i],
-          mixing = pareto_params$mixing[i],
-          location = pareto_params$location[i]
-        ) %>%
-          mutate(karyotype = pareto_params$karyotype[i],
-                 cluster = "Tail")
-      )
-
-    pareto_params_df_low$karyotype = nkaryo_labels[pareto_params_df_low$karyotype]
-    pareto_params_df_high$karyotype = nkaryo_labels[pareto_params_df_high$karyotype]
-  }
-
-
   # Beta density per karyotype
   Beta_params = mobster:::get_beta(x)
 
@@ -324,7 +284,135 @@ plot.dbpmmh = function(x,
     )
 
   beta_params_df$karyotype = nkaryo_labels[beta_params_df$karyotype]
+  
 
+  if (mobster:::has_tail(x)) {
+    pareto_params = mobster:::get_pareto(x)
+    # Power law density per karyotype
+    
+    pareto_params_df = NULL
+    for (i in 1:nrow(pareto_params))
+      pareto_params_df = pareto_params_df %>%
+      bind_rows(
+        df_powerlaw_density(
+          shape = pareto_params$shape[i],
+          scale = pareto_params$scale[i],
+          mixing = pareto_params$mixing[i],
+          location = pareto_params$location[i]
+        ) %>%
+          mutate(karyotype = pareto_params$karyotype[i],
+                 cluster = "Tail")
+      )
+    
+    pareto_params_df$karyotype = nkaryo_labels[pareto_params_df$karyotype]
+    
+    pareto_params_df_low = NULL
+    for (i in 1:nrow(pareto_params))
+      pareto_params_df_low = pareto_params_df_low %>%
+      bind_rows(
+        df_powerlaw_density(
+          shape = qlnorm(
+            0.05,
+            meanlog = log(pareto_params$shape[i]),
+            sdlog = pareto_params$shape_noise[i]
+          ),
+          scale = pareto_params$scale[i],
+          mixing = pareto_params$mixing[i],
+          location = pareto_params$location[i]
+        ) %>%
+          mutate(karyotype = pareto_params$karyotype[i],
+                 cluster = "Tail")
+      )
+    
+    pareto_params_df_high = NULL
+    for (i in 1:nrow(pareto_params))
+      pareto_params_df_high = pareto_params_df_high %>%
+      bind_rows(
+        df_powerlaw_density(
+          shape = qlnorm(
+            0.95,
+            meanlog = log(pareto_params$shape[i]),
+            sdlog = pareto_params$shape_noise[i]
+          ),
+          scale = pareto_params$scale[i],
+          mixing = pareto_params$mixing[i],
+          location = pareto_params$location[i]
+        ) %>%
+          mutate(karyotype = pareto_params$karyotype[i],
+                 cluster = "Tail")
+      )
+    
+    pareto_params_df_low$karyotype = nkaryo_labels[pareto_params_df_low$karyotype]
+    pareto_params_df_high$karyotype = nkaryo_labels[pareto_params_df_high$karyotype]
+    
+
+  }
+  
+  
+  # Beta or Moyal density for subclones 
+  if(has_subclones(x)){
+    if(is_moyal(x)) {
+      
+      Moyal_params = mobster:::get_moyal_sub(x)
+      
+      moyal_sub_params_df = NULL
+      
+      upper = Moyal_params  %>% separate(karyotype, sep = ":", into = c("Maj", "min"))
+      upper = (as.numeric(upper$min) / (as.numeric(upper$Maj) + (as.numeric(upper$min)))) * x$run_parameters$purity
+      
+      lower = x$data %>% group_by(karyotype) %>% summarize(lower = min(NV/DP) ) %>%  
+        filter(karyotype %in% Moyal_params$karyotype) %>% 
+        pull(lower)
+      
+      names(lower) <-  Moyal_params$karyotype %>% unique()
+      names(upper) <- Moyal_params$karyotype %>% unique()
+      
+      for (i in 1:nrow(Moyal_params)) {
+        
+        moyal_sub_params_df = moyal_sub_params_df %>%
+        bind_rows(
+          df_moyal_density(
+            loc = Moyal_params$location[i],
+            scale = Moyal_params$scale[i],
+            mixing = Moyal_params$mixing[i],
+            upper = upper[Moyal_params$karyotype[i]],
+            lower = lower[Moyal_params$karyotype[i]]
+            
+          ) %>%
+            mutate(
+              karyotype = Moyal_params$karyotype[i],
+              cluster = Moyal_params$cluster[i]
+            )
+        )
+      }
+      
+      moyal_sub_params_df$karyotype = nkaryo_labels[moyal_sub_params_df$karyotype]
+      
+  
+      
+    } else {
+      
+      Beta_sub_params = mobster:::get_beta_sub(x)
+      
+      beta_sub_params_df = NULL
+      for (i in 1:nrow(Beta_sub_params))
+        beta_sub_params_df = beta_sub_params_df %>%
+        bind_rows(
+          df_Beta_density(
+            a = Beta_sub_params$a[i],
+            b = Beta_sub_params$b[i],
+            mixing = Beta_sub_params$mixing[i]
+          ) %>%
+            mutate(
+              karyotype = Beta_sub_params$karyotype[i],
+              cluster = Beta_sub_params$cluster[i]
+            )
+        )
+      
+      beta_sub_params_df$karyotype = nkaryo_labels[beta_sub_params_df$karyotype]
+      
+    }
+  }
   # Create one plot per karyotype
   fit_plots = lapply(used_karyotypes, function(x) {
     ggplot(data = data.frame(x = 0, y = 0, label = "X"), aes(x = x,
@@ -350,7 +438,7 @@ plot.dbpmmh = function(x,
   {
     k = (x$model_parameters %>% names)[s_k]
     k_label = nkaryo_labels[k]
-
+    
     # data_table$karyotype = nkaryo_labels[data_table$karyotype]
 
     cli::cli_alert("Generating plot for {.field {k}}")
@@ -381,6 +469,36 @@ plot.dbpmmh = function(x,
         size = 1
       )
 
+    # Add subclonal density
+    if(has_subclones(x)) {
+      
+      if(is_moyal(x)) {
+        density_plot = density_plot + geom_line(
+          data =  moyal_sub_params_df %>% filter(karyotype == k_label),
+          aes(
+            x = x,
+            y = y * VAF_binwidth,
+            color = cluster
+          ),
+          size = 1,
+          inherit.aes = FALSE,
+          show.legend = FALSE)
+      } else {
+        density_plot = density_plot + geom_line(
+          data = beta_sub_params_df %>% filter(karyotype == k_label),
+          aes(
+            x = x,
+            y = y * VAF_binwidth,
+            color = cluster
+          ),
+          size = 1,
+          inherit.aes = FALSE,
+          show.legend = FALSE)
+      }
+      
+      
+    }
+    
     # Add tail density
     if (mobster:::has_tail(x)) {
       density_plot = density_plot + geom_line(

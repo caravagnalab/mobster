@@ -75,11 +75,13 @@
 mobsterh_fit = function(x,
                         subclonal_clusters = 0:2,
                         tail = c(TRUE, FALSE),
-                        truncate_pareto = c(TRUE, FALSE),
+                        truncate_pareto = TRUE,
+                        subclonal_prior = "Moyal",
+                        multi_tail = FALSE,
                         purity = 1.,
                         samples = 1,
                         enforce_QC_PASS = TRUE,
-                        epsilon = 0.01,
+                        epsilon = 0.005,
                         maxIter = 2000,
                         model.selection = 'ICL',
                         parallel = FALSE,
@@ -144,7 +146,7 @@ mobsterh_fit = function(x,
       )
 
     data_raw <- x
-    x <- format_data_mobsterh_DF(x,
+    x <- mobster:::format_data_mobsterh_DF(x,
                                  vaf_t = vaf_filter,
                                  n_t = n_t)
     cli::cli_alert_warning("Using input purity {.field {purity}}")
@@ -198,6 +200,8 @@ mobsterh_fit = function(x,
   # Configurations that will be used for model selection
   tests = expand.grid(
     subclonal_clusters = subclonal_clusters,
+    subclonal_prior = subclonal_prior,
+    multi_tail = multi_tail,
     tail = tail,
     truncate_pareto = truncate_pareto,
     stringsAsFactors = FALSE
@@ -240,6 +244,8 @@ mobsterh_fit = function(x,
                       subclonal_clusters =  as.integer(tests[r, 'subclonal_clusters']),
                       tail = as.integer(tests[r, 'tail']),
                       truncate_pareto = tests[r, 'truncate_pareto'],
+                      subclonal_prior = tests[r, 'subclonal_prior'], 
+                      multi_tail = tests[r, 'multi_tail'],
                       samples = samples,
                       purity = purity,
                       max_it = as.integer(maxIter),
@@ -302,7 +308,7 @@ mobsterh_fit = function(x,
   model$fits.table <- tests
 
 
-  model$best <- assign_drivers(model$best, purity)
+  model$best <- mobster:::assign_drivers(model$best, purity)
 
 
   ###### SHOW BEST FIT
@@ -322,6 +328,8 @@ mobsterh_fit_aux <-  function(data,
                               subclonal_clusters,
                               tail,
                               truncate_pareto,
+                              subclonal_prior,
+                              multi_tail,
                               samples,
                               purity,
                               max_it,
@@ -350,6 +358,7 @@ mobsterh_fit_aux <-  function(data,
         K = as.integer(subclonal_clusters),
         tail = as.integer(tail),
         truncated_pareto = truncate_pareto,
+        subclonal_prior = subclonal_prior,
         purity = purity,
         max_it = max_it,
         lr = lr,
@@ -416,6 +425,8 @@ mobsterh_fit_aux <-  function(data,
   inf_res$data <- inf_res$data %>% dplyr::mutate(VAF = NV / DP)
   
   inf_res$description <- description
+  
+  inf_res$data$driver_posteriori_annot <-  FALSE
 
   class(inf_res) <- "dbpmmh"
 

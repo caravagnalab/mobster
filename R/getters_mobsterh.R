@@ -53,20 +53,20 @@ get_beta = function(x) {
     tibble_beta = x$model_parameters[[k]][betas] %>% as_tibble()
     colnames(tibble_beta) = c("a", "b")
 
-    if(has_tail(x))
-      tibble_beta$mixing = x$model_parameters[[k]]$mixture_probs[-1]
-    else
-      tibble_beta$mixing = x$model_parameters[[k]]$mixture_probs
     tibble_beta$karyotype = k
     cluster <-  vector(length = nrow(tibble_beta))
     if(k %in% one_Beta){
       cluster[1] = "C1"
-      if(nrow(tibble_beta) > 1)
-        cluster[2:nrow(tibble_beta)] <-  paste0("S", 1:(nrow(tibble_beta)-1))
+      if(mobster:::has_tail(x))
+        tibble_beta$mixing = x$model_parameters[[k]]$mixture_probs[2]
+      else
+        tibble_beta$mixing = x$model_parameters[[k]]$mixture_probs[1]
     } else {
       cluster[1:2] = c("C1", "C2")
-      if(nrow(tibble_beta) > 2)
-        cluster[3:nrow(tibble_beta)] <-  paste0("S", 1:(nrow(tibble_beta)-2))
+      if(mobster:::has_tail(x))
+        tibble_beta$mixing = x$model_parameters[[k]]$mixture_probs[2:3]
+      else
+        tibble_beta$mixing = x$model_parameters[[k]]$mixture_probs[1:2]
     }
 
     tibble_beta$cluster <-  cluster
@@ -77,6 +77,73 @@ get_beta = function(x) {
 
   df
 }
+
+get_ccf_subclones <- function(x) {
+  used = x$model_parameters %>% names
+  
+
+  k = used[1]
+
+  tibble_ccf <- x$model_parameters[[k]]$ccf_subclones %>% as_tibble()
+  colnames(tibble_ccf) <- "CCF"
+  tibble_ccf$cluster <-  paste0("S", 1:nrow(tibble_ccf))
+  
+  return(tibble_ccf)
+}
+
+get_moyal_sub <- function(x) {
+  
+  used = x$model_parameters %>% names
+  
+  df = NULL
+  
+  for(k in used) {
+    tibble_moyal <- x$model_parameters[[k]]$loc_subclones %>% as_tibble()
+    colnames(tibble_moyal) <- "location"
+    tibble_moyal$scale <- x$model_parameters[[k]]$scale_subclonal
+    tibble_moyal$karyotype <- k
+    tibble_moyal$cluster <-  paste0("S", 1:nrow(tibble_moyal))
+    L <- length(x$model_parameters[[k]]$mixture_probs)
+    K <- nrow(tibble_moyal)
+    tibble_moyal$mixing <- x$model_parameters[[k]]$mixture_probs[(L-K+1):L]
+    
+    df = df %>% bind_rows(tibble_moyal)
+    
+  }
+  
+  return(df)
+  
+}
+
+
+get_beta_sub <- function(x) {
+  
+  used = x$model_parameters %>% names
+  
+  df = NULL
+  
+  for(k in used) {
+    
+    tibble_beta <- (x$model_parameters[[k]]$loc_subclones * 
+                      x$model_parameters[[k]]$n_trials_subclonal) %>% as_tibble()
+    colnames(tibble_beta) <- "a"
+    tibble_beta$b <- x$model_parameters[[k]]$n_trials_subclonal - tibble_beta$a 
+    
+    tibble_beta$karyotype = k
+    tibble_beta$cluster <-  paste0("S", 1:nrow(tibble_beta))
+    
+    L <- length(x$model_parameters[[k]]$mixture_probs)
+    K <- nrow(tibble_beta)
+    tibble_beta$mixing <- x$model_parameters[[k]]$mixture_probs[(L-K+1):L]
+    
+    df = df %>% bind_rows(tibble_beta)
+    
+  }
+  
+  return(df)
+  
+}
+
 
 get_mixture_weights <- function(x){
 
