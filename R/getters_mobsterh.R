@@ -79,6 +79,10 @@ get_beta = function(x) {
 }
 
 get_ccf_subclones <- function(x) {
+  
+  
+  if(!mobster:::has_subclones(x)) return(NULL)
+  
   used = x$model_parameters %>% names
   
 
@@ -92,7 +96,7 @@ get_ccf_subclones <- function(x) {
 }
 
 get_moyal_sub <- function(x) {
-  
+  if(!mobster:::has_subclones(x)) return(NULL)
   used = x$model_parameters %>% names
   
   df = NULL
@@ -117,7 +121,7 @@ get_moyal_sub <- function(x) {
 
 
 get_beta_sub <- function(x) {
-  
+  if(!mobster:::has_subclones(x)) return(NULL)
   used = x$model_parameters %>% names
   
   df = NULL

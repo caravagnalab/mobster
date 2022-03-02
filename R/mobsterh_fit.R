@@ -76,7 +76,7 @@ mobsterh_fit = function(x,
                         subclonal_clusters = 0:2,
                         tail = c(TRUE, FALSE),
                         truncate_pareto = TRUE,
-                        subclonal_prior = "Moyal",
+                        subclonal_prior = "Beta",
                         multi_tail = FALSE,
                         purity = 1.,
                         samples = 1,
@@ -87,8 +87,9 @@ mobsterh_fit = function(x,
                         parallel = FALSE,
                         alpha_precision_concentration = 5,
                         alpha_precision_rate = 0.01,
-                        number_of_trials_clonal_mean = 300,
-                        number_of_trials_k = 120,
+                        number_of_trials_clonal_mean = 1000,
+                        number_of_trials_k = 500,
+                        number_of_trials_subclonal = 900,
                         prior_lims_clonal = c(0.1, 100000.),
                         prior_lims_k = c(0.1, 100000.),
                         lr = 0.01,
@@ -98,6 +99,7 @@ mobsterh_fit = function(x,
                         karyotypes = c("1:0", "1:1", "2:1", "2:0", "2:2"),
                         lrd_gamma = 0.1,
                         vaf_filter = 0.05,
+                        NV_filter = 5,
                         n_t = 100,
                         quantile_filt = 1,
                         N_MAX = 50000)
@@ -118,7 +120,8 @@ mobsterh_fit = function(x,
       mobster:::format_data_mobsterh_QC(x,
                               vaf_t = vaf_filter,
                               n_t = n_t,
-                              enforce_QC_PASS = enforce_QC_PASS
+                              enforce_QC_PASS = enforce_QC_PASS,
+                              NV_filter = NV_filter
                               )
 
     can_work = TRUE
@@ -132,6 +135,7 @@ mobsterh_fit = function(x,
     data_raw <- x$snvs
     x <- format_data_mobsterh_DF(x$snvs,
                                  vaf_t = vaf_filter,
+                                 NV_filter = NV_filter,
                                  n_t = n_t)
 
     can_work = TRUE
@@ -148,6 +152,7 @@ mobsterh_fit = function(x,
     data_raw <- x
     x <- mobster:::format_data_mobsterh_DF(x,
                                  vaf_t = vaf_filter,
+                                 NV_filter = NV_filter,
                                  n_t = n_t)
     cli::cli_alert_warning("Using input purity {.field {purity}}")
 
@@ -260,7 +265,8 @@ mobsterh_fit = function(x,
                       compile = compile,
                       CUDA = CUDA,
                       description = description,
-                      lrd_gamma = lrd_gamma
+                      lrd_gamma = lrd_gamma,
+                      number_of_trials_subclonal = number_of_trials_subclonal
                     ))
 
 
@@ -345,7 +351,8 @@ mobsterh_fit_aux <-  function(data,
                               compile,
                               CUDA,
                               description,
-                              lrd_gamma) {
+                              lrd_gamma, 
+                              number_of_trials_subclonal) {
   data_u <- data
   data <- mobster:::tensorize(data_u)
 

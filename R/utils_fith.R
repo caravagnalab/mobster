@@ -14,6 +14,7 @@ format_data_mobsterh_QC <-
            kar = c("1:0", "1:1", "2:1", "2:0", "2:2"),
            vaf_t = 0.05,
            n_t = 100,
+           NV_filter = 5,
            enforce_QC_PASS = TRUE
            ) {
     if (enforce_QC_PASS)
@@ -52,7 +53,7 @@ format_data_mobsterh_QC <-
 
     res <-
       x$cnaqc$snvs %>% filter(karyotype %in% valid_karyo, type == "SNV") %>%
-      mutate(VAF = NV / DP) %>% 
+      mutate(VAF = NV / DP) %>%  filter(NV > NV_filter) %>% 
       filter(VAF >= vaf_t) %>% mutate(id = paste(chr, from, to, sep = ":")) %>%
       select(NV, DP, karyotype, id)
 
@@ -73,6 +74,7 @@ format_data_mobsterh_DF <-
   function(x,
            kar = c("1:0", "1:1", "2:1", "2:0", "2:2"),
            vaf_t = 0.05,
+           NV_filter = 5,
            n_t = 100) {
 
     if("cluster" %in% colnames(x)){
@@ -82,7 +84,7 @@ format_data_mobsterh_DF <-
 
     res <- x %>%
       mutate(VAF = NV / DP) %>% 
-      filter(karyotype %in% kar, VAF > vaf_t, VAF <= 1, VAF > 0) %>% 
+      filter(karyotype %in% kar, VAF > vaf_t, VAF <= 1, VAF > 0, NV > NV_filter) %>% 
       mutate(id = paste(chr, from, to, sep = ":")) %>%
     select(NV, DP, karyotype, id) 
     
