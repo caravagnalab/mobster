@@ -19,8 +19,14 @@ assign_drivers <- function(x, purity, rho = 0.01){
   }
 
   if(x$run_parameters$K > 0){
-    p_subclonal <- calculate_prob_subclonal(x1 = drivers, ccfs = x$model_parameters[[1]]$ccf_subclones,
-                                            purity = purity, rho =  rho) %>% matrix() %>%  t
+    if(x$run_parameters$K == 1){
+      p_subclonal <- calculate_prob_subclonal(x1 = drivers, ccfs = x$model_parameters[[1]]$ccf_subclones,
+                                              purity = purity, rho =  rho) %>%  matrix(nrow = 1) 
+    } else {
+      p_subclonal <- calculate_prob_subclonal(x1 = drivers, ccfs = x$model_parameters[[1]]$ccf_subclones,
+                                              purity = purity, rho =  rho) 
+    }
+    
   }
 
   names <-  c("C*", "Tail", paste0("S", seq_along(x$model_parameters[[1]]$ccf_subclones) ))
