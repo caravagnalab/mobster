@@ -62,5 +62,6 @@ Remotes:
     caravagn/ctree,
     caravagn/CNAqc
 VignetteBuilder: knitr
-URL: https://github.com/caravagn/mobster
-BugReports: https://github.com/caravagn/mobster/issues
+URL: https://github.com/caravagnalab/mobster,
+    https://caravagnalab.github.io/mobster/
+BugReports: https://github.com/caravagnalab/mobster/issues
