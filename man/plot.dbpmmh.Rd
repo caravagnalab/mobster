@@ -16,13 +16,11 @@ plot.dbpmmh(
 \arguments{
 \item{x}{An object of class \code{"dbpmmh"}.}
 
-\item{show_na}{Leave in the plot points for which a clustering assignment
-is not available (\code{NA}).}
+\item{show_na}{Show filtered mutations as NA cluster}
 
-\item{add_density}{Add density of the fit on top of the histogram.}
+\item{add_density}{Add distribution density over the histogram}
 
-\item{empty_plot}{Force the inclusion of an empty plot for a karyotype
-that has not been used (from the list of supported karyotypes).}
+\item{empty_plot}{Pad filtered and/or absent karyotypes with empyt plots}
 
 \item{assembly_plot}{Turn the plot into a one-line strip, instead of returning}
 

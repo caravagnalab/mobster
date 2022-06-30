@@ -8,18 +8,21 @@ mobsterh_fit(
   x,
   subclonal_clusters = 0:2,
   tail = c(TRUE, FALSE),
-  truncate_pareto = c(TRUE, FALSE),
+  truncate_pareto = TRUE,
+  subclonal_prior = "Beta",
+  multi_tail = FALSE,
   purity = 1,
   samples = 1,
   enforce_QC_PASS = TRUE,
-  epsilon = 1e-05,
+  epsilon = 0.005,
   maxIter = 2000,
   model.selection = "ICL",
   parallel = FALSE,
   alpha_precision_concentration = 5,
   alpha_precision_rate = 0.01,
-  number_of_trials_clonal_mean = 300,
-  number_of_trials_k = 120,
+  number_of_trials_clonal_mean = 1000,
+  number_of_trials_k = 500,
+  number_of_trials_subclonal = 900,
   prior_lims_clonal = c(0.1, 1e+05),
   prior_lims_k = c(0.1, 1e+05),
   lr = 0.01,
@@ -29,13 +32,17 @@ mobsterh_fit(
   karyotypes = c("1:0", "1:1", "2:1", "2:0", "2:2"),
   lrd_gamma = 0.1,
   vaf_filter = 0.05,
+  NV_filter = 5,
   n_t = 100,
-  quantile_filt = 0.995,
-  N_MAX = 50000
+  quantile_filt = 1,
+  N_MAX = 50000,
+  assign_drivers = TRUE,
+  assign_mutation_posteriori = FALSE
 )
 }
 \arguments{
-\item{x}{Input tibble (or data.frame), cnaqc object ot evopipe_qc object (laste two preferred),}
+\item{x}{Input tibble (or data.frame), cnaqc object ot evopipe_qc object (laste two preferred),
+the input data.frame should have at least 6 coloumns named as chr, from, to, NV (number of variant), DP (depth) and karyotype.}
 
 \item{subclonal_clusters}{A vector with the number of Beta components to use. All values of \code{K} must be positive
 and strictly greater than 0; they are combined with the value of \code{tail} and to define all model
@@ -53,8 +60,8 @@ are produced and the one with the highest \code{model.selection} values is taken
 
 \item{enforce_QC_PASS}{if \code{TRUE} when using a cnaqc of evopipe_qc object fit just the karyotype that passe QC.}
 
-\item{epsilon}{Tolerance for convergency estimation. For MLE fit this is compared to the differential of the
-negative log-likelihood (NLL); for MM fit the largest differential among the mixing proportions (pi) is used.}
+\item{epsilon}{Tolerance for convergency estimation. As ELBO oscillations are common in gradient based VI, we will monitor the convergence of all the parameters in the model,
+the inference stops when (abs(new-old) / abs(old)) < epsilon, for all the parameters}
 
 \item{maxIter}{Maximum number of steps for a fit. If convergency is not achieved before these steps, the fit is interrupted.}
 
@@ -92,6 +99,10 @@ negative log-likelihood (NLL); for MM fit the largest differential among the mix
 \item{quantile_filt}{Filter the mutations with VAF higher than those quantile}
 
 \item{N_MAX}{subsample an N_MAX number of mutations, it keeps the drivers. Works only with a CNAqc input}
+
+\item{assign_drivers}{assign drivers in non used karyotype using betabinomials and pareto-binomials mixtures}
+
+\item{assign_mutation_posteriori}{assign mutation in used karyotypes not included in the main fit}
 }
 \value{
 An object of class \code{mobster_deconv}, i.e. list of all fits computed (objects of class \code{dbpmm}), the best fit, a table with the results of the fits and a
@@ -100,9 +111,14 @@ variable that specify which score has been used for model selection.
 \description{
 This function fits a bayesian hierarchical version of the MOBSTER model implemented in \code{mobster_fit}. We still
 have a mixture of Beta distributions and an optional Pareto type-one distribution to model the neutral tail. From a modelling
-point of view the main difference here is that we are expanding that model over different karyotypes and we treat the problem from a bayesian point of view.
+point of view there are two main differenceshere:
+  1. We are expanding that model over different karyotypes and we treat the problem from a bayesian point of view.
+  2. We model do not consider the VAF deconvolution but the read count deconvolution (with a beta-binomial noise term)
 In this way we can grant information about the mutation rate and the tail pooling from the different karyotypes and at the same time include the
 strong prior knowledge we have about how clonal and subclonal clusters are supposed to be ddistributed along the VAF spectrum.
+By modelling counts then, we also explicitly account for the binomial (with dispersion) sampling process that happens
+during sequencing.
+
 All the Beta distributions in the prior model are not modelled using concentration parameters but using this parametrization:
 \deqn{concentration1 = mean  * number_of_trials}
 \deqn{concentration2 = (1 - mean)  * number_of_trials}

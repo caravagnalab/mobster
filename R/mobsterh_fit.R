@@ -7,9 +7,9 @@
 #'   2. We model do not consider the VAF deconvolution but the read count deconvolution (with a beta-binomial noise term)
 #' In this way we can grant information about the mutation rate and the tail pooling from the different karyotypes and at the same time include the
 #' strong prior knowledge we have about how clonal and subclonal clusters are supposed to be ddistributed along the VAF spectrum.
-#' By modelling counts then, we also explicitly account for the binomial (with dispersion) sampling process that happens 
+#' By modelling counts then, we also explicitly account for the binomial (with dispersion) sampling process that happens
 #' during sequencing.
-#' 
+#'
 #' All the Beta distributions in the prior model are not modelled using concentration parameters but using this parametrization:
 #' \deqn{concentration1 = mean  * number_of_trials}
 #' \deqn{concentration2 = (1 - mean)  * number_of_trials}
@@ -48,6 +48,8 @@
 #' @param n_t Discard karyotypes with less then a given number of mutations.
 #' @param quantile_filt Filter the mutations with VAF higher than those quantile
 #' @param N_MAX subsample an N_MAX number of mutations, it keeps the drivers. Works only with a CNAqc input
+#' @param assign_drivers assign drivers in non used karyotype using betabinomials and pareto-binomials mixtures
+#' @param assign_mutation_posteriori assign mutation in used karyotypes not included in the main fit
 #'
 #' @return An object of class \code{mobster_deconv}, i.e. list of all fits computed (objects of class \code{dbpmm}), the best fit, a table with the results of the fits and a
 #' variable that specify which score has been used for model selection.
@@ -102,7 +104,9 @@ mobsterh_fit = function(x,
                         NV_filter = 5,
                         n_t = 100,
                         quantile_filt = 1,
-                        N_MAX = 50000)
+                        N_MAX = 50000,
+                        assign_drivers = TRUE,
+                        assign_mutation_posteriori = FALSE)
 {
   pio::pioHdr(paste0("MOBSTERh fit"))
   cat('\n')
@@ -249,7 +253,7 @@ mobsterh_fit = function(x,
                       subclonal_clusters =  as.integer(tests[r, 'subclonal_clusters']),
                       tail = as.integer(tests[r, 'tail']),
                       truncate_pareto = tests[r, 'truncate_pareto'],
-                      subclonal_prior = tests[r, 'subclonal_prior'], 
+                      subclonal_prior = tests[r, 'subclonal_prior'],
                       multi_tail = tests[r, 'multi_tail'],
                       samples = samples,
                       purity = purity,
@@ -313,8 +317,11 @@ mobsterh_fit = function(x,
   model$runs <-  runs
   model$fits.table <- tests
 
-
-  model$best <- mobster:::assign_drivers(model$best, purity)
+  if(assign_drivers)
+    model$best <- mobster:::assign_drivers(model$best)
+  
+  if(assign_mutation_posteriori)
+    model$best <- mobster:::assign_mutations_posteriori(model$best)
 
 
   ###### SHOW BEST FIT
@@ -351,7 +358,7 @@ mobsterh_fit_aux <-  function(data,
                               compile,
                               CUDA,
                               description,
-                              lrd_gamma, 
+                              lrd_gamma,
                               number_of_trials_subclonal) {
   data_u <- data
   data <- mobster:::tensorize(data_u)
@@ -430,9 +437,9 @@ mobsterh_fit_aux <-  function(data,
   inf_res$data <-  dplyr::left_join(table, assig_temp, by = "id", copy = T) %>% as.data.frame()
 
   inf_res$data <- inf_res$data %>% dplyr::mutate(VAF = NV / DP)
-  
+
   inf_res$description <- description
-  
+
   inf_res$data$driver_posteriori_annot <-  FALSE
 
   class(inf_res) <- "dbpmmh"

@@ -53,8 +53,8 @@ format_data_mobsterh_QC <-
 
     res <-
       x$cnaqc$snvs %>% filter(karyotype %in% valid_karyo, type == "SNV") %>%
-      mutate(VAF = NV / DP) %>%  filter(NV > NV_filter) %>% 
-      filter(VAF >= vaf_t) %>% mutate(id = paste(chr, from, to, sep = ":")) %>%
+      mutate(VAF = NV / DP) %>%  filter(NV > NV_filter) %>%
+      filter(VAF >= vaf_t, VAF < 1) %>% mutate(id = paste(chr, from, to, sep = ":")) %>%
       select(NV, DP, karyotype, id)
 
     valid_k_n <-
@@ -83,11 +83,11 @@ format_data_mobsterh_DF <-
     }
 
     res <- x %>%
-      mutate(VAF = NV / DP) %>% 
-      filter(karyotype %in% kar, VAF > vaf_t, VAF <= 1, VAF > 0, NV > NV_filter) %>% 
+      mutate(VAF = NV / DP) %>%
+      filter(karyotype %in% kar, VAF > vaf_t, VAF < 1, VAF > 0, NV > NV_filter) %>%
       mutate(id = paste(chr, from, to, sep = ":")) %>%
-    select(NV, DP, karyotype, id) 
-    
+    select(NV, DP, karyotype, id)
+
     valid_k_n <-
       res %>%  dplyr::group_by(karyotype) %>% dplyr::summarize(n = dplyr::n()) %>%  dplyr::filter(n > n_t) %>% dplyr::pull(karyotype)
     nremoved <- length(res$karyotype %>%  unique()) - length(valid_k_n %>% unique())
@@ -137,4 +137,10 @@ is_moyal <- function(x) {
 is_truncated <-  function(x) {
   return(has_tail(x) & x$run_parameters$truncated_pareto)
 
+}
+
+get_simple_karyotypes <- function() {
+  
+  return(c("1:0", "1:1", "2:0", "2:1", "2:2") )
+  
 }
