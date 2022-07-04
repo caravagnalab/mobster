@@ -73,7 +73,7 @@ assign_mutations_posteriori_aux <- function(muts,fit_object, karyo) {
   prob_ass <- do.call(rbind, c(lk_clonal, lk_sub, lk_tail))
   names_cluster <- c(clonal_names, subclonal_names, "Tail")
   cluster <- names_cluster[apply(prob_ass,2, which.max)]
-  prob_ass <- apply(prob_ass,1, function(z) z / colSums(prob_ass))
+  prob_ass <- apply(prob_ass,1, function(z) z / colSums(prob_ass), simplify = FALSE) %>% do.call(cbind,.)
   names(cluster) <- rownames(prob_ass)
   colnames(prob_ass) <- names_cluster
   
