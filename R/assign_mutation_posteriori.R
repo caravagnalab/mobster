@@ -28,7 +28,8 @@ assign_mutations_posteriori <- function(x) {
   
   ret <- lapply(1:length(by_karyo), function(i) assign_mutations_posteriori_aux(by_karyo[[i]], x, names(by_karyo)[i] )) 
   clusters <- lapply(ret, function(z) z$clusters) %>% do.call(c, .)
-  assignment_probs <- lapply(ret, function(z) z$assignment_probs) %>% do.call(rbind, .)
+  assignment_probs <- lapply(ret, function(z) z$assignment_probs) 
+  names(assignment_probs) <- names(by_karyo)
   x$data[match(names(clusters), x$data$id), ]$cluster <- clusters
   x$data[match(names(clusters), x$data$id), ]$posteriori_annot <- TRUE
   x$posteriori_measures$assignment_probs <- assignment_probs
