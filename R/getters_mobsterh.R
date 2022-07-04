@@ -28,7 +28,7 @@ get_pareto = function(x) {
         shape_noise = x$model_parameters[[k]]$tail_noise,
         location = ifelse(is_truncated(x),
                           min_beta_clonal_mean,
-                          Inf),
+                          1 - 1e-5),
         cluster = "Tail"
       )
     )
