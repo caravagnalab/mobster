@@ -1,7 +1,7 @@
 tensorize <- function(x) {
   torch <- reticulate::import("torch")
   x <- lapply(x, function(y)
-    torch$tensor(y))
+    torch$tensor(y))$float()
   return(x)
 }
 
