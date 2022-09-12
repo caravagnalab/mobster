@@ -412,12 +412,13 @@ mobsterh_fit_aux <-  function(data,
   table = NULL
   if (inherits(data_raw, what = "evopipe_qc"))
   {
-    table = data_raw$cnaqc$snvs %>%
+    table = data_raw$cnaqc$mutations
+    %>%
       mutate(id = paste(chr, from, to, sep = ":"))
   } else
   {
     if (inherits(data_raw, what = "cnaqc"))
-      table = data_raw$snvs %>%
+      table = data_raw$mutations %>%
         mutate(id = paste(chr, from, to, sep = ":"))
     else
       table = data_raw  %>%
