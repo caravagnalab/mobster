@@ -52,7 +52,7 @@ format_data_mobsterh_QC <-
     }
 
     res <-
-      x$cnaqc$snvs %>% filter(karyotype %in% valid_karyo, type == "SNV") %>%
+      x$cnaqc$mutations %>% filter(karyotype %in% valid_karyo, type == "SNV") %>%
       mutate(VAF = NV / DP) %>%  filter(NV > NV_filter) %>%
       filter(VAF >= vaf_t, VAF < 1) %>% mutate(id = paste(chr, from, to, sep = ":")) %>%
       select(NV, DP, karyotype, id)
