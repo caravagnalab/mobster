@@ -136,8 +136,8 @@ mobsterh_fit = function(x,
   {
     x <- CNAqc::subsample(x, N = N_MAX)
     purity <- x$purity
-    data_raw <- x$snvs
-    x <- format_data_mobsterh_DF(x$snvs,
+    data_raw <- x$mutations
+    x <- format_data_mobsterh_DF(x$mutations,
                                  vaf_t = vaf_filter,
                                  NV_filter = NV_filter,
                                  n_t = n_t)
