@@ -177,6 +177,8 @@ mobsterh_fit = function(x,
     k[(k[,1] / k[,2]) <= qf, ]
   })
 
+  used_muts <- lapply(x, rownames) %>% do.call(c,.) %>% unname()
+  
   # Check for basic input requirements
   mobster:::check_inputh(
     K,
@@ -316,6 +318,7 @@ mobsterh_fit = function(x,
 
   model$runs <-  runs
   model$fits.table <- tests
+  model$used_mutations <- used_muts
 
   if(assign_drivers)
     model$best <- mobster:::assign_drivers(model$best)

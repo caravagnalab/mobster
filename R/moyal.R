@@ -32,3 +32,21 @@ standard_moyal <-  function(x) {
   
   return(exponent + norm_const)
 }
+
+
+rtruncmoyal <- function(n, loc, scale, lower, upper) {
+
+  smpl = -1
+  while(any(smpl > upper | smpl < lower)){
+    rand = runif(n = n)
+    smpl = moyalppf(rand,loc, scale)
+  }
+  return(smpl)
+}
+
+moyalppf <- function(value, loc, scale){
+  inv_err = -qnorm(0,1,p = value * 0.5) * sqrt(1/2)
+  return(-log(2 * inv_err ** 2) * scale + loc)
+}
+  
+ 
