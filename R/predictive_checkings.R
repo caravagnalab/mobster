@@ -402,7 +402,7 @@ calculate_distance_ecdf <- function(obj, samples, karyo_collapse = c("none", "su
   data_real <- split(data_real, data_real$karyotype, drop = T)
   data_real <- lapply(data_real, function(x) x[,1])
   
-  dist_vec = vector(length = 2L)
+  dist_vec = vector(length = length(names(obj$model_parameters)))
   names(dist_vec) <- names(obj$model_parameters)
   
   for(k in names(obj$model_parameters)) {

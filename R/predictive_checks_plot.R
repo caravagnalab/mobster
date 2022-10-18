@@ -5,7 +5,7 @@ plot_random_samples_overlay <- function(obj, predictive_samples, type = c("densi
   data_real <- obj$data %>% mutate(mutation_id = paste(chr,from,to, sep = ":")) %>% filter(mutation_id %in% used_mutations) %>% select(NV,DP, karyotype)
   data_real <- split(data_real, data_real$karyotype, drop = T)
   data_real <- lapply(data_real, function(x) x[,1])
-  plot_list = vector(length = 2L, mode = "list")
+  plot_list = vector(length = length(names(obj$model_parameters)) , mode = "list")
   names(plot_list) <- names(obj$model_parameters)
   
   for(k in names(obj$model_parameters)) {
@@ -46,7 +46,7 @@ plot_random_samples_overlay <- function(obj, predictive_samples, type = c("densi
     plot_list[[k]] <- ggplot(df_plot, aes(x = x, y = y, alpha = paste(alpha), color = color, size = color)) + geom_line() + theme_bw() + 
       ggtitle(paste0(type, " plot for karyotype ", k)) + scale_alpha_manual("", labels = c("simulated data", "real data"), values = c(0.25, 1), guide = "none") + 
       scale_color_manual("", labels = c("simulated data", "real data"), values = c("darkred", "black")) + theme() + xlab("") + ylab("")+ 
-      scale_size_manual("", labels = c("simulated data", "real data"), values = c(0.5, 1.8), guide = "none")
+      scale_size_manual("", labels = c("simulated data", "real data"), values = c(0.5, 1.5), guide = "none")
     
   }
   
