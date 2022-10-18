@@ -177,7 +177,6 @@ mobsterh_fit = function(x,
     k[(k[,1] / k[,2]) <= qf, ]
   })
 
-  used_muts <- lapply(x, rownames) %>% do.call(c,.) %>% unname()
   
   # Check for basic input requirements
   mobster:::check_inputh(
@@ -318,7 +317,7 @@ mobsterh_fit = function(x,
 
   model$runs <-  runs
   model$fits.table <- tests
-  model$used_mutations <- used_muts
+  
 
   if(assign_drivers)
     model$best <- mobster:::assign_drivers(model$best)
@@ -364,6 +363,9 @@ mobsterh_fit_aux <-  function(data,
                               lrd_gamma,
                               number_of_trials_subclonal) {
   data_u <- data
+  
+  used_muts <- lapply(data_u, rownames) %>% do.call(c,.) %>% unname()
+  
   data <- mobster:::tensorize(data_u)
 
   mob <- reticulate::import("mobster")
@@ -444,6 +446,8 @@ mobsterh_fit_aux <-  function(data,
   inf_res$description <- description
 
   inf_res$data$driver_posteriori_annot <-  FALSE
+  
+  inf_res$used_mutations <- used_muts
 
   class(inf_res) <- "dbpmmh"
 

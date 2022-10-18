@@ -393,7 +393,10 @@ posterior_predictive_checks_aux <- function(i){
 }
 
 
-calculate_distance_ecdf <- function(obj, samples, used_mutations, karyo_collapse = c("none", "sum", "mean", "max")){
+calculate_distance_ecdf <- function(obj, samples, karyo_collapse = c("none", "sum", "mean", "max")){
+  
+  
+  used_mutations <- obj$used_mutations
   
   data_real <- obj$data %>% mutate(mutation_id = paste(chr,from,to, sep = ":")) %>% filter(mutation_id %in% used_mutations) %>% select(NV,DP, karyotype)
   data_real <- split(data_real, data_real$karyotype, drop = T)
