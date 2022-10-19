@@ -456,3 +456,69 @@ estimate_prior <- function(fit) {
   return(prior)
 
 }
+
+
+s_posterior <- function(fit,
+                        subclone = "S1",
+                        quantiles = c(0.02,0.98),
+                         prior = list(alpha = 1, beta = 10)){
+  
+  # check subclone
+  if (! subclone %in% (fit$data$cluster %>% unique())){
+    stop(paste0("No ",subclone," cluster"))
+  }
+  
+  required_karyotypes = names(fit$model_parameters)
+  
+  vaf_m = NULL
+  
+ for(karyo in required_karyotypes){
+   
+    vaf = tibble(ploidy = stringr::str_split(karyo,pattern = ":") %>% unlist() %>% as.numeric() %>% sum(), 
+                 estimate_vaf = fit$data %>% filter(karyotype == karyo,cluster == subclone) %>% summarize(vaf = mean(VAF)) %>% pull(vaf),
+                 x_min = fit$model_parameters[[karyo]]$tail_scale)
+    
+    vaf_m = rbind(vaf_m,vaf)
+    
+   }
+  
+  # calculate alpha e beta mutation rate posterior
+  
+  vaf_m = vaf_m %>% filter(!is.na(estimate_vaf)) %>% mutate(ccf = estimate_vaf*ploidy,ccf_min = x_min*ploidy)
+  
+  alpha = prior$alpha + nrow(vaf_m)
+  beta =  prior$beta + sum(log(vaf_m$ccf/vaf_m$ccf_min))
+  
+  sampling = rgamma(10000, shape = alpha, rate = beta)
+  
+  s = 1/(1+sampling)
+  
+  mean = mean(s)
+  var = var(s)
+  
+  q1 = quantile(s,quantiles[1])
+  q2 = quantile(s,quantiles[2])
+  
+  #sampling from the posterior distribution
+  
+  plot = ggplot(data.frame(s = s), aes(x = s)) +
+    geom_histogram(bins = 100, aes(y = ..density.., fill = "indianred")) +
+      geom_vline(xintercept = mean, linetype = "dashed") +
+    theme_bw() +
+    theme(legend.position = "none")  +
+    labs(title = paste0("selection coefficient ",subclone), x = "s", y = "Density")
+  
+  # return the results of the inference
+  
+  inference = tibble(
+    mean = mean,
+    var = var,
+    lower_quantile = q1,
+    upper_quantile = q2,
+    plot = list(plot)
+  )
+  
+  return(inference)
+  
+}
+
