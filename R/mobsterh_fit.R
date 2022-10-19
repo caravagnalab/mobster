@@ -103,11 +103,11 @@ mobsterh_fit = function(x,
   # Evoverse pipeline input
   if (inherits(x, "evopipe_qc"))
   {
-    purity <- get_purity(x)
+    purity <- mobster:::get_purity(x)
     x$cnaqc <- CNAqc::subsample(x$cnaqc,N = N_MAX)
     data_raw <- x
     x <-
-      format_data_mobsterh_QC(x,
+      mobster:::format_data_mobsterh_QC(x,
                               vaf_t = vaf_filter,
                               n_t = n_t,
                               enforce_QC_PASS = enforce_QC_PASS
@@ -161,7 +161,7 @@ mobsterh_fit = function(x,
   })
 
   # Check for basic input requirements
-  check_inputh(
+  mobster:::check_inputh(
     K,
     subclonal_clusters,
     tail,
@@ -253,7 +253,7 @@ mobsterh_fit = function(x,
 
 
   runs = easypar::run(
-    FUN = mobsterh_fit_aux,
+    FUN = mobster:::mobsterh_fit_aux,
     PARAMS = inputs,
     export = ls(globalenv(), all.names = TRUE),
     cores.ratio = .5,
@@ -296,13 +296,13 @@ mobsterh_fit = function(x,
   model$fits.table <- tests
 
   # assign drivers in not-fitted karyotypes #
-  if(model){
+  if(all(c("DP", "NV") %in% colnames(model$best$data))) {
     model$best <- assign_drivers(model$best, purity)
   } else {
+    model$best$data$driver_posteriori_annot <-  FALSE
     if(sum(model$best$data$is_driver) > 0)
       cli::cli_alert_info("To annotate driver genes a posteriori, you need to define coloumns DP (total depth) and NV (variant depth) in the input file.")
   }
-
 
   ###### SHOW BEST FIT
   print.dbpmmh(model$best)
@@ -338,7 +338,7 @@ mobsterh_fit_aux <-  function(data,
                               description,
                               lrd_gamma) {
   data_u <- data
-  data <- tensorize(data_u)
+  data <- mobster:::tensorize(data_u)
 
   mob <- reticulate::import("mobster")
 
@@ -400,9 +400,9 @@ mobsterh_fit_aux <-  function(data,
         mutate(id = paste(chr, from, to, sep = ":"))
   }
 
-  if ("is_driver" %in% colnames(table) )
+  if (!("is_driver" %in% colnames(table)))
     table$is_driver <-  FALSE
-  if ("driver_label" %in% colnames(table) )
+  if (!("driver_label" %in% colnames(table)))
     table$driver_label <-  ""
 
   if("cluster" %in% colnames(table)){

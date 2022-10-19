@@ -88,12 +88,12 @@ format_data_mobsterh_DF <-
     if(nremoved > 0 )
       cli::cli_alert_warning("Removing {length(nremoved)} karyotypes, containing less than {n_t} mutations")
 
-    return(split_and_tolist(res %>% filter(karyotype %in% valid_k_n)))
+    return(split_and_tolist(res %>% filter(karyotype %in% valid_k_n),n_t))
 
   }
 
 
-split_and_tolist <- function(x) {
+split_and_tolist <- function(x,n_t) {
   res <- split(x, x$karyotype)
 
   nm <-  lapply(res, function(y)
@@ -105,7 +105,7 @@ split_and_tolist <- function(x) {
     names(res[[i]]) <- nm[[i]]
 
   filt <- sapply(res, function(y)
-    length(y) > 100)
+    length(y) > n_t)
 
   nm <- names(res)[which(filt)]
   res <- as.list(res[which(filt)])
