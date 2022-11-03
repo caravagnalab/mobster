@@ -18,7 +18,7 @@ plot_random_samples_overlay <- function(obj, predictive_samples, type = c("densi
       y_samples <- lapply(density_samples, function(x) x$y) %>% do.call(c,.)
       
       
-      density_real <- density(data_real[[k]])
+      density_real <- density(as.numeric(data_real[[k]]))
       
       x_real <- density_real$x
       y_real <- density_real$y
@@ -39,14 +39,15 @@ plot_random_samples_overlay <- function(obj, predictive_samples, type = c("densi
       y_real <- density_real(x)
       
     }
-    df_samples <- data.frame(x = x_samples, y = y_samples, alpha = 0.3,  color = "aquamarine1")
-    df_real <- data.frame(x = x_real, y = y_real, alpha = 1, color = "black")
+    
+    df_samples <- data.frame(x = x_samples, y = y_samples, alpha = 0.3,  color = "simulated", group = lapply(1:length(density_samples), function(i) rep(i, length(x_real) )) %>% do.call(c,.))
+    df_real <- data.frame(x = x_real, y = y_real, alpha = 1, color = "real", group = "real")
     df_plot <- rbind(df_samples, df_real)
     
-    plot_list[[k]] <- ggplot(df_plot, aes(x = x, y = y, alpha = paste(alpha), color = color, size = color)) + geom_line() + theme_bw() + 
-      ggtitle(paste0(type, " plot for karyotype ", k)) + scale_alpha_manual("", labels = c("simulated data", "real data"), values = c(0.25, 1), guide = "none") + 
-      scale_color_manual("", labels = c("simulated data", "real data"), values = c("darkred", "black")) + theme() + xlab("") + ylab("")+ 
-      scale_size_manual("", labels = c("simulated data", "real data"), values = c(0.5, 1.5), guide = "none")
+    plot_list[[k]] <- ggplot(df_plot, aes(x = x, y = y, alpha = paste(alpha), color = color, size = color,group = group)) + geom_line() + theme_bw() + 
+      ggtitle(paste0(type, " plot for karyotype ", k)) + scale_alpha_manual("", labels = c("real data", "simulated data"), values = c(0.25, 1), guide = "none") + 
+      scale_color_manual("", labels = c("real data", "simulated data"), values = c("black", "darkred")) + theme() + xlab("") + ylab("")+ 
+      scale_size_manual("", labels = c("real data", "simulated data"), values = c(1.5, 0.3), guide = "none")
     
   }
   

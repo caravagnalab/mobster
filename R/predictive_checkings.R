@@ -13,14 +13,14 @@ predictive_checks <- function(obj, samples = 100, type = c("prior", "posterior")
 
 prior_predictive_checks <- function(obj, samples = 100){
   
-  samples <- easypar::run(prior_predictive_checks_aux,lapply(1:samples, list),parallel = F,export = "obj")
+  samples <- easypar::run(FUN = function(i) prior_predictive_checks_aux(i,obj),lapply(1:samples, list),parallel = F)
   return(samples)
   
   
 }
 
 
-prior_predictive_checks_aux <- function(i){
+prior_predictive_checks_aux <- function(i, obj){
   
   res <- vector(length = length(names(obj$model_parameters)), mode = "list")
   names(res) <- names(obj$model_parameters)
@@ -223,14 +223,14 @@ log_sum_exp <- function(M){
 
 posterior_predictive_checks <- function(obj, samples = 100){
   
-  samples <- easypar::run(posterior_predictive_checks_aux,lapply(1:samples, list),parallel = F,export = "obj")
+  samples <- easypar::run(FUN = function(i) posterior_predictive_checks_aux(i,obj),lapply(1:samples, list),parallel = F)
   return(samples)
   
   
 }
 
 
-posterior_predictive_checks_aux <- function(i){
+posterior_predictive_checks_aux <- function(i,obj){
   
   res <- vector(length = length(names(obj$model_parameters)), mode = "list")
   names(res) <- names(obj$model_parameters)
@@ -350,8 +350,8 @@ posterior_predictive_checks_aux <- function(i){
     } 
     if (has_tail & has_subclones){
       
-      all_samples = cbind(pareto_bin, subclonal_lk)
-      all_samples = cbind(all_samples, beta)
+      all_samples = cbind(pareto_bin, beta)
+      all_samples = cbind(all_samples, subclonal_lk)
       probs = weights
       idx = sample.int(size = nrow(all_samples),n = ncol(all_samples), prob = probs, replace = T)
       final_sample = lapply(1:nrow(all_samples), function(i) all_samples[i,idx[i]]) %>%
@@ -370,7 +370,7 @@ posterior_predictive_checks_aux <- function(i){
     
     if ( !has_tail & has_subclones){
       
-      all_samples = cbind(subclonal_lk, beta)
+      all_samples = cbind(beta, subclonal_lk)
       probs = weights 
       idx = sample.int(size = nrow(all_samples),n = ncol(all_samples), prob = probs, replace = T)
       final_sample = lapply(1:nrow(all_samples), function(i) all_samples[i,idx[i]]) %>%
@@ -424,5 +424,33 @@ calculate_distance_ecdf <- function(obj, samples, karyo_collapse = c("none", "su
   }else {
     return(do.call(karyo_collapse,as.list(dist_vec)))
   }
+  
+}
+
+
+
+calculate_ecdf_CI <- function(obj, samples, low = 0.05, high = 0.95) {
+  
+  used_mutations <- obj$used_mutations
+  
+  data_real <- obj$data %>% mutate(mutation_id = paste(chr,from,to, sep = ":")) %>% filter(mutation_id %in% used_mutations) %>% select(NV,DP, karyotype)
+  data_real <- split(data_real, data_real$karyotype, drop = T)
+  data_real <- lapply(data_real, function(x) x[,1])
+  
+  dist_vec = vector(length = length(names(obj$model_parameters)))
+  names(dist_vec) <- names(obj$model_parameters)
+  
+  for(k in names(obj$model_parameters)) {
+    x <- seq.default(0,max(data_real[[k]]) + 10,by = 1)
+    
+    predictive_samples <- lapply(samples, function(x) x[[k]]) %>% do.call("cbind",.)
+    
+    avg_post <- apply(predictive_samples,1, mean)
+    dist_k <- ks.test(data_real[[k]], avg_post)$statistic
+    
+    dist_vec[k] <- dist_k
+    
+  }
+  
   
 }

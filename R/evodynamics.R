@@ -194,6 +194,11 @@ evolutionary_parameters <-
            ploidy = 2,
            ncells = 2)
   {
+    
+    if(class(x$best) == "dbpmmh"){
+      return(evolutionary_parameters_mobsterh(x))
+    }
+    
     is_list_mobster_fits(x)
     fit = x
 
@@ -281,6 +286,108 @@ evolutionary_parameters <-
     }
     return(res)
   }
+
+
+subcloneparameters_mobsterh <- function(x, mu, subclonenumber = "S1"){
+  
+
+  
+  subclonemutations <-
+    x$data %>% group_by(cluster) %>% summarize(N = n()) %>% filter(cluster == !!subclonenumber) %>% pull(N)
+  subclonefrequency <-
+    get_ccf_subclones(x) %>% filter(cluster == !!subclonenumber) %>% pull(CCF)
+  time <-
+    (subclonemutations / mu) / (2 * log(2)) - (-digamma(1) / log(2))
+  
+  res <- tibble::tibble(
+    time = time,
+    subclonefrequency = subclonefrequency,
+    subclonemutations = subclonemutations,
+    cluster = subclonenumber
+  )
+  
+  return(res)
+}
+
+evolutionary_parameters_mobsterh <- function(x,
+                                             Nmax = 10 ^ 10,
+                                             lq = 0.1,
+                                             uq = 0.9,
+                                             ncells = 2){
+  
+  if (!x$run_parameters$tail)
+    stop("No tail detected,
+           evolutionary inference not possible")
+  
+  mu_post <- mu_posterior(x, get_genome_length(x))
+  mu <- mu_post$mean * sum(get_genome_length(x) %>% filter(karyotype %in% names(x$model_parameters)) %>%  pull(length) )
+  
+  powerlawexponent <- x$model_parameters[[1]]$tail_shape + 1
+  nsubclones <- x$run_parameters$K
+  
+  if (nsubclones == 0) {
+    res <- list(mu = mu_post, exponent = powerlawexponent)
+    
+  } else if (nsubclones == 1) {
+    scparams <- subcloneparameters_mobsterh(x, mu, "S1")
+    time_end <-
+      log(Nmax * (1 - scparams$subclonefrequency)) / log(2)
+    scparams$s <-
+      selection(scparams$time, time_end, scparams$subclonefrequency)
+    res <- list(mu = mu_post, exponent = powerlawexponent, selection_S1 = scparams)
+
+    
+  } else if (nsubclones == 2) {
+    scparams1 <- subcloneparameters_mobsterh(x, mu, "S1")
+    scparams2 <- subcloneparameters_mobsterh(x, mu, "S2")
+    #check if subclones satisfy pigeon hole principle, if yes assume subclones are independent
+    
+    if (scparams1$subclonefrequency + scparams2$subclonefrequency < 1) {
+      time_end <- log(Nmax * (
+        1 - scparams1$subclonefrequency -
+          scparams2$subclonefrequency
+      )) / log(2)
+      s <- selection2clone(
+        scparams1$time,
+        scparams2$time,
+        time_end,
+        scparams1$subclonefrequency,
+        scparams2$subclonefrequency
+      )
+      scparams1$s <- s[1]
+      scparams2$s <- s[2]
+      scparams1$subclone <- "subclone1"
+      scparams2$subclone <- "subclone2"
+      res <- list(mu = mu_post, exponent = powerlawexponent, selection_S1 = scparams1,selection_S2 = scparams2)
+      
+    } else {
+      largestsubclone <- max(scparams1$subclonefrequency,
+                             scparams2$subclonefrequency)
+      time_end <- log(Nmax * (1 - largestsubclone)) / log(2)
+      s <- selection2clonenested(
+        scparams1$time,
+        scparams2$time,
+        time_end,
+        scparams1$subclonefrequency,
+        scparams2$subclonefrequency
+      )
+      scparams1$s <- s[1]
+      scparams2$s <- s[2]
+      scparams1$subclone <- "subclone1"
+      scparams2$subclone <- "subclone2"
+      res <-
+        list(mu = mu_post, exponent = powerlawexponent, selection_S1 = scparams1,selection_S2 = scparams2)
+    }
+  } else if (nsubclones > 2) {
+    cli::cli_alert_info("Selection coefficient calculation is currently implemented only for max 2 subclones! ")
+    res <- list(mu = mu_post, exponent = powerlawexponent)
+  }
+  return(res)
+  
+    
+  
+  
+}
 
 
 #' Estimate mutation rate posterior from MOBSTER fit
@@ -458,9 +565,39 @@ estimate_prior <- function(fit) {
 }
 
 
+get_genome_length = function(fit){
+  
+  id = fit$data %>% mutate(segment_id = paste0(segment_id,":",karyotype)) %>% 
+    select(segment_id) %>% unique()
+  
+  seg <- read.table(text = id$segment_id, sep = ":", as.is = TRUE)
+  
+  lengths = seg %>% mutate(karyotype = paste0(V4,":",V5)) %>% group_by(karyotype) %>% 
+    summarize(length = sum(V3-V2)) 
+  
+  return(lengths)
+  
+}
+
+#' Estimate selection coefficient posterior for a subclone from MOBSTER fit
+#'
+#'  @description The mean and variance of the posterior distribution of the selection coefficient are computed, together with the plot
+#'  of the distribution and a sampling from the distribution. The probability distribution of observing a subclone at a given mean ccf is given by
+#'  a Pareto distribution with shape r = \frac{1}{1+s} and scale x_m corresponding to the minimum observable ccf, estimated by the MOBSTER fit.
+#'  Assuming a gamma distribution with parameters \alpha,\beta as prior, the posterior distribution is again a
+#'  gamma distribution with parameters \alpha^{\prime} = \alpha + K,\beta^{\prime} = \beta^{\prime} + \sum_{k} \log(\frac{ccf_k}{ccf_min}), where K
+#'  denotes the number of karyotypes and k=1,..,K is the karyotype index. Sampling from this distribution and inverting
+#'  with s = \frac{1-r}/{r}, we obtain the desired posterior on the selection coefficient.
+#
+#'  @param fit Fit by MOBSTERh
+#'  @param prior Object containing the alpha and beta parameters of the gamma prior
+#'  @return a list containing the pmean and variance of the posterior distribution, a sampling from the posterior and a density plot
+#'  @examples
+#'  s_posterior(my_fit)
+#'  @export
+
 s_posterior <- function(fit,
                         subclone = "S1",
-                        quantiles = c(0.02,0.98),
                         prior = list(alpha = 1, beta = 10)){
   
   # check subclone
@@ -491,13 +628,10 @@ s_posterior <- function(fit,
   
   sampling = rgamma(10000, shape = alpha, rate = beta)
   
-  s = 1/(1+sampling)
+  s = (1-sampling)/sampling
   
   mean = mean(s)
   var = var(s)
-  
-  q1 = quantile(s,quantiles[1])
-  q2 = quantile(s,quantiles[2])
   
   #sampling from the posterior distribution
   
@@ -511,10 +645,9 @@ s_posterior <- function(fit,
   # return the results of the inference
   
   inference = tibble(
+    sampling = s,
     mean = mean,
     var = var,
-    lower_quantile = q1,
-    upper_quantile = q2,
     plot = list(plot)
   )
   

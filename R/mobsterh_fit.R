@@ -82,13 +82,14 @@ mobsterh_fit = function(x,
                         multi_tail = FALSE,
                         purity = 1.,
                         samples = 1,
+                        k_means_init = TRUE,
                         enforce_QC_PASS = TRUE,
                         epsilon = 0.005,
                         maxIter = 2000,
                         model.selection = 'ICL',
                         parallel = FALSE,
                         alpha_precision_concentration = 5,
-                        alpha_precision_rate = 0.01,
+                        alpha_precision_rate = 0.1,
                         number_of_trials_clonal_mean = 1000,
                         number_of_trials_k = 500,
                         number_of_trials_subclonal = 900,
@@ -271,7 +272,8 @@ mobsterh_fit = function(x,
                       CUDA = CUDA,
                       description = description,
                       lrd_gamma = lrd_gamma,
-                      number_of_trials_subclonal = number_of_trials_subclonal
+                      number_of_trials_subclonal = number_of_trials_subclonal,
+                      k_means_init = k_means_init
                     ))
 
 
@@ -361,7 +363,8 @@ mobsterh_fit_aux <-  function(data,
                               CUDA,
                               description,
                               lrd_gamma,
-                              number_of_trials_subclonal) {
+                              number_of_trials_subclonal,
+                              k_means_init) {
   data_u <- data
   
   used_muts <- lapply(data_u, rownames) %>% do.call(c,.) %>% unname()
@@ -390,7 +393,8 @@ mobsterh_fit_aux <-  function(data,
         prior_lims_k = prior_lims_k,
         compile = compile,
         CUDA = CUDA,
-        lrd_gamma = lrd_gamma
+        lrd_gamma = lrd_gamma,
+        k_means_init = k_means_init
       ))
 
   best_model <-
