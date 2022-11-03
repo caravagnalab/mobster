@@ -393,7 +393,7 @@ posterior_predictive_checks_aux <- function(i,obj){
 }
 
 
-calculate_distance_ecdf <- function(obj, samples, karyo_collapse = c("none", "sum", "mean", "max")){
+calculate_distance_ecdf <- function(obj, samples, karyo_collapse = c("none", "sum", "mean", "max"), distance_type = "Wasserstein"){
   
   
   used_mutations <- obj$used_mutations
@@ -406,12 +406,25 @@ calculate_distance_ecdf <- function(obj, samples, karyo_collapse = c("none", "su
   names(dist_vec) <- names(obj$model_parameters)
   
   for(k in names(obj$model_parameters)) {
-    x <- seq.default(0,max(data_real[[k]]) + 10,by = 1)
-    
+
     predictive_samples <- lapply(samples, function(x) x[[k]]) %>% do.call("cbind",.)
     
     avg_post <- apply(predictive_samples,1, mean)
-    dist_k <- ks.test(data_real[[k]], avg_post)$statistic
+    
+    if(distance_type == "Wasserstein") {
+      dist_k <- twosamples::wass_stat(data_real[[k]], avg_post)
+    } else if(distance_type == "KS") {
+      dist_k <- twosamples::ks_stat(data_real[[k]], avg_post)
+    } else if(distance_type == "CVM") {
+      dist_k <- twosamples::cvm_stat(data_real[[k]], avg_post)
+    } else if(distance_type == "DTS") {
+      dist_k <- twosamples::dts_stat(data_real[[k]], avg_post)
+    } else if(distance_type == "AD") {
+      dist_k <- twosamples::ad_stat(data_real[[k]], avg_post)
+    } else {
+      stop("Distance type not implemented, choose one of c('Wasserstein', 'KS', 'CVM', 'DTS', 'AD') ")
+    }
+    
     
     dist_vec[k] <- dist_k
     
@@ -429,7 +442,7 @@ calculate_distance_ecdf <- function(obj, samples, karyo_collapse = c("none", "su
 
 
 
-calculate_ecdf_CI <- function(obj, samples, low = 0.05, high = 0.95) {
+calculate_post_CI <- function(obj, samples, low = 0.01, high = 0.99) {
   
   used_mutations <- obj$used_mutations
   
@@ -441,16 +454,24 @@ calculate_ecdf_CI <- function(obj, samples, low = 0.05, high = 0.95) {
   names(dist_vec) <- names(obj$model_parameters)
   
   for(k in names(obj$model_parameters)) {
-    x <- seq.default(0,max(data_real[[k]]) + 10,by = 1)
     
-    predictive_samples <- lapply(samples, function(x) x[[k]]) %>% do.call("cbind",.)
+
+    predictive_samples <- lapply(samples, function(x) density(x[[k]], from = 0, to = max(data_real[[k]] + 1))) 
+    y <- lapply(predictive_samples, function(x) x$y) %>% do.call(cbind,.)
+    x <- lapply(predictive_samples, function(x) x$x) %>% do.call(cbind,.)
     
-    avg_post <- apply(predictive_samples,1, mean)
-    dist_k <- ks.test(data_real[[k]], avg_post)$statistic
     
-    dist_vec[k] <- dist_k
+    quant_post <- apply(y,1, function(x) quantile(x, c(low, high)), simplify = F) %>% do.call(rbind,.) %>% as.data.frame()
+    
+    y_real <- density(data_real[[k]],  from = 0, to = max(data_real[[k]] + 1))$y
+    
+    quant_post$real_y <- y_real
+    quant_post$x <- x[,1]
+    quant_post$is_in_CI <- (quant_post$real_y < quant_post$`95%`) & (quant_post$real_y > quant_post$`5%`)
     
   }
   
+  return(quant_post)
   
 }
+
