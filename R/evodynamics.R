@@ -306,7 +306,6 @@ evolutionary_parameters <-
 
 mu_posterior <- function(fit,
                          genome_length,
-                         quantiles = c(0.02,0.98),
                          prior = list(alpha = 1e-4, beta = 1e-4)) {
 
   # check tail
@@ -372,8 +371,6 @@ mu_posterior <- function(fit,
   mean = alpha / beta
   var = alpha / (beta ^ 2)
   sampling = rgamma(10000, shape = alpha, rate = beta)
-  q1 = quantile(sampling,quantiles[1])
-  q2 = quantile(sampling,quantiles[2])
 
   #sampling from the posterior distribution
 
@@ -388,6 +385,8 @@ mu_posterior <- function(fit,
     theme_bw() +
     theme(legend.position = "none")  +
     labs(x = "mu", y = "Density")
+  
+  names(subclonal_mutations) = required_karyotypes
 
   # return the results of the inference
 
@@ -396,8 +395,7 @@ mu_posterior <- function(fit,
     beta = beta,
     mean = mean,
     var = var,
-    lower_quantile = q1,
-    upper_quantile = q2,
+    number_subclonal_mutations = list(subclonal_mutations),
     plot = list(plot)
   )
 
@@ -434,10 +432,25 @@ return(lengths)
 }
 
 
+#' Estimate selection coefficient posterior for a subclone from MOBSTER fit
+#'
+#'  @description The mean and variance of the posterior distribution of the selection coefficient are computed, together with the plot
+#'  of the distribution and a sampling from the distribution. The probability distribution of observing a subclone at a given mean ccf is given by
+#'  a Pareto distribution with shape r = \frac{1}{1+s} and scale x_m corresponding to the minimum observable ccf, estimated by the MOBSTER fit.
+#'  Assuming a gamma distribution with parameters \alpha,\beta as prior, the posterior distribution is again a
+#'  gamma distribution with parameters \alpha^{\prime} = \alpha + K,\beta^{\prime} = \beta^{\prime} + \sum_{k} \log(\frac{ccf_k}{ccf_min}), where K
+#'  denotes the number of karyotypes and k=1,..,K is the karyotype index. Sampling from this distribution and inverting
+#'  with s = \frac{1-r}/{r}, we obtain the desired posterior on the selection coefficient.
+#
+#'  @param fit Fit by MOBSTERh
+#'  @param prior Object containing the alpha and beta parameters of the gamma prior
+#'  @return a list containing the pmean and variance of the posterior distribution, a sampling from the posterior and a density plot
+#'  @examples
+#'  s_posterior(my_fit)
+#'  @export
 
 s_posterior <- function(fit,
                         subclone = "S1",
-                        quantiles = c(0.02,0.98),
                         prior = list(alpha = 1, beta = 10)){
   
   # check subclone
@@ -468,13 +481,10 @@ s_posterior <- function(fit,
   
   sampling = rgamma(10000, shape = alpha, rate = beta)
   
-  s = 1/(1+sampling)
+  s = (1-samplig)/sampling
   
   mean = mean(s)
   var = var(s)
-  
-  q1 = quantile(s,quantiles[1])
-  q2 = quantile(s,quantiles[2])
   
   #sampling from the posterior distribution
   
@@ -488,10 +498,9 @@ s_posterior <- function(fit,
   # return the results of the inference
   
   inference = tibble(
+    sampling = s,
     mean = mean,
     var = var,
-    lower_quantile = q1,
-    upper_quantile = q2,
     plot = list(plot)
   )
   
