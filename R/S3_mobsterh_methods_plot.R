@@ -65,38 +65,72 @@ plot.dbpmmh = function(x,
     data.frame(x = domain_x, y = line_points)
   }
 
-
-
   # Add drivers annotation
   add_drivers = function(x, drivers_table, plot, facet = FALSE)
   {
-
     if ((drivers_table %>% nrow) == 0)
       return(plot)
-
+    
     if (facet)
-      plot = plot +
-        scale_x_continuous(
-          limits = c(0, 1.01),
-          expand = c(0, 0),
-          sec.axis = dup_axis(
-            breaks = drivers_table$VAF,
-            labels = drivers_table$driver_label,
-            name = NULL
+    {
+      # CCF are simpler
+      ymax = ggplot_build(plot)$layout$panel_params[[1]]$y.range[2]
+      
+      drivers = drivers_table %>%
+        dplyr::mutate(
+          driver_label = ifelse(
+            nchar(driver_label) > 10,
+            paste0(substr(driver_label, 0, 10), '..'),
+            driver_label
           )
-        ) +
-        geom_vline(
-          data = drivers_table,
-          aes(xintercept = VAF, color = cluster),
-          size = .5,
-          linetype = 'dashed',
-          show.legend = FALSE
-        ) +
-        theme(axis.text.x.top = element_text(
-          angle = 45,
+        )
+      
+      plot = plot +
+        ggrepel::geom_label_repel(
+          data = drivers,
+          ggplot2::aes(
+            x = VAF,
+            y =  0,
+            fill = cluster,
+            label = driver_label
+          ),
           color = 'black',
-          hjust = 0
-        ))
+          ylim = c(ymax[1] * .7, ymax[1] * .9),
+          size = 2,
+          nudge_x = 0,
+          show.legend = FALSE,
+          segment.size = 0.25,
+          segment.linetype = 2,
+          segment.curvature = 1,
+          segment.ncp = 1,
+          segment.square = TRUE,
+          segment.inflect = TRUE
+        )
+      # 
+      # 
+      # plot = plot +
+      #   scale_x_continuous(
+      #     limits = c(0, 1.01),
+      #     expand = c(0, 0),
+      #     sec.axis = dup_axis(
+      #       breaks = drivers_table$VAF,
+      #       labels = drivers_table$driver_label,
+      #       name = NULL
+      #     )
+      #   ) +
+      #   geom_vline(
+      #     data = drivers_table,
+      #     aes(xintercept = VAF, color = cluster),
+      #     size = .5,
+      #     linetype = 'dashed',
+      #     show.legend = FALSE
+      #   ) +
+      #   theme(axis.text.x.top = element_text(
+      #     angle = 45,
+      #     color = 'black',
+      #     hjust = 0
+      #   ))
+    }
     else
       plot = plot +
         geom_vline(
@@ -119,7 +153,7 @@ plot.dbpmmh = function(x,
           show.legend = FALSE,
           hjust = 1
         )
-
+    
     return(plot)
   }
 
@@ -327,8 +361,12 @@ plot.dbpmmh = function(x,
 
   # Create one plot per karyotype
   fit_plots = lapply(used_karyotypes, function(x) {
-    ggplot(data = data.frame(x = 0, y = 0, label = "X"), aes(x = x,
-                                                             y = y, label = label)) + CNAqc:::my_ggplot_theme() +
+    ggplot(data = data.frame(x = 0, y = 0, label = "X"), 
+           aes(x = x,
+               y = y, 
+               label = label)
+           ) + 
+      CNAqc:::my_ggplot_theme() +
       theme(
         panel.border = element_rect(
           colour = "black",
