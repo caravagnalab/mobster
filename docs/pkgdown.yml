@@ -1,9 +1,0 @@
-pandoc: 2.3.1
-pkgdown: 1.6.0
-pkgdown_sha: ~
-articles: []
-last_built: 2020-09-13T09:21Z
-urls:
-  reference: caravagn.github.io/mobster/reference
-  article: caravagn.github.io/mobster/articles
-

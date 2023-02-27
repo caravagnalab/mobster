@@ -5,7 +5,10 @@
 
 ![check-master](https://github.com/caravagnalab/mobster/workflows/check-master/badge.svg?branch=master)
 ![check-development](https://github.com/caravagnalab/mobster/workflows/check-development/badge.svg?branch=development)
+<<<<<<< HEAD
 [![pkgdown](https://github.com/caravagnalab/mobster/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/caravagnalab/mobster/actions/workflows/pkgdown.yaml)
+=======
+>>>>>>> b824fe0d44cfb9816e086f3d1c3b6ae39766523a
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://www.tidyverse.org/lifecycle/#stable)
 <!-- badges: end -->
@@ -22,10 +25,13 @@ maximum-likelihood formulation of Dirichlet mixture models, and use
 bootstrap routines to assess the confidence of the parameters. The
 package implements S3 objects to visualize the data and the fits.
 
+<<<<<<< HEAD
 `mobster` is part of the `evoverse` set of [R
 packages](https://caravagn.github.io/evoverse) to implement Cancer
 Evolution analyses.
 
+=======
+>>>>>>> b824fe0d44cfb9816e086f3d1c3b6ae39766523a
 #### Citation
 
 [![](https://img.shields.io/badge/doi-10.1038/s41588--020--0675--5-red.svg)](https://doi.org/10.1038/s41588-020-0675-5)
@@ -40,7 +46,7 @@ If you use `mobster`, please cite:
 
 #### Help and support
 
-[![](https://img.shields.io/badge/GitHub%20Pages-https://caravagn.github.io/mobster/-steelblue.svg)](https://caravagn.github.io/mobster)
+[![](https://img.shields.io/badge/GitHub%20Pages-https://caravagnalab.github.io/mobster/-steelblue.svg)](https://caravagnalab.github.io/mobster)
 
 ### Installation
 
@@ -56,9 +62,14 @@ devtools::install_github("caravagnalab/mobster")
 
 #### Copyright and contacts
 
+<<<<<<< HEAD
 Giulio Caravagna, PhD. *Institute of Cancer Research, London, UK*.
 
 [![](https://img.shields.io/badge/Email-gcaravagn@gmail.com-informational.svg?style=social)](mailto:gcaravagn@gmail.com)
 [![](https://img.shields.io/badge/caravagn-informational.svg?style=social&logo=GitHub)](https://github.com/caravagn)
 [![](https://img.shields.io/badge/@gcaravagna-informational.svg?style=social&logo=Twitter)](https://twitter.com/gcaravagna)
 [![](https://img.shields.io/badge/Homepage-informational.svg?style=social&logo=Google)](https://sites.google.com/site/giuliocaravagna/)
+=======
+[![](https://img.shields.io/badge/CDS%20Lab%20Github-caravagnalab-seagreen.svg)](https://github.com/caravagnalab)
+[![](https://img.shields.io/badge/CDS%20Lab%20webpage-https://www.caravagnalab.org/-red.svg)](https://www.caravagnalab.org/)
+>>>>>>> b824fe0d44cfb9816e086f3d1c3b6ae39766523a
