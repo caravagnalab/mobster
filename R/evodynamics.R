@@ -146,7 +146,7 @@ selection2clonenested <- function(time1,
   x1 <- log(2) * time1
   x2 <- log((subclonefrequency1 - subclonefrequency2)
             / (1 - subclonefrequency1))
-  x3 <- log(2) * (time_end - time)
+  x3 <- log(2) * (time_end - time1)
   s1 <- ((x1 + x2) / x3)
   
   x1 <- log(2) * time2
