@@ -582,10 +582,10 @@ get_genome_length = function(fit){
 #' Estimate selection coefficient posterior for a subclone from MOBSTER fit
 #'
 #'  @description The mean and variance of the posterior distribution of the selection coefficient are computed, together with the plot
-#'  of the distribution and a sampling from the distribution. The probability distribution of observing a subclone at a given mean ccf is given by
-#'  a Pareto distribution with shape r = \frac{1}{1+s} and scale x_m corresponding to the minimum observable ccf, estimated by the MOBSTER fit.
+#'  of the distribution and a sampling from the distribution. The probability distribution of observing a subclone at a given mean vaf is given by
+#'  a Pareto distribution with shape r = \frac{1}{1+s} and scale x_m corresponding to the minimum observable vaf, estimated by the MOBSTER fit.
 #'  Assuming a gamma distribution with parameters \alpha,\beta as prior, the posterior distribution is again a
-#'  gamma distribution with parameters \alpha^{\prime} = \alpha + K,\beta^{\prime} = \beta^{\prime} + \sum_{k} \log(\frac{ccf_k}{ccf_min}), where K
+#'  gamma distribution with parameters \alpha^{\prime} = \alpha + K,\beta^{\prime} = \beta^{\prime} + \sum_{k} \log(\frac{vaf_k}{x_m}), where K
 #'  denotes the number of karyotypes and k=1,..,K is the karyotype index. Sampling from this distribution and inverting
 #'  with s = \frac{1-r}/{r}, we obtain the desired posterior on the selection coefficient.
 #
@@ -598,7 +598,7 @@ get_genome_length = function(fit){
 
 s_posterior <- function(fit,
                         subclone = "S1",
-                        prior = list(alpha = 1, beta = 10)){
+                        prior = list(alpha = 1, beta = 100)){
   
   # check subclone
   if (! subclone %in% (fit$data$cluster %>% unique())){
@@ -607,24 +607,15 @@ s_posterior <- function(fit,
   
   required_karyotypes = names(fit$model_parameters)
   
-  vaf_m = NULL
-  
-  for(karyo in required_karyotypes){
-    
-    vaf = tibble(ploidy = stringr::str_split(karyo,pattern = ":") %>% unlist() %>% as.numeric() %>% sum(), 
-                 estimate_vaf = fit$data %>% filter(karyotype == karyo,cluster == subclone) %>% summarize(vaf = mean(VAF)) %>% pull(vaf),
-                 x_min = fit$model_parameters[[karyo]]$tail_scale)
-    
-    vaf_m = rbind(vaf_m,vaf)
-    
-  }
+ vaf =  fit$data %>% filter(!is.na(cluster),cluster == subclone) %>% as_tibble() %>% group_by(karyotype) %>% 
+    summarize(mean_vaf = mean(VAF))
   
   # calculate alpha e beta mutation rate posterior
   
-  vaf_m = vaf_m %>% filter(!is.na(estimate_vaf)) %>% mutate(ccf = estimate_vaf*ploidy,ccf_min = x_min*ploidy)
+  vaf_m = fit$data$VAF %>% min()
   
-  alpha = prior$alpha + nrow(vaf_m)
-  beta =  prior$beta + sum(log(vaf_m$ccf/vaf_m$ccf_min))
+  alpha = prior$alpha + nrow(vaf)
+  beta =  prior$beta + sum(log(vaf$mean_vaf/vaf_m))
   
   sampling = rgamma(10000, shape = alpha, rate = beta)
   
