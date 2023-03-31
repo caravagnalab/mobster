@@ -598,7 +598,7 @@ get_genome_length = function(fit){
 
 s_posterior <- function(fit,
                         subclone = "S1",
-                        prior = list(alpha = 1, beta = 100)){
+                        prior = tibble(s = seq(0,2,0.1),probs = rep(1/21,21))){
   
   # check subclone
   if (! subclone %in% (fit$data$cluster %>% unique())){
@@ -607,23 +607,41 @@ s_posterior <- function(fit,
   
   required_karyotypes = names(fit$model_parameters)
   
- vaf =  fit$data %>% filter(!is.na(cluster),cluster == subclone) %>% as_tibble() %>% group_by(karyotype) %>% 
-    summarize(mean_vaf = mean(VAF))
+   vaf = fit$data %>% filter(!is.na(cluster),cluster == subclone) %>% as_tibble() %>% group_by(karyotype) %>% 
+    summarize(mean_vaf = mean(VAF)) %>% mutate(vaf_min = fit$data$VAF %>% min())
   
   # calculate alpha e beta mutation rate posterior
   
-  vaf_m = fit$data$VAF %>% min()
+  vaf_max = lapply(vaf$karyotype,function(v){ 
+    
+  tibble(karyotype = v, vaf_max = fit$run_parameters$purity*1/(str_split(v,pattern = ":")[[1]] %>% as.numeric() %>% sum()))
+    
+    }) %>% bind_rows()
   
-  alpha = prior$alpha + nrow(vaf)
-  beta =  prior$beta + sum(log(vaf$mean_vaf/vaf_m))
   
-  sampling = rgamma(10000, shape = alpha, rate = beta)
+  vaf = full_join(vaf,vaf_max, by = "karyotype")
   
-  s = (1-sampling)/sampling
+  lik = function(vaf,s){
+    
+    all_r = 1/(1+s)
+    
+    vaf_lik = lapply(all_r,function(r){
+      
+    vaf %>% mutate(s = (1-r)/r,c = r/(1/(vaf_min**r) - 1/(vaf_max**r))) %>% mutate(lik = c/(mean_vaf**(r+1))) %>% dplyr::select(-c)
+    
+    }) %>% bind_rows()
+
+    vaf_lik %>% group_by(s) %>% summarize(lik = prod(lik))
+  }
   
-  mean = mean(s)
-  var = var(s)
+ likelihood = lik(vaf,prior$s)
+ 
+ probs =  likelihood %>% mutate(posterior = lik*prior$probs/sum(lik*prior$probs))
   
+ mean = probs %>% summarize(mean = sum(posterior*s)) %>% pull(mean)
+ var = probs %>% summarize(var = sum(posterior*(s-mean)**2)) %>% pull(var)
+ 
+ s = sample(x = probs$s,replace = T,prob = probs$posterior,size = 10000)
   #sampling from the posterior distribution
   
   plot = ggplot(data.frame(s = s), aes(x = s)) +
@@ -635,12 +653,7 @@ s_posterior <- function(fit,
   
   # return the results of the inference
   
-  inference = tibble(
-    sampling = s,
-    mean = mean,
-    var = var,
-    plot = list(plot)
-  )
+  inference = list(inference = probs, mean = mean,var = var,plot = plot)
   
   return(inference)
   
