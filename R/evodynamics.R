@@ -598,63 +598,72 @@ get_genome_length = function(fit){
 
 s_posterior <- function(fit,
                         subclone = "S1",
-                        prior = tibble(s = seq(0,2,0.1),probs = rep(1/21,21))){
+                        N_max = 10^10,
+                        prior_s = tibble(values = c(0.1,0.2,0.3,1,1.5,2,2.5),
+                                       probs = rep(1/7,7)),
+                        prior_t = tibble(values = c(10,100,1000,1e4,1e5),
+                                           probs = rep(1/5,5))
+                        ){
   
   # check subclone
   if (! subclone %in% (fit$data$cluster %>% unique())){
     stop(paste0("No ",subclone," cluster"))
   }
   
-  required_karyotypes = names(fit$model_parameters)
-  
-   vaf = fit$data %>% filter(!is.na(cluster),cluster == subclone) %>% as_tibble() %>% group_by(karyotype) %>% 
-    summarize(mean_vaf = mean(VAF)) %>% mutate(vaf_min = fit$data$VAF %>% min())
-  
-  # calculate alpha e beta mutation rate posterior
-  
-  vaf_max = lapply(vaf$karyotype,function(v){ 
-    
-  tibble(karyotype = v, vaf_max = fit$run_parameters$purity*1/(str_split(v,pattern = ":")[[1]] %>% as.numeric() %>% sum()))
-    
-    }) %>% bind_rows()
-  
-  
-  vaf = full_join(vaf,vaf_max, by = "karyotype")
-  
-  lik = function(vaf,s){
-    
-    all_r = 1/(1+s)
-    
-    vaf_lik = lapply(all_r,function(r){
-      
-    vaf %>% mutate(s = (1-r)/r,c = r/(1/(vaf_min**r) - 1/(vaf_max**r))) %>% mutate(lik = c/(mean_vaf**(r+1))) %>% dplyr::select(-c)
-    
-    }) %>% bind_rows()
-
-    vaf_lik %>% group_by(s) %>% summarize(lik = prod(lik))
+  # check karyotype 1:1
+  if (! "1:1" %in% names(fit$model_parameters)){
+    stop(paste0("No 1:1 karyotype"))
   }
   
- likelihood = lik(vaf,prior$s)
+  library(stringr)
+  
+# time foundation posterior  
+  
+  M = fit$data %>% filter(!is.na(cluster),cluster == subclone) %>% as_tibble() %>% 
+    filter(karyotype == "1:1") %>% nrow()
+  
+  
+  vaf = fit$data %>% filter(!is.na(cluster),cluster == subclone) %>% as_tibble() %>% 
+     filter(karyotype == "1:1") %>% pull(VAF) %>% mean()
+  
+  mu = mobster:::mu_posterior(fit = fit, genome_length = get_genome_length(fit)) %>% pull(mean)
+  
+  nu =  fit$model_parameters[["1:1"]]$beta_concentration1[
+    str_remove(string = subclone,pattern = "S") %>% as.numeric() + 1]  +  
+ fit$model_parameters[["1:1"]]$beta_concentration2[
+   str_remove(string = subclone,pattern = "S") %>% as.numeric() + 1]
+      
+# likelihood calculation
+  
+lik = function(M,vaf,mu,s,t,N_max){
+    
+    
+    l = get_genome_length(fit) %>% filter(karyotype == "1:1") %>% pull(length)
+   
+    plik =   log(dpois(x = M,lambda = 2*log(2)*mu*t*l))
+    
+    Time = log((1-2*vaf)*N_max)/log(2)
+      
+    expected_vaf = 1/2*exp(log(2)*(1+s)*(Time-t))/(exp(log(2)*(1+s)*(Time-t)) + exp(log(2)*Time))
+      
+    blik =  log(dbeta(x = vaf,shape1 = nu*expected_vaf,shape2 = nu*(1-expected_vaf)))
+    
+    plik + blik
+    
+}
+    
+ prior = expand_grid(s = prior_s$values,t = prior_t$values)  
  
- probs =  likelihood %>% mutate(posterior = lik*prior$probs/sum(lik*prior$probs))
-  
- mean = probs %>% summarize(mean = sum(posterior*s)) %>% pull(mean)
- var = probs %>% summarize(var = sum(posterior*(s-mean)**2)) %>% pull(var)
+ likelihood = lapply(1:nrow(prior), function(i){
+   tibble(s = prior$s[i], t = prior$t[i], s_probs = prior_s %>% filter(values == prior$s[i]) %>% pull(probs),
+          t_probs = prior_t %>% filter(values == prior$t[i]) %>% pull(probs),
+          lik =  lik(M,vaf,mu,prior$s[i],prior$t[i],N_max))
+   }) %>% bind_rows() 
  
- s = sample(x = probs$s,replace = T,prob = probs$posterior,size = 10000)
-  #sampling from the posterior distribution
-  
-  plot = ggplot(data.frame(s = s), aes(x = s)) +
-    geom_histogram(bins = 100, aes(y = ..density.., fill = "indianred")) +
-    geom_vline(xintercept = mean, linetype = "dashed") +
-    theme_bw() +
-    theme(legend.position = "none")  +
-    labs(title = paste0("selection coefficient ",subclone), x = "s", y = "Density")
-  
-  # return the results of the inference
-  
-  inference = list(inference = probs, mean = mean,var = var,plot = plot)
-  
-  return(inference)
+ probs = likelihood %>% mutate(post = exp(lik)*s_probs*t_probs) 
+ 
+ probs$post = probs$post/sum(probs$post)
+ 
+ return(probs)
   
 }
