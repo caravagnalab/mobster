@@ -599,7 +599,7 @@ get_genome_length = function(fit){
 selection_posterior <- function(fit,
                         N_max = 10^10,
                         prior_s1 = tibble(s = c(0.1,0.2,0.3,1,1.5,2,2.5),
-                                       probs = rep(1/7,7)),
+                                    probs = rep(1/7,7)),
                         prior_s2 = NULL
                         ){
   
@@ -633,7 +633,7 @@ lik_single_clone = function(M,vaf,mu,s,nu,N_max){
   
 }
 
-lik_indip_clone = function(M,vaf,mu,s1,s2,nu1,nu2,N_max){
+lik_indip_clones = function(M,vaf,mu,s1,s2,nu1,nu2,N_max){
   
   t1 = M$m[1]/(2*log(2)*mu*l)
   t2 = M$m[2]/(2*log(2)*mu*l)
@@ -653,7 +653,7 @@ lik_indip_clone = function(M,vaf,mu,s1,s2,nu1,nu2,N_max){
   
 }
 
-lik_nested_clone = function(M,vaf,mu,s1,s2,nu1,nu2,N_max){
+lik_nested_clones = function(M,vaf,mu,s1,s2,nu1,nu2,N_max){
   
   t1 = M$m[1]/(2*log(2)*mu*l)
   t2 = M$m[2]/(2*log(2)*(1+s1)*mu*l) + t1
@@ -720,17 +720,17 @@ probs = likelihood %>% mutate(post = exp(lik)*prior_s1$probs)
    if(sum(vaf$VAF) > 0.5){
      
      likelihood = lapply(1:nrow(values_s),function(i){tibble(s1 =  values_s$s1[i], s2 =  values_s$s2[i],
-                      probs_s1 = prior_s1 %>% filter(s1 == values_s$s1[i]) %>% pull(probs),
-                      probs_s2 = prior_s2 %>% filter(s2 == values_s$s2[i]) %>% pull(probs),
-                      lik_nested_clones(M,vaf,mu,values_s$s1[i],values_s$s2[i],nu1,nu2,N_max))}) %>% 
+                      probs_s1 = prior_s1 %>% filter(s == values_s$s1[i]) %>% pull(probs),
+                      probs_s2 = prior_s2 %>% filter(s == values_s$s2[i]) %>% pull(probs),
+                      lik = lik_nested_clones(M,vaf,mu,values_s$s1[i],values_s$s2[i],nu1,nu2,N_max))}) %>% 
                       bind_rows()
      
    }else{
      
      likelihood = lapply(1:nrow(values_s),function(i){tibble(s1 =  values_s$s1[i], s2 =  values_s$s2[i],
-         probs_s1 = prior_s1 %>% filter(s1 == values_s$s1[i]) %>% pull(probs),
-         probs_s2 = prior_s2 %>% filter(s2 == values_s$s2[i]) %>% pull(probs),
-         lik_indip_clones(M,vaf,mu,values_s$s1[i],values_s$s2[i],nu1,nu2,N_max))}) %>% 
+         probs_s1 = prior_s1 %>% filter(s == values_s$s1[i]) %>% pull(probs),
+         probs_s2 = prior_s2 %>% filter(s == values_s$s2[i]) %>% pull(probs),
+         lik = lik_indip_clones(M,vaf,mu,values_s$s1[i],values_s$s2[i],nu1,nu2,N_max))}) %>% 
          bind_rows()
    
    }
