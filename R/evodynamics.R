@@ -320,7 +320,7 @@ evolutionary_parameters_mobsterh <- function(x,
            evolutionary inference not possible")
   
   mu_post <- mu_posterior(x, get_genome_length(x))
-  mu <- mu_post$mean * sum(get_genome_length(x) %>% filter(karyotype %in% names(x$model_parameters)) %>%  pull(length) )
+  mu <- mu_post$mean * sum((get_genome_length(x) %>% filter(karyotype %in% names(x$model_parameters)) %>%  pull(length)))
   
   powerlawexponent <- x$model_parameters[[1]]$tail_shape + 1
   nsubclones <- x$run_parameters$K
@@ -413,7 +413,7 @@ evolutionary_parameters_mobsterh <- function(x,
 mu_posterior <- function(fit,
                          genome_length,
                          quantiles = c(0.02,0.98),
-                         prior = list(alpha = 1e-4, beta = 1e-4)) {
+                         prior = list(alpha = 1e-4, beta = 1e-4)){
 
   # check tail
   if (fit$run_parameters$tail == 0) {
@@ -552,8 +552,7 @@ estimate_prior <- function(fit) {
   #parameters estimates
 
   mu = mean(subclonal_mutations / ((1 / f_min - 1 / f_max) * length_karyo))
-  var = sd(subclonal_mutations / ((1 / f_min - 1 / f_max) * length_karyo)) ^
-    2
+  var = sd(subclonal_mutations / ((1 / f_min - 1 / f_max) * length_karyo))^2
 
   alpha = (mu ^ 2) / var
   beta = mu / var
@@ -598,9 +597,10 @@ get_genome_length = function(fit){
 
 selection_posterior <- function(fit,
                         N_max = 10^10,
-                        prior_s1 = tibble(s = c(0.1,0.2,0.3,1,1.5,2,2.5),
-                                    probs = rep(1/7,7)),
-                        prior_s2 = NULL
+                        prior_s1 = tibble(s = seq(0.01,2,0.05),
+                                    probs = ,
+                        prior_s2 = tibble(s = seq(0.01,2,0.05),
+                                          probs = ,
                         ){
   
   # check subclone
@@ -621,13 +621,13 @@ l = get_genome_length(fit) %>% filter(karyotype == "1:1") %>% pull(length)
 
 lik_single_clone = function(M,vaf,mu,s,nu,N_max){
   
-  t = M/(2*log(2)*mu*l)
+  t = M/(2*log(2)*mu*l) + digamma(1)/log(2)
   
   Time = log((1-2*vaf)*N_max)/log(2)
   
   expected_vaf = 1/2*exp(log(2)*(1+s)*(Time-t))/(exp(log(2)*(1+s)*(Time-t)) + exp(log(2)*Time))
   
-  blik =  log(dbeta(x = vaf,shape1 = nu*expected_vaf,shape2 = nu*(1-expected_vaf)))
+ 
   
   blik
   
@@ -635,8 +635,8 @@ lik_single_clone = function(M,vaf,mu,s,nu,N_max){
 
 lik_indip_clones = function(M,vaf,mu,s1,s2,nu1,nu2,N_max){
   
-  t1 = M$m[1]/(2*log(2)*mu*l)
-  t2 = M$m[2]/(2*log(2)*mu*l)
+  t1 = M$m[1]/(2*log(2)*mu*l) + digamma(1)/log(2)
+  t2 = M$m[2]/(2*log(2)*mu*l) + digamma(1)/log(2)
   
   Time = log((1-2*vaf$VAF[1] - 2*vaf$VAF[2])*N_max)/log(2)
   
@@ -655,13 +655,14 @@ lik_indip_clones = function(M,vaf,mu,s1,s2,nu1,nu2,N_max){
 
 lik_nested_clones = function(M,vaf,mu,s1,s2,nu1,nu2,N_max){
   
-  t1 = M$m[1]/(2*log(2)*mu*l)
-  t2 = M$m[2]/(2*log(2)*(1+s1)*mu*l) + t1
+  t1 = M$m[1]/(2*log(2)*mu*l) + digamma(1)/log(2)
+  t2 = M$m[2]/(2*log(2)*(1+s1)*mu*l) + t1 + digamma(1)/log(2)
   
   Time = log((1-2*vaf$VAF[1])*N_max)/log(2)
   
-  expected_vaf1 = 1/2*(exp(log(2)*(1+s1)*(Time-t1)) + exp(log(2)*(1+s2)*(Time-t2)))/(exp(log(2)*(1+s2)*(Time-t2)) +
-                                          exp(log(2)*Time) + exp(log(2)*(1+s1)*(Time-t1)))
+  expected_vaf1 = 1/2*(exp(log(2)*(1+s1)*(Time-t1)) + 
+                        exp(log(2)*(1+s2)*(Time-t2)))/(exp(log(2)*(1+s2)*(Time-t2)) +
+                        exp(log(2)*Time) + exp(log(2)*(1+s1)*(Time-t1)))
   
   expected_vaf2 = 1/2*exp(log(2)*(1+s2)*(Time-t2))/(exp(log(2)*(1+s2)*(Time-t2)) + exp(log(2)*Time) + 
                                                     exp(log(2)*(1+s1)*(Time-t1)))
@@ -684,8 +685,7 @@ if(! "S2" %in% fit$data$cluster %>% unique()){
      filter(karyotype == "1:1") %>% pull(VAF) %>% mean()
   
 
-  nu =  fit$model_parameters[["1:1"]]$beta_concentration1[2]  +  
-         fit$model_parameters[["1:1"]]$beta_concentration2[2]
+  nu = fit$model_parameters[["1:1"]]$n_trials_subclonal
       
 # likelihood calculation
   
@@ -695,7 +695,7 @@ probs = likelihood %>% mutate(post = exp(lik)*prior_s1$probs)
  
  probs$post = probs$post/sum(probs$post)
  
- } else{
+ }else{
     
    if (is.null(prior_s2)){
      stop(paste0("No prior S2"))
@@ -709,11 +709,9 @@ probs = likelihood %>% mutate(post = exp(lik)*prior_s1$probs)
    
    M = M[c(2,1),]
    
-   nu1 =  fit$model_parameters[["1:1"]]$beta_concentration1[3]  +  
-     fit$model_parameters[["1:1"]]$beta_concentration2[3]
+   nu1 = fit$model_parameters[["1:1"]]$n_trials_subclonal[2]
    
-   nu2 =  fit$model_parameters[["1:1"]]$beta_concentration1[2]  +  
-          fit$model_parameters[["1:1"]]$beta_concentration2[2]
+   nu2 = fit$model_parameters[["1:1"]]$n_trials_subclonal[1]
    
    values_s = expand.grid(s1 = prior_s1$s,s2 = prior_s2$s)
    
