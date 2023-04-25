@@ -320,7 +320,7 @@ evolutionary_parameters_mobsterh <- function(x,
            evolutionary inference not possible")
   
   mu_post <- mu_posterior(x, get_genome_length(x))
-  mu <- mu_post$mean * sum(get_genome_length(x) %>% filter(karyotype %in% names(x$model_parameters)) %>%  pull(length) )
+  mu <- mu_post$mean * sum((get_genome_length(x) %>% filter(karyotype %in% names(x$model_parameters)) %>%  pull(length)))
   
   powerlawexponent <- x$model_parameters[[1]]$tail_shape + 1
   nsubclones <- x$run_parameters$K
@@ -413,7 +413,7 @@ evolutionary_parameters_mobsterh <- function(x,
 mu_posterior <- function(fit,
                          genome_length,
                          quantiles = c(0.02,0.98),
-                         prior = list(alpha = 1e-4, beta = 1e-4)) {
+                         prior = list(alpha = 1e-4, beta = 1e-4)){
 
   # check tail
   if (fit$run_parameters$tail == 0) {
@@ -552,8 +552,7 @@ estimate_prior <- function(fit) {
   #parameters estimates
 
   mu = mean(subclonal_mutations / ((1 / f_min - 1 / f_max) * length_karyo))
-  var = sd(subclonal_mutations / ((1 / f_min - 1 / f_max) * length_karyo)) ^
-    2
+  var = sd(subclonal_mutations / ((1 / f_min - 1 / f_max) * length_karyo))^2
 
   alpha = (mu ^ 2) / var
   beta = mu / var
@@ -608,76 +607,168 @@ get_genome_length = function(fit, exome = FALSE, build = "hg38", karyotypes = NU
 
 #' Estimate selection coefficient posterior for a subclone from MOBSTER fit
 #'
-#'  @description The mean and variance of the posterior distribution of the selection coefficient are computed, together with the plot
-#'  of the distribution and a sampling from the distribution. The probability distribution of observing a subclone at a given mean ccf is given by
-#'  a Pareto distribution with shape r = \frac{1}{1+s} and scale x_m corresponding to the minimum observable ccf, estimated by the MOBSTER fit.
-#'  Assuming a gamma distribution with parameters \alpha,\beta as prior, the posterior distribution is again a
-#'  gamma distribution with parameters \alpha^{\prime} = \alpha + K,\beta^{\prime} = \beta^{\prime} + \sum_{k} \log(\frac{ccf_k}{ccf_min}), where K
-#'  denotes the number of karyotypes and k=1,..,K is the karyotype index. Sampling from this distribution and inverting
-#'  with s = \frac{1-r}/{r}, we obtain the desired posterior on the selection coefficient.
+#'  @description Posterior distribution of time of origin t and selection coefficient s of a subclone.
+#'  We assume a Poisson distribution as likelihood for the number of diploid heterozygous mutations of the subclonal cluster with mean M = 2\mu l\omega t,
+#'  where l is the length of the diploid genome, \mu is the mutation rate and \omega is the growth rate of the tumour. 
+#'  We assume a Beta distribution as likelihood for the mean VAF of the subclonal cluster, where the mean corresponds to the CCF of the subclone divided 
+#'  by 2 and computed assuming exponential growth for both populations. The time of origin is expressed in tumour doublings.
+#'  
 #
 #'  @param fit Fit by MOBSTERh
-#'  @param prior Object containing the alpha and beta parameters of the gamma prior
-#'  @return a list containing the pmean and variance of the posterior distribution, a sampling from the posterior and a density plot
+#'  @param prior_s Object containing range of values of s and the corresponding probabilities
+#'  @param N_max Object containing 
+#'  @return 
 #'  @examples
 #'  s_posterior(my_fit)
 #'  @export
 
-s_posterior <- function(fit,
-                        subclone = "S1",
-                        prior = list(alpha = 1, beta = 10)){
+selection_posterior <- function(fit,
+                        N_max = 10^10,
+                        prior_s1 = tibble(s = seq(0.01,2,0.05),
+                                    probs = ,
+                        prior_s2 = tibble(s = seq(0.01,2,0.05),
+                                          probs = ,
+                        ){
   
   # check subclone
-  if (! subclone %in% (fit$data$cluster %>% unique())){
+  if (! "S1" %in% (fit$data$cluster %>% unique())){
     stop(paste0("No ",subclone," cluster"))
   }
   
-  required_karyotypes = names(fit$model_parameters)
-  
-  vaf_m = NULL
-  
-  for(karyo in required_karyotypes){
-    
-    vaf = tibble(ploidy = stringr::str_split(karyo,pattern = ":") %>% unlist() %>% as.numeric() %>% sum(), 
-                 estimate_vaf = fit$data %>% filter(karyotype == karyo,cluster == subclone) %>% summarize(vaf = mean(VAF)) %>% pull(vaf),
-                 x_min = fit$model_parameters[[karyo]]$tail_scale)
-    
-    vaf_m = rbind(vaf_m,vaf)
-    
+  # check karyotype 1:1
+  if (! "1:1" %in% names(fit$model_parameters)){
+    stop(paste0("No 1:1 karyotype"))
   }
   
-  # calculate alpha e beta mutation rate posterior
+library(stringr)
   
-  vaf_m = vaf_m %>% filter(!is.na(estimate_vaf)) %>% mutate(ccf = estimate_vaf*ploidy,ccf_min = x_min*ploidy)
+mu = mobster:::mu_posterior(fit = fit, genome_length = mobster:::get_genome_length(fit)) %>% pull(mean)
+
+l = get_genome_length(fit) %>% filter(karyotype == "1:1") %>% pull(length)
+
+lik_single_clone = function(M,vaf,mu,s,nu,N_max){
   
-  alpha = prior$alpha + nrow(vaf_m)
-  beta =  prior$beta + sum(log(vaf_m$ccf/vaf_m$ccf_min))
+  t = M/(2*log(2)*mu*l) + digamma(1)/log(2)
   
-  sampling = rgamma(10000, shape = alpha, rate = beta)
+  Time = log((1-2*vaf)*N_max)/log(2)
   
-  s = (1-sampling)/sampling
+  expected_vaf = 1/2*exp(log(2)*(1+s)*(Time-t))/(exp(log(2)*(1+s)*(Time-t)) + exp(log(2)*Time))
   
-  mean = mean(s)
-  var = var(s)
+ 
   
-  #sampling from the posterior distribution
-  
-  plot = ggplot(data.frame(s = s), aes(x = s)) +
-    geom_histogram(bins = 100, aes(y = ..density.., fill = "indianred")) +
-    geom_vline(xintercept = mean, linetype = "dashed") +
-    theme_bw() +
-    theme(legend.position = "none")  +
-    labs(title = paste0("selection coefficient ",subclone), x = "s", y = "Density")
-  
-  # return the results of the inference
-  
-  inference = tibble(
-    sampling = s,
-    mean = mean,
-    var = var,
-    plot = list(plot)
-  )
-  
-  return(inference)
+  blik
   
 }
+
+lik_indip_clones = function(M,vaf,mu,s1,s2,nu1,nu2,N_max){
+  
+  t1 = M$m[1]/(2*log(2)*mu*l) + digamma(1)/log(2)
+  t2 = M$m[2]/(2*log(2)*mu*l) + digamma(1)/log(2)
+  
+  Time = log((1-2*vaf$VAF[1] - 2*vaf$VAF[2])*N_max)/log(2)
+  
+  expected_vaf1 = 1/2*exp(log(2)*(1+s1)*(Time-t1))/(exp(log(2)*(1+s2)*(Time-t2)) + 
+                                                    exp(log(2)*Time) + exp(log(2)*(1+s1)*(Time-t1)))
+  
+  expected_vaf2 = 1/2*exp(log(2)*(1+s2)*(Time-t2))/(exp(log(2)*(1+s2)*(Time-t2)) + exp(log(2)*Time) 
+                                                + exp(log(2)*(1+s1)*(Time-t1)))
+  
+  blik =  log(dbeta(x = vaf$VAF[1],shape1 = nu1*expected_vaf1,shape2 = nu1*(1-expected_vaf1))) + 
+           log(dbeta(x = vaf$VAF[2],shape1 = nu2*expected_vaf2,shape2 = nu2*(1-expected_vaf2)))
+  
+  blik
+  
+}
+
+lik_nested_clones = function(M,vaf,mu,s1,s2,nu1,nu2,N_max){
+  
+  t1 = M$m[1]/(2*log(2)*mu*l) + digamma(1)/log(2)
+  t2 = M$m[2]/(2*log(2)*(1+s1)*mu*l) + t1 + digamma(1)/log(2)
+  
+  Time = log((1-2*vaf$VAF[1])*N_max)/log(2)
+  
+  expected_vaf1 = 1/2*(exp(log(2)*(1+s1)*(Time-t1)) + 
+                        exp(log(2)*(1+s2)*(Time-t2)))/(exp(log(2)*(1+s2)*(Time-t2)) +
+                        exp(log(2)*Time) + exp(log(2)*(1+s1)*(Time-t1)))
+  
+  expected_vaf2 = 1/2*exp(log(2)*(1+s2)*(Time-t2))/(exp(log(2)*(1+s2)*(Time-t2)) + exp(log(2)*Time) + 
+                                                    exp(log(2)*(1+s1)*(Time-t1)))
+  
+  blik =  log(dbeta(x = vaf$VAF[1],shape1 = nu1*expected_vaf1,shape2 = nu1*(1-expected_vaf1))) + 
+    log(dbeta(x = vaf$VAF[2],shape1 = nu2*expected_vaf2,shape2 = nu2*(1-expected_vaf2)))
+  
+  blik
+  
+}
+  
+
+if(! "S2" %in% fit$data$cluster %>% unique()){
+  
+  M = fit$data %>% filter(!is.na(cluster),cluster == "S1") %>% as_tibble() %>% 
+    filter(karyotype == "1:1") %>% nrow()
+  
+  
+  vaf = fit$data %>% filter(!is.na(cluster),cluster == "S1") %>% as_tibble() %>% 
+     filter(karyotype == "1:1") %>% pull(VAF) %>% mean()
+  
+
+  nu = fit$model_parameters[["1:1"]]$n_trials_subclonal
+      
+# likelihood calculation
+  
+likelihood = tibble(s = prior_s1$s, lik =  lik_single_clone(M,vaf,mu,prior_s1$s,nu,N_max))
+ 
+probs = likelihood %>% mutate(post = exp(lik)*prior_s1$probs) 
+ 
+ probs$post = probs$post/sum(probs$post)
+ 
+ }else{
+    
+   if (is.null(prior_s2)){
+     stop(paste0("No prior S2"))
+   }
+   
+   vaf = fit$data %>% filter(!is.na(cluster),cluster %in% c("S1","S2")) %>% as_tibble() %>% 
+     group_by(cluster) %>% filter(karyotype == "1:1") %>% summarize(VAF = mean(VAF)) %>% arrange(desc(VAF))
+   
+   M = fit$data %>% filter(!is.na(cluster),cluster %in% c("S1","S2")) %>% as_tibble() %>% 
+     group_by(cluster) %>% filter(karyotype == "1:1") %>% summarize(m = length(chr))
+   
+   M = M[c(2,1),]
+   
+   nu1 = fit$model_parameters[["1:1"]]$n_trials_subclonal[2]
+   
+   nu2 = fit$model_parameters[["1:1"]]$n_trials_subclonal[1]
+   
+   values_s = expand.grid(s1 = prior_s1$s,s2 = prior_s2$s)
+   
+   if(sum(vaf$VAF) > 0.5){
+     
+     likelihood = lapply(1:nrow(values_s),function(i){tibble(s1 =  values_s$s1[i], s2 =  values_s$s2[i],
+                      probs_s1 = prior_s1 %>% filter(s == values_s$s1[i]) %>% pull(probs),
+                      probs_s2 = prior_s2 %>% filter(s == values_s$s2[i]) %>% pull(probs),
+                      lik = lik_nested_clones(M,vaf,mu,values_s$s1[i],values_s$s2[i],nu1,nu2,N_max))}) %>% 
+                      bind_rows()
+     
+   }else{
+     
+     likelihood = lapply(1:nrow(values_s),function(i){tibble(s1 =  values_s$s1[i], s2 =  values_s$s2[i],
+         probs_s1 = prior_s1 %>% filter(s == values_s$s1[i]) %>% pull(probs),
+         probs_s2 = prior_s2 %>% filter(s == values_s$s2[i]) %>% pull(probs),
+         lik = lik_indip_clones(M,vaf,mu,values_s$s1[i],values_s$s2[i],nu1,nu2,N_max))}) %>% 
+         bind_rows()
+   
+   }
+   
+   
+   probs = likelihood %>% mutate(post = exp(lik)*probs_s1*probs_s2) 
+   
+   probs$post = probs$post/sum(probs$post)
+   
+}
+ 
+ return(probs)
+  
+}
+
+
