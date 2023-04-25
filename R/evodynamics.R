@@ -565,15 +565,42 @@ estimate_prior <- function(fit) {
 }
 
 
-get_genome_length = function(fit){
+get_genome_length = function(fit, exome = FALSE, build = "hg38", karyotypes = NULL){
+  
   
   id = fit$data %>% mutate(segment_id = paste0(segment_id,":",karyotype)) %>% 
-    select(segment_id) %>% unique()
+    dplyr::select(segment_id) %>% unique()
   
-  seg <- read.table(text = id$segment_id, sep = ":", as.is = TRUE)
+  seg <- read.table(text = id$segment_id, sep = ":", as.is = TRUE) %>% mutate(karyotype = paste0(V4,":",V5))
   
-  lengths = seg %>% mutate(karyotype = paste0(V4,":",V5)) %>% group_by(karyotype) %>% 
-    summarize(length = sum(V3-V2)) 
+  seg <- seg[,c(1,2,3,9)]
+  
+  colnames(seg) <- c("chr", "from", "to", "karyotype")
+  
+  
+  if(exome){
+    if(build == "hg38"){
+      if(!require(TxDb.Hsapiens.UCSC.hg38.knownGene)) stop("Plaease install TxDb.Hsapiens.UCSC.hg38.knownGene to use the exonic feature")
+      exs <- exons(TxDb.Hsapiens.UCSC.hg38.knownGene::TxDb.Hsapiens.UCSC.hg38.knownGene) 
+    } else if(build == "hg19") {
+      if(!require(TxDb.Hsapiens.UCSC.hg19.knownGene)) stop("Plaease install TxDb.Hsapiens.UCSC.hg19.knownGene to use the exonic feature")
+      exs <- exons(TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg38.knownGene) 
+    } else {
+      stop("Supporterd build are hg38 and hg19!")
+    }
+   
+    seg_grang <- lapply(split(seg, seg$karyotype), FUN = function(x) GenomicRanges::makeGRangesFromDataFrame(x,start.field = "from", end.field = "to"))
+    seg_int <- lapply(seg_grang, function(x) GenomicRanges::intersect(x, exs, ignore.strand = TRUE) %>% as.data.frame)
+    seg_int <- mapply(names(seg_int), seg_int, FUN = function(x,y) {y$karyotype <- x 
+    y
+    }, SIMPLIFY = F) %>% do.call(rbind,.)
+    seg <- seg_int %>% dplyr::select(seqnames, start,end, karyotype) %>% dplyr::rename(chr = seqnames, from = start, to = end)
+  }
+  
+  if(!is.null(karyotypes)) seg %>% filter(karyotype %in% karyotypes)
+  
+  lengths = seg  %>% group_by(karyotype) %>% 
+    summarize(length = sum(to-from)) 
   
   return(lengths)
   

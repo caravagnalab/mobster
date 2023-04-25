@@ -15,7 +15,8 @@ format_data_mobsterh_QC <-
            vaf_t = 0.05,
            n_t = 100,
            NV_filter = 5,
-           enforce_QC_PASS = TRUE
+           enforce_QC_PASS = TRUE,
+           filter_indels = TRUE
            ) {
     if (enforce_QC_PASS)
       valid_karyo <-
@@ -52,10 +53,12 @@ format_data_mobsterh_QC <-
     }
 
     res <-
-      x$cnaqc$mutations %>% filter(karyotype %in% valid_karyo, type == "SNV") %>%
+      x$cnaqc$mutations %>% filter(karyotype %in% valid_karyo) %>%
       mutate(VAF = NV / DP) %>%  filter(NV > NV_filter) %>%
       filter(VAF >= vaf_t, VAF < 1) %>% mutate(id = paste(chr, from, to, sep = ":")) %>%
       select(NV, DP, karyotype, id)
+    
+    if(filter_indels) res <- res %>%  filter(type == "SNV")
 
     valid_k_n <-
       res %>%  dplyr::group_by(karyotype) %>% dplyr::summarize(n = dplyr::n()) %>%  dplyr::filter(n > n_t) %>% dplyr::pull(karyotype)
@@ -75,7 +78,8 @@ format_data_mobsterh_DF <-
            kar = c("1:0", "1:1", "2:1", "2:0", "2:2"),
            vaf_t = 0.05,
            NV_filter = 5,
-           n_t = 100) {
+           n_t = 100, 
+           filter_indels = TRUE) {
 
     if("cluster" %in% colnames(x)){
       cli::cli_alert_warning("A coloumn names cluster already exists, overwriting it!")
@@ -87,7 +91,9 @@ format_data_mobsterh_DF <-
       filter(karyotype %in% kar, VAF > vaf_t, VAF < 1, VAF > 0, NV > NV_filter) %>%
       mutate(id = paste(chr, from, to, sep = ":")) %>%
     select(NV, DP, karyotype, id)
-
+    
+    if(filter_indels) res <- res %>% filter(to - from > 1)
+    
     valid_k_n <-
       res %>%  dplyr::group_by(karyotype) %>% dplyr::summarize(n = dplyr::n()) %>%  dplyr::filter(n > n_t) %>% dplyr::pull(karyotype)
     nremoved <- length(res$karyotype %>%  unique()) - length(valid_k_n %>% unique())
