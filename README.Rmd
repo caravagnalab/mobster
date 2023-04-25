@@ -53,13 +53,9 @@ devtools::install_github("caravagnalab/mobster")
 #### Copyright and contacts
 
 Giulio Caravagna. Cancer Data Science (CDS) Laboratory.
-<<<<<<< HEAD
 
 [![](https://img.shields.io/badge/Email-gcaravagn@gmail.com-steelblue.svg)](mailto:gcaravagn@gmail.com)
 [![](https://img.shields.io/badge/CDS%20Lab%20Github-caravagnalab-seagreen.svg)](https://github.com/caravagnalab)
 [![](https://img.shields.io/badge/CDS%20Lab%20webpage-https://www.caravagnalab.org/-red.svg)](https://www.caravagnalab.org/)
-=======
->>>>>>> b824fe0d44cfb9816e086f3d1c3b6ae39766523a
-
 [![](https://img.shields.io/badge/CDS%20Lab%20Github-caravagnalab-seagreen.svg)](https://github.com/caravagnalab)
 [![](https://img.shields.io/badge/CDS%20Lab%20webpage-https://www.caravagnalab.org/-red.svg)](https://www.caravagnalab.org/)

@@ -411,7 +411,7 @@ evolutionary_parameters_mobsterh <- function(x,
 #'  mu_posterior(fit_example_mobsterh,prior=prior)
 #'  @export
 mu_posterior <- function(fit,
-                         genome_length,
+                         genome_length = get_genome_length(fit),
                          quantiles = c(0.02,0.98),
                          prior = list(alpha = 1e-4, beta = 1e-4)){
 
@@ -624,10 +624,8 @@ get_genome_length = function(fit, exome = FALSE, build = "hg38", karyotypes = NU
 
 selection_posterior <- function(fit,
                         N_max = 10^10,
-                        prior_s1 = tibble(s = seq(0.01,2,0.05),
-                                    probs = ,
-                        prior_s2 = tibble(s = seq(0.01,2,0.05),
-                                          probs = ,
+                        prior_s1 = tibble(s = seq(0.01,2,0.05)),
+                        prior_s2 = tibble(s = seq(0.01,2,0.05))
                         ){
   
   # check subclone

@@ -150,3 +150,37 @@ get_simple_karyotypes <- function() {
   return(c("1:0", "1:1", "2:0", "2:1", "2:2") )
   
 }
+
+
+filter_vaf <- function(x, min_VAF = 0, max_VAF = 1){
+  stl <- split_and_tolist(x$data %>% dplyr::filter(id %in% x$used_mutations) )
+  stl_nms <- lapply(stl,function(x) rownames(x))
+  x$data <- x$data %>% filter(VAF > min_VAF, VAF < max_VAF)
+  x$model_parameters <- mapply(x$model_parameters,stl_nms,FUN =  function(y,z) {
+    colnames(y$cluster_probs) <- z
+    y$cluster_probs <- y$cluster_probs[,colnames(y$cluster_probs) %in% x$data$id]
+    names(y$cluster_assignments) <- z
+    y$cluster_assignments <- y$cluster_assignments[names(y$cluster_assignments) %in% x$data$id]
+    return(y)
+  }, SIMPLIFY = FALSE)
+  return(x)
+}
+
+mutation_rate_by_VAF_cut <- function(x, VAF_interval = seq(0.01, 0.1, by = 0.01), ...) {
+  
+  mu_table <- lapply(VAF_interval, function(i) mu_posterior(filter_vaf(x, i), ...)) %>% do.call(rbind,.)
+  mu_table$min_VAF <- VAF_interval
+  elbow_slope <- c(NA, diff(mu_table$mean)/diff(mu_table$min_VAF)) %>% abs()
+  elbow_slope[1] <- 0 
+  mu_table$slope <- elbow_slope
+  elbow_point <- mu_table$min_VAF[(elbow_slope %>% which.max()) - 1]
+  plot <- ggplot(mu_table, aes(y = mean, x = min_VAF )) + geom_line() + 
+    geom_point(aes(color = min_VAF == min_VAF[(elbow_slope %>% which.max()) - 1] )) +
+    theme_bw() + scale_color_manual("Elbow point?", values = c("grey60", "indianred"))
+
+  return(list(mu_table, plt = plot, elbow_point = elbow_point))
+
+} 
+
+
+
