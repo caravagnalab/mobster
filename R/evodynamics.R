@@ -576,11 +576,11 @@ get_genome_length = function(fit, exome = FALSE, build = "hg38", karyotypes = NU
   id = fit$data %>% mutate(segment_id = paste0(segment_id,":",karyotype)) %>% 
     dplyr::select(segment_id) %>% unique()
   
-  seg <- read.table(text = id$segment_id, sep = ":", as.is = TRUE) %>% mutate(karyotype = paste0(V4,":",V5))
+  seg <- read.table(text = id$segment_id, sep = ":", as.is = TRUE) %>% mutate(V6 = paste0(V4,":",V5))
   
-  seg <- seg[,c(1,2,3,9)]
+  seg <- seg %>% dplyr::select(V1,V2,V3,V6)
   
-  colnames(seg) <- c("chr", "from", "to", "karyotype")
+  colnames(seg) <- c("chr", "from", "to","karyotype")
   
   
   if(exome){
