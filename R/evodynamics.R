@@ -192,8 +192,7 @@ evolutionary_parameters <-
            lq = 0.1,
            uq = 0.9,
            ploidy = 2,
-           ncells = 2)
-  {
+           ncells = 2){
     
     if(class(x$best) == "dbpmmh"){
       return(evolutionary_parameters_mobsterh(x))
@@ -472,8 +471,15 @@ mu_posterior <- function(fit,
   }
 
   # calculate alpha e beta mutation rate posterior
-
-  alpha = prior$alpha + sum(subclonal_mutations)
+  ccf = get_ccf_subclones(fit)
+  
+  if(!is.null(ccf)){
+    
+     pi = ifelse(sum(ccf$CCF) > 1, max(ccf$CCF),sum(ccf$CCF))
+    
+  }else{ pi = 1 }
+  
+  alpha = prior$alpha + sum(subclonal_mutations)*pi
   beta =  prior$beta + sum((1 / f_min - 1 / f_max) * length_karyo)
   mean = alpha / beta
   var = alpha / (beta ^ 2)
@@ -633,140 +639,106 @@ selection_posterior <- function(fit,
     stop(paste0("No ",subclone," cluster"))
   }
   
-  # check karyotype 1:1
-  if (! "1:1" %in% names(fit$model_parameters)){
-    stop(paste0("No 1:1 karyotype"))
-  }
-  
+
 library(stringr)
   
 mu = mobster:::mu_posterior(fit = fit, genome_length = mobster:::get_genome_length(fit)) %>% pull(mean)
 
-l = get_genome_length(fit) %>% filter(karyotype == "1:1") %>% pull(length)
+l = get_genome_length(fit)  %>% 
+     mutate(ploidy = strsplit(karyotype,":")[[1]] %>% as.numeric() %>% sum())
 
-lik_single_clone = function(M,vaf,mu,s,nu,N_max){
-  
-  t = M/(2*log(2)*mu*l) + digamma(1)/log(2)
-  
-  Time = log((1-2*vaf)*N_max)/log(2)
-  
-  expected_vaf = 1/2*exp(log(2)*(1+s)*(Time-t))/(exp(log(2)*(1+s)*(Time-t)) + exp(log(2)*Time))
-  
- 
-  
-  blik
-  
-}
+n_subclones = grep(x = fit$data$cluster %>% unique(),pattern = "S") %>% length()
 
-lik_indip_clones = function(M,vaf,mu,s1,s2,nu1,nu2,N_max){
-  
-  t1 = M$m[1]/(2*log(2)*mu*l) + digamma(1)/log(2)
-  t2 = M$m[2]/(2*log(2)*mu*l) + digamma(1)/log(2)
-  
-  Time = log((1-2*vaf$VAF[1] - 2*vaf$VAF[2])*N_max)/log(2)
-  
-  expected_vaf1 = 1/2*exp(log(2)*(1+s1)*(Time-t1))/(exp(log(2)*(1+s2)*(Time-t2)) + 
-                                                    exp(log(2)*Time) + exp(log(2)*(1+s1)*(Time-t1)))
-  
-  expected_vaf2 = 1/2*exp(log(2)*(1+s2)*(Time-t2))/(exp(log(2)*(1+s2)*(Time-t2)) + exp(log(2)*Time) 
-                                                + exp(log(2)*(1+s1)*(Time-t1)))
-  
-  blik =  log(dbeta(x = vaf$VAF[1],shape1 = nu1*expected_vaf1,shape2 = nu1*(1-expected_vaf1))) + 
-           log(dbeta(x = vaf$VAF[2],shape1 = nu2*expected_vaf2,shape2 = nu2*(1-expected_vaf2)))
-  
-  blik
-  
-}
-
-lik_nested_clones = function(M,vaf,mu,s1,s2,nu1,nu2,N_max){
-  
-  t1 = M$m[1]/(2*log(2)*mu*l) + digamma(1)/log(2)
-  t2 = M$m[2]/(2*log(2)*(1+s1)*mu*l) + t1 + digamma(1)/log(2)
-  
-  Time = log((1-2*vaf$VAF[1])*N_max)/log(2)
-  
-  expected_vaf1 = 1/2*(exp(log(2)*(1+s1)*(Time-t1)) + 
-                        exp(log(2)*(1+s2)*(Time-t2)))/(exp(log(2)*(1+s2)*(Time-t2)) +
-                        exp(log(2)*Time) + exp(log(2)*(1+s1)*(Time-t1)))
-  
-  expected_vaf2 = 1/2*exp(log(2)*(1+s2)*(Time-t2))/(exp(log(2)*(1+s2)*(Time-t2)) + exp(log(2)*Time) + 
-                                                    exp(log(2)*(1+s1)*(Time-t1)))
-  
-  blik =  log(dbeta(x = vaf$VAF[1],shape1 = nu1*expected_vaf1,shape2 = nu1*(1-expected_vaf1))) + 
-    log(dbeta(x = vaf$VAF[2],shape1 = nu2*expected_vaf2,shape2 = nu2*(1-expected_vaf2)))
-  
-  blik
-  
-}
-  
-
-if(! "S2" %in% fit$data$cluster %>% unique()){
+if(n_subclones == 1){
   
   M = fit$data %>% filter(!is.na(cluster),cluster == "S1") %>% as_tibble() %>% 
-    filter(karyotype == "1:1") %>% nrow()
+     group_by(karyotype) %>% 
+      summarize(n = length(chr)) 
   
   
-  vaf = fit$data %>% filter(!is.na(cluster),cluster == "S1") %>% as_tibble() %>% 
-     filter(karyotype == "1:1") %>% pull(VAF) %>% mean()
+  ccf =    get_ccf_subclones(fit) %>% pull(CCF)
   
-
-  nu = fit$model_parameters[["1:1"]]$n_trials_subclonal
+  nu = lapply(names(fit$model_parameters), 
+              function(k){tibble(karyotype = k,n = fit$model_parameters[[k]]$n_trials_subclonal)}) %>% 
+       bind_rows() %>% pull(n) %>% mean()
       
 # likelihood calculation
   
-likelihood = tibble(s = prior_s1$s, lik =  lik_single_clone(M,vaf,mu,prior_s1$s,nu,N_max))
+t = rgamma(n=1e4, shape = M$n %>% sum(),rate = log(2)*mu*sum(l$length*l$ploidy)) 
+
+f = rbeta(n=1e4, shape1 = nu*ccf, shape2 = (1-ccf)*nu)
  
-probs = likelihood %>% mutate(post = exp(lik)*prior_s1$probs) 
+Time = log((1-ccf)*N_max)/log(2) - digamma(1)/log(2)
  
- probs$post = probs$post/sum(probs$post)
- 
+s = (log(f/(1-f)) + log(2)*t)/(log(2)*(Time-t))
+
+return(tibble(param = c("t","s"),mean = c(mean(t),mean(s)), var =  c(var(t),var(s)),
+         inference = c(list(t),list(s))))
+
  }else{
     
-   if (is.null(prior_s2)){
-     stop(paste0("No prior S2"))
-   }
-   
-   vaf = fit$data %>% filter(!is.na(cluster),cluster %in% c("S1","S2")) %>% as_tibble() %>% 
-     group_by(cluster) %>% filter(karyotype == "1:1") %>% summarize(VAF = mean(VAF)) %>% arrange(desc(VAF))
+   ccf = get_ccf_subclones(fit) 
    
    M = fit$data %>% filter(!is.na(cluster),cluster %in% c("S1","S2")) %>% as_tibble() %>% 
-     group_by(cluster) %>% filter(karyotype == "1:1") %>% summarize(m = length(chr))
+     group_by(cluster,karyotype) %>% summarize(n = length(chr))
    
-   M = M[c(2,1),]
-   
-   nu1 = fit$model_parameters[["1:1"]]$n_trials_subclonal[2]
-   
-   nu2 = fit$model_parameters[["1:1"]]$n_trials_subclonal[1]
-   
-   values_s = expand.grid(s1 = prior_s1$s,s2 = prior_s2$s)
-   
-   if(sum(vaf$VAF) > 0.5){
+   nu =   lapply(names(fit$model_parameters), 
+          function(k){tibble(karyotype = k,
+                             S1 = fit$model_parameters[[k]]$n_trials_subclonal[1],
+                             S2 = fit$model_parameters[[k]]$n_trials_subclonal[2])}) %>% 
+             bind_rows() 
+
+
+   if(ccf %>% pull(CCF) %>% sum() > 1){
      
-     likelihood = lapply(1:nrow(values_s),function(i){tibble(s1 =  values_s$s1[i], s2 =  values_s$s2[i],
-                      probs_s1 = prior_s1 %>% filter(s == values_s$s1[i]) %>% pull(probs),
-                      probs_s2 = prior_s2 %>% filter(s == values_s$s2[i]) %>% pull(probs),
-                      lik = lik_nested_clones(M,vaf,mu,values_s$s1[i],values_s$s2[i],nu1,nu2,N_max))}) %>% 
-                      bind_rows()
+   
+     t1 = rgamma(n=1e4, shape = M %>% filter(cluster == "S2") %>% pull(n) %>% sum(), 
+                 rate = log(2)*mu*sum(l$length*l$ploidy))
      
-   }else{
+     Time = log((1-ccf %>% pull(CCF) %>% sum())*N_max)/log(2) - digamma(1)/log(2)
      
-     likelihood = lapply(1:nrow(values_s),function(i){tibble(s1 =  values_s$s1[i], s2 =  values_s$s2[i],
-         probs_s1 = prior_s1 %>% filter(s == values_s$s1[i]) %>% pull(probs),
-         probs_s2 = prior_s2 %>% filter(s == values_s$s2[i]) %>% pull(probs),
-         lik = lik_indip_clones(M,vaf,mu,values_s$s1[i],values_s$s2[i],nu1,nu2,N_max))}) %>% 
-         bind_rows()
-   
-   }
-   
-   
-   probs = likelihood %>% mutate(post = exp(lik)*probs_s1*probs_s2) 
-   
-   probs$post = probs$post/sum(probs$post)
-   
+     f1 = rbeta(n=1e4, shape1 = mean(nu$S2)*(ccf %>% filter(cluster == "S2") %>% pull(CCF)), 
+                shape2 = mean(nu$S2)*(1 - ccf %>% filter(cluster == "S2") %>% pull(CCF)))
+     
+     f2 = rbeta(n=1e4, shape1 = mean(nu$S1)*(ccf %>% filter(cluster == "S1") %>% pull(CCF)), 
+                shape2 = mean(nu$S1)*(1 - ccf %>% filter(cluster == "S1") %>% pull(CCF)))
+     
+     s1 = (log(max(f1-f2,0.01)/(1-f1)) + log(2)*t1)/(log(2)*(Time-t1))
+     
+     t2 = rgamma(n=1e4, shape = M %>% filter(cluster == "S1") %>% pull(n) %>% sum(), 
+                 rate = log(2)*(1+s1)*mu*sum(l$length*l$ploidy)) + t1
+     
+     s2 = (log(f2/max(1-f1,0.01)) + log(2)*t2)/(log(2)*(Time-t2))
+     
+     
+}else{
+     
+     t1 = rgamma(n=1e4, shape = M %>% filter(cluster == "S1") %>% pull(n) %>% sum(), 
+                 rate = log(2)*mu*sum(l$length*l$ploidy)) 
+     t2 = rgamma(n=1e4, shape = M %>% filter(cluster == "S2") %>% pull(n) %>% sum(), 
+                 rate = log(2)*mu*sum(l$length*l$ploidy)) 
+     
+     f1 = rbeta(n=1e4, shape1 = mean(nu$S1)*(ccf %>% filter(cluster == "S1") %>% pull(CCF)), 
+                       shape2 = mean(nu$S1)*(1 - ccf %>% filter(cluster == "S1") %>% pull(CCF)))
+     
+     f2 = rbeta(n=1e4, shape1 = mean(nu$S2)*(ccf %>% filter(cluster == "S2") %>% pull(CCF)), 
+                       shape2 = mean(nu$S2)*(1 - ccf %>% filter(cluster == "S2") %>% pull(CCF)))
+     
+     Time = log((1-ccf %>% pull(CCF) %>% sum())*N_max)/log(2) - digamma(1)/log(2)
+     
+     s1 = (log(f1/max(1-f1-f2,0.01)) + log(2)*t1)/(log(2)*(Time-t1))
+     
+     s2 = (log(f2/max(1-f1-f2,0.01)) + log(2)*t2)/(log(2)*(Time-t2))
+     
 }
  
- return(probs)
-  
-}
+   return(tibble(param = c("t1","t2","s1","s2"),
+                 mean = c(mean(t1),mean(t2),mean(s1),mean(s2)), 
+                 var = c(var(t1),var(t2),var(s1),var(s2)),
+                 inference = c(list(t1),list(t2),list(s1),list(s2))))  
+ 
+   }
 
+
+}
 
