@@ -192,8 +192,7 @@ evolutionary_parameters <-
            lq = 0.1,
            uq = 0.9,
            ploidy = 2,
-           ncells = 2)
-  {
+           ncells = 2){
     
     if(class(x$best) == "dbpmmh"){
       return(evolutionary_parameters_mobsterh(x))
