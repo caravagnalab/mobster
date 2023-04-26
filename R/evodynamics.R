@@ -629,9 +629,7 @@ get_genome_length = function(fit, exome = FALSE, build = "hg38", karyotypes = NU
 #'  @export
 
 selection_posterior <- function(fit,
-                        N_max = 10^10,
-                        prior_s1 = tibble(s = seq(0.01,2,0.05)),
-                        prior_s2 = tibble(s = seq(0.01,2,0.05))
+                        N_max = 10^10
                         ){
   
   # check subclone
