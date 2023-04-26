@@ -86,15 +86,15 @@ format_data_mobsterh_DF <-
       x$cluster <-  NULL
     }
 
+    if(filter_indels) x <- x %>% filter(to - from == 1)
+    
     res <- x %>%
       mutate(VAF = NV / DP) %>%
       filter(karyotype %in% kar, VAF > vaf_t, VAF < 1, VAF > 0, NV > NV_filter) %>%
       mutate(id = paste(chr, from, to, sep = ":")) %>%
     select(NV, DP, karyotype, id)
     
-    if(filter_indels) res <- res %>% filter(to - from > 1)
-    
-    valid_k_n <-
+   valid_k_n <-
       res %>%  dplyr::group_by(karyotype) %>% dplyr::summarize(n = dplyr::n()) %>%  dplyr::filter(n > n_t) %>% dplyr::pull(karyotype)
     nremoved <- length(res$karyotype %>%  unique()) - length(valid_k_n %>% unique())
     if(nremoved > 0 )
