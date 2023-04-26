@@ -477,9 +477,9 @@ mu_posterior <- function(fit,
     
      pi = ifelse(sum(ccf$CCF) > 1, max(ccf$CCF),sum(ccf$CCF))
     
-  }else{ pi = 1 }
+  }else{ pi = 0 }
   
-  alpha = prior$alpha + sum(subclonal_mutations)*pi
+  alpha = prior$alpha + sum(subclonal_mutations)*(1-pi)
   beta =  prior$beta + sum((1 / f_min - 1 / f_max) * length_karyo)
   mean = alpha / beta
   var = alpha / (beta ^ 2)
