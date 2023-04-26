@@ -467,7 +467,7 @@ calculate_post_CI <- function(obj, samples, low = 0.01, high = 0.99) {
     
     quant_post$real_y <- y_real
     quant_post$x <- x[,1]
-    quant_post$is_in_CI <- (quant_post$real_y < quant_post$`95%`) & (quant_post$real_y > quant_post$`5%`)
+    quant_post$is_in_CI <- (quant_post$real_y < quant_post[,2]) & (quant_post$real_y > quant_post[,1])
     
   }
   

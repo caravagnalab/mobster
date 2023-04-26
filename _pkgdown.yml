@@ -1,11 +1,14 @@
-destination: docs
-
+url: https://caravagnalab.github.io/mobster/
 template:
+<<<<<<< HEAD
   params:
     part_of: evoverse
     footer: G. Caravagna, PhD.
 url:
   caravagn.github.io/mobster
+=======
+  bootstrap: 5
+>>>>>>> b824fe0d44cfb9816e086f3d1c3b6ae39766523a
 
 repo:
   url:

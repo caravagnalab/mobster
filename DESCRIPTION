@@ -1,15 +1,19 @@
 Package: mobster
 Type: Package
 Title: MOBSTER - Model-based tumour subclonal deconvolution
-Version: 0.99.1
-Date: 2020-10-27
+Version: 1.0.0
+Date: 2020-10-28
 Author: Giulio Caravagna
 Maintainer: Giulio Caravagna <gcaravagn@gmail.com>
 Authors@R: c(
     person("Giulio", "Caravagna", , "gcaravagn@gmail.com", role = c("aut", "cre"),
       comment = c(ORCID = "0000-0003-4240-3265")),
+<<<<<<< HEAD
     person("Milite", "Salvatore", , "militesalvatore@gmail.com", role = c("aut")),
     person("Luca", "De Sano", , "luca.desano@gmail.com", role = c("aut"),
+=======
+    person("Luca", "De Sano", , "luca.desano@gmail.com", role = c("ctb"),
+>>>>>>> b824fe0d44cfb9816e086f3d1c3b6ae39766523a
       comment = c(ORCID = "0000-0002-9618-3774"))
   )
 Description: MOBSTER is a package that implements a statistical model for tumour subclonal deconvolution
@@ -70,5 +74,10 @@ Remotes:
     caravagn/ctree,
     caravagn/CNAqc
 VignetteBuilder: knitr
+<<<<<<< HEAD
 URL: https://github.com/caravagnalab/mobster
+=======
+URL: https://github.com/caravagnalab/mobster,
+    https://caravagnalab.github.io/mobster/
+>>>>>>> b824fe0d44cfb9816e086f3d1c3b6ae39766523a
 BugReports: https://github.com/caravagnalab/mobster/issues

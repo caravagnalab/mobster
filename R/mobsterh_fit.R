@@ -50,6 +50,7 @@
 #' @param N_MAX subsample an N_MAX number of mutations, it keeps the drivers. Works only with a CNAqc input
 #' @param assign_drivers assign drivers in non used karyotype using betabinomials and pareto-binomials mixtures
 #' @param assign_mutation_posteriori assign mutation in used karyotypes not included in the main fit
+#' @param filter_indels filter indels and use only SNVs for subclonal devonvolution (indels are reassigned if \code{assign_mutation_posteriori} is \code{TRUE})
 #'
 #' @return An object of class \code{mobster_deconv}, i.e. list of all fits computed (objects of class \code{dbpmm}), the best fit, a table with the results of the fits and a
 #' variable that specify which score has been used for model selection.
@@ -107,7 +108,8 @@ mobsterh_fit = function(x,
                         quantile_filt = 1,
                         N_MAX = 50000,
                         assign_drivers = TRUE,
-                        assign_mutation_posteriori = FALSE)
+                        assign_mutation_posteriori = FALSE,
+                        filter_indels = TRUE)
 {
   pio::pioHdr(paste0("MOBSTERh fit"))
   cat('\n')
@@ -126,7 +128,8 @@ mobsterh_fit = function(x,
                               vaf_t = vaf_filter,
                               n_t = n_t,
                               enforce_QC_PASS = enforce_QC_PASS,
-                              NV_filter = NV_filter
+                              NV_filter = NV_filter,
+                              filter_indels = filter_indels
                               )
 
     can_work = TRUE
@@ -142,7 +145,8 @@ mobsterh_fit = function(x,
                               vaf_t = vaf_filter,
                               n_t = n_t,
                               enforce_QC_PASS = enforce_QC_PASS,
-                              NV_filter = NV_filter
+                              NV_filter = NV_filter,
+                              filter_indels = filter_indels
                               )
 
     can_work = TRUE
@@ -160,7 +164,9 @@ mobsterh_fit = function(x,
     x <- mobster:::format_data_mobsterh_DF(x,
                                  vaf_t = vaf_filter,
                                  NV_filter = NV_filter,
-                                 n_t = n_t)
+                                 n_t = n_t,
+                                 filter_indels = filter_indels
+                                 )
     cli::cli_alert_warning("Using input purity {.field {purity}}")
 
     can_work = TRUE
