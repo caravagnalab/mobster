@@ -52,13 +52,15 @@ format_data_mobsterh_QC <-
       return(NULL)
     }
 
+    if(filter_indels) res <- res %>%  filter(type == "SNV")
+    
     res <-
       x$cnaqc$mutations %>% filter(karyotype %in% valid_karyo) %>%
       mutate(VAF = NV / DP) %>%  filter(NV > NV_filter) %>%
       filter(VAF >= vaf_t, VAF < 1) %>% mutate(id = paste(chr, from, to, sep = ":")) %>%
       select(NV, DP, karyotype, id)
     
-    if(filter_indels) res <- res %>%  filter(type == "SNV")
+    
 
     valid_k_n <-
       res %>%  dplyr::group_by(karyotype) %>% dplyr::summarize(n = dplyr::n()) %>%  dplyr::filter(n > n_t) %>% dplyr::pull(karyotype)
