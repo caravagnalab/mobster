@@ -412,6 +412,8 @@ evolutionary_parameters_mobsterh <- function(x,
 mu_posterior <- function(fit,
                          genome_length = get_genome_length(fit),
                          ncells = 1,
+                          lq = 0.05,
+                          uq = 0.95,
                          quantiles = c(0.02,0.98),
                          prior = list(alpha = 1e-4, beta = 1e-4)){
 
@@ -446,15 +448,18 @@ mu_posterior <- function(fit,
 
   for (karyo in required_karyotypes)
   {
-    tail_mutations = fit$model_parameters[karyo][[1]]$cluster_probs[1, ] %>% sum()
-    subclonal_mutations = c(subclonal_mutations, tail_mutations %>% sum())
-
-    f_min = c(f_min, fit$model_parameters[karyo][[1]]$tail_scale)
-    alpha = fit$model_parameters[karyo][[1]]$beta_concentration1[1]
-    beta = fit$model_parameters[karyo][[1]]$beta_concentration2[1]
-    f_max = c(f_max, alpha / (alpha + beta))
-
-    karyotype = fit$data %>% filter(karyotype == karyo)
+    # tail_mutations = fit$model_parameters[karyo][[1]]$cluster_probs[1, ] %>% sum()
+    # subclonal_mutations = c(subclonal_mutations, tail_mutations)
+    # f_min = c(f_min, fit$model_parameters[karyo][[1]]$tail_scale)
+    # alpha = fit$model_parameters[karyo][[1]]$beta_concentration1[1]
+    # beta = fit$model_parameters[karyo][[1]]$beta_concentration2[1]
+    # f_max = c(f_max, alpha / (alpha + beta))
+    
+    tail_mutations = fit$data %>% filter(karyotype == karyo, cluster == "Tail")
+    tail_mutations = tail_mutations %>% filter(VAF > quantile(VAF,lq) & VAF < quantile(VAF,uq))
+    subclonal_mutations = c(subclonal_mutations, tail_mutations %>% nrow())
+    f_min = c(f_min,  tail_mutations %>% pull(VAF) %>% min())
+    f_max = c(f_max,  tail_mutations %>% pull(VAF) %>% max())
 
     # L_karyo = genome_length %>% filter()
 
@@ -608,141 +613,259 @@ get_genome_length = function(fit, exome = FALSE, build = "hg38", karyotypes = NU
 
 #' Estimate selection coefficient posterior for a subclone from MOBSTER fit
 #'
-#'  @description Posterior distribution of time of origin t and selection coefficient s of a subclone.
+#'  @description Posterior distribution of time of origin t, mrca and selection coefficient s of a subclone.
 #'  We assume a Poisson distribution as likelihood for the number of diploid heterozygous mutations of the subclonal cluster with mean M = 2\mu l\omega t,
 #'  where l is the length of the diploid genome, \mu is the mutation rate and \omega is the growth rate of the tumour. 
-#'  We assume a Beta distribution as likelihood for the mean VAF of the subclonal cluster, where the mean corresponds to the CCF of the subclone divided 
-#'  by 2 and computed assuming exponential growth for both populations. The time of origin is expressed in tumour doublings.
+#'  We assume an exponential distribution as likelihood for the mean number of cells of the subclone. The rate of the exponential is the inverse of expected
+#'  subclone size exp(-\omega*(T-t)), where T is the time of sample collection. Times and growth rate are expressed in tumour doubling units. 
+#'  Posterior distributions are computed with HMC using RSTAN.
 #'  
 #
 #'  @param fit Fit by MOBSTERh
 #'  @param prior_s Object containing range of values of s and the corresponding probabilities
-#'  @param N_max Object containing 
+#'  @param m Number of mutations clustered in the subclone
+#'  @param ccf estimated ccf of the subclone
+#'  @param N_max Final tumour size
+#'  @param mu Mutation rate
+#'  @param length_diploid_genome length of the diploid part of the genome
+#'  @param u = 0   mean of lognormal prior on s
+#'  @param sigma = 1 sigma of lognormal prior on s
 #'  @return 
 #'  @examples
-#'  s_posterior(my_fit)
+#'   m = fit$best$data %>% filter(cluster == 'S1',karyotype == "1:1") %>% nrow()
+#'   mu = mu_posterior(fit$best,ncells = 2) %>% pull(mean)
+#'   pi = (fit$best$data %>% filter(cluster == 'S1',karyotype == "1:1") %>% pull(VAF) %>% mean())*2
+#'  point_estimate = evolutionary_parameters_mobsterh(fit$best,ncells = 2)
+#'  mean = point_estimate$selection_S1 %>% pull(s)
+#'  sigma = 0.5
+#'  u = log(mean) - (sigma^2)/2
+#'  evo_dynamics = s_posterior(m,pi,N_max,mu,length_diploid_genome = 3*10^9, u = u, sigma = sigma)
 #'  @export
 
-selection_posterior <- function(fit,
-                        N_max = 10^10,
-                        ncells = 1
-                        ){
+# s_posterior <- function(fit,
+#                         N_max = 10^10,
+#                         # lq = 0.05,
+#                         # uq = 0.95,
+#                         ncells = 1
+#                         ){
+#   
+#   # check subclone
+#   if (! "S1" %in% (fit$data$cluster %>% unique())){
+#     return(NA)
+#   }
+#   
+# 
+# library(stringr)
+#   
+# mu = mobster:::mu_posterior(fit = fit,
+#                             genome_length = mobster:::get_genome_length(fit),
+#                             # lq = lq,
+#                             # uq = uq,
+#                             ncells = ncells) %>% pull(mean)
+# 
+# l = get_genome_length(fit)  %>% 
+#      mutate(ploidy = strsplit(karyotype,":")[[1]] %>% as.numeric() %>% sum())
+# 
+# n_subclones = grep(x = fit$data$cluster %>% unique(),pattern = "S") %>% length()
+# 
+# if(n_subclones == 1){
+#   
+#   M = fit$data %>% filter(!is.na(cluster),cluster == "S1") %>% as_tibble() %>% 
+#      group_by(karyotype) %>% 
+#       summarize(n = length(chr)) 
+#   
+#   
+#   ccf =    get_ccf_subclones(fit) %>% pull(CCF)
+#   
+#   nu = lapply(names(fit$model_parameters), 
+#               function(k){tibble(karyotype = k,n = fit$model_parameters[[k]]$n_trials_subclonal)}) %>% 
+#        bind_rows() %>% pull(n) %>% mean()
+#       
+# # likelihood calculation
+#   
+# t = rgamma(n=1e4, shape = M$n %>% sum() + digamma(1)*mu*sum(l$length*l$ploidy), rate = log(2)*mu*sum(l$length*l$ploidy)) 
+# 
+# qt = quantile(t,probs = c(0.02,0.98))
+# 
+# f = rbeta(n=1e4, shape1 = nu*ccf, shape2 = (1-ccf)*nu)
+#  
+# Time = log((1-ccf)*N_max)/log(2)
+#  
+# s = (log(f/(1-f)) + log(2)*t)/(log(2)*(Time-t))
+# qs = quantile(s,probs = c(0.02,0.98))
+# 
+# 
+# return(tibble(param = c("t","s"),mean = c(mean(t),mean(s)), var =  c(var(t),var(s)), quantiles = c(list(qt),list(qs)),
+#          inference = c(list(t),list(s))))
+# 
+#  }else{
+#     
+#    ccf = get_ccf_subclones(fit) 
+#    
+#    M = fit$data %>% filter(!is.na(cluster),cluster %in% c("S1","S2")) %>% as_tibble() %>% 
+#      group_by(cluster,karyotype) %>% summarize(n = length(chr))
+#    
+#    nu =   lapply(names(fit$model_parameters), 
+#           function(k){tibble(karyotype = k,
+#                              S1 = fit$model_parameters[[k]]$n_trials_subclonal[1],
+#                              S2 = fit$model_parameters[[k]]$n_trials_subclonal[2])}) %>% 
+#              bind_rows() 
+# 
+# 
+#    if(ccf %>% pull(CCF) %>% sum() > 1){
+#      
+#    
+#      t1 = rgamma(n=1e4, shape = M %>% filter(cluster == "S2") %>% pull(n) %>% sum() + digamma(1)*mu*sum(l$length*l$ploidy), 
+#                  rate = log(2)*mu*sum(l$length*l$ploidy)) 
+#      
+#      Time = log((1-ccf %>% pull(CCF) %>% max())*N_max)/log(2) 
+#      
+#      f1 = rbeta(n=1e4, shape1 = mean(nu$S2)*(ccf %>% filter(cluster == "S2") %>% pull(CCF)), 
+#                 shape2 = mean(nu$S2)*(1 - ccf %>% filter(cluster == "S2") %>% pull(CCF)))
+#      
+#      f2 = rbeta(n=1e4, shape1 = mean(nu$S1)*(ccf %>% filter(cluster == "S1") %>% pull(CCF)), 
+#                 shape2 = mean(nu$S1)*(1 - ccf %>% filter(cluster == "S1") %>% pull(CCF)))
+#      
+#      s1 = (log(max(f1-f2,0.01)/(1-f1)) + log(2)*t1)/(log(2)*(Time-t1))
+#      
+#      t2 = rgamma(n=1e4, shape = M %>% filter(cluster == "S1") %>% pull(n) %>% sum() + digamma(1)*mu*sum(l$length*l$ploidy), 
+#                  rate = log(2)*(1+s1)*mu*sum(l$length*l$ploidy)) 
+#      
+#      s2 = (log(f2/max(1-f1,0.01)) + log(2)*t2)/(log(2)*(Time-t2))
+#      
+#      
+# }else{
+#      
+#      t1 = rgamma(n=1e4, shape = M %>% filter(cluster == "S1") %>% pull(n) %>% sum() + digamma(1)*mu*sum(l$length*l$ploidy), 
+#                  rate = log(2)*mu*sum(l$length*l$ploidy))
+#      t2 = rgamma(n=1e4, shape = M %>% filter(cluster == "S2") %>% pull(n) %>% sum() + digamma(1)*mu*sum(l$length*l$ploidy), 
+#                  rate = log(2)*mu*sum(l$length*l$ploidy)) 
+#      
+#      f1 = rbeta(n=1e4, shape1 = mean(nu$S1)*(ccf %>% filter(cluster == "S1") %>% pull(CCF)), 
+#                        shape2 = mean(nu$S1)*(1 - ccf %>% filter(cluster == "S1") %>% pull(CCF)))
+#      
+#      f2 = rbeta(n=1e4, shape1 = mean(nu$S2)*(ccf %>% filter(cluster == "S2") %>% pull(CCF)), 
+#                        shape2 = mean(nu$S2)*(1 - ccf %>% filter(cluster == "S2") %>% pull(CCF)))
+#      
+#      Time = log((1-ccf %>% pull(CCF) %>% sum())*N_max)/log(2) 
+#      
+#      s1 = (log(f1/max(1-f1-f2,0.01)) + log(2)*t1)/(log(2)*(Time-t1))
+#      
+#      s2 = (log(f2/max(1-f1-f2,0.01)) + log(2)*t2)/(log(2)*(Time-t2))
+#      
+# }
+#    
+#    qt1 = quantile(t1,probs = c(0.02,0.98))
+#    qt2 = quantile(t2,probs = c(0.02,0.98))
+#    qs1 = quantile(s1,probs = c(0.02,0.98))
+#    qs2 = quantile(s2,probs = c(0.02,0.98))
+#  
+#    return(tibble(param = c("t1","t2","s1","s2"),
+#                  mean = c(mean(t1),mean(t2),mean(s1),mean(s2)), 
+#                  var = c(var(t1),var(t2),var(s1),var(s2)),
+#                  qunatiles = c(list(qt1),list(qt2),list(qs1),list(qs2)),
+#                  inference = c(list(t1),list(t2),list(s1),list(s2))))  
+#  
+#    }
+# 
+# 
+# }
+
+
+s_posterior = function(m,ccf,N_max,mu,length_diploid_genome,u = 0,sigma = 1){
   
-  # check subclone
-  if (! "S1" %in% (fit$data$cluster %>% unique())){
-    return(NA)
-  }
+  library(rstan)
+  library(ggplot2)
+  library(ggpubr)
   
-
-library(stringr)
+  data = list( m = m,
+               Ntot = N_max,
+               ccf = ccf,
+               length_dipl_genome = length_diploid_genome,
+               mu = mu,
+               u = u,
+               sigma = sigma
+  )
   
-mu = mobster:::mu_posterior(fit = fit, genome_length = mobster:::get_genome_length(fit),ncells = ncells) %>% pull(mean)
+model.stan = "
 
-l = get_genome_length(fit)  %>% 
-     mutate(ploidy = strsplit(karyotype,":")[[1]] %>% as.numeric() %>% sum())
-
-n_subclones = grep(x = fit$data$cluster %>% unique(),pattern = "S") %>% length()
-
-if(n_subclones == 1){
+data {
   
-  M = fit$data %>% filter(!is.na(cluster),cluster == "S1") %>% as_tibble() %>% 
-     group_by(karyotype) %>% 
-      summarize(n = length(chr)) 
-  
-  
-  ccf =    get_ccf_subclones(fit) %>% pull(CCF)
-  
-  nu = lapply(names(fit$model_parameters), 
-              function(k){tibble(karyotype = k,n = fit$model_parameters[[k]]$n_trials_subclonal)}) %>% 
-       bind_rows() %>% pull(n) %>% mean()
-      
-# likelihood calculation
-  
-t = rgamma(n=1e4, shape = M$n %>% sum() + digamma(1)*mu*sum(l$length*l$ploidy), rate = log(2)*mu*sum(l$length*l$ploidy)) 
-
-qt = quantile(t,probs = c(0.02,0.98))
-
-f = rbeta(n=1e4, shape1 = nu*ccf, shape2 = (1-ccf)*nu)
- 
-Time = log((1-ccf)*N_max)/log(2)
- 
-s = (log(f/(1-f)) + log(2)*t)/(log(2)*(Time-t))
-qs = quantile(s,probs = c(0.02,0.98))
-
-
-return(tibble(param = c("t","s"),mean = c(mean(t),mean(s)), var =  c(var(t),var(s)), quantiles = c(list(qt),list(qs)),
-         inference = c(list(t),list(s))))
-
- }else{
-    
-   ccf = get_ccf_subclones(fit) 
-   
-   M = fit$data %>% filter(!is.na(cluster),cluster %in% c("S1","S2")) %>% as_tibble() %>% 
-     group_by(cluster,karyotype) %>% summarize(n = length(chr))
-   
-   nu =   lapply(names(fit$model_parameters), 
-          function(k){tibble(karyotype = k,
-                             S1 = fit$model_parameters[[k]]$n_trials_subclonal[1],
-                             S2 = fit$model_parameters[[k]]$n_trials_subclonal[2])}) %>% 
-             bind_rows() 
-
-
-   if(ccf %>% pull(CCF) %>% sum() > 1){
-     
-   
-     t1 = rgamma(n=1e4, shape = M %>% filter(cluster == "S2") %>% pull(n) %>% sum() + digamma(1)*mu*sum(l$length*l$ploidy), 
-                 rate = log(2)*mu*sum(l$length*l$ploidy)) 
-     
-     Time = log((1-ccf %>% pull(CCF) %>% max())*N_max)/log(2) 
-     
-     f1 = rbeta(n=1e4, shape1 = mean(nu$S2)*(ccf %>% filter(cluster == "S2") %>% pull(CCF)), 
-                shape2 = mean(nu$S2)*(1 - ccf %>% filter(cluster == "S2") %>% pull(CCF)))
-     
-     f2 = rbeta(n=1e4, shape1 = mean(nu$S1)*(ccf %>% filter(cluster == "S1") %>% pull(CCF)), 
-                shape2 = mean(nu$S1)*(1 - ccf %>% filter(cluster == "S1") %>% pull(CCF)))
-     
-     s1 = (log(max(f1-f2,0.01)/(1-f1)) + log(2)*t1)/(log(2)*(Time-t1))
-     
-     t2 = rgamma(n=1e4, shape = M %>% filter(cluster == "S1") %>% pull(n) %>% sum() + digamma(1)*mu*sum(l$length*l$ploidy), 
-                 rate = log(2)*(1+s1)*mu*sum(l$length*l$ploidy)) 
-     
-     s2 = (log(f2/max(1-f1,0.01)) + log(2)*t2)/(log(2)*(Time-t2))
-     
-     
-}else{
-     
-     t1 = rgamma(n=1e4, shape = M %>% filter(cluster == "S1") %>% pull(n) %>% sum() + digamma(1)*mu*sum(l$length*l$ploidy), 
-                 rate = log(2)*mu*sum(l$length*l$ploidy))
-     t2 = rgamma(n=1e4, shape = M %>% filter(cluster == "S2") %>% pull(n) %>% sum() + digamma(1)*mu*sum(l$length*l$ploidy), 
-                 rate = log(2)*mu*sum(l$length*l$ploidy)) 
-     
-     f1 = rbeta(n=1e4, shape1 = mean(nu$S1)*(ccf %>% filter(cluster == "S1") %>% pull(CCF)), 
-                       shape2 = mean(nu$S1)*(1 - ccf %>% filter(cluster == "S1") %>% pull(CCF)))
-     
-     f2 = rbeta(n=1e4, shape1 = mean(nu$S2)*(ccf %>% filter(cluster == "S2") %>% pull(CCF)), 
-                       shape2 = mean(nu$S2)*(1 - ccf %>% filter(cluster == "S2") %>% pull(CCF)))
-     
-     Time = log((1-ccf %>% pull(CCF) %>% sum())*N_max)/log(2) 
-     
-     s1 = (log(f1/max(1-f1-f2,0.01)) + log(2)*t1)/(log(2)*(Time-t1))
-     
-     s2 = (log(f2/max(1-f1-f2,0.01)) + log(2)*t2)/(log(2)*(Time-t2))
-     
+  int<lower=0> m;
+  real<lower=0> Ntot;
+  real<lower=0,upper = 1> ccf;
+  real<lower=0> length_dipl_genome;
+  real<lower=0> mu;
+  real u;
+  real<lower=0> sigma;
 }
-   
-   qt1 = quantile(t1,probs = c(0.02,0.98))
-   qt2 = quantile(t2,probs = c(0.02,0.98))
-   qs1 = quantile(s1,probs = c(0.02,0.98))
-   qs2 = quantile(s2,probs = c(0.02,0.98))
- 
-   return(tibble(param = c("t1","t2","s1","s2"),
-                 mean = c(mean(t1),mean(t2),mean(s1),mean(s2)), 
-                 var = c(var(t1),var(t2),var(s1),var(s2)),
-                 qunatiles = c(list(qt1),list(qt2),list(qs1),list(qs2)),
-                 inference = c(list(t1),list(t2),list(s1),list(s2))))  
- 
-   }
 
+parameters {
+  
+  real<lower=0> t_mrca;
+  real<lower=0,upper=t_mrca> t_driver;
+  real<lower=0> s;
+  
+}
+
+model{
+  
+  // priors
+  
+  t_mrca ~ uniform(0,log(Ntot*(1-ccf))/log(2));
+  t_driver ~ uniform(0,t_mrca);
+  s ~ lognormal(u,sigma);
+  
+  //  Likelihood mutations
+  
+  m ~ poisson(2*mu*log(2)*length_dipl_genome*((t_driver) + (1+s)*(t_mrca-t_driver)));
+  
+  // Likelihood branching process
+  
+  target += exponential_lpdf(Ntot*ccf | exp(-log(2)*(1+s)*(log(Ntot*(1-ccf))/log(2) - t_driver)));
+  
+}
+
+"
+
+
+
+fit <- stan(
+  model_code = model.stan,  # Stan program
+  data = data,    # named list of data
+  chains = 4,             # number of Markov chains
+  warmup = 1000,          # number of warmup iterations per chain
+  iter = 5000,            # total number of iterations per chain
+  cores = 4,
+  control = list(adapt_delta= 0.99)
+)
+
+
+
+post = as.data.frame(fit) %>% dplyr::select(c("t_mrca","t_driver","s")) %>% mutate(type = "post")
+pre = data.frame(t_mrca = runif(nrow(post),min = 0,max = log(N_max*(1-ccf))/log(2)),
+                 t_driver = runif(nrow(post),min = 0,max = log(N_max*(1-ccf))/log(2)),
+                 s = rlnorm(nrow(post),meanlog = u,sdlog = sigma), 
+                 type = "prior")
+
+post = rbind(post,pre)
+
+p_mrca = ggplot(post  %>% reshape2::melt() %>% filter(variable == "t_mrca"))   + labs(x = "", title = "t_mrca") + 
+  CNAqc:::my_ggplot_theme() + 
+  scale_alpha_manual(values = c("prior" = 0.4, "post" = 1)) + geom_density(aes(x = value, alpha = type), fill = "indianred")  
+
+p_driver = ggplot(post  %>% reshape2::melt() %>% filter(variable == "t_driver"))   + labs(x = "", title = "t_driver") + 
+  CNAqc:::my_ggplot_theme() + 
+  scale_alpha_manual(values = c("prior" = 0.4, "post" = 1)) + geom_density(aes(x = value, alpha = type), fill = "darkgreen")  
+
+p_s = ggplot(post  %>% reshape2::melt() %>% filter(variable == "s"))   + labs(x = "", title = "s") + 
+  CNAqc:::my_ggplot_theme() + 
+  scale_alpha_manual(values = c("prior" = 0.4, "post" = 1)) + geom_density(aes(x = value, alpha = type), fill = "cornflowerblue") 
+
+
+p_dynamics = ggarrange(plotlist = list(p_mrca,p_driver,p_s),nrow = 1, ncol = 3, legend = "bottom")
+
+return(list(posterior = fit , plot = p_dynamics))
 
 }
 
