@@ -642,136 +642,6 @@ get_genome_length = function(fit, exome = FALSE, build = "hg38", karyotypes = NU
 #'  evo_dynamics = s_posterior(m,pi,N_max,mu,length_diploid_genome = 3*10^9, u = u, sigma = sigma)
 #'  @export
 
-# s_posterior <- function(fit,
-#                         N_max = 10^10,
-#                         # lq = 0.05,
-#                         # uq = 0.95,
-#                         ncells = 1
-#                         ){
-#   
-#   # check subclone
-#   if (! "S1" %in% (fit$data$cluster %>% unique())){
-#     return(NA)
-#   }
-#   
-# 
-# library(stringr)
-#   
-# mu = mobster:::mu_posterior(fit = fit,
-#                             genome_length = mobster:::get_genome_length(fit),
-#                             # lq = lq,
-#                             # uq = uq,
-#                             ncells = ncells) %>% pull(mean)
-# 
-# l = get_genome_length(fit)  %>% 
-#      mutate(ploidy = strsplit(karyotype,":")[[1]] %>% as.numeric() %>% sum())
-# 
-# n_subclones = grep(x = fit$data$cluster %>% unique(),pattern = "S") %>% length()
-# 
-# if(n_subclones == 1){
-#   
-#   M = fit$data %>% filter(!is.na(cluster),cluster == "S1") %>% as_tibble() %>% 
-#      group_by(karyotype) %>% 
-#       summarize(n = length(chr)) 
-#   
-#   
-#   ccf =    get_ccf_subclones(fit) %>% pull(CCF)
-#   
-#   nu = lapply(names(fit$model_parameters), 
-#               function(k){tibble(karyotype = k,n = fit$model_parameters[[k]]$n_trials_subclonal)}) %>% 
-#        bind_rows() %>% pull(n) %>% mean()
-#       
-# # likelihood calculation
-#   
-# t = rgamma(n=1e4, shape = M$n %>% sum() + digamma(1)*mu*sum(l$length*l$ploidy), rate = log(2)*mu*sum(l$length*l$ploidy)) 
-# 
-# qt = quantile(t,probs = c(0.02,0.98))
-# 
-# f = rbeta(n=1e4, shape1 = nu*ccf, shape2 = (1-ccf)*nu)
-#  
-# Time = log((1-ccf)*N_max)/log(2)
-#  
-# s = (log(f/(1-f)) + log(2)*t)/(log(2)*(Time-t))
-# qs = quantile(s,probs = c(0.02,0.98))
-# 
-# 
-# return(tibble(param = c("t","s"),mean = c(mean(t),mean(s)), var =  c(var(t),var(s)), quantiles = c(list(qt),list(qs)),
-#          inference = c(list(t),list(s))))
-# 
-#  }else{
-#     
-#    ccf = get_ccf_subclones(fit) 
-#    
-#    M = fit$data %>% filter(!is.na(cluster),cluster %in% c("S1","S2")) %>% as_tibble() %>% 
-#      group_by(cluster,karyotype) %>% summarize(n = length(chr))
-#    
-#    nu =   lapply(names(fit$model_parameters), 
-#           function(k){tibble(karyotype = k,
-#                              S1 = fit$model_parameters[[k]]$n_trials_subclonal[1],
-#                              S2 = fit$model_parameters[[k]]$n_trials_subclonal[2])}) %>% 
-#              bind_rows() 
-# 
-# 
-#    if(ccf %>% pull(CCF) %>% sum() > 1){
-#      
-#    
-#      t1 = rgamma(n=1e4, shape = M %>% filter(cluster == "S2") %>% pull(n) %>% sum() + digamma(1)*mu*sum(l$length*l$ploidy), 
-#                  rate = log(2)*mu*sum(l$length*l$ploidy)) 
-#      
-#      Time = log((1-ccf %>% pull(CCF) %>% max())*N_max)/log(2) 
-#      
-#      f1 = rbeta(n=1e4, shape1 = mean(nu$S2)*(ccf %>% filter(cluster == "S2") %>% pull(CCF)), 
-#                 shape2 = mean(nu$S2)*(1 - ccf %>% filter(cluster == "S2") %>% pull(CCF)))
-#      
-#      f2 = rbeta(n=1e4, shape1 = mean(nu$S1)*(ccf %>% filter(cluster == "S1") %>% pull(CCF)), 
-#                 shape2 = mean(nu$S1)*(1 - ccf %>% filter(cluster == "S1") %>% pull(CCF)))
-#      
-#      s1 = (log(max(f1-f2,0.01)/(1-f1)) + log(2)*t1)/(log(2)*(Time-t1))
-#      
-#      t2 = rgamma(n=1e4, shape = M %>% filter(cluster == "S1") %>% pull(n) %>% sum() + digamma(1)*mu*sum(l$length*l$ploidy), 
-#                  rate = log(2)*(1+s1)*mu*sum(l$length*l$ploidy)) 
-#      
-#      s2 = (log(f2/max(1-f1,0.01)) + log(2)*t2)/(log(2)*(Time-t2))
-#      
-#      
-# }else{
-#      
-#      t1 = rgamma(n=1e4, shape = M %>% filter(cluster == "S1") %>% pull(n) %>% sum() + digamma(1)*mu*sum(l$length*l$ploidy), 
-#                  rate = log(2)*mu*sum(l$length*l$ploidy))
-#      t2 = rgamma(n=1e4, shape = M %>% filter(cluster == "S2") %>% pull(n) %>% sum() + digamma(1)*mu*sum(l$length*l$ploidy), 
-#                  rate = log(2)*mu*sum(l$length*l$ploidy)) 
-#      
-#      f1 = rbeta(n=1e4, shape1 = mean(nu$S1)*(ccf %>% filter(cluster == "S1") %>% pull(CCF)), 
-#                        shape2 = mean(nu$S1)*(1 - ccf %>% filter(cluster == "S1") %>% pull(CCF)))
-#      
-#      f2 = rbeta(n=1e4, shape1 = mean(nu$S2)*(ccf %>% filter(cluster == "S2") %>% pull(CCF)), 
-#                        shape2 = mean(nu$S2)*(1 - ccf %>% filter(cluster == "S2") %>% pull(CCF)))
-#      
-#      Time = log((1-ccf %>% pull(CCF) %>% sum())*N_max)/log(2) 
-#      
-#      s1 = (log(f1/max(1-f1-f2,0.01)) + log(2)*t1)/(log(2)*(Time-t1))
-#      
-#      s2 = (log(f2/max(1-f1-f2,0.01)) + log(2)*t2)/(log(2)*(Time-t2))
-#      
-# }
-#    
-#    qt1 = quantile(t1,probs = c(0.02,0.98))
-#    qt2 = quantile(t2,probs = c(0.02,0.98))
-#    qs1 = quantile(s1,probs = c(0.02,0.98))
-#    qs2 = quantile(s2,probs = c(0.02,0.98))
-#  
-#    return(tibble(param = c("t1","t2","s1","s2"),
-#                  mean = c(mean(t1),mean(t2),mean(s1),mean(s2)), 
-#                  var = c(var(t1),var(t2),var(s1),var(s2)),
-#                  qunatiles = c(list(qt1),list(qt2),list(qs1),list(qs2)),
-#                  inference = c(list(t1),list(t2),list(s1),list(s2))))  
-#  
-#    }
-# 
-# 
-# }
-
-
 s_posterior = function(m,ccf,N_max,mu,length_diploid_genome,u = 0,sigma = 1){
   
   library(rstan)
@@ -837,7 +707,8 @@ fit <- stan(
   warmup = 1000,          # number of warmup iterations per chain
   iter = 5000,            # total number of iterations per chain
   cores = 4,
-  control = list(adapt_delta= 0.99)
+  control = list(adapt_delta= 0.99),
+  verbose = F
 )
 
 
