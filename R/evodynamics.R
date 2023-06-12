@@ -187,21 +187,18 @@ selection2clonenested <- function(time1,
 #' data('fit_example', package = 'mobster')
 #' evolutionary_parameters(fit_example)
 evolutionary_parameters <-
-  function(x,
+  function(fit,
            Nmax = 10 ^ 10,
            lq = 0.1,
            uq = 0.9,
            ploidy = 2,
            ncells = 2){
     
-    if(class(x$best) == "dbpmmh"){
+    if(class(fit$best) == "dbpmmh"){
       return(evolutionary_parameters_mobsterh(x$best))
     }
     
-    is_list_mobster_fits(x)
-    fit = x
-
-    if (fit$best$fit.tail == FALSE)
+   if (fit$best$fit.tail == FALSE)
       stop("No tail detected,
            evolutionary inference not possible")
 
@@ -622,28 +619,37 @@ get_genome_length = function(fit, exome = FALSE, build = "hg38", karyotypes = NU
 #'  
 #
 #'  @param fit Fit by MOBSTERh
-#'  @param prior_s Object containing range of values of s and the corresponding probabilities
-#'  @param m Number of mutations clustered in the subclone
-#'  @param ccf estimated ccf of the subclone
 #'  @param N_max Final tumour size
-#'  @param mu Mutation rate
-#'  @param length_diploid_genome length of the diploid part of the genome
+#'  @param ncells Model of cell division
 #'  @param u = 0   mean of lognormal prior on s
 #'  @param sigma = 1 sigma of lognormal prior on s
 #'  @return 
 #'  @examples
-#'   m = fit$best$data %>% filter(cluster == 'S1',karyotype == "1:1") %>% nrow()
-#'   mu = mu_posterior(fit$best,ncells = 2) %>% pull(mean)
-#'   pi = (fit$best$data %>% filter(cluster == 'S1',karyotype == "1:1") %>% pull(VAF) %>% mean())*2
-#'  point_estimate = evolutionary_parameters_mobsterh(fit$best,ncells = 2)
-#'  mean = point_estimate$selection_S1 %>% pull(s)
-#'  sigma = 0.5
-#'  u = log(mean) - (sigma^2)/2
-#'  evo_dynamics = s_posterior(m,pi,N_max,mu,length_diploid_genome = 3*10^9, u = u, sigma = sigma)
+#'  data('fit_example', package = 'mobster')
+#'  N_max = 10^9
+#'  evo_dynamics = s_posterior(fit_example,N_max,ncells = 2, u = 0, sigma = 0.5)
 #'  @export
 
-s_posterior = function(m,ccf,N_max,mu,length_diploid_genome,u = 0,sigma = 1){
+s_posterior = function(fit,N_max,ncells = 1,u = 0,sigma = 1){
   
+  
+  if(class(fit$best) == "dbpmmh"){
+    
+    m = fit$best$data %>% filter(cluster == 'S1',karyotype == "1:1") %>% nrow()
+    mu = mu_posterior(fit$best,ncells = ncells) %>% pull(mean)
+    ccf = (fit$best$data %>% filter(cluster == 'S1',karyotype == "1:1") %>% pull(VAF) %>% mean())*2
+    length_diploid_genome = get_genome_length(fit$best) %>% filter(karyotype == "1:1") %>% 
+      pull(length)
+    
+  }else{
+  
+    m = fit$best$data %>% filter(cluster == 'C2') %>% nrow()
+    mu = mutationrate(fit,ncells = ncells)/(2*3*10^9)
+    ccf = (fit$best$data %>% filter(cluster == 'C2') %>% pull(VAF) %>% mean())*2
+    length_diploid_genome = 3*10^9
+    
+}
+
   library(rstan)
   library(ggplot2)
   library(ggpubr)
