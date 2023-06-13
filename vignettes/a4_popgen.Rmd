@@ -52,15 +52,15 @@ The mathematical details of these computations are described in the main paper, 
 
 ```{r}
 N_max = 10^9
-s_posterior(fit_example,N_max,ncells = 2, u = 0, sigma = 0.5)
+mobster:::s_posterior(fit_example,N_max,ncells = 2, u = 0, sigma = 0.5)
 ```
 
-A posterior distribution of time of origin $t_{driver}$, time of mrca appearance t_{mrca} and selection coefficient s of a subclone.
+A posterior distribution of time of origin $t_{driver}$, time of mrca appearance $t_{mrca}$ and selection coefficient $s$ of a subclone.
 We assume a Poisson distribution as likelihood for the number of diploid heterozygous mutations of the subclonal cluster with mean 
 $M = 2\mu l\omega(t_{driver} + (1+s)(t_{mrca} - t_{driver}))$,where $l$ is the length of the diploid genome, 
 $\mu$ is the mutation rate and $\omega$ is the growth rate of the tumour. 
 We assume an exponential distribution as likelihood for the mean number of cells of the subclone. The rate of the exponential is the inverse of expected
-subclone size $exp(-\omega*(T-t_{driver}))$, where $T$ is the time of sample collection. Times and growth rate are expressed in tumor doubling units. 
+subclone size $exp(-\omega(T-t_{driver}))$, where $T$ is the time of sample collection. Times and growth rate are expressed in tumor doubling units. 
 Posterior distributions are computed with HMC using RSTAN.
 
 

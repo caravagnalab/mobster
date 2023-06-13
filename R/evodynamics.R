@@ -623,12 +623,11 @@ get_genome_length = function(fit, exome = FALSE, build = "hg38", karyotypes = NU
 #'  @param ncells Model of cell division
 #'  @param u = 0   mean of lognormal prior on s
 #'  @param sigma = 1 sigma of lognormal prior on s
-#'  @return 
+#'  @return stan inference and a plot of prior and posterior distributions
+#'  @export
 #'  @examples
 #'  data('fit_example', package = 'mobster')
-#'  N_max = 10^9
-#'  evo_dynamics = s_posterior(fit_example,N_max,ncells = 2, u = 0, sigma = 0.5)
-#'  @export
+#'  evo_dynamics = s_posterior(fit_example,N_max = 10^9,ncells = 2, u = 0, sigma = 0.5)
 
 s_posterior = function(fit,N_max,ncells = 1,u = 0,sigma = 1){
   
