@@ -1,5 +1,20 @@
 
 
+#' Perform predictive checks from a fitted object
+#'
+#' @param obj mobsterh object
+#' @param samples how many samples to draw
+#' @param type one of \code{prior} or \code{posterior} to get 
+#' samples from the posterior or the prior respectively
+#'
+#' @return a list with number of variants for each karyotype for each sample
+#' @export
+#'
+#' @examples
+#' 
+#' ps <- predictive_checks(mobster::fit_example_mobsterh$best, samples = 30, type = "posterior")
+#' plot_random_samples_overlay(mobster::fit_example_mobsterh$best,ps)
+#' 
 predictive_checks <- function(obj, samples = 100, type = c("prior", "posterior")){
   
   if(type == "prior")
@@ -119,7 +134,7 @@ prior_predictive_checks_aux <- function(i, obj){
         has_subclones = FALSE
       }
         
-      
+      has_tail = FALSE
       if (obj$run_parameters$tail == 1){
         has_tail = TRUE
         multi_penalty = 0
@@ -330,7 +345,7 @@ posterior_predictive_checks_aux <- function(i,obj){
       has_subclones = FALSE
     }
     
-    
+    has_tail = FALSE
     if (obj$run_parameters$tail == 1){
       has_tail = TRUE
       multi_penalty = 0

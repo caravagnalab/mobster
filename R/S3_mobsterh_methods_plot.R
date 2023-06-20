@@ -24,6 +24,8 @@ plot.dbpmmh = function(x,
                        add_density = TRUE,
                        empty_plot = TRUE,
                        assembly_plot = TRUE,
+                       filter_indels = FALSE,
+                       min_VAF = x$run_parameters$vaf_filter,
                        ...)
 {
   #############################################
@@ -169,7 +171,9 @@ plot.dbpmmh = function(x,
 
   cli::cli_alert("Generating metadata for plot.")
 
-  data_table = x$data
+  data_table = x$data %>% filter(VAF > min_VAF)
+  
+   if(filter_indels) data_table %>% filter(to - from == 1)
 
    if (!show_na)
      data_table = data_table %>% filter(!is.na(cluster))
@@ -219,10 +223,10 @@ plot.dbpmmh = function(x,
 
   tail_color = 'gray'
 
-  clonal_colors = suppressWarnings(RColorBrewer::brewer.pal(9, 'Set1'))[1:2]
+  clonal_colors = suppressWarnings(RColorBrewer::brewer.pal(9, 'Set1'))
   subclonal_colors = suppressWarnings(RColorBrewer::brewer.pal(7, 'Dark2'))[1:7]
 
-  names(clonal_colors) = c("C1", "C2")
+  names(clonal_colors) = c("C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9")
   names(subclonal_colors) =  c("S1", "S2", "S3", "S4", "S5", "S6", "S7")
 
   cluster_colors = c("Tail" = tail_color, clonal_colors, subclonal_colors, `Not used` = 'lightpink')

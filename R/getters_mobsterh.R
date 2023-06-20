@@ -41,9 +41,6 @@ get_pareto = function(x) {
 get_beta = function(x) {
   used = x$model_parameters %>% names
 
-  one_Beta = c("1:0", "1:1")
-  two_Beta = c("2:0", "2:1", "2:2")
-
   df = NULL
   for (k in used)
   {
@@ -51,23 +48,16 @@ get_beta = function(x) {
     betas = startsWith(betas, 'beta')
 
     tibble_beta = x$model_parameters[[k]][betas] %>% as_tibble()
-    colnames(tibble_beta) = c("a", "b")
+    colnames(tibble_beta)[1:2] = c("a", "b")
 
     tibble_beta$karyotype = k
-    cluster <-  vector(length = nrow(tibble_beta))
-    if(k %in% one_Beta){
-      cluster[1] = "C1"
-      if(mobster:::has_tail(x))
-        tibble_beta$mixing = x$model_parameters[[k]]$mixture_probs[2]
-      else
-        tibble_beta$mixing = x$model_parameters[[k]]$mixture_probs[1]
-    } else {
-      cluster[1:2] = c("C1", "C2")
-      if(mobster:::has_tail(x))
-        tibble_beta$mixing = x$model_parameters[[k]]$mixture_probs[2:3]
-      else
-        tibble_beta$mixing = x$model_parameters[[k]]$mixture_probs[1:2]
-    }
+    cluster <-  paste0("C",1:nrow(tibble_beta))
+    n_clones <- sum(grepl("C", x$model_parameters[[k]]$cluster_types))
+    if(mobster:::has_tail(x))
+      tibble_beta$mixing = x$model_parameters[[k]]$mixture_probs[2:(1 + n_clones)]
+    else
+      tibble_beta$mixing = x$model_parameters[[k]]$mixture_probs[1:(n_clones)]
+
 
     tibble_beta$cluster <-  cluster
 

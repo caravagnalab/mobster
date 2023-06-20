@@ -121,15 +121,16 @@ mobsterh_fit = function(x,
   if (inherits(x, "evopipe_qc"))
   {
     purity <- mobster:::get_purity(x)
-    x$cnaqc <- CNAqc::subsample(x$cnaqc,N = N_MAX)
     data_raw <- x
     x <-
       format_data_mobsterh_QC(x,
                               vaf_t = vaf_filter,
                               n_t = n_t,
+                              kar = karyotypes,
                               enforce_QC_PASS = enforce_QC_PASS,
                               NV_filter = NV_filter,
-                              filter_indels = filter_indels
+                              filter_indels = filter_indels,
+                              N = N_MAX
                               )
 
     can_work = TRUE
@@ -138,15 +139,17 @@ mobsterh_fit = function(x,
   # CNAqc object
   if (inherits(x, "cnaqc"))
   {
-    x <- CNAqc::subsample(x, N = N_MAX)
+   
     purity <- x$purity
     data_raw <- x$mutations
     x <- format_data_mobsterh_QC(x,
                               vaf_t = vaf_filter,
+                              kar = karyotypes,
                               n_t = n_t,
                               enforce_QC_PASS = enforce_QC_PASS,
                               NV_filter = NV_filter,
-                              filter_indels = filter_indels
+                              filter_indels = filter_indels,
+                              N = N_MAX
                               )
 
     can_work = TRUE
@@ -161,11 +164,13 @@ mobsterh_fit = function(x,
       )
 
     data_raw <- x
-    x <- mobster:::format_data_mobsterh_DF(x,
+    x <- format_data_mobsterh_DF(x,
                                  vaf_t = vaf_filter,
+                                 kar = karyotypes,
                                  NV_filter = NV_filter,
                                  n_t = n_t,
-                                 filter_indels = filter_indels
+                                 filter_indels = filter_indels,
+                                 N = N_MAX
                                  )
     cli::cli_alert_warning("Using input purity {.field {purity}}")
 
@@ -281,7 +286,9 @@ mobsterh_fit = function(x,
                       description = description,
                       lrd_gamma = lrd_gamma,
                       number_of_trials_subclonal = number_of_trials_subclonal,
-                      k_means_init = k_means_init
+                      k_means_init = k_means_init,
+                      vaf_filter = vaf_filter,
+                      NV_filter = NV_filter
                     ))
 
 
@@ -372,7 +379,10 @@ mobsterh_fit_aux <-  function(data,
                               description,
                               lrd_gamma,
                               number_of_trials_subclonal,
-                              k_means_init) {
+                              k_means_init,
+                              vaf_filter,
+                              NV_filter
+                              ) {
   data_u <- data
   
   used_muts <- lapply(data_u, rownames) %>% do.call(c,.) %>% unname()
@@ -405,6 +415,12 @@ mobsterh_fit_aux <-  function(data,
         k_means_init = k_means_init
       ))
 
+  inf_res <- lapply(inf_res, function(x) {
+  x$run_parameters$vaf_filter <- vaf_filter
+  x$run_parameters$NV_filter <- NV_filter
+  x
+  })
+  
   best_model <-
     which.max(sapply(inf_res, function(h)
       h$information_criteria$likelihood))

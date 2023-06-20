@@ -15,7 +15,10 @@
 
 assign_mutations_posteriori <- function(x) {
   
-  to_assign <- x$data %>% filter(is.na(cluster), karyotype %in% names(x$model_parameters)) 
+  to_assign <- x$data %>% filter(is.na(cluster), 
+                                 karyotype %in% names(x$model_parameters),
+                                 VAF <= x$run_parameters$min_vaf,
+                                 NV <= x$run_parameters$NV_filter) 
   
   if(nrow(to_assign) == 0) {
     cli::cli_alert_info("No mutations to assign, returning input object!")
