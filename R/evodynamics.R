@@ -601,8 +601,8 @@ get_genome_length = function(fit, exome = FALSE, build = "hg38", karyotypes = NU
   
   if(!is.null(karyotypes)) seg %>% filter(karyotype %in% karyotypes)
   
-  lengths = seg  %>% group_by(karyotype) %>% 
-    summarize(length = sum(to-from)) 
+  lengths = seg  %>% dplyr::group_by(karyotype) %>% 
+    dplyr::summarize(length = sum(to-from)) 
   
   return(lengths)
   
