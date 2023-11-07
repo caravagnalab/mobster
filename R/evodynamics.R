@@ -472,6 +472,18 @@ mu_posterior <- function(fit,
                      genome_length %>% filter(karyotype == karyo) %>% pull(length))
 
   }
+  
+  good_karyo = (subclonal_mutations > 0) & (f_min < f_max)
+  
+  subclonal_mutations = subclonal_mutations[good_karyo]
+  f_min = f_min[ good_karyo]
+  f_max = f_max[ good_karyo]
+  
+  if(sum(good_karyo) == 0)
+  {
+    warning("Missing karyotype with enough mutations")
+    stop("Will not compute mutation rate")
+  }
 
   # calculate alpha e beta mutation rate posterior
 
