@@ -613,8 +613,8 @@ get_genome_length = function(fit, exome = FALSE, build = "hg38", karyotypes = NU
   
   if(!is.null(karyotypes)) seg %>% filter(karyotype %in% karyotypes)
   
-  lengths = seg  %>% group_by(karyotype) %>% 
-    summarize(length = sum(to-from)) 
+  lengths = seg  %>% dplyr::group_by(karyotype) %>% 
+    dplyr::summarize(length = sum(to-from)) 
   
   return(lengths)
   
@@ -644,19 +644,19 @@ get_genome_length = function(fit, exome = FALSE, build = "hg38", karyotypes = NU
 s_posterior = function(fit,N_max,ncells = 1,u = 0,sigma = 1){
   
   
-  if(class(fit$best) == "dbpmmh"){
+  if(class(fit) == "dbpmmh"){
     
-    m = fit$best$data %>% filter(cluster == 'S1',karyotype == "1:1") %>% nrow()
-    mu = mu_posterior(fit$best,ncells = ncells) %>% pull(mean)
-    ccf = (fit$best$data %>% filter(cluster == 'S1',karyotype == "1:1") %>% pull(VAF) %>% mean())*2
-    length_diploid_genome = get_genome_length(fit$best) %>% filter(karyotype == "1:1") %>% 
+    m = fit$data %>% filter(cluster == 'S1',karyotype == "1:1") %>% nrow()
+    mu = mu_posterior(fit,ncells = ncells) %>% pull(mean)
+    ccf = (fit$data %>% filter(cluster == 'S1',karyotype == "1:1") %>% pull(VAF) %>% mean())*2
+    length_diploid_genome = get_genome_length(fit) %>% filter(karyotype == "1:1") %>% 
       pull(length)
     
   }else{
   
-    m = fit$best$data %>% filter(cluster == 'C2') %>% nrow()
+    m = fit$data %>% filter(cluster == 'C2') %>% nrow()
     mu = mutationrate(fit,ncells = ncells)/(2*3*10^9)
-    ccf = (fit$best$data %>% filter(cluster == 'C2') %>% pull(VAF) %>% mean())*2
+    ccf = (fit$data %>% filter(cluster == 'C2') %>% pull(VAF) %>% mean())*2
     length_diploid_genome = 3*10^9
     
 }
