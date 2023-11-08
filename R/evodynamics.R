@@ -883,7 +883,7 @@ model{
   
   //  Likelihood mutations
   
-  m1 ~ poisson(n*mu*log(2)*length_genome*((t_driver1) + (1+s1)*(t_sp-t_driver)));
+  m1 ~ poisson(n*mu*log(2)*length_genome*((t_driver1) + (1+s1)*(t_sp-t_driver1)));
   m2 ~ poisson(n*mu*log(2)*length_genome*((t_driver2-t_sp) + (1+s2)*(t_mrca2-t_sp)));
   
   // Likelihood branching process
