@@ -695,7 +695,7 @@ s_posterior = function(fit,N_max,ncells = 1,u1 = 0,sigma1 = 1,u2 = 0,sigma2 = 1)
   # library(ggpubr)
   
   data = list( m1 = m1,
-               m2 = m2
+               m2 = m2,
                Ntot = N_max,
                ccf1 = ccf1,
                ccf2 = ccf2,
