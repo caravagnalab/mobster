@@ -641,7 +641,7 @@ get_genome_length = function(fit, exome = FALSE, build = "hg38", karyotypes = NU
 #'  data('fit_example', package = 'mobster')
 #'  evo_dynamics = s_posterior(fit_example,N_max = 10^9,ncells = 2, u = 0, sigma = 0.5)
 
-s_posterior = function(fit,N_max,ncells = 1,u1 = 0,sigma1 = 1,u2 = 0,sigma2 = 1){
+s_posterior = function(fit,N_max = 10^9,ncells = 1,u1 = -0.5,sigma1 = 0.6,u2 = -0.5,sigma2 = 0.6){
   
   
   if(class(fit) == "dbpmmh"){
