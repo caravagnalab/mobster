@@ -643,7 +643,6 @@ get_genome_length = function(fit, exome = FALSE, build = "hg38", karyotypes = NU
 
 s_posterior = function(fit,N_max = 10^9,ncells = 1,u1 = -0.5,sigma1 = 0.6,u2 = -0.5,sigma2 = 0.6){
   
-  
   if(class(fit) == "dbpmmh"){
     
     order_karyo = c(names(fit$model_parameters)[names(fit$model_parameters) == "1:0"],
@@ -661,54 +660,62 @@ s_posterior = function(fit,N_max = 10^9,ncells = 1,u1 = -0.5,sigma1 = 0.6,u2 = -
     
     n_alleles = as.numeric(strsplit(x = karyo, split = ":")[[1]][1]) + 
                as.numeric(strsplit(x = karyo, split = ":")[[1]][2])
-    m1 = fit$data %>% filter(cluster == 'S1',karyotype == karyo) %>% nrow()
-    m2 = fit$data %>% filter(cluster == 'S2',karyotype == karyo) %>% nrow()
     
-    if(m1 == 0){
-      warning("No subclonal mutations")
-      stop("Will not compute s")
+    if(!"S2" %in% (fit$data %>% pull(cluster))){
+      
+      m1 = fit$data %>% filter(cluster == 'S1',karyotype == karyo) %>% nrow()
+      ccf1 = fit$model_parameters[[karyo]]$ccf_subclones
+      
+    }else{
+      
+    m1 = fit$data %>% filter(cluster == 'S2',karyotype == karyo) %>% nrow()
+    m2 = fit$data %>% filter(cluster == 'S1',karyotype == karyo) %>% nrow()
+    ccf1 = fit$model_parameters[[karyo]]$ccf_subclones %>% max()
+    ccf2 = fit$model_parameters[[karyo]]$ccf_subclones %>% min()
+    
     }
     
     mu = mu_posterior(fit,ncells = ncells) %>% pull(mean)
-    ccf1 = (fit$data %>% filter(cluster == 'S1',karyotype == karyo) %>% 
-             pull(VAF) %>% mean())*n_alleles 
-    ccf2 = (fit$data %>% filter(cluster == 'S2',karyotype == karyo) %>% 
-              pull(VAF) %>% mean())*n_alleles 
+   
     length_genome = get_genome_length(fit) %>% filter(karyotype == karyo) %>% 
       pull(length)
     
   }else{
   
     n_alleles = 2
+    purity = (fit$data %>% filter(cluster == 'C1') %>% pull(VAF) %>% mean())*n_alleles 
     m1 = fit$data %>% filter(cluster == 'C2') %>% nrow()
     m2 = fit$data %>% filter(cluster == 'C3') %>% nrow()
     mu = mutationrate(fit,ncells = ncells)/(2*3*10^9)
-    ccf1 = (fit$data %>% filter(cluster == 'C2') %>% pull(VAF) %>% mean())*n_alleles 
-    ccf2 = (fit$data %>% filter(cluster == 'C3') %>% pull(VAF) %>% mean())*n_alleles 
+    ccf1 = (fit$data %>% filter(cluster == 'C2') %>% pull(VAF) %>% mean())*n_alleles/purity 
+  if("C3" %in% (fit$data %>% pull(cluster))){
+    ccf2 = (fit$data %>% filter(cluster == 'C3') %>% pull(VAF) %>% mean())*n_alleles/purity
+    }
     length_genome = 3*10^9
     
-    
-}
+  }
+  
+  if(m1 == 0){
+    warning("No subclonal mutations")
+    stop("Will not compute s")
+  }
 
   library(rstan)
   # library(ggplot2)
   # library(ggpubr)
-  
-  data = list( m1 = m1,
-               m2 = m2,
-               Ntot = N_max,
-               ccf1 = ccf1,
-               ccf2 = ccf2,
-               n = n_alleles,
-               length_genome = length_genome,
-               mu = mu,
-               u1 = u1,
-               sigma1 = sigma1,
-               u2 = u2,
-               sigma2 = sigma2
-  )
-  
-  if(m2 == 0){
+
+ if(m2 == 0){
+   
+   
+   data = list( m1 = m1,
+                Ntot = N_max,
+                ccf1 = ccf1,
+                n = n_alleles,
+                length_genome = length_genome,
+                mu = mu,
+                u1 = u1,
+                sigma1 = sigma1
+   )
 
 type = "single subclone"
 
@@ -717,17 +724,13 @@ model.stan = "
 data {
   
   int<lower=0> m1;
-  int <lower=0> m2;
   real<lower=0> Ntot;
   real<lower=0,upper = 1> ccf1;
-  real<lower=0,upper = ccf1> ccf2;
   real<lower=0> length_genome;
   real<lower=0> mu;
   int n;
   real u1;
   real<lower=0> sigma1;
-  real u2;
-  real<lower=0> sigma2;
 }
 
 parameters {
@@ -758,6 +761,21 @@ model{
 
 "
   }else{
+    
+    
+    data = list( m1 = m1,
+                 m2 = m2,
+                 Ntot = N_max,
+                 ccf1 = ccf1,
+                 ccf2 = ccf2,
+                 n = n_alleles,
+                 length_genome = length_genome,
+                 mu = mu,
+                 u1 = u1,
+                 sigma1 = sigma1,
+                 u2 = u2,
+                 sigma2 = sigma2
+    )
   
     if(ccf1 + ccf2 < 1){
       
@@ -892,10 +910,23 @@ fit <- stan(
   iter = 5000,            # total number of iterations per chain
   cores = 4,
   control = list(adapt_delta= 0.99),
-  verbose = F
+  verbose = T
 )
 
+library("dplyr")
+library("rstanarm")
+library("ggplot2")
+library("bayesplot")
 
+color_scheme_set("brightblue")
+
+posterior <- as.matrix(fit)
+
+plot_title <- ggtitle("Posterior distributions",
+                      "with medians and 80% intervals")
+p_dynamics = mcmc_areas(posterior,
+           pars = (posterior %>% colnames())[posterior %>% colnames() != "lp__"],
+           prob = 0.8) + plot_title + CNAqc:::my_ggplot_theme()
 
 # post = as.data.frame(fit) %>% dplyr::select(c("t_mrca","t_driver","s")) %>% mutate(type = "post")
 # pre = data.frame(t_mrca = runif(nrow(post),min = 0,max = log(N_max*(1-ccf))/log(2)),
@@ -922,7 +953,7 @@ fit <- stan(
  
 # return(list(posterior = fit , plot = p_dynamics))
 
-return(list(posterior = fit , model_type = type))
+return(list(posterior = fit ,plot = p_dynamics, model_type = type))
 
 }
 
