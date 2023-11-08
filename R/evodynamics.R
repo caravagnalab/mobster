@@ -641,50 +641,93 @@ get_genome_length = function(fit, exome = FALSE, build = "hg38", karyotypes = NU
 #'  data('fit_example', package = 'mobster')
 #'  evo_dynamics = s_posterior(fit_example,N_max = 10^9,ncells = 2, u = 0, sigma = 0.5)
 
-s_posterior = function(fit,N_max,ncells = 1,u = 0,sigma = 1){
+s_posterior = function(fit,N_max,ncells = 1,u1 = 0,sigma1 = 1,u2 = 0,sigma2 = 1){
   
   
   if(class(fit) == "dbpmmh"){
     
-    m = fit$data %>% filter(cluster == 'S1',karyotype == "1:1") %>% nrow()
+    order_karyo = c(names(fit$model_parameters)[names(fit$model_parameters) == "1:0"],
+                    names(fit$model_parameters)[names(fit$model_parameters) == "1:1"],
+                    names(fit$model_parameters)[names(fit$model_parameters) == "2:0"],
+                    names(fit$model_parameters)[names(fit$model_parameters) == "2:1"],
+                    names(fit$model_parameters)[names(fit$model_parameters) == "2:2"])
+    
+    karyo = order_karyo[1]
+    
+    if(length(karyo) == 0){
+      warning("No common karyotypes")
+      stop("Will not compute s")
+    }
+    
+    n_alleles = as.numeric(strsplit(x = karyo, split = ":")[[1]][1]) + 
+               as.numeric(strsplit(x = karyo, split = ":")[[1]][2])
+    m1 = fit$data %>% filter(cluster == 'S1',karyotype == karyo) %>% nrow()
+    m2 = fit$data %>% filter(cluster == 'S2',karyotype == karyo) %>% nrow()
+    
+    if(m1 == 0){
+      warning("No subclonal mutations")
+      stop("Will not compute s")
+    }
+    
     mu = mu_posterior(fit,ncells = ncells) %>% pull(mean)
-    ccf = (fit$data %>% filter(cluster == 'S1',karyotype == "1:1") %>% pull(VAF) %>% mean())*2
-    length_diploid_genome = get_genome_length(fit) %>% filter(karyotype == "1:1") %>% 
+    ccf1 = (fit$data %>% filter(cluster == 'S1',karyotype == karyo) %>% 
+             pull(VAF) %>% mean())*n_alleles 
+    ccf2 = (fit$data %>% filter(cluster == 'S2',karyotype == karyo) %>% 
+              pull(VAF) %>% mean())*n_alleles 
+    length_genome = get_genome_length(fit) %>% filter(karyotype == karyo) %>% 
       pull(length)
     
   }else{
   
-    m = fit$data %>% filter(cluster == 'C2') %>% nrow()
+    n_alleles = 2
+    m1 = fit$data %>% filter(cluster == 'C2') %>% nrow()
+    m2 = fit$data %>% filter(cluster == 'C3') %>% nrow()
     mu = mutationrate(fit,ncells = ncells)/(2*3*10^9)
-    ccf = (fit$data %>% filter(cluster == 'C2') %>% pull(VAF) %>% mean())*2
-    length_diploid_genome = 3*10^9
+    ccf1 = (fit$data %>% filter(cluster == 'C2') %>% pull(VAF) %>% mean())*n_alleles 
+    ccf2 = (fit$data %>% filter(cluster == 'C3') %>% pull(VAF) %>% mean())*n_alleles 
+    length_genome = 3*10^9
+    
     
 }
 
   library(rstan)
-  library(ggplot2)
-  library(ggpubr)
+  # library(ggplot2)
+  # library(ggpubr)
   
-  data = list( m = m,
+  data = list( m1 = m1,
+               m2 = m2
                Ntot = N_max,
-               ccf = ccf,
-               length_dipl_genome = length_diploid_genome,
+               ccf1 = ccf1,
+               ccf2 = ccf2,
+               n = n_alleles,
+               length_genome = length_genome,
                mu = mu,
-               u = u,
-               sigma = sigma
+               u1 = u1,
+               sigma1 = sigma1,
+               u2 = u2,
+               sigma2 = sigma2
   )
   
+  if(m2 == 0){
+
+type = "single subclone"
+
 model.stan = "
 
 data {
   
-  int<lower=0> m;
+  int<lower=0> m1;
+  int <lower=0> m2;
   real<lower=0> Ntot;
-  real<lower=0,upper = 1> ccf;
-  real<lower=0> length_dipl_genome;
+  real<lower=0,upper = 1> ccf1;
+  real<lower=0,upper = ccf1> ccf2;
+  real<lower=0> length_genome;
   real<lower=0> mu;
-  real u;
-  real<lower=0> sigma;
+  int n;
+  real u1;
+  real<lower=0> sigma1;
+  real u2;
+  real<lower=0> sigma2;
 }
 
 parameters {
@@ -699,22 +742,146 @@ model{
   
   // priors
   
-  t_mrca ~ uniform(0,log(Ntot*(1-ccf))/log(2));
+  t_mrca ~ uniform(0,log(Ntot*(1-ccf1))/log(2));
   t_driver ~ uniform(0,t_mrca);
-  s ~ lognormal(u,sigma);
+  s ~ lognormal(u1,sigma1);
   
   //  Likelihood mutations
   
-  m ~ poisson(2*mu*log(2)*length_dipl_genome*((t_driver) + (1+s)*(t_mrca-t_driver)));
+  m1 ~ poisson(n*mu*log(2)*length_genome*((t_driver) + (1+s)*(t_mrca-t_driver)));
   
   // Likelihood branching process
   
-  target += exponential_lpdf(Ntot*ccf | exp(-log(2)*(1+s)*(log(Ntot*(1-ccf))/log(2) - t_driver)));
+  target += exponential_lpdf(Ntot*ccf1 | exp(-log(2)*(1+s)*(log(Ntot*(1-ccf1))/log(2) - t_driver)));
   
 }
 
 "
+  }else{
+  
+    if(ccf1 + ccf2 < 1){
+      
+      type = "two indipendent subclones"
+      
+      model.stan = "
 
+data {
+  
+  int<lower=0> m1;
+  int <lower=0> m2;
+  real<lower=0> Ntot;
+  real<lower=0,upper = 1> ccf1;
+  real<lower=0,upper = ccf1> ccf2;
+  real<lower=0> length_genome;
+  real<lower=0> mu;
+  int n;
+  real u1;
+  real<lower=0> sigma1;
+  real u2;
+  real<lower=0> sigma2;
+}
+
+parameters {
+  
+  real<lower=0> t_mrca1;
+  real<lower=0,upper=t_mrca1> t_driver1;
+  real<lower=0> t_mrca2;
+  real<lower=0,upper=t_mrca2> t_driver2;
+  real<lower=0> s1;
+  real<lower=0> s2;
+  
+}
+
+model{
+  
+  // priors
+  
+  t_mrca1 ~ uniform(0,log(Ntot*(1-ccf1-ccf2))/log(2));
+  t_mrca2 ~ uniform(0,log(Ntot*(1-ccf1-ccf2))/log(2));
+  t_driver1 ~ uniform(0,t_mrca1);
+  t_driver2 ~ uniform(0,t_mrca2);
+  s1 ~ lognormal(u1,sigma1);
+  s2 ~ lognormal(u2,sigma2);
+  
+  //  Likelihood mutations
+  
+  m1 ~ poisson(n*mu*log(2)*length_genome*((t_driver1) + (1+s1)*(t_mrca1-t_driver1)));
+  m2 ~ poisson(n*mu*log(2)*length_genome*((t_driver2) + (1+s2)*(t_mrca2-t_driver2)));
+  
+  // Likelihood branching process
+  
+  target += exponential_lpdf(Ntot*ccf1 | 
+  exp(-log(2)*(1+s1)*(log(Ntot*(1-ccf1-ccf2))/log(2) - t_driver1)));
+  target += exponential_lpdf(Ntot*ccf2 | 
+  exp(-log(2)*(1+s2)*(log(Ntot*(1-ccf1-ccf2))/log(2) - t_driver2)));
+  
+}
+
+"
+      
+    }else{
+      
+      type = "two nested subclones"
+      
+      model.stan = "
+
+data {
+  
+  int<lower=0> m1;
+  int <lower=0> m2;
+  real<lower=0> Ntot;
+  real<lower=0,upper = 1 > ccf1;
+  real<lower=0,upper = ccf1> ccf2;
+  real<lower=0> length_genome;
+  real<lower=0> mu;
+  int n;
+  real u1;
+  real<lower=0> sigma1;
+  real u2;
+  real<lower=0> sigma2;
+}
+
+parameters{
+  
+  real<lower=0> t_sp;
+  real<lower=0,upper=t_sp> t_driver1;
+  real<lower=t_sp> t_mrca2;
+  real<lower=t_sp,upper=t_mrca2> t_driver2;
+  real<lower=0> s1;
+  real<lower=s1> s2;
+  
+}
+
+model{
+  
+  // priors
+  
+  t_sp ~ uniform(0,log(Ntot*(1-ccf1))/log(2));
+  t_driver1 ~ uniform(0,t_sp);
+  t_mrca2 ~ uniform(t_sp,log(Ntot*(1-ccf1))/log(2));
+  t_driver2 ~ uniform(t_sp,t_mrca2);
+  s1 ~ lognormal(u1,sigma1);
+  s2 ~ lognormal(u2,sigma2) T[s1,];
+  
+  //  Likelihood mutations
+  
+  m1 ~ poisson(n*mu*log(2)*length_genome*((t_driver1) + (1+s1)*(t_sp-t_driver)));
+  m2 ~ poisson(n*mu*log(2)*length_genome*((t_driver2-t_sp) + (1+s2)*(t_mrca2-t_sp)));
+  
+  // Likelihood branching process
+  
+  target += exponential_lpdf(Ntot*ccf2 | 
+  exp(-log(2)*(1+s2)*(log(Ntot*(1-ccf1))/log(2) - t_driver2)));
+  
+  target += exponential_lpdf(Ntot*(ccf1-ccf2) | 
+  exp(-log(2)*(1+s1)*(log(Ntot*(1-ccf1))/log(2) - t_driver1)));
+  
+}
+
+"
+    }
+     
+}
 
 
 fit <- stan(
@@ -730,30 +897,32 @@ fit <- stan(
 
 
 
-post = as.data.frame(fit) %>% dplyr::select(c("t_mrca","t_driver","s")) %>% mutate(type = "post")
-pre = data.frame(t_mrca = runif(nrow(post),min = 0,max = log(N_max*(1-ccf))/log(2)),
-                 t_driver = runif(nrow(post),min = 0,max = log(N_max*(1-ccf))/log(2)),
-                 s = rlnorm(nrow(post),meanlog = u,sdlog = sigma), 
-                 type = "prior")
+# post = as.data.frame(fit) %>% dplyr::select(c("t_mrca","t_driver","s")) %>% mutate(type = "post")
+# pre = data.frame(t_mrca = runif(nrow(post),min = 0,max = log(N_max*(1-ccf))/log(2)),
+#                  t_driver = runif(nrow(post),min = 0,max = log(N_max*(1-ccf))/log(2)),
+#                  s = rlnorm(nrow(post),meanlog = u,sdlog = sigma), 
+#                  type = "prior")
 
-post = rbind(post,pre)
+# post = rbind(post,pre)
+# 
+# p_mrca = ggplot(post  %>% reshape2::melt() %>% filter(variable == "t_mrca"))   + labs(x = "", title = "t_mrca") + 
+#   CNAqc:::my_ggplot_theme() + 
+#   scale_alpha_manual(values = c("prior" = 0.4, "post" = 1)) + geom_density(aes(x = value, alpha = type), fill = "indianred")  
+# 
+# p_driver = ggplot(post  %>% reshape2::melt() %>% filter(variable == "t_driver"))   + labs(x = "", title = "t_driver") + 
+#   CNAqc:::my_ggplot_theme() + 
+#   scale_alpha_manual(values = c("prior" = 0.4, "post" = 1)) + geom_density(aes(x = value, alpha = type), fill = "darkgreen")  
+# 
+# p_s = ggplot(post  %>% reshape2::melt() %>% filter(variable == "s"))   + labs(x = "", title = "s") + 
+#   CNAqc:::my_ggplot_theme() + 
+#   scale_alpha_manual(values = c("prior" = 0.4, "post" = 1)) + geom_density(aes(x = value, alpha = type), fill = "cornflowerblue") 
+# 
+# 
+# p_dynamics = ggarrange(plotlist = list(p_mrca,p_driver,p_s),nrow = 1, ncol = 3, legend = "bottom")
+ 
+# return(list(posterior = fit , plot = p_dynamics))
 
-p_mrca = ggplot(post  %>% reshape2::melt() %>% filter(variable == "t_mrca"))   + labs(x = "", title = "t_mrca") + 
-  CNAqc:::my_ggplot_theme() + 
-  scale_alpha_manual(values = c("prior" = 0.4, "post" = 1)) + geom_density(aes(x = value, alpha = type), fill = "indianred")  
-
-p_driver = ggplot(post  %>% reshape2::melt() %>% filter(variable == "t_driver"))   + labs(x = "", title = "t_driver") + 
-  CNAqc:::my_ggplot_theme() + 
-  scale_alpha_manual(values = c("prior" = 0.4, "post" = 1)) + geom_density(aes(x = value, alpha = type), fill = "darkgreen")  
-
-p_s = ggplot(post  %>% reshape2::melt() %>% filter(variable == "s"))   + labs(x = "", title = "s") + 
-  CNAqc:::my_ggplot_theme() + 
-  scale_alpha_manual(values = c("prior" = 0.4, "post" = 1)) + geom_density(aes(x = value, alpha = type), fill = "cornflowerblue") 
-
-
-p_dynamics = ggarrange(plotlist = list(p_mrca,p_driver,p_s),nrow = 1, ncol = 3, legend = "bottom")
-
-return(list(posterior = fit , plot = p_dynamics))
+return(list(posterior = fit , model_type = type))
 
 }
 
