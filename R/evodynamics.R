@@ -453,6 +453,7 @@ mu_posterior <- function(fit,
     # f_max = c(f_max, alpha / (alpha + beta))
     
     tail_mutations = fit$data %>% filter(karyotype == karyo, cluster == "Tail")
+    if(nrow(tail_mutations) > 0){
     tail_mutations = tail_mutations %>% filter(VAF > quantile(VAF,lq) & VAF < quantile(VAF,uq))
     subclonal_mutations = c(subclonal_mutations, tail_mutations %>% nrow())
     f_min = c(f_min,  tail_mutations %>% pull(VAF) %>% min())
@@ -470,7 +471,7 @@ mu_posterior <- function(fit,
 
     length_karyo = c(length_karyo,
                      genome_length %>% filter(karyotype == karyo) %>% pull(length))
-
+}
   }
   
   good_karyo = (subclonal_mutations > 0) & (f_min < f_max)
@@ -664,10 +665,11 @@ s_posterior = function(fit,N_max = 10^9,ncells = 1,u1 = -0.5,sigma1 = 0.6,u2 = -
     if(!"S2" %in% (fit$data %>% pull(cluster))){
       
       m1 = fit$data %>% filter(cluster == 'S1',karyotype == karyo) %>% nrow()
-      ccf1 = fit$model_parameters[[karyo]]$ccf_subclones
+      m2 = 0
+      ccf1 = fit$model_parameters[[karyo]]$ccf_subclones %>% max()
       
     }else{
-      
+     
     m1 = fit$data %>% filter(cluster == 'S2',karyotype == karyo) %>% nrow()
     m2 = fit$data %>% filter(cluster == 'S1',karyotype == karyo) %>% nrow()
     ccf1 = fit$model_parameters[[karyo]]$ccf_subclones %>% max()
@@ -680,8 +682,11 @@ s_posterior = function(fit,N_max = 10^9,ncells = 1,u1 = -0.5,sigma1 = 0.6,u2 = -
     length_genome = get_genome_length(fit) %>% filter(karyotype == karyo) %>% 
       pull(length)
     
+    tr = fit$data %>% filter(cluster %in% c('C1',"C2"),karyotype == karyo) %>% nrow() 
+    
   }else{
   
+    karyo = "1:1"
     n_alleles = 2
     purity = (fit$data %>% filter(cluster == 'C1') %>% pull(VAF) %>% mean())*n_alleles 
     m1 = fit$data %>% filter(cluster == 'C2') %>% nrow()
@@ -690,8 +695,10 @@ s_posterior = function(fit,N_max = 10^9,ncells = 1,u1 = -0.5,sigma1 = 0.6,u2 = -
     ccf1 = (fit$data %>% filter(cluster == 'C2') %>% pull(VAF) %>% mean())*n_alleles/purity 
   if("C3" %in% (fit$data %>% pull(cluster))){
     ccf2 = (fit$data %>% filter(cluster == 'C3') %>% pull(VAF) %>% mean())*n_alleles/purity
-    }
+  }
+    
     length_genome = 3*10^9
+    tr = fit$data %>% filter(cluster == "C1",karyotype == karyo) %>% nrow() 
     
   }
   
@@ -789,7 +796,7 @@ data {
   int <lower=0> m2;
   real<lower=0> Ntot;
   real<lower=0,upper = 1> ccf1;
-  real<lower=0,upper = ccf1> ccf2;
+  real<lower=0,upper = 1> ccf2;
   real<lower=0> length_genome;
   real<lower=0> mu;
   int n;
@@ -884,7 +891,7 @@ model{
   //  Likelihood mutations
   
   m1 ~ poisson(n*mu*log(2)*length_genome*((t_driver1) + (1+s1)*(t_sp-t_driver1)));
-  m2 ~ poisson(n*mu*log(2)*length_genome*((t_driver2-t_sp) + (1+s2)*(t_mrca2-t_sp)));
+  m2 ~ poisson(n*mu*log(2)*length_genome*((t_driver2-t_sp) + (1+s2)*(t_mrca2-t_driver2)));
   
   // Likelihood branching process
   
@@ -902,7 +909,7 @@ model{
 }
 
 
-fit <- stan(
+stan_fit <- stan(
   model_code = model.stan,  # Stan program
   data = data,    # named list of data
   chains = 4,             # number of Markov chains
@@ -917,16 +924,65 @@ library("dplyr")
 library("rstanarm")
 library("ggplot2")
 library("bayesplot")
+library("ggpubr")
+library("ape")
+library("ggtree")
+library("treeio")
 
 color_scheme_set("brightblue")
 
-posterior <- as.matrix(fit)
+posterior <- as.matrix(stan_fit)
 
-plot_title <- ggtitle("Posterior distributions",
-                      "with medians and 80% intervals")
-p_dynamics = mcmc_areas(posterior,
-           pars = (posterior %>% colnames())[posterior %>% colnames() != "lp__"],
-           prob = 0.8) + plot_title + CNAqc:::my_ggplot_theme()
+plots = lapply((posterior %>% colnames())[posterior %>% colnames() != "lp__"], function(p){
+mcmc_areas(posterior,
+           pars = p,
+           prob = 0.8) + CNAqc:::my_ggplot_theme()
+})
+
+p_dynamics = ggarrange(plotlist = plots) %>% annotate_figure("Posterior distributions with medians and 80% intervals") 
+
+if(type == "single subclone"){
+
+text =  paste0("((S1:",m1,"[&&NHX:S=t_driver],W:50[&&NHX:S=W] ):",tr,"[&&NHX:S=Truncal] );")
+
+}else if(type == "two nested subclones"){
+  
+  text =  paste0("(((S1:",m2,"[&&NHX:S=t_driver2],a:50):",m1,"[&&NHX:S=t_driver1],W:50[&&NHX:S=W] ):",tr,"[&&NHX:S=Truncal]);")
+  
+}else{
+  
+  text =  paste0("(((S1:",m2,"[&&NHX:S=t_driver2],a:",50,"):",50,",(S2:",m1,"[&&NHX:S=t_driver1],b:50):",50,"):",tr,"[&&NHX:S=Truncal]);")
+  
+  
+}
+  
+phylo <- read.nhx(textConnection(text))
+
+tree_plot = ggtree(phylo) + 
+  geom_label(aes(x=branch, label=S, fill = S))
+
+clonal_colors = suppressWarnings(RColorBrewer::brewer.pal(9, 'Set1'))
+subclonal_colors = suppressWarnings(RColorBrewer::brewer.pal(7, 'Dark2'))[1:7]
+
+names(clonal_colors) = c("C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9")
+names(subclonal_colors) =  c("S1", "S2", "S3", "S4", "S5", "S6", "S7")
+
+if(type == "single subclone"){
+  cls = c(clonal_colors[names(clonal_colors) == "C1"],subclonal_colors[names(subclonal_colors) == "S1"],"gray")
+  names(cls) = c("Truncal","t_driver","W") 
+}else{
+cls = c(clonal_colors[names(clonal_colors) == "C1"],subclonal_colors[names(subclonal_colors) %in% c("S1","S2")],"gray")
+names(cls) = c("Truncal","t_driver2","t_driver1","W")
+}
+
+tree_plot = tree_plot +
+  scale_fill_manual(values = cls) + theme(legend.position = "none")
+
+tree_plot = tree_plot + ggtitle(
+  label = paste0("Sample Tree of ",type),
+)
+
+p_dynamics = ggarrange(plotlist = list(p_dynamics,tree_plot),ncol = 2,nrow = 1)
 
 # post = as.data.frame(fit) %>% dplyr::select(c("t_mrca","t_driver","s")) %>% mutate(type = "post")
 # pre = data.frame(t_mrca = runif(nrow(post),min = 0,max = log(N_max*(1-ccf))/log(2)),
@@ -953,7 +1009,7 @@ p_dynamics = mcmc_areas(posterior,
  
 # return(list(posterior = fit , plot = p_dynamics))
 
-return(list(posterior = fit ,plot = p_dynamics, model_type = type))
+return(list(posterior = fit ,plot_inference = p_dynamics,model_type = type, used_karyotype = karyo))
 
 }
 
