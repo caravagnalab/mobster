@@ -33,8 +33,8 @@
 #' @param model.selection Score to minimize to select the best model; this has to be one of \code{'ICL'},
 #' \code{'BIC'}, \code{'AIC'} or \code{'likelihood'}. We advise to use only ICL
 #' @param parallel Optional parameter to run the fits in parallel, or not (default).
-#' @param alpha_precision_concentration Concentration value for the gamma modelling the prior shape of the Pareto
-#' @param alpha_precision_rate Rate value for the gamma modelling the prior shape of the Pareto
+#' @param alpha_mean Concentration value for the gamma modelling the prior shape of the Pareto
+#' @param alpha_precision Rate value for the gamma modelling the prior shape of the Pareto
 #' @param number_of_trials_clonal_mean Number of trials for the Beta prior over the clonal clusters mean
 #' @param number_of_trials_k Number of trials for the Beta prior over the subclonal clusters mean
 #' @param prior_lims_clonal Bounds on the uniform prior over the number of trials for the clonal clusters
@@ -89,8 +89,8 @@ mobsterh_fit = function(x,
                         maxIter = 2000,
                         model.selection = 'ICL',
                         parallel = FALSE,
-                        alpha_precision_concentration = 5,
-                        alpha_precision_rate = 0.1,
+                        alpha_mean = 1.,
+                        alpha_precision = 1.,
                         number_of_trials_clonal_mean = 1000,
                         number_of_trials_k = 500,
                         number_of_trials_subclonal = 900,
@@ -123,7 +123,7 @@ mobsterh_fit = function(x,
     purity <- mobster:::get_purity(x)
     data_raw <- x
     x <-
-      format_data_mobsterh_QC(x,
+      mobster:::format_data_mobsterh_QC(x,
                               vaf_t = vaf_filter,
                               n_t = n_t,
                               kar = karyotypes,
@@ -205,8 +205,8 @@ mobsterh_fit = function(x,
     karyotypes,
     prior_lims_k,
     prior_lims_clonal,
-    alpha_precision_concentration,
-    alpha_precision_rate
+    alpha_mean,
+    alpha_precision
   )
 
 
@@ -273,8 +273,8 @@ mobsterh_fit = function(x,
                       samples = samples,
                       purity = purity,
                       max_it = as.integer(maxIter),
-                      alpha_precision_concentration = alpha_precision_concentration,
-                      alpha_precision_rate = alpha_precision_rate,
+                      alpha_mean = alpha_mean,
+                      alpha_precision = alpha_precision,
                       number_of_trials_clonal_mean = number_of_trials_clonal_mean,
                       number_of_trials_k = number_of_trials_k,
                       prior_lims_clonal = prior_lims_clonal,
@@ -366,8 +366,8 @@ mobsterh_fit_aux <-  function(data,
                               purity,
                               max_it,
                               seed,
-                              alpha_precision_concentration,
-                              alpha_precision_rate,
+                              alpha_mean,
+                              alpha_precision,
                               number_of_trials_clonal_mean,
                               number_of_trials_k,
                               prior_lims_clonal,
@@ -403,8 +403,8 @@ mobsterh_fit_aux <-  function(data,
         max_it = max_it,
         lr = lr,
         e = e,
-        alpha_precision_concentration = alpha_precision_concentration,
-        alpha_precision_rate = alpha_precision_rate,
+        alpha_mean = alpha_mean,
+        alpha_precision = alpha_precision,
         number_of_trials_clonal_mean = number_of_trials_clonal_mean,
         number_of_trials_k = number_of_trials_k,
         prior_lims_clonal = prior_lims_clonal,

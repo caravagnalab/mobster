@@ -317,8 +317,7 @@ plot.dbpmmh = function(x,
         df_powerlaw_density(
           shape = qlnorm(
             0.05,
-            meanlog = log(pareto_params$shape[i]),
-            sdlog = pareto_params$shape_noise[i]
+            meanlog = log(pareto_params$shape[i])
           ),
           scale = pareto_params$scale[i],
           mixing = pareto_params$mixing[i],
@@ -335,8 +334,7 @@ plot.dbpmmh = function(x,
         df_powerlaw_density(
           shape = qlnorm(
             0.95,
-            meanlog = log(pareto_params$shape[i]),
-            sdlog = pareto_params$shape_noise[i]
+            meanlog = log(pareto_params$shape[i])
           ),
           scale = pareto_params$scale[i],
           mixing = pareto_params$mixing[i],

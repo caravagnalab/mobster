@@ -25,7 +25,7 @@ get_pareto = function(x) {
         scale = x$model_parameters[[k]]$tail_scale,
         shape = x$model_parameters[[k]]$tail_shape,
         mixing = x$model_parameters[[k]]$mixture_probs[1],
-        shape_noise = x$model_parameters[[k]]$tail_noise,
+        #shape_noise = x$model_parameters[[k]]$tail_noise,
         location = ifelse(is_truncated(x),
                           min_beta_clonal_mean,
                           1 - 1e-5),
