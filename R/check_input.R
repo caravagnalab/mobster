@@ -29,7 +29,7 @@ check_input = function(x, K, samples, init, tail, epsilon, maxIter, fit.type, se
   
   stopifnot(
     fit.type %in%
-      c('MM', 'MLW')
+      c('MM', 'MLE')
   )
   
 
