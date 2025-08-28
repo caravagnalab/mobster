@@ -3,7 +3,7 @@
 #'
 #' @description This function fits a multivariate version of the MOBSTER model implemented in \code{mobster_fit}. 
 #' 
-#' @param x Input data.frame. The input data.frame should have at least 
+#' @param x Input data.frame (or tibble). The input data.frame should have at least 
 #' 6 coloumns named as mutation_id, NV (number of variant), DP (depth), sample_id, purity and karyotype.
 #' @param K_list A vector with the number of mixture components to use. All values of \code{K_list} must be positive
 #' and strictly greater than 0.

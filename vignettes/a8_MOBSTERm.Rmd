@@ -1,0 +1,70 @@
+---
+title: "a8_MOBSTERm"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{a8_MOBSTERm}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+
+```{r setup}
+library(mobster)
+library(tidyr)
+library(dplyr)
+```
+
+`MOBSTERm` is a tool that implements a Bayesian model to perform multivariate subclonal deconvolution, allowing to detect neutral, private and selected clonal mutations in multi-region and longitudinal cancer datasets.
+
+# Input data for `MOBSTERm`
+
+The input data consists of a dataframe (or tibble) `x` containing information about somatic mutations (SNVs). Each row represents a mutation, with the following columns:
+
+- **`mutation_id`**: Unique identifier for the mutation.
+- **`sample_id`**: Unique identifier for the sample.
+- **`NV`**: Number of reads supporting the variant.
+- **`DP`**: Depth of sequencing at the mutation site.
+- **`purity`**: Purity of the sample.
+- **`karyotype`**: Copy number (cn) state of the sample. The karyotype value must be unique for each sample. The cn state must be in the format `major_cn:minor_cn`.
+
+An example of an input dataframe is the following:
+
+...
+
+# Fitting the model
+Function `mobsterm_fit()` fits a `MOBSTERm` model.
+
+#### Key parameters
+This function has several parameters to customize the fitting procedure.
+
+- **`K_list`**: A vector with the number of mixture components to use. All values of the liist must be positive and strictly greater than 0.
+- **`max_iter`**: Maximum number of steps for a variational inference fit. If parameters and loss convergence is not achieved before these steps, the fit is interrupted.
+- **`seed`**: A vector with the number of seeds to test for the fit.
+- **`lr`**: Learning rate used by the optimizer.
+- **`par_threshold`**: Tolerance for parameter convergence. As ELBO oscillations are common in gradient based VI, we will monitor the convergence of all the parameters in the model, the inference stops when (abs(new-old) / abs(old)) < par_threshold for 200 consecutive iterations, for all the parameters.
+- **`loss_threshold`**: Tolerance for loss convergence. As ELBO oscillations are common in gradient based VI, we will monitor the convergence of the loss in the model, the inference stops when (abs(new_loss-old_loss) / abs(old_loss)) < loss_threshold for 200 consecutive iterations.
+
+#### Output
+The output is in the format..
+
+
+# Model plots
+
+Here we show how to plot the results of the fit.
+In particular we plot the multivariate scatter, the histograms of the marginals, the delta parameter.
+
+# Fit statistics
+
+Here we show how to plot responsibilities, mixing proportions, model selection scores, ELBO, parameters gradients, parameters and loss convergence.
+
+# Inspecting alternative fits
+
+Here we show how to plot alternative model fits.

@@ -1,10 +1,5 @@
 
 format_data_mobsterm <- function(x) {
-  
-  if("cluster" %in% colnames(x)){
-    cli::cli_alert_warning("A coloumn names cluster already exists, overwriting it!")
-    x$cluster <-  NULL
-  }
 
   x_unique <- x %>%
     distinct(sample_id, .keep_all = TRUE)
@@ -25,7 +20,7 @@ format_data_mobsterm <- function(x) {
     )
   
   # Remove rows with NA
-  x_wide =na.omit(x_wide)
+  x_wide = na.omit(x_wide)
   
   # Extract NV and DP for python code
   NV <- x_wide %>%
@@ -39,6 +34,10 @@ format_data_mobsterm <- function(x) {
   mutation_id = x_wide %>%
     select(mutation_id) %>% 
     as.matrix()
+  
+  # Add a "cluster" column
+  x_wide$cluster <-  NULL
+  
   
   return(list(
     x_wide = x_wide,
