@@ -19,7 +19,7 @@
 #' @return TBD
 #' @export
 #'
-#' @examples
+#' @examples TBD
 mobsterm_fit = function(x,
                        K_list=c(2, 8),
                        max_iter=1500,

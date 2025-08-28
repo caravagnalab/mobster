@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
 
 
 ```{r setup}
+devtools::install_github("caravagnalab/mobster@mobsterm")
 library(mobster)
 library(tidyr)
 library(dplyr)
