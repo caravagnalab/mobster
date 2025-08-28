@@ -20,7 +20,7 @@
 #' @export
 #'
 #' @examples
-mobster_fit = function(x,
+mobsterm_fit = function(x,
                        K_list=c(2, 8),
                        max_iter=1500,
                        seed_list=c(123, 1234), 
