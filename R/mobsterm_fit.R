@@ -43,8 +43,6 @@ mobsterm_fit = function(x,
         "Please provide a data.frame with the following columns: mutation_id, NV, DP, sample_id, purity and karyotype."
       )
     
-    cli::cli_alert_warning("Using input purity {.field {purity}}")
-    
     can_work = TRUE
   }
   
