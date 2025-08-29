@@ -25,6 +25,7 @@ Imports:
     sads,
     crayon,
     ggplot2,
+    stringr,
     ggthemes,
     tidyverse,
     pio,
