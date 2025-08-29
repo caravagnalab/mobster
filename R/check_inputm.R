@@ -11,6 +11,8 @@ check_inputm = function(
   
   stopifnot(all(sapply(K_list, function(k) k >= 0))) # Check all K values are positive
   
+  if (!is.list(K_list)) K_list = as.list(K_list) # Check K values is a list
+  if (!is.list(seed_list)) seed_list = as.list(seed_list) # Check seed values is a list
   
   if(lr > 0.05){
     cli::cli_alert_warning("You have selected a relatively high learning rate, consider that such a choice can cause instabilities.")

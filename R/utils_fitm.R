@@ -45,8 +45,15 @@ format_data_mobsterm <- function(x) {
     DP = DP,
     purity = purity,
     mutation_id = mutation_id,
-    karyotype = karyotype
+    karyotype = karyotype,
+    sample_names = sample_names
   ))
   
 }
 
+
+tensorize <- function(x) {
+  torch <- reticulate::import("torch")
+  x <-torch$tensor(x)$int()
+  return(x)
+}

@@ -16,7 +16,7 @@
 #' @param loss_threshold Tolerance for loss convergence. As ELBO oscillations are common in gradient based VI, we will monitor the convergence of the loss in the model,
 #' the inference stops when (abs(new_loss-old_loss) / abs(old_loss)) < loss_threshold for 200 consecutive iterations.
 #'
-#' @return TBD
+#' @return An object containing \code{best_fit} and a list of all alternative fits computed.
 #' @export
 #'
 #' @examples TBD
@@ -32,7 +32,7 @@ mobsterm_fit = function(x,
   print(x)
   pio::pioHdr(paste0("MOBSTERm fit"))
   cat('\n')
-  
+  can_work = FALSE
   
   # Tibble
   if (is.matrix(x) | is.data.frame(x))
@@ -48,7 +48,7 @@ mobsterm_fit = function(x,
   
   if (!can_work) {
     stop(
-      "Input must be any a data.frame."
+      "Input must be a data.frame or tibble."
     )
   }
   
@@ -78,6 +78,71 @@ mobsterm_fit = function(x,
   purity = formatted_data$purity
   mutation_id = formatted_data$mutation_id
   karyotype = formatted_data$karyotype
+  sample_names = formatted_data$sample_names
   
   # Inference here
+  mobster:::mobsterm_fit_aux(NV, 
+                   DP, 
+                   purity, 
+                   mutation_id, 
+                   karyotype, 
+                   K_list,
+                   max_iter,
+                   seed_list, 
+                   lr,
+                   par_threshold,
+                   loss_threshold,
+                   sample_names)
+  
+  
+  # devtools::document()
+  
+  
+}
+
+
+
+
+mobsterm_fit_aux <-  function(NV, 
+                              DP, 
+                              purity, 
+                              mutation_id, 
+                              karyotype, 
+                              K_list,
+                              max_iter,
+                              seed_list, 
+                              lr,
+                              par_threshold,
+                              loss_threshold,
+                              sample_names) 
+{
+  # Link to python code with reticulate
+  NV <- mobster:::tensorize(NV) # tensorize NV and DP
+  DP <- mobster:::tensorize(DP)
+  
+  K_list = r_to_py(as.integer(as.list(K_list)))
+  seed_list = r_to_py(as.integer(as.list(seed_list)))
+  karyotype = r_to_py(as.list(karyotype))
+  mutation_id = r_to_py(as.list(mutation_id))
+  par_threshold = r_to_py(as.integer(par_threshold))
+  loss_threshold = r_to_py(as.integer(loss_threshold))
+  max_iter = r_to_py(as.integer(max_iter))
+  sample_names = r_to_py(as.list(sample_names))
+  
+  mob <- reticulate::import("MOBSTERm")
+  fit = mob$fit(NV = NV, 
+          DP = DP, 
+          num_iter=max_iter,
+          K=K_list,
+          seed_list=seed_list, 
+          kr = karyotype, 
+          mut_id = mutation_id,
+          par_threshold=par_threshold, 
+          loss_threshold=loss_threshold,
+          sample_names = sample_names)
+  
+  # Create an S3 object like in mobster
+  
+  return(fit)
+  
 }

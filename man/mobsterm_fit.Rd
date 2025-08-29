@@ -35,7 +35,7 @@ the inference stops when (abs(new_loss-old_loss) / abs(old_loss)) < loss_thresho
 \item{seed}{A vector with the number of seeds to test for the fit.}
 }
 \value{
-TBD
+An object containing \code{best_fit} and a list of all alternative fits computed.
 }
 \description{
 This function fits a multivariate version of the MOBSTER model implemented in \code{mobster_fit}.
