@@ -40,7 +40,8 @@ Imports:
     magrittr,
     cowplot,
     reshape2,
-    ctree
+    ctree,
+    stringr
 RoxygenNote: 7.3.2
 Suggests: knitr,
     rmarkdown,

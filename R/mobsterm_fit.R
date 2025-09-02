@@ -29,7 +29,7 @@ mobsterm_fit = function(x,
                        loss_threshold = 0.01
                        )
 {
-  print(x)
+  # print(x)
   pio::pioHdr(paste0("MOBSTERm fit"))
   cat('\n')
   can_work = FALSE
