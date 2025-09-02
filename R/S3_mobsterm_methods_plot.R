@@ -8,12 +8,12 @@
 #' @examples
 plotm = function(x){
 
-  cm = combn(sample_names, 2) # Generate all combinations of the elements of sample_names taken 2 at a time
+  cm = combn(x$sample_names, 2) # Generate all combinations of the elements of sample_names taken 2 at a time
   
   plots <- apply(
     cm,
     2,
-    function(w) mobster:::ploth_2D(x, d1 = w[1], d2 = w[2]) # w is the sample name
+    function(w) mobster:::plotm_2D(x, d1 = w[1], d2 = w[2]) # w is the sample name
   )
   
   plots

@@ -1,5 +1,5 @@
 
-ploth_2D = function(x, 
+plotm_2D = function(x, 
                     d1, 
                     d2,
                     cex = 1){
@@ -24,7 +24,7 @@ ploth_2D = function(x,
   
   df = df %>% mutate(cluster_id=paste0("C",cluster_id+1))
   
-  data = mobster:::geth_2D_points(df, d1, d2)
+  data = mobster:::getm_2D_points(df, d1, d2)
   
   cluster = df$cluster_id
   
@@ -71,7 +71,7 @@ ploth_2D = function(x,
     plot
 }
 
-geth_2D_points = function(df, d1, d2)
+getm_2D_points = function(df, d1, d2)
 {
   cols <- paste0("vaf_", c(d1, d2))
   
