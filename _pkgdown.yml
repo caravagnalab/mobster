@@ -33,6 +33,8 @@ reference:
   - rdbpmm
   - random_dataset
   - to_string
+  - mobsterm_fit
+  - plotm
 
 - title: S3 functions
   desc: The `mobster` S3 object.

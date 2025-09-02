@@ -1,5 +1,5 @@
 ---
-title: "a8_MOBSTERm"
+title: "8. MOBSTERm"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{a8_MOBSTERm}
@@ -16,8 +16,8 @@ knitr::opts_chunk$set(
 
 
 
-```{r setup}
-devtools::install_github("caravagnalab/mobster@mobsterm")
+```{r setup, warning=FALSE, message=FALSE}
+# devtools::install_github("caravagnalab/mobster@mobsterm")
 library(mobster)
 library(tidyr)
 library(dplyr)
@@ -27,7 +27,7 @@ library(dplyr)
 
 # Input data for `MOBSTERm`
 
-The input data consists of a dataframe (or tibble) `x` containing information about somatic mutations (SNVs). Each row represents a mutation, with the following columns:
+The input data consists of a dataframe (or tibble) containing information about somatic mutations (SNVs). Each row represents a mutation, with the following columns:
 
 - **`mutation_id`**: Unique identifier for the mutation.
 - **`sample_id`**: Unique identifier for the sample.
