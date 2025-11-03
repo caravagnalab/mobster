@@ -1,12 +1,12 @@
-#' Plot a MOBSTERm fit.
+#' Scatterplots of a MOBSTERm fit.
 #'
 #' @param x A MOBSTERm fit.
 #'
-#' @return A list of ggplot objects for the plot.
+#' @return A list of ggplot objects for the scatter plots.
 #' @export
 #'
-#' @examples
-plotm = function(x){
+#' @examples TBD
+plot.dbpmm_m = function(x){
 
   cm = combn(x$sample_names, 2) # Generate all combinations of the elements of sample_names taken 2 at a time
   
