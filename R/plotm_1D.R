@@ -1,6 +1,5 @@
-
-plotm_1D = function(x, 
-                    sample_name,
+plotm_1D = function(x,
+                    color_palette,
                     cex = 1){
   
   NV_df <- as.data.frame(x$NV)
@@ -19,20 +18,20 @@ plotm_1D = function(x,
   
   df = df %>% mutate(cluster_id=paste0("C",cluster_id+1))
   
-  data = mobster:::getm_1D_points(df, sample_name)
-  # data = getm_1D_points(df, sample_name)
+  data <- df %>%
+    pivot_longer(
+      cols = starts_with("vaf_"),        # columns to pivot
+      names_to = "sample",               # new column for sample names
+      names_prefix = "vaf_",             # remove this prefix
+      values_to = "VAF"                  # new column for values
+    )
+  data = data %>% mutate(cluster=cluster_id)
   
-  cluster = df$cluster_id
+  cluster = data$cluster_id
   
-  color_palette = c(
-    "#e41a1c", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00","#a65628",
-    "#FFD700",  "#999999", "#000000", "#f781bf", # First 10 colors (Set1)  
-    "#46f0f0", "#f032e6", "#bcf60c", "#fabed4", "#008080", "#e6beff",  
-    "#9a6324", "#fffac8", "#800000", "#aaffc3", "#808000", "#ffd8b1",  
-    "#000075", "#808080", "#d3a6f3", "#ff9cdd", "#73d7b0"  
-  ) %>% setNames(str_sort(unique(cluster), numeric=T))
+  color_palette = color_palette %>% setNames(str_sort(unique(cluster), numeric=T))
   
-  data$cluster = cluster
+  # data$cluster = cluster
   
   # Now the actual plot
   cluster_order = data %>%
@@ -42,18 +41,17 @@ plotm_1D = function(x,
   
   # data <- data %>%
   #   mutate(cluster = factor(cluster, levels = cluster_order))
-  data = data %>% filter(.data[[sample_name]] > 0)
-
-  data = data %>%
-    filter(get(sample_name) > 0)
+  # data = data %>% filter(.data[[x$sample_names]] > 0)
+  # 
+  # data = data %>%
+  #   filter(get(x$sample_names) > 0)
+  data <- data %>%
+    filter(VAF>0)
   
-  plot = ggplot() +
-    geom_histogram(data=data, aes(x=eval(parse(text = sample_name)), fill=cluster), 
-                   position="identity", 
-                   alpha=1, 
-                   bins=100) +
+  plot = data %>% ggplot() +
+    geom_histogram(aes(x=VAF, fill=cluster), position="identity", alpha=1, bins=100) +
+    facet_grid(~sample) +
     labs(
-      title = bquote(bold(.(sample_name))),
       x = 'VAF',
       y = 'Count'
     ) +

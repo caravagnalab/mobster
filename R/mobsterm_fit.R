@@ -142,7 +142,7 @@ mobsterm_fit_aux <-  function(NV,
           sample_names = sample_names)
   
   # Create an S3 object like in mobster
-  class(fit) <- "dbpmm_m"
+  class(fit) = "dbpmm_m"
   
   return(fit)
   

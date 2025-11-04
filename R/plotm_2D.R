@@ -2,6 +2,7 @@
 plotm_2D = function(x, 
                     d1, 
                     d2,
+                    color_palette,
                     cex = 1){
   
   NV_df <- as.data.frame(x$NV)
@@ -28,13 +29,7 @@ plotm_2D = function(x,
   
   cluster = df$cluster_id
   
-  color_palette = c(
-    "#e41a1c", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00","#a65628",
-    "#FFD700",  "#999999", "#000000", "#f781bf", # First 10 colors (Set1)  
-    "#46f0f0", "#f032e6", "#bcf60c", "#fabed4", "#008080", "#e6beff",  
-    "#9a6324", "#fffac8", "#800000", "#aaffc3", "#808000", "#ffd8b1",  
-    "#000075", "#808080", "#d3a6f3", "#ff9cdd", "#73d7b0"  
-  ) %>% setNames(str_sort(unique(cluster), numeric=T))
+  color_palette = color_palette %>% setNames(str_sort(unique(cluster), numeric=T))
   
   
   # Now the actual plot
