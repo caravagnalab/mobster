@@ -54,7 +54,7 @@ cowplot::plot_grid(
   print
 ```
 
-Now we can compute `n.resamples` nonparametric bootstraps using function `mobster_bootstrap`, passing parameters to the calls of `mobster_fit`. This function by defaults runs the fits in parallel (using a default percentage of the available cores); parallel computing capabilities are achieved using package [easypar](https://github.com/caravagn/easypar).
+Now we can compute `n.resamples` nonparametric bootstraps using function `mobster_bootstrap`, passing parameters to the calls of `mobster_fit`. This function by defaults runs the fits in parallel (using a default percentage of the available cores); parallel computing capabilities are achieved using package [easypar](https://github.com/caravagnalab/easypar).
 
 ```{r, fig.width=9, fig.height=9, message=FALSE, warning=FALSE, eval=T}
 # The returned object contains also the list of bootstrap resamples, and the fits.

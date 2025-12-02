@@ -20,8 +20,8 @@ knitr::opts_chunk$set(
 
 
 <!-- <center> -->
-<!-- <a href="https://caravagn.github.io/mobster"><img src="https://caravagn.github.io/mobster/reference/figures/logo.png" width=77px height=91px></img></a> -->
-<!-- <a href="https://caravagn.github.io/ctree"><img src="https://caravagn.github.io/ctree/reference/figures/logo.png" width=77px height=91px></img></a> -->
+<!-- <a href="https://caravagnalab.github.io/mobster"><img src="https://caravagnalab.github.io/mobster/reference/figures/logo.png" width=77px height=91px></img></a> -->
+<!-- <a href="https://caravagnalab.github.io/ctree"><img src="https://caravagnalab.github.io/ctree/reference/figures/logo.png" width=77px height=91px></img></a> -->
 <!-- </center> -->
 <!-- <br> -->
 
@@ -31,7 +31,7 @@ library(tidyr)
 library(dplyr)
 ```
 
-Clone trees from `mobster` fits can be computing using the internal interface with [ctree](https://caravagn.github.io/ctree).
+Clone trees from `mobster` fits can be computing using the internal interface with [ctree](https://caravagnalab.github.io/ctree).
 
 You need to have drivers annotated your object if you want to use `ctree`, and every `driver_label` has to be unique, as it will be used as the `variantID` column to identify the driver event.
 

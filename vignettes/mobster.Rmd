@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 ```
 
 <center>
-<a href="https://caravagn.github.io/mobster"><img src="https://caravagn.github.io/mobster/reference/figures/logo.png" width=77px height=91px></img></a>
+<a href="https://caravagnalab.github.io/mobster"><img src="https://caravagnalab.github.io/mobster/reference/figures/logo.png" width=77px height=91px></img></a>
 </center>
 <br>
 
@@ -69,7 +69,7 @@ cowplot::plot_grid(
 )
 ```
 
-The plot shows the fit (right) of a simulated subclonal expansion (left, Muller plot with [ggmuller](https://cran.r-project.org/web/packages/ggmuller/vignettes/ggmuller.html)); `C2`, the subclone at `~30%` allelic frequency is outgrowing an ancestral clonal population `C1`, at `~50%` allelic frequency (heterozygous mutations). Their dynamics are consistent with what we [expect from the interplay of positive selection between clones and neutral evolution within each clone](https://caravagn.github.io/mobster/articles/Example_tumour_simulation.html).
+The plot shows the fit (right) of a simulated subclonal expansion (left, Muller plot with [ggmuller](https://cran.r-project.org/web/packages/ggmuller/vignettes/ggmuller.html)); `C2`, the subclone at `~30%` allelic frequency is outgrowing an ancestral clonal population `C1`, at `~50%` allelic frequency (heterozygous mutations). Their dynamics are consistent with what we [expect from the interplay of positive selection between clones and neutral evolution within each clone](https://caravagnalab.github.io/mobster/articles/Example_tumour_simulation.html).
 
 Inspired from both _mathematical modelling of evolutionary processes_ and _Machine Learning_, the  signal is modeled as mixture density with two types of distributions:
 
@@ -82,6 +82,6 @@ S3 objects are defined to perform easy visualization of the data and aid compari
 
 This is a _model-based_ approach to analyse cancer data, meaning that a power law tail is used to integrate evolutionary dynamics in this traditional clustering problem. Results from `mobster` deconvolution can be used to reconstruct the clonal architecture of a tumour (_subclonal deconvolution_) and identify patterns of functional heterogeneity (subclones under positive selection). 
 
-A number of [vignettes](https://caravagn.github.io/mobster/articles/) are available to help you using `mobster`; for a set of real case studies check out the Supplementary Data repository hosted at the [Sottoriva Lab Github page](https://github.com/sottorivalab)
+A number of [vignettes](https://caravagnalab.github.io/mobster/articles/) are available to help you using `mobster`; for a set of real case studies check out the Supplementary Data repository hosted at the [Sottoriva Lab Github page](https://github.com/sottorivalab)
 
 

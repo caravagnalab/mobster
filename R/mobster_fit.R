@@ -165,7 +165,7 @@ mobster_fit = function(x,
   # Fits are obtained using the easypar package
   # which allows easy parallelization of R functions
   #
-  # https://github.com/caravagn/easypar
+  # https://github.com/caravagnalab/easypar
   #
   # Inputs in the easypar format - list of lists
   # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
