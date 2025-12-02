@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+options(ragg.max_dim = 200000)
 ```
 
 <center>
@@ -80,11 +81,14 @@ ani = df %>%
     subtitle = 'Tumour doublings (clock): t = {closest_state}'
     ) +
   ggthemes::scale_fill_ptol() +
-  mobster:::my_ggplot_theme() 
+  mobster:::my_ggplot_theme()
 
-  gganimate::animate(ani,
+gganimate::animate(ani,
                    width = 480,
                    height = 480,
+                   units = "px",
+                   res = 72,
+                   nframes = 100,
                    renderer = gganimate::magick_renderer())
 ```
 
