@@ -35,7 +35,7 @@
     # pio::pioHdr('MOBSTER - Model-based clustering in cancer')
     # pio::pioStr("Author : ", "Giulio Caravagna <gcaravagn@gmail.com>", suffix = '\n')
     # pio::pioStr("GitHub : ", "caravagn/mobster", suffix = '\n')
-    # pio::pioStr("   WWW : ", "https://caravagn.github.io/mobster/", suffix = '\n')
+    # pio::pioStr("   WWW : ", "https://caravagnalab.github.io/mobster/", suffix = '\n')
     # 
     # 
     # cat(
@@ -46,7 +46,7 @@
     
     pk = 'mobster'
     pk_l = 'Model-based clustering in cancer'
-    www = "https://caravagn.github.io/mobster/"
+    www = "https://caravagnalab.github.io/mobster/"
     em = "gcaravagn@gmail.com"
     
     cli::cli_text("{crayon::green(clisymbols::symbol$tick)} Loading {.field {pk}}, {.emph \'{pk_l}\'}. Support : {.url { www}}.")

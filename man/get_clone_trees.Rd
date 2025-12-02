@@ -17,7 +17,7 @@ The output of the constructor \code{ctree::cetrees}.
 }
 \description{
 This function uses the output fit of MOBSTER
-to create a call to \code{ctree} (\url{https://caravagn.github.io/ctree/}),
+to create a call to \code{ctree} (\url{https://caravagnalab.github.io/ctree/}),
 a package to create clone trees for cancer evolution models.
 
 Creation of a clone tree requires annotations that are not usually 
